@@ -23,8 +23,8 @@ npm -v
 ### 1️⃣ Clone the Repository  
 
 ```sh
-git clone https://github.com/your-username/studio-booking-app.git
-cd studio-booking-app
+git clone https://github.com/MohamedAbdelhakem17/goocast.git
+cd goocast
 ```
 
 ### 2️⃣ Install Dependencies  
@@ -83,4 +83,3 @@ npm run dev
 
 ---
 
-**هل تحتاج أي تعديلات إضافية؟** 😊
