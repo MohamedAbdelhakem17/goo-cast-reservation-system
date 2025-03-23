@@ -23,8 +23,8 @@ npm -v
 ### 1️⃣ Clone the Repository  
 
 ```sh
-git clone https://github.com/MohamedAbdelhakem17/goocast.git
-cd goocast
+git clone https://github.com/MohamedAbdelhakem17/goo-cast-reservation-system.git
+cd goo-cast-reservation-system
 ```
 
 ### 2️⃣ Install Dependencies  
