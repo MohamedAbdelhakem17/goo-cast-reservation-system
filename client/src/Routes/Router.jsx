@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import React, { Suspense, lazy } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar/Navbar';
 import Footer from '../components/layout/Footer/Footer';
 import LoadingScreen from '../components/loading-screen/LoadingScreen';
@@ -13,22 +13,26 @@ const NotFound = lazy(() => import("../pages/Not-Found/NotFound"));
 
 // This is the main router component that handles the routing of the application
 export default function AppRouter() {
+    const location = useLocation()
+
+    useEffect(() => {
+        window.scrollTo(0, 0, { behavior: 'smooth' });
+    }, [location.pathname]);
+
     return (
-        <Router>
-            <Suspense fallback={<LoadingScreen />}>
-                <Navbar />
-                <main className='container mx-auto  py-16 my-8'>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/studios" element={<Studios />} />
-                        <Route path="/studio/:id" element={<StudioDetails />} />
-                        <Route path="/booking" element={<Booking />} />
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                </main>
-                <Footer />
-            </Suspense>
-        </Router>
+        <Suspense fallback={<LoadingScreen />}>
+            <Navbar />
+            <main className='container mx-auto  py-16 my-8'>
+                <Routes location={location} key={location.pathname}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/studios" element={<Studios />} />
+                    <Route path="/studio/:id" element={<StudioDetails />} />
+                    <Route path="/booking" element={<Booking />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </main>
+            <Footer />
+        </Suspense>
     );
 }
 

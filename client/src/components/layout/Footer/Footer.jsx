@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { footer_logo } from "../../../assets/images";
+import { logo } from "../../../assets/images";
 
 export default function Footer() {
     const NAV_LINKS = [
@@ -82,13 +82,18 @@ export default function Footer() {
                     {/* Brand Column */}
                     <motion.div variants={itemVariants} className="space-y-6">
                         <div className="flex items-center gap-2">
-                            <motion.div
+                            {/* <motion.div
                                 className="w-10 h-10 bg-main rounded-lg flex items-center justify-center text-white"
                                 whileHover={{ rotate: 5, scale: 1.05 }}
                             >
                                 <img src={footer_logo} alt="goocast" className="object-contain w-7 h-7" />
                             </motion.div>
-                            <h2 className="text-2xl font-bold">Goo Cast</h2>
+                            <h2 className="text-2xl font-bold">Goo Cast</h2> */}
+
+                            <Link to={"/"}>
+                                <img src={logo} alt="gooCast" className="w-50" />
+                            </Link>
+
                         </div>
 
                         <p className="text-gray-600 text-sm">
