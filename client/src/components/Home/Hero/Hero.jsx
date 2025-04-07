@@ -182,7 +182,7 @@ export default function Hero() {
 
           {/* Button with hover effect */}
           <motion.button
-            className="w-full md:w-auto py-3 px-8 bg-gradient-to-r from-main/80 to-main text-white font-semibold rounded-lg shadow-lg relative overflow-hidden group"
+            className="w-full md:w-auto py-3 px-8 cursor-pointer bg-gradient-to-r from-main/80 to-main text-white font-semibold rounded-lg shadow-lg relative overflow-hidden group"
             whileHover={{
               scale: 1.03,
               boxShadow:

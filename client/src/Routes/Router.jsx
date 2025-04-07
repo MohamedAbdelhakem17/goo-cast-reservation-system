@@ -8,8 +8,8 @@ import LoadingScreen from '../components/loading-screen/LoadingScreen';
 const Home = lazy(() => import("../pages/Home/Home"));
 const Studios = lazy(() => import("../pages/Studios/Studios"));
 const StudioDetails = lazy(() => import("../pages/Studio-Details/StudioDetails"));
-
-
+const Booking = lazy(() => import("../pages/Booking/Booking"));
+const NotFound = lazy(() => import("../pages/Not-Found/NotFound"));
 // This is the main router component that handles the routing of the application
 export default function AppRouter() {
     return (
@@ -21,6 +21,8 @@ export default function AppRouter() {
                         <Route path="/" element={<Home />} />
                         <Route path="/studios" element={<Studios />} />
                         <Route path="/studio/:id" element={<StudioDetails />} />
+                        <Route path="/booking" element={<Booking />} />
+                        <Route path="*" element={<NotFound />} />
                     </Routes>
                 </main>
                 <Footer />
