@@ -1,7 +1,7 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { studio } from '../../../assets/images'
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { studio } from "../../../assets/images";
 
 export default function Studio() {
     // Animation variants for staggered animations
@@ -14,7 +14,7 @@ export default function Studio() {
                 delayChildren: 0.3,
             },
         },
-    }
+    };
 
     const itemVariants = {
         hidden: { y: 20, opacity: 0 },
@@ -23,7 +23,7 @@ export default function Studio() {
             opacity: 1,
             transition: { type: "spring", stiffness: 100 },
         },
-    }
+    };
 
     const headerVariants = {
         hidden: { x: -20, opacity: 0 },
@@ -36,7 +36,7 @@ export default function Studio() {
                 duration: 0.6,
             },
         },
-    }
+    };
 
     const linkVariants = {
         hidden: { x: 20, opacity: 0 },
@@ -50,7 +50,7 @@ export default function Studio() {
                 delay: 0.2,
             },
         },
-    }
+    };
 
     // Sample studio data
     const studios = [
@@ -60,7 +60,7 @@ export default function Studio() {
         { id: 4, name: "Harmony House", location: "Austin", image: studio },
         { id: 5, name: "Rhythm Works", location: "Chicago", image: studio },
         { id: 6, name: "Sound Haven", location: "Miami", image: studio },
-    ]
+    ];
 
     const textVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -94,7 +94,6 @@ export default function Studio() {
 
     return (
         <section className="py-8 my-8">
-
             {/* Header */}
             <div className="flex justify-between items-center mb-8">
                 <motion.h2
@@ -125,7 +124,6 @@ export default function Studio() {
                 animate="visible"
             >
                 {studios.map((studio) => (
-
                     <motion.div
                         key={studio.id}
                         className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
@@ -136,34 +134,44 @@ export default function Studio() {
                         }}
                     >
                         {/* Studio Image with hover effect */}
-                        <motion.div className="relative h-64 overflow-hidden" whileHover={{
-                            scale: 1.05,
-                            transition: { duration: 0.3 },
-                        }}>
-                            <img src={studio.image || "/placeholder.svg"} alt={studio.name}
-                                className="w-full h-full object-cover" />
+                        <motion.div
+                            className="relative h-64 overflow-hidden"
+                            whileHover={{
+                                scale: 1.05,
+                                transition: { duration: 0.3 },
+                            }}
+                        >
+                            <img
+                                src={studio.image || "/placeholder.svg"}
+                                alt={studio.name}
+                                className="w-full h-full object-cover"
+                            />
 
                             <motion.div
                                 className="absolute inset-0 bg-gradient-to-t from-main/30 to-transparent flex items-end"
-                                initial={{ opacity: 0 }} whileHover={{ opacity: 1 }}
+                                initial={{ opacity: 0 }}
+                                whileHover={{ opacity: 1 }}
                             >
                                 <div className="py-4 px-8 text-white">
-                                    <Link to={`/studio/${studio.id}`} className="font-bold" >View Details</Link>
+                                    <Link to={`/studio/${studio.id}`} className="font-bold">
+                                        View Details
+                                    </Link>
                                 </div>
                             </motion.div>
-
                         </motion.div>
 
                         {/* Studio Name and Location */}
                         <div className="p-4">
-                            <div className='flex justify-between items-center'>
-                                <h3 className="text-xl font-bold text-gray-800">{studio.name}</h3>
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-xl font-bold text-gray-800">
+                                    {studio.name}
+                                </h3>
                                 <StarRating />
                             </div>
 
                             <p className="text-gray-600 flex items-center gap-2">
                                 <i className="fa-solid fa-location-dot text-main"></i>
-                                <span className='text-lg'>{studio.location}</span>
+                                <span className="text-lg">{studio.location}</span>
                             </p>
 
                             <p className="text-main font-bold">100 $ per hour</p>
@@ -176,11 +184,9 @@ export default function Studio() {
                                 viewport={{ once: true }}
                             />
                         </div>
-
                     </motion.div>
                 ))}
             </motion.div>
         </section>
-    )
+    );
 }
-

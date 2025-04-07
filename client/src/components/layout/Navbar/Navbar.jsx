@@ -1,41 +1,42 @@
-"use client"
+"use client";
 
-import { NavLink, Link } from "react-router-dom"
-import { logo } from "../../../assets/images"
-import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect } from "react"
+import { NavLink, Link } from "react-router-dom";
+import { logo } from "../../../assets/images";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
-    const [menuOpen, setMenuOpen] = useState(false)
-    const [scrolled, setScrolled] = useState(false)
-
-    // Handle scroll effect for navbar
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20)
-        }
-
-        window.addEventListener("scroll", handleScroll)
-        return () => window.removeEventListener("scroll", handleScroll)
-    }, [])
-
     const PAGES_LINKS = [
         { name: "Home", path: "/" },
         { name: "Studios", path: "/studios" },
-    ]
+    ];
 
     const BUTTON_ACTIONS = [
         { name: "Login", action: () => console.log("Login") },
         { name: "Sign Up", action: () => console.log("Sign Up") },
-    ]
+    ];
+
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    // Handle scroll effect for navbar
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
 
     // NavLink class function for active link styling
     const navLinkClasses = ({ isActive }) => {
         return `relative font-medium ${isActive
             ? "text-[20px] text-main font-semibold after:content-[''] after:block after:w-full after:h-[2px] after:bg-main after:absolute after:-bottom-1 after:left-0 after:transition-all after:duration-300"
             : "hover:text-main/90 transition-colors duration-200"
-            }`
-    }
+            }`;
+    };
 
     // Define animation variants
     const navbarVariants = {
@@ -48,7 +49,7 @@ export default function Navbar() {
                 ease: [0.22, 1, 0.36, 1],
             },
         },
-    }
+    };
 
     const mobileMenuVariants = {
         hidden: {
@@ -72,7 +73,7 @@ export default function Navbar() {
                 staggerChildren: 0.1,
             },
         },
-    }
+    };
 
     const fadeItem = {
         hidden: { opacity: 0, y: 10 },
@@ -84,7 +85,7 @@ export default function Navbar() {
                 ease: [0.22, 1, 0.36, 1],
             },
         },
-    }
+    };
 
     const buttonVariants = {
         hover: {
@@ -105,14 +106,10 @@ export default function Navbar() {
                 damping: 15,
             },
         },
-    }
-
+    };
 
     return (
-        <nav
-            className={`w-full fixed top-0 left-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-lg py-2" : "shadow-md py-4"
-                }`}
-        >
+        <nav className={`w-full fixed top-0 left-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-lg py-2" : "shadow-md py-4"}`} >
             <motion.div
                 variants={navbarVariants}
                 initial="initial"
@@ -170,7 +167,10 @@ export default function Navbar() {
                             whileHover="hover"
                             whileTap="tap"
                             variants={buttonVariants}
-                            className={`${index === 0 ? "bg-white text-main/90 border border-main/50" : "bg-main/90 text-white"} px-5 py-2 rounded-md font-medium transition-colors duration-200 ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
+                            className={`${index === 0
+                                ? "bg-white text-main/90 border border-main/50"
+                                : "bg-main/90 text-white"
+                                } px-5 py-2 rounded-md font-medium transition-colors duration-200 ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
                                 }`}
                             onClick={button.action}
                         >
@@ -180,8 +180,16 @@ export default function Navbar() {
                 </div>
 
                 {/* Mobile Toggle */}
-                <motion.div className="md:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.3 } }}>
-                    <motion.button onClick={() => setMenuOpen(!menuOpen)} whileTap={{ scale: 0.9 }} className="p-1">
+                <motion.div
+                    className="md:hidden"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, transition: { delay: 0.3 } }}
+                >
+                    <motion.button
+                        onClick={() => setMenuOpen(!menuOpen)}
+                        whileTap={{ scale: 0.9 }}
+                        className="p-1"
+                    >
                         <AnimatePresence mode="wait">
                             {menuOpen ? (
                                 <motion.i
@@ -219,8 +227,16 @@ export default function Navbar() {
                     >
                         <ul className="space-y-5 mb-6">
                             {PAGES_LINKS.map((page, index) => (
-                                <motion.li key={index} variants={fadeItem} className="border-b border-gray-100 pb-2">
-                                    <NavLink to={page.path} className={navLinkClasses} onClick={() => setMenuOpen(false)}>
+                                <motion.li
+                                    key={index}
+                                    variants={fadeItem}
+                                    className="border-b border-gray-100 pb-2"
+                                >
+                                    <NavLink
+                                        to={page.path}
+                                        className={navLinkClasses}
+                                        onClick={() => setMenuOpen(false)}
+                                    >
                                         {page.name}
                                     </NavLink>
                                 </motion.li>
@@ -240,8 +256,8 @@ export default function Navbar() {
                                         : "bg-blue-500 text-white hover:bg-blue-600"
                                         }`}
                                     onClick={() => {
-                                        button.action()
-                                        setMenuOpen(false)
+                                        button.action();
+                                        setMenuOpen(false);
                                     }}
                                 >
                                     {button.name}
@@ -252,6 +268,5 @@ export default function Navbar() {
                 )}
             </AnimatePresence>
         </nav>
-    )
+    );
 }
-
