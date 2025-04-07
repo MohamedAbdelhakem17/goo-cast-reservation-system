@@ -1,7 +1,16 @@
-"use client"
-import { motion } from "framer-motion"
+"use client";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { footer_logo } from "../../../assets/images";
 
 export default function Footer() {
+    const NAV_LINKS = [
+        { title: "Home", path: "/" },
+        { title: "Studios", path: "/studios" },
+    ];
+
+    const MotionLink = motion(Link);
+
     // Animation variants
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -12,7 +21,7 @@ export default function Footer() {
                 delayChildren: 0.1,
             },
         },
-    }
+    };
 
     const itemVariants = {
         hidden: { y: 20, opacity: 0 },
@@ -21,7 +30,7 @@ export default function Footer() {
             opacity: 1,
             transition: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] },
         },
-    }
+    };
 
     // Social media links
     const socialLinks = [
@@ -29,11 +38,10 @@ export default function Footer() {
         { icon: "fa-brands fa-twitter", url: "#", label: "Twitter" },
         { icon: "fa-brands fa-facebook", url: "#", label: "Facebook" },
         { icon: "fa-brands fa-spotify", url: "#", label: "Spotify" },
-    ]
+    ];
 
     return (
         <footer className="relative bg-gradient-to-b from-main/5 to-gray-100 pt-12 pb-6 overflow-hidden w-full">
-
             {/* Background elements */}
             <div className="absolute inset-0 -z-10 overflow-hidden">
                 <motion.div
@@ -78,14 +86,14 @@ export default function Footer() {
                                 className="w-10 h-10 bg-main rounded-lg flex items-center justify-center text-white"
                                 whileHover={{ rotate: 5, scale: 1.05 }}
                             >
-                                <i className="fa-solid fa-podcast text-xl"></i>
+                                <img src={footer_logo} alt="goocast" className="object-contain w-7 h-7" />
                             </motion.div>
                             <h2 className="text-2xl font-bold">Goo Cast</h2>
                         </div>
 
                         <p className="text-gray-600 text-sm">
-                            Egypt's premier podcast studio offering professional recording facilities and expert guidance for
-                            podcasters.
+                            Egypt's premier podcast studio offering professional recording
+                            facilities and expert guidance for podcasters.
                         </p>
 
                         <div className="flex gap-4">
@@ -116,26 +124,25 @@ export default function Footer() {
                                 transition={{ delay: 0.3, duration: 0.6 }}
                             ></motion.span>
                         </h3>
+
                         <ul className="space-y-3">
-                            <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <a
-                                    href="/"
-                                    className="text-gray-600 hover:text-main transition-colors duration-300 flex items-center gap-2"
+                            {NAV_LINKS.map((link, index) => (
+                                <motion.li
+                                    key={index}
+                                    whileHover={{ x: 5 }}
+                                    transition={{ type: "spring", stiffness: 300 }}
                                 >
-                                    <i className="fa-solid fa-chevron-right text-xs text-main/70"></i>
-                                    Home
-                                </a>
-                            </motion.li>
-                            <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 300 }}>
-                                <a
-                                    href="/studios"
-                                    className="text-gray-600 hover:text-main transition-colors duration-300 flex items-center gap-2"
-                                >
-                                    <i className="fa-solid fa-chevron-right text-xs text-main/70"></i>
-                                    Studios
-                                </a>
-                            </motion.li>
+                                    <Link
+                                        to={link.path}
+                                        className="text-gray-600 hover:text-main transition-colors duration-300 flex items-center gap-2"
+                                    >
+                                        <i className="fa-solid fa-chevron-right text-xs text-main/70"></i>
+                                        {link.title}
+                                    </Link>
+                                </motion.li>
+                            ))}
                         </ul>
+
                     </motion.div>
 
                     {/* Newsletter */}
@@ -151,7 +158,8 @@ export default function Footer() {
                             ></motion.span>
                         </h3>
                         <p className="text-gray-600 text-sm">
-                            Subscribe to our newsletter for the latest updates and special offers.
+                            Subscribe to our newsletter for the latest updates and special
+                            offers.
                         </p>
                         <form className="space-y-3">
                             <div className="relative">
@@ -183,20 +191,30 @@ export default function Footer() {
                     transition={{ duration: 0.6, delay: 0.2 }}
                 >
                     <div className="flex flex-col md:flex-row gap-4 md:gap-8">
-                        <a href="tel:+201234567890" className="flex items-center gap-2 hover:text-main transition-colors">
+                        <a
+                            href="tel:+201234567890"
+                            className="flex items-center gap-2 hover:text-main transition-colors"
+                        >
                             <i className="fa-solid fa-phone"></i>
                             <span>+20 123 456 7890</span>
                         </a>
-                        <a href="mailto:info@goocast.com" className="flex items-center gap-2 hover:text-main transition-colors">
+                        <a
+                            href="mailto:info@goocast.com"
+                            className="flex items-center gap-2 hover:text-main transition-colors"
+                        >
                             <i className="fa-solid fa-envelope"></i>
                             <span>info@goocast.com</span>
                         </a>
                     </div>
 
-                    <motion.a href="#" className="flex items-center gap-1 text-main font-medium" whileHover={{ x: 5 }}>
+                    <MotionLink
+                        to="/studios"
+                        className="flex items-center gap-1 text-main font-medium"
+                        whileHover={{ x: 5 }}
+                    >
                         <span>Book a Studio</span>
                         <i className="fa-solid fa-arrow-right text-xs"></i>
-                    </motion.a>
+                    </MotionLink>
                 </motion.div>
 
                 {/* Copyright */}
@@ -211,6 +229,5 @@ export default function Footer() {
                 </motion.div>
             </div>
         </footer>
-    )
+    );
 }
-

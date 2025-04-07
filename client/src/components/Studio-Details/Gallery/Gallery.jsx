@@ -1,22 +1,16 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { studio  , studio2} from "../../../assets/images";
-
-const images = [
-    // Replace with actual image URLs
-    studio,
-    studio2,
-    studio,
-    studio,
-    studio2,
-];
+import { studio, studio2 } from "../../../assets/images";
 
 export default function Gallery() {
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
+    // Replace with actual image URLs
+    const images = [studio, studio2, studio, studio, studio2];
+
     // Function to go to the next image
     const nextImage = (e) => {
-        e.stopPropagation(); // Prevent closing the image
+        e.stopPropagation();
         setSelectedImageIndex((prevIndex) =>
             prevIndex === null || prevIndex === images.length - 1 ? 0 : prevIndex + 1
         );
@@ -24,7 +18,7 @@ export default function Gallery() {
 
     // Function to go to the previous image
     const prevImage = (e) => {
-        e.stopPropagation(); // Prevent closing the image
+        e.stopPropagation();
         setSelectedImageIndex((prevIndex) =>
             prevIndex === null || prevIndex === 0 ? images.length - 1 : prevIndex - 1
         );
@@ -32,6 +26,7 @@ export default function Gallery() {
 
     return (
         <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Main Image */}
             <div className="md:col-span-1">
                 <motion.img
                     src={images[0]}
@@ -44,6 +39,7 @@ export default function Gallery() {
                 />
             </div>
 
+            {/* Thumbnails */}
             <div className="md:col-span-2 grid grid-cols-2 gap-4">
                 {images.slice(1).map((img, index) => (
                     <motion.img
@@ -56,13 +52,14 @@ export default function Gallery() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{
                             duration: 0.5,
-                            delay: index * 0.1,
+                            delay: index * 0.2,
                             ease: "easeOut",
                         }}
                     />
                 ))}
             </div>
 
+            {/* image preview */}
             <AnimatePresence>
                 {selectedImageIndex !== null && (
                     <motion.div
@@ -71,7 +68,7 @@ export default function Gallery() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        onClick={() => setSelectedImageIndex(null)} // Close image when clicking outside
+                        onClick={() => setSelectedImageIndex(null)} // Close the image when clicking outside of it
                     >
                         <motion.img
                             src={images[selectedImageIndex]}
@@ -91,14 +88,14 @@ export default function Gallery() {
                         {/* Prev and Next Buttons */}
                         <button
                             onClick={prevImage}
-                            className="absolute left-4 text-white text-3xl p-2 rounded-full bg-black/50 hover:bg-black/70"
+                            className="absolute left-10 text-white text-2xl cursor-pointer h-10 w-10 flex justify-center items-center rounded-full bg-black/50 hover:bg-black/70"
                         >
                             &lt;
                         </button>
 
                         <button
                             onClick={nextImage}
-                            className="absolute right-4 text-white text-3xl p-2 rounded-full bg-black/50 hover:bg-black/70"
+                            className="absolute right-10 text-white text-2xl cursor-pointer h-10 w-10 flex justify-center items-center rounded-full bg-black/50 hover:bg-black/70"
                         >
                             &gt;
                         </button>
