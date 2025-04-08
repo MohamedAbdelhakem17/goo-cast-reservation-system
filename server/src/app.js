@@ -27,10 +27,11 @@ app.use(cors("*"));
 amountRoutes(app);
 
 // Serve Client Files
-app.use(express.static(path.join(__dirname, "../../client/dist")));
-app.get("*", (req, res) => {
+app.use("/goocast", express.static(path.join(__dirname, "../../client/dist")));
+app.get("/goocast/*", (req, res) => {
     res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
 });
+
 
 // Handel Not Found Route Middleware
 app.use("/api/v1/*", (req, res) => {
