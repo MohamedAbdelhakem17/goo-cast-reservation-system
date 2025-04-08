@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 
 export default function Navbar() {
     const PAGES_LINKS = [
-        { name: "Home", path: "/goocast" },
+        { name: "Home", path: "/" },
         { name: "Studios", path: "/studios" },
     ];
 
@@ -117,7 +117,7 @@ export default function Navbar() {
                 className="container mx-auto px-5 flex justify-between items-center"
             >
                 {/* Logo */}
-                <Link to="/goocast" className="flex items-center">
+                <Link to="/" className="flex items-center">
                     <motion.img
                         src={logo}
                         alt="Goo Cast"
