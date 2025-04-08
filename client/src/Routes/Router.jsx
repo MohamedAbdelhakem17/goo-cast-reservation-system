@@ -24,7 +24,7 @@ export default function AppRouter() {
             <Navbar />
             <main className='container mx-auto  py-16 my-8'>
                 <Routes location={location} key={location.pathname}>
-                    <Route index={true} path="/goocast" element={<Home />} />
+                    <Route index={true}  element={<Home />} />
                     <Route path="/studios" element={<Studios />} />
                     <Route path="/studio/:id" element={<StudioDetails />} />
                     <Route path="/booking" element={<Booking />} />
