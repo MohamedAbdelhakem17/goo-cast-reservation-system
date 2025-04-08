@@ -9,7 +9,7 @@ export default function Footer() {
         { title: "Studios", path: "/studios" },
     ];
 
-    const MotionLink = motion(Link);
+    const MotionLink = motion.create(Link);
 
     // Animation variants
     const containerVariants = {

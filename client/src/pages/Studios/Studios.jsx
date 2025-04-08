@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { studio, studio2 } from "../../assets/images";
 import { useEffect, useState } from "react";
+import StarRating from "../../hooks/useRate";
 
 export default function Studios() {
   // Sample studio data - using exactly what was provided
@@ -14,35 +15,6 @@ export default function Studios() {
     { id: 6, name: "Sound Haven", location: "Miami", image: studio2 },
   ];
 
-  const textVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (custom) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        delay: custom * 0.2,
-        ease: [0.43, 0.13, 0.23, 0.96],
-      },
-    }),
-  };
-
-  const StarRating = () => {
-    return (
-      <div className="flex py-2">
-        {[0, 1, 2, 3, 4].map((index) => (
-          <motion.i
-            key={index}
-            className="fa-solid fa-star text-yellow-400"
-            variants={textVariants}
-            initial="hidden"
-            animate="visible"
-            custom={index}
-          />
-        ))}
-      </div>
-    );
-  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -162,7 +134,7 @@ export default function Studios() {
                     </div>
 
                     <div className="flex flex-col items-end">
-                      <StarRating />
+                      <StarRating rating={3.5} />
                       <span className="text-sm text-gray-500">
                         5.0 (24 reviews)
                       </span>
