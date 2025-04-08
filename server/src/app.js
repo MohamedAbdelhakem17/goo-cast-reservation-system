@@ -26,15 +26,9 @@ app.use(cors("*"));
 //AMOUNT ROUTES
 amountRoutes(app);
 
-// Serve Client Files
-app.use("/goocast/", express.static(path.join(__dirname, "../../client/dist")));
-app.get("/goocast/*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
-});
-
 
 // Handel Not Found Route Middleware
-app.use("/api/v1/*", (req, res) => {
+app.use("*", (req, res) => {
     throw new AppError(404, HTTP_STATUS_TEXT.ERROR, `This route ${req.hostname} not found. Please try another one.`);
 });
 
