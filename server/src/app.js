@@ -27,7 +27,7 @@ app.use(cors("*"));
 amountRoutes(app);
 
 // Serve Client Files
-app.use("/goocast", express.static(path.join(__dirname, "../../client/dist")));
+app.use("/goocast/", express.static(path.join(__dirname, "../../client/dist")));
 app.get("/goocast/*", (req, res) => {
     res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
 });
