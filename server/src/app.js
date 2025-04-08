@@ -7,6 +7,8 @@ const amountRoutes = require("./routes/index");
 const AppError = require('./utils/app-error');
 const { HTTP_STATUS_TEXT } = require('./config/system-variables');
 const app = express();
+const path = require("path");
+
 
 
 // database connection;
@@ -22,8 +24,14 @@ app.use(express.json());
 //AMOUNT ROUTES
 amountRoutes(app);
 
+// Serve Client Files
+app.use(express.static(path.join(__dirname, "../../client/dist")));
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
+});
+
 // Handel Not Found Route Middleware
-app.use("*", (req, res) => {
+app.use("/api/v1/*", (req, res) => {
     throw new AppError(404, HTTP_STATUS_TEXT.ERROR, `This route ${req.hostname} not found. Please try another one.`);
 });
 
@@ -31,7 +39,7 @@ app.use("*", (req, res) => {
 app.use(errorMiddlewareHandler);
 
 const server = app.listen(process.env.PORT, () => {
-    console.log('Server is running on http://localhost:' + process.env.PORT);
+    console.log('Server is running on port:' + process.env.PORT);
 });
 
 // Handle unhandled promise rejections

@@ -5,7 +5,7 @@ const home = async (req, res) => {
 }
 
 const amountRoutes = (app) => {
-    app.use("/", home);
+    app.use("/api/v1", home);
 }
 
 module.exports = amountRoutes
