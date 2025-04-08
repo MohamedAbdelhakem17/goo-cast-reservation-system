@@ -10,7 +10,7 @@ const home = async (req, res) => {
 }
 
 const amountRoutes = (app) => {
-    app.use("/api/v1/home", home);
+    app.use("/home", home);
 }
 
 module.exports = amountRoutes
