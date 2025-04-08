@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { studio } from "../../../assets/images";
+import StarRating from "../../../hooks/useRate";
 
 export default function Studio() {
     // Animation variants for staggered animations
@@ -75,22 +76,6 @@ export default function Studio() {
         }),
     };
 
-    const StarRating = () => {
-        return (
-            <div className="flex py-2">
-                {[0, 1, 2, 3, 4].map((index) => (
-                    <motion.i
-                        key={index}
-                        className="fa-solid fa-star text-yellow-400"
-                        variants={textVariants}
-                        initial="hidden"
-                        animate="visible"
-                        custom={index}
-                    />
-                ))}
-            </div>
-        );
-    };
 
     return (
         <section className="py-8 my-8">
@@ -166,7 +151,7 @@ export default function Studio() {
                                 <h3 className="text-xl font-bold text-gray-800">
                                     {studio.name}
                                 </h3>
-                                <StarRating />
+                                <StarRating rating={4.5} />
                             </div>
 
                             <p className="text-gray-600 flex items-center gap-2">
