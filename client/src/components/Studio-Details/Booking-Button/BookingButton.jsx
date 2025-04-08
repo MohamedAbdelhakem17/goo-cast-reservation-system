@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 export default function BookingButton() {
-    const MotionLink = motion(Link)
+    const MotionLink = motion.create(Link)
     return (
         <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.8, rotate: -10 }}

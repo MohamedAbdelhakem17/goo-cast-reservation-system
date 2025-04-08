@@ -1,5 +1,6 @@
 import React from 'react'
 import { motion } from "framer-motion"
+import StarRating from '../../../../hooks/useRate'
 import { user } from '../../../../assets/images'
 
 export default function ReviewsTap() {
@@ -32,6 +33,15 @@ export default function ReviewsTap() {
             comment:
                 "I've used many studios in the city, and this one ranks among the top. Clean, spacious, and well-maintained. Will definitely book again.",
         },
+        {
+            id: 4,
+            name: "Sarah Johnson",
+            image: user,
+            date: "2023-11-05T16:45:00",
+            rating: 2.5,
+            comment:
+                "I've used many studios in the city, and this one ranks among the top. Clean, spacious, and well-maintained. Will definitely book again.",
+        },
     ]
 
     const formatDate = (dateString) => {
@@ -39,39 +49,6 @@ export default function ReviewsTap() {
         return new Date(dateString).toLocaleDateString(undefined, options)
     }
 
-    const renderStars = (rating) => {
-        const stars = []
-        const fullStars = Math.floor(rating)
-        const hasHalfStar = rating % 1 !== 0
-
-        for (let i = 0; i < fullStars; i++) {
-            stars.push(
-                <motion.span
-                    key={`star-${i}`}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 * i }}
-                >
-                    <i className="fa-solid fa-star w-5 h-5 fill-amber-400 text-amber-400"></i>
-                </motion.span>,
-            )
-        }
-
-        if (hasHalfStar) {
-            stars.push(
-                <motion.span
-                    key="half-star"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 * fullStars }}
-                >
-                    <i class="fa-solid fa-star-half w-5 h-5 fill-amber-400 text-amber-400"></i>
-                </motion.span>,
-            )
-        }
-
-        return stars
-    }
 
     // Animation variants
     const containerVariants = {
@@ -143,7 +120,8 @@ export default function ReviewsTap() {
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.3 }}
                                     >
-                                        {renderStars(review.rating)}
+                                        <StarRating rating={review.rating} />
+
                                     </motion.div>
 
                                     <motion.p
