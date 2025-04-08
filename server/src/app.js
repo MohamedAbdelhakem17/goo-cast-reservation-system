@@ -1,21 +1,21 @@
 require('dotenv').config(".env");
 const express = require('express');
 const morgan = require('morgan');
+const path = require("path");
+const cors = require("cors");
+
 const databaseConnect = require('./config/database-connection');
 const errorMiddlewareHandler = require('./middleware/error-middleware-handler');
 const amountRoutes = require("./routes/index");
 const AppError = require('./utils/app-error');
 const { HTTP_STATUS_TEXT } = require('./config/system-variables');
+
 const app = express();
-const path = require("path");
-const cors = require("cors");
 
-
-
-// database connection;
+// ====== Database Connection ======
 databaseConnect();
 
-// Middleware
+// ====== Middleware ======
 if (process.env.ENVIRONMENT_MODE === 'development') {
     app.use(morgan('dev'));
 }
@@ -23,23 +23,35 @@ if (process.env.ENVIRONMENT_MODE === 'development') {
 app.use(express.json());
 app.use(cors("*"));
 
-//AMOUNT ROUTES
+// ====== API Routes ======
 amountRoutes(app);
 
+// ====== Serve React Frontend ======
+app.use(express.static(path.join(__dirname, '../../client/dist')));
 
-// Handel Not Found Route Middleware
+app.get('*', (req, res, next) => {
+    const filePath = path.join(__dirname, '../../client/dist/index.html');
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            next(err);
+        }
+    });
+});
+
+// ====== Not Found Middleware ======
 app.use("*", (req, res) => {
     throw new AppError(404, HTTP_STATUS_TEXT.ERROR, `This route ${req.hostname} not found. Please try another one.`);
 });
 
-// Handel Error Middleware
+// ====== Error Handler Middleware ======
 app.use(errorMiddlewareHandler);
 
+// ====== Start Server ======
 const server = app.listen(process.env.PORT, () => {
-    console.log('Server is running on port:' + process.env.PORT);
+    console.log('Server is running on port: ' + process.env.PORT);
 });
 
-// Handle unhandled promise rejections
+// ====== Handle Unhandled Promise Rejections ======
 process.on("unhandledRejection", (error) => {
     console.error(`Unhandled Rejection: ${error.name} | ${error.message}`);
     server.close(() => {
