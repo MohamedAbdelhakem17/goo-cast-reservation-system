@@ -10,8 +10,8 @@ npm install
 echo "🧱 Building frontend..."
 cd ../client
 npm install
-npm run build
+npm run build -- --base=/goocast/
 
 echo "🚀 Restarting backend..."
 cd ../server
-pm2 restart src/app.js
+pm2 restart goocast
