@@ -8,6 +8,7 @@ const AppError = require('./utils/app-error');
 const { HTTP_STATUS_TEXT } = require('./config/system-variables');
 const app = express();
 const path = require("path");
+const cors = require("cors");
 
 
 
@@ -20,6 +21,7 @@ if (process.env.ENVIRONMENT_MODE === 'development') {
 }
 
 app.use(express.json());
+app.use(cors("*"));
 
 //AMOUNT ROUTES
 amountRoutes(app);
