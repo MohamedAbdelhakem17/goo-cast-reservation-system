@@ -5,7 +5,7 @@ import { logo } from "../../../assets/images";
 
 export default function Footer() {
     const NAV_LINKS = [
-        { title: "Home", path: "/" },
+        { title: "Home", path: "/goocast" },
         { title: "Studios", path: "/studios" },
     ];
 

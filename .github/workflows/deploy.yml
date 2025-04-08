@@ -3,7 +3,7 @@ name: 🚀 Deploy to Server
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
@@ -17,16 +17,31 @@ jobs:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@master
         with:
-          host:  45.159.231.9 
-          username: root 
-          key: ${{ secrets.SSH_KEY }} 
-          port: 22 
+          host: 45.159.231.9
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
           script: |
-            cd /var/www/goo-cast-reservation-system/  
-            git pull origin main
-            cd client 
+            echo "👉 Pulling latest code (force merge)"
+            cd /var/www/goo-cast-reservation-system/
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "📦 Building client with base path"
+            cd client
             npm install
-            npm run build
+            npm run build -- --base=/goocast
+
+            echo "🔧 Installing server dependencies"
             cd ../server
             npm install
-            pm2 restart goocast              
+
+            echo "🚀 Restarting PM2"
+            pm2 describe goocast > /dev/null
+            if [ $? -eq 0 ]; then
+              pm2 restart goocast
+            else
+              pm2 start index.js --name goocast
+            fi
+
+            echo "✅ Deployment complete"

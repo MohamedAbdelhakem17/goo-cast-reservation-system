@@ -1,6 +1,6 @@
 {
   "name": "goocast",
-  "homepage": "/goocast",
+  "homepage": "goocast",
   "private": true,
   "version": "0.0.0",
   "type": "module",
