@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { logo } from "../../../assets/images";
+import useQuickBooking from "../../../hooks/useQuickBooking";
 
 export default function Footer() {
     const NAV_LINKS = [
@@ -9,7 +10,7 @@ export default function Footer() {
         { title: "Studios", path: "/studios" },
     ];
 
-    const MotionLink = motion.create(Link);
+    const { handleQuickBooking } = useQuickBooking();
 
     // Animation variants
     const containerVariants = {
@@ -212,14 +213,14 @@ export default function Footer() {
                         </a>
                     </div>
 
-                    <MotionLink
-                        to="/studios"
-                        className="flex items-center gap-1 text-main font-medium"
+                    <motion.button
+                        onClick={() => handleQuickBooking(1)}
+                        className="flex items-center gap-1 text-main font-medium cursor-pointer"
                         whileHover={{ x: 5 }}
                     >
                         <span>Book a Studio</span>
                         <i className="fa-solid fa-arrow-right text-xs"></i>
-                    </MotionLink>
+                    </motion.button>
                 </motion.div>
 
                 {/* Copyright */}

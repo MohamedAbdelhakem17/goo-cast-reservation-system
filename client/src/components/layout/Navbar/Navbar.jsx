@@ -281,7 +281,7 @@ export default function Navbar() {
             <AnimatePresence mode="wait">
                 {
                     (isSignupOpen || isSigninOpen) &&
-                    <motion.div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50"
+                    <motion.div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50 px-4"
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
                         {isSignupOpen &&
                             <Signup
