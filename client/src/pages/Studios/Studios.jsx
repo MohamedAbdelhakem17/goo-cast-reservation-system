@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { studio, studio2 } from "../../assets/images";
 import { useEffect, useState } from "react";
 import StarRating from "../../hooks/useRate";
-
+import useQuickBooking from "../../hooks/useQuickBooking";
 export default function Studios() {
   // Sample studio data - using exactly what was provided
   const studios = [
@@ -15,6 +15,7 @@ export default function Studios() {
     { id: 6, name: "Sound Haven", location: "Miami", image: studio2 },
   ];
 
+  const { handleQuickBooking } = useQuickBooking();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -172,12 +173,12 @@ export default function Studios() {
                         <i className="fa-solid fa-bookmark mr-2"></i>
                         Save
                       </button>
-                      <Link
-                        to={`/studio/${studio.id}`}
-                        className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors"
+                      <button
+                        onClick={() => handleQuickBooking(2, studio)}
+                        className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors cursor-pointer"
                       >
                         Book Now
-                      </Link>
+                      </button>
                     </div>
                   </div>
 

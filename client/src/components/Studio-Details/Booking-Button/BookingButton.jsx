@@ -1,8 +1,13 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-
+import { studio } from '../../../assets/images'
+import useQuickBooking from '../../../hooks/useQuickBooking'
 export default function BookingButton() {
-    const MotionLink = motion.create(Link)
+    const navigate = useNavigate()
+
+    const { handleQuickBooking } = useQuickBooking()
+
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.8, rotate: -10 }}
@@ -12,7 +17,7 @@ export default function BookingButton() {
         >
             <p className="text-main font-bold">100 $ per hour</p>
 
-            <MotionLink to="/booking"
+            <motion.button onClick={() => handleQuickBooking(2, studio)}
                 className="bg-main text-white py-3 px-6 rounded-lg shadow-lg relative overflow-hidden"
                 whileHover={{ scale: 1.05, boxShadow: "0px 0px 15px rgba(0,0,0,0.3)" }}
                 whileTap={{ scale: 0.95 }}
@@ -39,7 +44,7 @@ export default function BookingButton() {
                 >
                     Book Now
                 </motion.span>
-            </MotionLink>
+            </motion.button>
         </motion.div>
     )
 }

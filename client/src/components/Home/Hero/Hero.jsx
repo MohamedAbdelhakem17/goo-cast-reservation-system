@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import useQuickBooking from "../../../hooks/useQuickBooking";
 
 export default function Hero() {
   // Animation variants for text elements
@@ -37,6 +38,8 @@ export default function Hero() {
       transition: { duration: 1.5 },
     },
   };
+
+  const { handleQuickBooking } = useQuickBooking()
 
   return (
     <section className="relative py-16 overflow-hidden">
@@ -79,7 +82,7 @@ export default function Hero() {
       <div className="max-w-6xl mx-auto text-center px-6 md:px-12 relative z-10">
         {/* Animated Welcome Text with letter animation */}
         <motion.div className="overflow-hidden mb-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} >
-          {Array.from("Welcome").map((letter, index) => (
+          {Array.from("Wellcome").map((letter, index) => (
             <motion.span
               key={index}
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-main font-sub inline-block"
@@ -182,13 +185,14 @@ export default function Hero() {
 
           {/* Button with hover effect */}
           <motion.button
-            className="w-full md:w-auto py-3 px-8 cursor-pointer bg-gradient-to-r from-main/80 to-main text-white font-semibold rounded-lg shadow-lg relative overflow-hidden group"
+            className="cursor-pointer w-full md:w-auto py-3 px-8 bg-gradient-to-r from-main/80 to-main text-white font-semibold rounded-lg shadow-lg relative overflow-hidden group"
             whileHover={{
               scale: 1.03,
               boxShadow:
                 "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
             }}
             whileTap={{ scale: 0.97 }}
+            onClick={() => handleQuickBooking(1)}
           >
             <motion.span
               className="absolute inset-0 w-0 bg-white/20"

@@ -1,7 +1,10 @@
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
+import useQuickBooking from "../../hooks/useQuickBooking"
 
 export default function NotFound() {
+
+    const { handleQuickBooking } = useQuickBooking()
 
     return (
         <div className="flex flex-col items-center justify-center  px-4 py-12 sm:px-6 lg:px-8">
@@ -38,19 +41,19 @@ export default function NotFound() {
                 >
                     <Link
                         to={"/"}
-                        className="mt-8 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-main"
+                        className="mt-8 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-main shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2  border border-main bg-white"
                     >
-                        <i class="fa-solid fa-arrow-left mr-2 h-4 w-4"></i>
+                        <i className="fa-solid fa-arrow-left mr-2 h-4 w-4"></i>
                         Back to home
                     </Link>
 
-                    <Link
-                        to={"/"}
-                        className="mt-8 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-main shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 border border-main bg-white"
+                    <button
+                        onClick={() => handleQuickBooking(1)}
+                        className="mt-8 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-main"
                     >
                         Booking Now
-                        <i class="fa-solid fa-arrow-right ml-2 h-4 w-4"></i>
-                    </Link>
+                        <i className="fa-solid fa-arrow-right ml-2 h-4 w-4"></i>
+                    </button>
                 </motion.div>
 
                 {/* Animated decorative elements */}
