@@ -258,9 +258,10 @@ export default function Navbar() {
                                         variants={fadeItem}
                                         whileHover="hover"
                                         whileTap="tap"
-                                        className={`w-full py-3 rounded-md font-medium ${index === 0
-                                            ? "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                                            : "bg-blue-500 text-white hover:bg-blue-600"
+                                        className={`${index === 0
+                                            ? "bg-white text-main/90 border border-main/50"
+                                            : "bg-main/90 text-white"
+                                            } px-5 py-2 rounded-md font-medium transition-colors duration-200  w-full ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
                                             }`}
                                         onClick={() => {
                                             button.action();
