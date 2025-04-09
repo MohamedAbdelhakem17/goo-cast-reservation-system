@@ -22,7 +22,7 @@ export default function AppRouter() {
     return (
         <Suspense fallback={<LoadingScreen />}>
             <Navbar />
-            <main className='container mx-auto  py-16 my-8'>
+            <main className='container mx-auto  py-16 my-8 px-4'>
                 <Routes location={location} key={location.pathname}>
                     <Route path='/' element={<Home />} />
                     <Route path="/studios" element={<Studios />} />
