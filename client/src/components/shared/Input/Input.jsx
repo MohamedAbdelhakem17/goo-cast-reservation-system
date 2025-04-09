@@ -55,7 +55,7 @@ const Input = ({
                         ? "border-b-red-500"
                         : isFocused
                             ? "border-b-[#ed1e26]"
-                            : "border-b-gray-300 dark:border-b-gray-600"
+                            : "border-b-gray-300"
                         }`}
                     id={id}
                     placeholder={isFocused || !label ? placeholder : ""}
