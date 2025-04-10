@@ -18,6 +18,7 @@
     "@tanstack/react-query-devtools": "^5.71.10",
     "motion": "^12.5.0",
     "react": "^19.0.0",
+    "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^7.4.0",
