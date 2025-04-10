@@ -1,19 +1,15 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import StepIndicator from "../../components/Booking/Step-Indicator/StepIndicator";
 import NavigationButtons from "../../components/Booking/Navigation-Buttons/NavigationButtons";
-import SelectStudio from "../../components/Booking/Select-studio/SelectStudio";
+import SelectStudio from "../../components/Booking/Select-Studio/SelectStudio";
 import SelectDateTime from "../../components/Booking/Select-Date-Time/SelectDateTime";
 import SelectAdditionalServices from "../../components/Booking/Select-Additional-Services/SelectAdditionalServices";
 import PersonalInformation from "../../components/Booking/Personal-Information/PersonalInformation";
+import { useBooking } from "../../context/Booking-Context/BookingContext";
 
 export default function Booking() {
-  const location = useLocation();
-  const { step = 1, selectedStudio = null } = location.state || {};
-
-  const [currentStep, setCurrentStep] = useState(step);
-  const [studio, setStudio] = useState(selectedStudio);
+  // Booking context
+  const { studio, currentStep } = useBooking()
 
   console.log("Selected Studio:", studio);
 
@@ -69,7 +65,7 @@ export default function Booking() {
   return (
     <div className=" py-12 px-4 sm:px-6 lg:px-8">
       {/* Step indicator */}
-      <StepIndicator currentStep={currentStep} />
+      <StepIndicator />
 
       <motion.div
         className="my-4 bg-white rounded-xl shadow-lg overflow-hidden"
@@ -87,7 +83,7 @@ export default function Booking() {
               <motion.div variants={itemVariants} className="p-6 rounded-lg " >
                 {/* Select Studio */}
                 {currentStep === 1 && (
-                  <SelectStudio setStudio={setStudio} setCurrentStep={setCurrentStep} />)}
+                  <SelectStudio />)}
 
                 {/* Select Date and Time */}
                 {currentStep === 2 && <SelectDateTime />}
@@ -104,11 +100,9 @@ export default function Booking() {
         </AnimatePresence>
 
         {/* Navigation buttons */}
-        <NavigationButtons
-          currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
-        />
+        <NavigationButtons />
       </motion.div>
     </div>
+
   );
 }

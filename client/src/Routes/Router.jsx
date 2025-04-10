@@ -3,6 +3,7 @@ import React, { Suspense, lazy, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar/Navbar';
 import Footer from '../components/layout/Footer/Footer';
 import LoadingScreen from '../components/loading-screen/LoadingScreen';
+import BookingProvider from '../context/Booking-Context/BookingContext';
 
 // Lazy load the components to improve performance
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -27,7 +28,7 @@ export default function AppRouter() {
                     <Route path='/' element={<Home />} />
                     <Route path="/studios" element={<Studios />} />
                     <Route path="/studio/:id" element={<StudioDetails />} />
-                    <Route path="/booking" element={<Booking />} />
+                    <Route path="/booking" element={<BookingProvider><Booking /></BookingProvider>} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>

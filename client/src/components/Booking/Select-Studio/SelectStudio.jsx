@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { studio } from '../../../assets/images'
 import StarRating from '../../../hooks/useRate'
-export default function SelectStudio({ setStudio, setCurrentStep }) {
+import { useBooking } from '../../../context/Booking-Context/BookingContext';
+export default function SelectStudio() {
     const [hoveredId, setHoveredId] = useState(null);
+    const { handleNextStep, setStudio } = useBooking()
 
     // Sample studio data
     const studios = [
@@ -16,7 +18,7 @@ export default function SelectStudio({ setStudio, setCurrentStep }) {
     ];
     const selectStudio = () => {
         setStudio({ name: "Studio 1", image: "studio1.jpg", price: 100, description: "Lorem ipsum dolor sit amet." })
-        setCurrentStep(2)
+        handleNextStep()
     }
 
     const itemVariants = {

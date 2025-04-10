@@ -1,12 +1,14 @@
 import { motion } from "motion/react";
+import { useBooking } from "../../../context/Booking-Context/BookingContext";
 
-export default function StepIndicator({ currentStep }) {
-    const totalSteps = 4;
+export default function StepIndicator() {
+    const { currentStep, TOTAL_STEPS } = useBooking()
     const STEPS_LABELS = ["Select Studio", "Select Date & Time", "Select Additional Services", "Personal Information"];
+
     return (
         <div className="px-6 py-2">
             <div className="flex items-center justify-between mb-2">
-                {[...Array(totalSteps)].map((_, index) => (
+                {[...Array(TOTAL_STEPS)].map((_, index) => (
                     <div key={index} className="flex flex-col items-center">
                         <motion.div
                             className={`flex items-center justify-center w-10 h-10 rounded-full ${index + 1 === currentStep
@@ -45,7 +47,7 @@ export default function StepIndicator({ currentStep }) {
                             )}
                         </motion.div>
                         <span className="text-xs mt-2 font-medium text-gray-500">
-                           {STEPS_LABELS[index]}
+                            {STEPS_LABELS[index]}
                         </span>
                     </div>
                 ))}
@@ -56,10 +58,10 @@ export default function StepIndicator({ currentStep }) {
                 <motion.div
                     className="absolute top-1/2 left-0 h-1 -translate-y-1/2 bg-main/80 rounded"
                     initial={{
-                        width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`,
+                        width: `${((currentStep - 1) / (TOTAL_STEPS - 1)) * 100}%`,
                     }}
                     animate={{
-                        width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`,
+                        width: `${((currentStep - 1) / (TOTAL_STEPS - 1)) * 100}%`,
                     }}
                     transition={{ duration: 0.3 }}
                 ></motion.div>
