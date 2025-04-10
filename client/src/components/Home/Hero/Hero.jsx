@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import useQuickBooking from "../../../hooks/useQuickBooking";
 
 export default function Hero() {
+  
   // Animation variants for text elements
   const textVariants = {
     hidden: { opacity: 0, y: 20 },
