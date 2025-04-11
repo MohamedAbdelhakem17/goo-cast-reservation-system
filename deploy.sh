@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 set -e  
 ERROR_MESSAGE=""
 SUCCESS=true
