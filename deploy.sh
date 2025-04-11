@@ -5,7 +5,7 @@ ERROR_MESSAGE=""
 SUCCESS=true
 
 FROM_NAME="Goocast Deploy Bot"
-FROM_EMAIL="mohamed.abdelhakem3200@gmail.com"  
+FROM_EMAIL="noreply@dottopia.com"
 TO_EMAIL="m.abdelhakem@dottopia.com"
 
 print_section() {
@@ -44,8 +44,12 @@ if ! npm install 2>&1; then
 fi
 
 print_section "Building frontend..."
+# Capture the build output and print it
 BUILD_OUTPUT=$(npm run build -- --base=/goocast/ 2>&1)
 BUILD_STATUS=$?
+
+# Print the build output for debugging purposes
+echo "$BUILD_OUTPUT"
 
 if [ $BUILD_STATUS -ne 0 ]; then
     ERROR_MESSAGE="Frontend build failed.\n\nDetails:\n$BUILD_OUTPUT"
@@ -53,7 +57,7 @@ if [ $BUILD_STATUS -ne 0 ]; then
 fi
 
 print_section "Restarting backend..."
-
+cd ../server
 if ! pm2 restart goocast 2>&1; then
     ERROR_MESSAGE="Failed to restart backend with PM2."
     send_error_email
