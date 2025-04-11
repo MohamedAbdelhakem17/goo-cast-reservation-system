@@ -49,7 +49,6 @@ if [ $BUILD_STATUS -ne 0 ]; then
 fi
 
 echo "Restarting backend..."
-cd ../server
 if ! pm2 restart goocast 2>&1; then
     ERROR_MESSAGE="Failed to restart backend with PM2."
     SUCCESS=false
