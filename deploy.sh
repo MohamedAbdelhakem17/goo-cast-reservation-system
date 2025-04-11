@@ -8,7 +8,9 @@ FROM_NAME="Goocast Deploy Bot"
 TO_EMAIL="m.abdelhakem@dottopia.com"
 
 print_section() {
+    echo "\n"
     echo "================= $1 ================="
+    echo "\n"
 }
 
 send_error_email() {
