@@ -6,7 +6,7 @@ export default function StepIndicator() {
     const STEPS_LABELS = ["Select Studio", "Select Date & Time", "Select Additional Services", "Personal Information"];
 
     return (
-        <div className="px-6 py-2">
+        <div className="md:px-6 py-2">
             <div className="flex items-center justify-between mb-2">
                 {[...Array(TOTAL_STEPS)].map((_, index) => (
                     <div key={index} className="flex flex-col items-center">
@@ -46,7 +46,7 @@ export default function StepIndicator() {
                                 index + 1
                             )}
                         </motion.div>
-                        <span className="text-xs mt-2 font-medium text-gray-500">
+                        <span className="text-xs mt-2 font-medium text-gray-500 text-center">
                             {STEPS_LABELS[index]}
                         </span>
                     </div>
