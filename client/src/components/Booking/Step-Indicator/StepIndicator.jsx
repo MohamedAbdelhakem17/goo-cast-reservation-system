@@ -2,8 +2,7 @@ import { motion } from "motion/react";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 
 export default function StepIndicator() {
-    const { currentStep, TOTAL_STEPS } = useBooking()
-    const STEPS_LABELS = ["Select Studio", "Select Date & Time", "Select Additional Services", "Personal Information"];
+    const { currentStep, TOTAL_STEPS , stepLabels } = useBooking()
 
     return (
         <div className="md:px-6 py-2">
@@ -47,7 +46,7 @@ export default function StepIndicator() {
                             )}
                         </motion.div>
                         <span className="text-xs mt-2 font-medium text-gray-500 text-center">
-                            {STEPS_LABELS[index]}
+                            {stepLabels[index]}
                         </span>
                     </div>
                 ))}
