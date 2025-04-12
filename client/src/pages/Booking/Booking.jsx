@@ -63,7 +63,7 @@ export default function Booking() {
   };
 
   return (
-    <div className=" py-12 px-4 sm:px-6 lg:px-8">
+    <div className=" py-12 lg:px-8">
       {/* Step indicator */}
       <StepIndicator />
 
@@ -76,11 +76,11 @@ export default function Booking() {
 
         {/* Content */}
         <AnimatePresence mode="wait" custom={currentStep}>
-          <motion.div key={currentStep} custom={currentStep} variants={slideVariants} initial="enter" animate="center" exit="exit" className="px-6 py-8">
+          <motion.div key={currentStep} custom={currentStep} variants={slideVariants} initial="enter" animate="center" exit="exit" className="md:px-6 py-8">
 
             <motion.div variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6" >
 
-              <motion.div variants={itemVariants} className="p-6 rounded-lg " >
+              <motion.div variants={itemVariants} className="md:p-6  rounded-lg " >
                 {/* Select Studio */}
                 {currentStep === 1 && (
                   <SelectStudio />)}
@@ -98,10 +98,10 @@ export default function Booking() {
             </motion.div>
           </motion.div>
         </AnimatePresence>
-
-        {/* Navigation buttons */}
-        <NavigationButtons />
       </motion.div>
+      
+      {/* Navigation buttons */}
+      <NavigationButtons />
     </div>
 
   );
