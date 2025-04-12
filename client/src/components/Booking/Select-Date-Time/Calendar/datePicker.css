@@ -60,3 +60,28 @@
 .react-datepicker__day--keyboard-selected {
     background-color: #ed1e2549;
 }
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .react-datepicker {
+        max-width: 100%;
+    }
+
+    .react-datepicker__current-month,
+    .react-datepicker__day-name,
+    .react-datepicker__day {
+        font-size: 0.8rem;
+        padding: 6px 0;
+    }
+
+    .react-datepicker__day,
+    .react-datepicker__day-name {
+        flex: 1 0 10.28%;
+        min-width: 10.28%;
+    }
+
+    .react-datepicker__day-names,
+    .react-datepicker__week {
+        gap: 0;
+    }
+}
