@@ -8,10 +8,6 @@ import ServiceType from './Service-Type/ServiceType';
 export default function SelectAdditionalServices() {
     // State to manage the selected service type
     const [selected, setSelected] = useState("Hourly Recording");
-    const [selectedAddOns, setSelectedAddOns] = useState({})
-    const [selectedPackage, setSelectedPackage] = useState(null);
-    const [selectedDuration, setSelectedDuration] = useState(null);
-
 
     return (
         <>
@@ -26,8 +22,8 @@ export default function SelectAdditionalServices() {
                 {/* Animated Content */}
                 <AnimatePresence mode="wait">
                     <div >
-                        {selected === "Hourly Recording" && <HourlyRecording selectedPackage={selectedPackage} setSelectedPackage={setSelectedPackage} selectedDuration={selectedDuration} setSelectedDuration={setSelectedDuration} />}
-                        {selected === "Add-Ons" && <AddOns selectedAddOns={selectedAddOns} setSelectedAddOns={setSelectedAddOns} />}
+                        {selected === "Hourly Recording" && <HourlyRecording />}
+                        {selected === "Add-Ons" && <AddOns  />}
                     </div>
                 </AnimatePresence>
             </div>

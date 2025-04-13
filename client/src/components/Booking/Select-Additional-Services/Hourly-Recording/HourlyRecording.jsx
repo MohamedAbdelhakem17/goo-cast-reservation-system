@@ -1,14 +1,19 @@
 import { motion } from "framer-motion";
-export default function HourlyRecording({ selectedPackage, setSelectedPackage, selectedDuration, setSelectedDuration }) {
+import { useBooking } from "../../../../context/Booking-Context/BookingContext";
+export default function HourlyRecording() {
+  const { bookingData, setBookingField } = useBooking();
 
+  const handlePackageSelect = (pkg, duration) => {
+    const price = pkg.prices[duration.id];
 
-  const handlePackageSelect = (packageData, duration) => {
-    setSelectedPackage(packageData);
-    setSelectedDuration(duration);
+    setBookingField("selectedPackage", {
+      id: pkg.id,
+      name: pkg.name,
+      duration: duration.id,
+      durationLabel: duration.label,
+      price,
+    });
   };
-
-  console.log("Selected Package:", selectedPackage);
-  console.log("Selected Duration:", selectedDuration);
 
   const hourlyPackages = [
     {
@@ -18,7 +23,7 @@ export default function HourlyRecording({ selectedPackage, setSelectedPackage, s
       details: [
         "Fully equipped Podcast Set of your choice",
         "1x Cinema Cameras sony fx30 and 1x Rode wireless mic",
-        "Professional audio mixer (will replaced with the camera mixer)",
+        "Professional audio mixer (will be replaced with the camera mixer)",
         "Raw audio and video files transferred to your own hard drive",
       ],
       prices: {
@@ -65,7 +70,6 @@ export default function HourlyRecording({ selectedPackage, setSelectedPackage, s
     { id: "fullday", label: "Full Day (8 Hours)" },
   ];
 
-  // Animation Variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -88,10 +92,18 @@ export default function HourlyRecording({ selectedPackage, setSelectedPackage, s
 
   return (
     <div className="space-y-6">
-      <motion.div className="grid md:grid-cols-2 gap-6" variants={containerVariants} initial="hidden" animate="visible">
+      <motion.div
+        className="grid md:grid-cols-2 gap-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {hourlyPackages.map((pkg) => (
-          <motion.div variants={cardVariants} key={pkg.id}
-            className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+          <motion.div
+            variants={cardVariants}
+            key={pkg.id}
+            className="border border-gray-300 rounded-lg overflow-hidden shadow-sm"
+          >
             <div className="bg-gray-300 text-main p-4 flex items-center">
               {pkg.icon}
               <h3 className="text-lg font-semibold">{pkg.name}</h3>
@@ -112,23 +124,35 @@ export default function HourlyRecording({ selectedPackage, setSelectedPackage, s
               <div className="mt-6 space-y-3">
                 {durations.map((duration) => {
                   const isSelected =
-                    selectedPackage?.id === pkg.id &&
-                    selectedDuration === duration.id;
+                    bookingData.selectedPackage?.id === pkg.id &&
+                    bookingData.selectedPackage?.duration === duration.id;
+
+                  const price = pkg.prices[duration.id];
+                  const saving = pkg.savings[duration.id];
 
                   return (
-                    <motion.button key={duration.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={` w-full
-            py-2 px-4 border border-main/60 rounded-md flex justify-between items-center 
-            transition-colors ${isSelected ? "bg-main text-white hover:bg-main" : "bg-white hover:bg-main/10"} `} onClick={() =>
-                        handlePackageSelect(pkg, duration.id)}
+                    <motion.button
+                      key={duration.id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`w-full py-2 px-4 border border-main/60 rounded-md flex justify-between items-center transition-colors ${isSelected
+                          ? "bg-main text-white hover:bg-main"
+                          : "bg-white hover:bg-main/10"
+                        }`}
+                      onClick={() => handlePackageSelect(pkg, duration)}
                     >
                       <span>{duration.label}</span>
                       <div className="text-right">
-                        <span className={`font-bold ${isSelected ? "text-white" : "text-main/60"}`}>
-                          {pkg.prices[duration.id].toLocaleString()} EGP
+                        <span
+                          className={`font-bold ${isSelected ? "text-white" : "text-main/60"
+                            }`}
+                        >
+                          {price.toLocaleString()} EGP
                         </span>
-                        {pkg.savings[duration.id] && (
-                          <div>
-                            Save {pkg.savings[duration.id].toLocaleString()} EGP
+                        {saving && (
+                          <div className={`font-light text-sm ${isSelected ? "text-white" : "text-main/60"
+                          }`}>
+                            Save {saving.toLocaleString()} EGP
                           </div>
                         )}
                       </div>
@@ -141,6 +165,7 @@ export default function HourlyRecording({ selectedPackage, setSelectedPackage, s
         ))}
       </motion.div>
 
+      {/* Extra Hours */}
       <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
         <h3 className="font-semibold mb-2">Extra Hours</h3>
         <div className="grid grid-cols-2 gap-4">
@@ -158,6 +183,7 @@ export default function HourlyRecording({ selectedPackage, setSelectedPackage, s
           </div>
         </div>
       </div>
+
     </div>
   );
 }
