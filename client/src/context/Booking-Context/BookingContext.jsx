@@ -22,7 +22,7 @@ export default function BookingProvider({ children }) {
     // Hooks
     const location = useLocation();
     const navigate = useNavigate();
-    const { setBookingField, getBookingField, getBookingError, values, handleSubmit, formik, getField } = useBookingFormik();
+    const { setBookingField, getBookingField, getBookingError, values, formik } = useBookingFormik();
 
     // Step Initialization
     const { step = 1, selectedStudio } = location.state || {};
@@ -124,9 +124,8 @@ export default function BookingProvider({ children }) {
         handleNextStep,
         handlePrevStep,
         resetBooking,
-        handleSubmit,
+        handleSubmit:formik.handleSubmit,
         formik,
-        getField
     };
 
     return (

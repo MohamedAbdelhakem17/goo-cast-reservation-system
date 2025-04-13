@@ -1,23 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import Input from "../../components/shared/Input/Input"
-
-
+import signinForm from "../../apis/studios/auth/signin.api";
 const Signin = ({ closeModal, changeForm }) => {
   const inputRef = useRef(null)
-  const [formValues, setFormValues] = useState({
-    userName: "",
-    password: "",
-  })
+  const formik = signinForm()
   const [showPassword, setShowPassword] = useState(false)
-
-  const handleChange = (e) => {
-    const { id, value } = e.target
-    setFormValues((prev) => ({
-      ...prev,
-      [id]: value,
-    }))
-  }
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev)
@@ -37,24 +25,28 @@ const Signin = ({ closeModal, changeForm }) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <div className="p-2  my-2  w-full bg-white/80 rounded-t-2xl flex justify-center"
-      >
+      {/* Close Modal */}
+      <div className="p-2 my-2 w-full bg-white/80 rounded-t-2xl flex justify-center">
         <motion.i
           onClick={closeModal}
-          whileTap={{ scale: 0.9, shadow: "0px 0px 15px rgba(0,0,0,0.3)" }} whileHover={{ scale: 1.1 }}
-          className="fa-solid fa-circle-xmark text-main text-3xl cursor-pointer"></motion.i>
+          whileTap={{ scale: 0.9, shadow: "0px 0px 15px rgba(0,0,0,0.3)" }}
+          whileHover={{ scale: 1.1 }}
+          className="fa-solid fa-circle-xmark text-main text-3xl cursor-pointer"
+        />
       </div>
 
+      {/* Form Container */}
       <motion.div
         className="relative overflow-hidden rounded-b-2xl bg-white shadow-xl"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
-        {/* Decorative background elements */}
+        {/* Decorative Background */}
         <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-[#ed1e26]/20 to-[#ff5b60]/20 dark:from-[#ed1e26]/10 dark:to-[#ff5b60]/10 blur-3xl opacity-70"></div>
         <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-gradient-to-br from-[#ff5b60]/20 to-[#ff8a8e]/20 dark:from-[#ff5b60]/10 dark:to-[#ff8a8e]/10 blur-3xl opacity-70"></div>
 
+        {/* Form Content */}
         <div className="relative p-8">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -63,28 +55,34 @@ const Signin = ({ closeModal, changeForm }) => {
             className="text-center mb-6"
           >
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome back!</h2>
-            <p className="text-gray-600  text-sm">
+            <p className="text-gray-600 text-sm">
               Enter your Email and password to access your account.
             </p>
           </motion.div>
 
-          <form className="space-y-2">
+          {/* Form */}
+          <form className="space-y-2" onSubmit={formik.handleSubmit}>
+            {/* Email Field */}
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5, duration: 0.4 }}
             >
               <Input
-                type="text"
-                id="userName"
+                type="email"
+                id="email"
                 label="Email"
                 inputRef={inputRef}
                 placeholder="Enter your Email"
-                value={formValues.userName}
-                onChange={handleChange}
+                value={formik.values.email}
+                errors={formik.errors.email}
+                touched={formik.touched.email}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
               />
             </motion.div>
 
+            {/* Password Field */}
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
@@ -92,17 +90,21 @@ const Signin = ({ closeModal, changeForm }) => {
             >
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label="Password"
                 isPasswordField={true}
                 placeholder="Enter your password"
-                value={formValues.password}
-                onChange={handleChange}
+                value={formik.values.password}
+                errors={formik.errors.password}
+                touched={formik.touched.password}
                 showPasswordToggle={showPassword}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
                 togglePasswordVisibility={togglePasswordVisibility}
               />
             </motion.div>
 
+            {/* Forgot Password Link */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -114,8 +116,10 @@ const Signin = ({ closeModal, changeForm }) => {
               </a>
             </motion.div>
 
+            {/* Submit Button */}
             <motion.button
               type="submit"
+              disabled={formik.isSubmitting}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 10 }}
@@ -133,6 +137,7 @@ const Signin = ({ closeModal, changeForm }) => {
             </motion.button>
           </form>
 
+          {/* Switch to Sign Up */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
