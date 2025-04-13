@@ -4,26 +4,24 @@ import Navbar from "../components/layout/Navbar/Navbar";
 import Footer from "../components/layout/Footer/Footer";
 import LoadingScreen from "../components/loading-screen/LoadingScreen";
 import BookingProvider from "../context/Booking-Context/BookingContext";
+import ProtectedRoute from "../components/Protected-Route/ProtectedRoute";
+// import createFakeToken , { removeFakeToken } from "../assets/util/fack-token";
 
-// Lazy load the components to improve performance
 const Home = lazy(() => import("../pages/Home/Home"));
 const Studios = lazy(() => import("../pages/Studios/Studios"));
-const StudioDetails = lazy(() =>
-    import("../pages/Studio-Details/StudioDetails")
-);
+const StudioDetails = lazy(() => import("../pages/Studio-Details/StudioDetails"));
 const Booking = lazy(() => import("../pages/Booking/Booking"));
 const NotFound = lazy(() => import("../pages/Not-Found/NotFound"));
+const AdminDashboard = lazy(() => import("../Admin-Dashboard/AdminDashboard"));
+const UserDashboard = lazy(() => import("../User-Dashboard/UserDashboard"));
 
-// This is the main router component that handles the routing of the application
 export default function AppRouter() {
     const location = useLocation();
 
-    // Scroll to the top of the page when the user navigates to a new route
     useEffect(() => {
         window.scrollTo(0, 0, { behavior: "smooth" });
     }, [location.pathname]);
 
-    // Clear the local storage when the user navigates away from the booking page
     useEffect(() => {
         const cleanLocalStorage = () => {
             if (
@@ -34,26 +32,38 @@ export default function AppRouter() {
                 localStorage.removeItem("bookingStep");
             }
         };
-
         cleanLocalStorage();
     }, [location]);
 
+
     return (
         <Suspense fallback={<LoadingScreen />}>
+            {/* Uncomment the following lines to test the token creation and removal functionality */}
+            {/* <div className="fixed top-[200px] left-0 right-0 z-50 bg-white shadow-md p-4 flex justify-between items-center">
+            <button className="bg-main text-white py-3 px-6 rounded-lg" onClick={createFakeToken}>Crete Token For Testing</button>
+            <button className="bg-main text-white py-3 px-6 rounded-lg" onClick={removeFakeToken}>Logout</button>
+            </div> */}
             <Navbar />
-            <main className="container mx-auto  py-16 my-8 px-4">
+            <main className="container mx-auto py-16 my-8 px-4">
                 <Routes location={location} key={location.pathname}>
                     <Route path="/" element={<Home />} />
                     <Route path="/studios" element={<Studios />} />
                     <Route path="/studio/:id" element={<StudioDetails />} />
-                    <Route
-                        path="/booking"
-                        element={
-                            <BookingProvider>
-                                <Booking />
-                            </BookingProvider>
-                        }
-                    />
+                    <Route path="/booking" element={
+                        <BookingProvider>
+                            <Booking />
+                        </BookingProvider>
+                    } />
+                    <Route path="/admin" element={
+                        <ProtectedRoute allowedRoles={['admin']}>
+                            <AdminDashboard />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/user" element={
+                        <ProtectedRoute allowedRoles={['user']}>
+                            <UserDashboard />
+                        </ProtectedRoute>
+                    } />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
