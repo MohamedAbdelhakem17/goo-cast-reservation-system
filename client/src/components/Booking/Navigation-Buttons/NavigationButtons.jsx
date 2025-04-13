@@ -4,7 +4,7 @@ import { useBooking } from "../../../context/Booking-Context/BookingContext";
 
 export default function NavigationButtons() {
     // Get the booking context
-    const { TOTAL_STEPS, currentStep, handleNextStep, handlePrevStep } = useBooking()
+    const { TOTAL_STEPS, currentStep, handleNextStep, handlePrevStep, handleSubmit, hasError } = useBooking()
 
     return (
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between">
@@ -14,9 +14,10 @@ export default function NavigationButtons() {
                 className={`px-4 py-2 rounded-md ${currentStep === 1
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
+                    }
+                    `}
+                disabled={currentStep === 1} 
                 onClick={handlePrevStep}
-                disabled={currentStep === 1}
             >
                 Previous
             </motion.button>
@@ -27,12 +28,16 @@ export default function NavigationButtons() {
                 className={`px-4 py-2 rounded-md cursor-pointer ${currentStep === TOTAL_STEPS
                     ? "bg-green-500 text-white hover:bg-green-600"
                     : "bg-main/90 text-white hover:bg-main"
-                    }`}
+                    } 
+                     disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed
+                    `}
+                disabled={hasError()}
                 onClick={
                     currentStep === TOTAL_STEPS
-                        ? () => alert("Booking completed!")
+                        ? handleSubmit
                         : handleNextStep
                 }
+                type={currentStep === TOTAL_STEPS ? "submit" : "button"}
             >
                 {currentStep === TOTAL_STEPS ? "Proceed to payment" : "Next Step"}
             </motion.button>

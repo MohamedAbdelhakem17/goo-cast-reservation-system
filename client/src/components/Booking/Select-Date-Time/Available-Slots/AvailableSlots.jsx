@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 
 export default function AvailableSlots() {
     const timeSlots = [
@@ -13,11 +13,10 @@ export default function AvailableSlots() {
         "04:00 PM",
         "05:00 PM",
     ];
-    const [selectedSlot, setSelectedSlot] = useState(null);
+    const {bookingData , setBookingField} = useBooking()
 
     const selectTimeSlot = (slot) => {
-        console.log(`Selected time slot: ${slot}`);
-        setSelectedSlot(slot);
+        setBookingField("timeSlot",slot);
     };
 
     return (
@@ -31,12 +30,12 @@ export default function AvailableSlots() {
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300 }}
                         className={`flex items-center justify-center p-4 border border-gray-300 rounded-lg shadow-sm cursor-pointer
-                            ${selectedSlot === index
+                            ${bookingData.timeSlot === slot
                                 ? "bg-main text-white"
                                 : "bg-white hover:bg-gray-100"
                             }
                         `}
-                        onClick={() => selectTimeSlot(index)}
+                        onClick={() => selectTimeSlot(slot)}
                     >
                         <span className="text-sm font-medium">{slot}</span>
                     </motion.div>
