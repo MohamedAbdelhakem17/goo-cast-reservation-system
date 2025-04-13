@@ -1,10 +1,10 @@
 import React, { useRef } from "react"
 import { motion } from "framer-motion"
 import Input from "../../components/shared/Input/Input"
-import signupForm from "../../apis/studios/auth/signup.api"
+import signupForm from "../../apis/auth/signup.api"
 
 export default function Signup({ closeModal, changeForm }) {
-  const formik = signupForm()
+  const {formik} = signupForm()
   const inputRef = useRef(null)
 
   return (
