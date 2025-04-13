@@ -49,8 +49,6 @@ export default function useBookingFormik() {
         enableReinitialize: true,
     });
 
-    // Return formik's getFieldProps for easier field binding
-    const getField = (fieldName) => formik.getFieldProps(fieldName);
 
     // Helpers Functions to access formik values and errors
     const setBookingField = (field, value) => {
@@ -73,6 +71,5 @@ export default function useBookingFormik() {
         setBookingField,
         getBookingField,
         getBookingError,
-        getField,
     };
 }

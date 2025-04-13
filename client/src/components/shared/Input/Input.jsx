@@ -19,7 +19,6 @@ const Input = ({
 }) => {
     const [isFocused, setIsFocused] = useState(false)
 
-
     return (
         <div className={`relative mb-8 ${className}`}>
             {/* Floating label */}
@@ -62,7 +61,10 @@ const Input = ({
                     placeholder={isFocused || !label ? placeholder : ""}
                     value={value}
                     onChange={onChange}
-                    onBlur={onBlur}
+                    onBlur={(e) => {
+                        setIsFocused(false)
+                        onBlur && onBlur(e)
+                    }}
                     onFocus={() => setIsFocused(true)}
                 />
 
@@ -95,4 +97,4 @@ const Input = ({
     )
 }
 
-export default Input 
+export default Input
