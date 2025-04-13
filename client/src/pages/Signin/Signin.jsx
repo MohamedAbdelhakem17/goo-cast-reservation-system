@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import Input from "../../components/shared/Input/Input"
-import signinForm from "../../apis/studios/auth/signin.api";
+import signinForm from "../../apis/auth/signin.api";
 const Signin = ({ closeModal, changeForm }) => {
   const inputRef = useRef(null)
-  const formik = signinForm()
+  const {formik} = signinForm()
   const [showPassword, setShowPassword] = useState(false)
 
   const togglePasswordVisibility = () => {
