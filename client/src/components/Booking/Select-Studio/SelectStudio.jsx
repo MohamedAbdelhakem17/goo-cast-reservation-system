@@ -5,7 +5,7 @@ import StarRating from '../../../hooks/useRate'
 import { useBooking } from '../../../context/Booking-Context/BookingContext';
 export default function SelectStudio() {
     const [hoveredId, setHoveredId] = useState(null);
-    const { handleNextStep, setStudio } = useBooking()
+    const { handleNextStep, setBookingField } = useBooking()
 
     // Sample studio data
     const studios = [
@@ -17,7 +17,7 @@ export default function SelectStudio() {
         { id: 6, name: "Sound Haven", location: "Miami", image: studio },
     ];
     const selectStudio = () => {
-        setStudio({ name: "Studio 1", image: "studio1.jpg", price: 100, description: "Lorem ipsum dolor sit amet." })
+        setBookingField("studio", "Studio 1",)
         handleNextStep()
     }
 

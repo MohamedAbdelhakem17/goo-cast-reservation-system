@@ -1,13 +1,9 @@
-import { useReducer } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useReducer, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useBooking } from '../../../../context/Booking-Context/BookingContext';
 
-// Define the initial state
-const initialState = {
-    duration: 1,
-    persons: 1,
-};
-
-// Define the reducer function
+// Reducer function
 function reducer(state, action) {
     switch (action.type) {
         case 'DECREMENT_DURATION':
@@ -26,11 +22,24 @@ function reducer(state, action) {
             return state;
     }
 }
+
 export default function SelectDurationPersonsPar() {
+    const { bookingData, setBookingField } = useBooking();
+
+    const initialState = {
+        duration: bookingData.duration || 1,
+        persons: bookingData.persons || 1,
+    };
+
     const [state, dispatch] = useReducer(reducer, initialState);
 
+    useEffect(() => {
+        setBookingField('duration', state.duration);
+        setBookingField('persons', state.persons);
+    }, [state.duration, state.persons]);
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2  p-2  divide-x-1 divide-gray-300" >
+        <div className="grid grid-cols-1 md:grid-cols-2 p-2 divide-x-1 divide-gray-300">
             {/* Duration */}
             <div className="col-span-1 flex items-center justify-between px-4 py-2 md:flex-row flex-col gap-2">
                 <p className="text-sm font-medium">Session duration</p>
@@ -41,13 +50,15 @@ export default function SelectDurationPersonsPar() {
                         className="h-10 w-10 flex items-center justify-center cursor-pointer rounded-l-md border border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors"
                     >
                         <i className="fa-solid fa-minus"></i>
-
                     </motion.button>
 
                     <input
                         type="text"
                         value={state.duration}
-                        onChange={(e) => dispatch({ type: 'SET_DURATION', payload: Number.parseInt(e.target.value) || 1 })}
+                        onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            dispatch({ type: 'SET_DURATION', payload: parseInt(value) || 1 });
+                        }}
                         className="h-10 rounded-none border-x-0 text-center appearance-none outline-none border border-gray-300"
                     />
 
@@ -67,8 +78,8 @@ export default function SelectDurationPersonsPar() {
                 <div className="flex items-center">
                     <motion.button
                         whileTap={{ scale: 0.9 }}
-                        onClick={() => dispatch({ type: 'INCREMENT_PERSONS' })}
-                        className="h-10 w-10 flex items-center justify-center cursor-pointer rounded-l-md border border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors appearance-none"
+                        onClick={() => dispatch({ type: 'DECREMENT_PERSONS' })}
+                        className="h-10 w-10 flex items-center justify-center cursor-pointer rounded-l-md border border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors"
                     >
                         <i className="fa-solid fa-minus"></i>
                     </motion.button>
@@ -76,7 +87,10 @@ export default function SelectDurationPersonsPar() {
                     <input
                         type="text"
                         value={state.persons}
-                        onChange={(e) => dispatch({ type: 'SET_PERSONS', payload: Number.parseInt(e.target.value) || 1 })}
+                        onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            dispatch({ type: 'SET_PERSONS', payload: parseInt(value) || 1 });
+                        }}
                         className="h-10 rounded-none border-x-0 text-center appearance-none outline-none border border-gray-300"
                     />
 
@@ -86,10 +100,9 @@ export default function SelectDurationPersonsPar() {
                         className="h-10 w-10 flex items-center justify-center cursor-pointer rounded-r-md border border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors"
                     >
                         <i className="fa-solid fa-plus"></i>
-
                     </motion.button>
                 </div>
             </div>
         </div>
-    )
+    );
 }
