@@ -9,9 +9,8 @@ import { useBooking } from "../../context/Booking-Context/BookingContext";
 
 export default function Booking() {
   // Booking context
-  const { studio, currentStep } = useBooking()
+  const { currentStep } = useBooking()
 
-  console.log("Selected Studio:", studio);
 
   // Animation variants
   const containerVariants = {

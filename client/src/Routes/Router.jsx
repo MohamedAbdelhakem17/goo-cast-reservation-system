@@ -1,34 +1,59 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
-import React, { Suspense, lazy, useEffect } from 'react';
-import Navbar from '../components/layout/Navbar/Navbar';
-import Footer from '../components/layout/Footer/Footer';
-import LoadingScreen from '../components/loading-screen/LoadingScreen';
-import BookingProvider from '../context/Booking-Context/BookingContext';
+import { Routes, Route, useLocation } from "react-router-dom";
+import React, { Suspense, lazy, useEffect } from "react";
+import Navbar from "../components/layout/Navbar/Navbar";
+import Footer from "../components/layout/Footer/Footer";
+import LoadingScreen from "../components/loading-screen/LoadingScreen";
+import BookingProvider from "../context/Booking-Context/BookingContext";
 
 // Lazy load the components to improve performance
 const Home = lazy(() => import("../pages/Home/Home"));
 const Studios = lazy(() => import("../pages/Studios/Studios"));
-const StudioDetails = lazy(() => import("../pages/Studio-Details/StudioDetails"));
+const StudioDetails = lazy(() =>
+    import("../pages/Studio-Details/StudioDetails")
+);
 const Booking = lazy(() => import("../pages/Booking/Booking"));
 const NotFound = lazy(() => import("../pages/Not-Found/NotFound"));
 
 // This is the main router component that handles the routing of the application
 export default function AppRouter() {
-    const location = useLocation()
+    const location = useLocation();
 
+    // Scroll to the top of the page when the user navigates to a new route
     useEffect(() => {
-        window.scrollTo(0, 0, { behavior: 'smooth' });
+        window.scrollTo(0, 0, { behavior: "smooth" });
     }, [location.pathname]);
+
+    // Clear the local storage when the user navigates away from the booking page
+    useEffect(() => {
+        const cleanLocalStorage = () => {
+            if (
+                location.pathname !== "/booking" &&
+                !location.search.startsWith("?step=")
+            ) {
+                localStorage.removeItem("bookingData");
+                localStorage.removeItem("bookingStep");
+            }
+        };
+
+        cleanLocalStorage();
+    }, [location]);
 
     return (
         <Suspense fallback={<LoadingScreen />}>
             <Navbar />
-            <main className='container mx-auto  py-16 my-8 px-4'>
+            <main className="container mx-auto  py-16 my-8 px-4">
                 <Routes location={location} key={location.pathname}>
-                    <Route path='/' element={<Home />} />
+                    <Route path="/" element={<Home />} />
                     <Route path="/studios" element={<Studios />} />
                     <Route path="/studio/:id" element={<StudioDetails />} />
-                    <Route path="/booking" element={<BookingProvider><Booking /></BookingProvider>} />
+                    <Route
+                        path="/booking"
+                        element={
+                            <BookingProvider>
+                                <Booking />
+                            </BookingProvider>
+                        }
+                    />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
@@ -36,5 +61,3 @@ export default function AppRouter() {
         </Suspense>
     );
 }
-
-
