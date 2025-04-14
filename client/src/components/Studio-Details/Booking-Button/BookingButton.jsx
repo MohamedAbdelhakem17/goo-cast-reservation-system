@@ -17,7 +17,12 @@ export default function BookingButton() {
         >
             <p className="text-main font-bold">100 $ per hour</p>
 
-            <motion.button onClick={() => handleQuickBooking(2, studio)}
+            <motion.button onClick={() => handleQuickBooking(2, {
+                image: studio,
+                name: "Studio 1",
+                price: 100,
+                id: 1
+            })}
                 className="bg-main text-white py-3 px-6 rounded-lg shadow-lg relative overflow-hidden"
                 whileHover={{ scale: 1.05, boxShadow: "0px 0px 15px rgba(0,0,0,0.3)" }}
                 whileTap={{ scale: 0.95 }}

@@ -9,15 +9,15 @@ export default function SelectStudio() {
 
     // Sample studio data
     const studios = [
-        { id: 1, name: "Sunrise Studio", location: "Los Angeles", image: studio },
-        { id: 2, name: "Moonlight Records", location: "New York", image: studio },
-        { id: 3, name: "Echo Chamber", location: "Nashville", image: studio },
-        { id: 4, name: "Harmony House", location: "Austin", image: studio },
-        { id: 5, name: "Rhythm Works", location: "Chicago", image: studio },
-        { id: 6, name: "Sound Haven", location: "Miami", image: studio },
+        { id: 1, name: "Sunrise Studio", location: "Los Angeles", image: studio , price: 100},
+        { id: 2, name: "Moonlight Records", location: "New York", image: studio  , price: 90},
+        { id: 3, name: "Echo Chamber", location: "Nashville", image: studio , price: 120},
+        { id: 4, name: "Harmony House", location: "Austin", image: studio , price: 110},
+        { id: 5, name: "Rhythm Works", location: "Chicago", image: studio  , price: 130},
+        { id: 6, name: "Sound Haven", location: "Miami", image: studio , price: 140},
     ];
-    const selectStudio = () => {
-        setBookingField("studio", "Studio 1",)
+    const selectStudio = (studio) => {
+        setBookingField("studio", studio)
         handleNextStep()
     }
 
@@ -33,7 +33,7 @@ export default function SelectStudio() {
     return (
         <div className="space-y-2">
             <p className="text-gray-700 pb-3">Please select a studio to continue with your booking.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 cursor-pointer" onClick={selectStudio}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 cursor-pointer" >
                 {studios.map((studio) => (
                     <motion.div
                         onHoverStart={() => setHoveredId(studio.id)}
@@ -45,6 +45,14 @@ export default function SelectStudio() {
                             y: -10,
                             transition: { type: "spring", stiffness: 300 },
                         }}
+                        onClick={() => selectStudio(
+                            {
+                                id: studio.id,
+                                name: studio.name,
+                                image: studio.image,
+                                price: studio.price
+                            }
+                        )}
                     >
                         {/* Studio Image with hover effect */}
                         <motion.div
@@ -76,7 +84,7 @@ export default function SelectStudio() {
                                 <span className="text-lg">{studio.location}</span>
                             </p>
 
-                            <p className="text-main font-bold">100 $ per hour</p>
+                            <p className="text-main font-bold">{studio.price} $ per hour</p>
 
                             <motion.div
                                 className="mt-3 h-1 bg-main rounded-full"

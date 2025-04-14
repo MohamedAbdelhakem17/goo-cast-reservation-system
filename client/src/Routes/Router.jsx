@@ -5,7 +5,7 @@ import Footer from "../components/layout/Footer/Footer";
 import LoadingScreen from "../components/loading-screen/LoadingScreen";
 import BookingProvider from "../context/Booking-Context/BookingContext";
 import ProtectedRoute from "../components/Protected-Route/ProtectedRoute";
-// import createFakeToken , { removeFakeToken } from "../assets/util/fack-token";
+// import FackHeader from "../test/fack-token";
 
 const Home = lazy(() => import("../pages/Home/Home"));
 const Studios = lazy(() => import("../pages/Studios/Studios"));
@@ -38,13 +38,11 @@ export default function AppRouter() {
 
     return (
         <Suspense fallback={<LoadingScreen />}>
-            {/* Uncomment the following lines to test the token creation and removal functionality */}
-            {/* <div className="fixed top-[200px] left-0 right-0 z-50 bg-white shadow-md p-4 flex justify-between items-center">
-            <button className="bg-main text-white py-3 px-6 rounded-lg" onClick={createFakeToken}>Crete Token For Testing</button>
-            <button className="bg-main text-white py-3 px-6 rounded-lg" onClick={removeFakeToken}>Logout</button>
-            </div> */}
             <Navbar />
             <main className="container mx-auto py-16 my-8 px-4">
+                {/* Test Token */}
+                {/* <FackHeader /> */}
+
                 <Routes location={location} key={location.pathname}>
                     <Route path="/" element={<Home />} />
                     <Route path="/studios" element={<Studios />} />

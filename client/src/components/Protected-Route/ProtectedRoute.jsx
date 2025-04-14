@@ -2,48 +2,51 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../../context/Auth-Context/AuthContext';
+import LoadingScreen from '../loading-screen/LoadingScreen';
 
 export default function ProtectedRoute({ children, allowedRoles, redirectTo = "/" }) {
     const [userRole, setUserRole] = useState(null);
-    const [loading, setLoading] = useState(true);  
+    const [loading, setLoading] = useState(true);
     const { dispatch } = useAuth();
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
+        const checkToken = () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                dispatch({ type: 'LOGOUT' });
+                return;
+            }
+
             try {
                 const decoded = jwtDecode(token);
                 const now = Date.now() / 1000;
+
                 if (decoded.exp && decoded.exp < now) {
                     dispatch({ type: 'LOGOUT' });
-                    setUserRole(null);
                 } else {
                     setUserRole(decoded.role);
                 }
-            } catch (error) {
-                console.error('Invalid token', error);
+            } catch (err) {
+                console.error("Invalid token", err);
                 dispatch({ type: 'LOGOUT' });
-                setUserRole(null);
             }
-        } else {
-            setUserRole(null);  // No token found, set userRole to null
-        }
+        };
 
-        setLoading(false);  // Set loading to false once the effect is complete
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userRole]);
+        checkToken();
+        setLoading(false);
+    }, [dispatch]);
 
     if (loading) {
-        return null;  // Show nothing while the role is being determined
+        return <LoadingScreen />;
     }
 
-    if (userRole === null) {
-        return <Navigate to="/" replace />;  // Redirect to home page if no role
+    if (!userRole) {
+        return <Navigate to="/" replace />;
     }
 
     if (!allowedRoles.includes(userRole)) {
-        return <Navigate to={redirectTo} replace />;  // Redirect to the specified page if role is not allowed
+        return <Navigate to={redirectTo} replace />;
     }
 
-    return children;  // If everything is good, render the children
+    return children;
 }

@@ -5,7 +5,12 @@ export default function useBookingFormik() {
 
     // Formik initial values
     const bookingInitialValues = {
-        studio: null,
+        studio: {
+            id: null,
+            name: "",
+            image: "",
+            price: 0,
+        },
         date: null,
         timeSlot: null,
         duration: 1,
@@ -22,7 +27,7 @@ export default function useBookingFormik() {
 
     // Formik validation schema
     const bookingValidationSchema = Yup.object({
-        studio: Yup.string().required("Studio is required"),
+        studio: Yup.object().required("Studio is required"),
         date: Yup.string().required("Date is required"),
         timeSlot: Yup.string().required("Time slot is required"),
         duration: Yup.number().min(1).required("Duration is required"),

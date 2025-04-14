@@ -174,7 +174,12 @@ export default function Studios() {
                         Save
                       </button>
                       <button
-                        onClick={() => handleQuickBooking(2, studio)}
+                        onClick={() => handleQuickBooking(2, {
+                          image: studio2,
+                          name: "Studio 1",
+                          price: 100,
+                          id: 1
+                        })}
                         className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors cursor-pointer"
                       >
                         Book Now
