@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback ,  useRef} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useBookingFormik from "../Booking-Formik/useBookingFormik";
 
@@ -25,26 +25,42 @@ export default function BookingProvider({ children }) {
     const { setBookingField, getBookingField, getBookingError, values, formik } = useBookingFormik();
 
     // Step Initialization
-    const { step = 1, selectedStudio } = location.state || {};
+    const { step = 1, studio } = location.state || {};
 
     // Check if the current step is valid and set it accordingly
-    const getInitialStep = () => {
+    const [currentStep, setCurrentStep] = useState(() => {
         const storedStep = localStorage.getItem("bookingStep");
         const parsedStep = parseInt(storedStep);
         if (Number.isInteger(parsedStep) && parsedStep >= 1 && parsedStep <= TOTAL_STEPS) {
             return parsedStep;
         }
         return step;
+    });
+
+    // Utility function to validate studio object
+    const isValidStudio = (studio) => {
+        return (
+            studio &&
+            typeof studio === "object" &&
+            studio.id !== null &&
+            studio.name &&
+            studio.image &&
+            studio.price > 0
+        );
     };
 
-    const [currentStep, setCurrentStep] = useState(getInitialStep);
+    // Set Selected Studio in Formik
+    const didSetStudio = useRef(false);
 
-    // set Selected Studio in Formik
     useEffect(() => {
-        if (selectedStudio) {
-            setBookingField("studio", selectedStudio);
+        if (!didSetStudio.current) {
+            if (isValidStudio(studio)) {
+                setBookingField("studio", studio);
+            } 
+            didSetStudio.current = true;
         }
-    }, []);
+    }, [studio]);
+
 
 
     // Restore formik booking data from localStorage
@@ -54,7 +70,15 @@ export default function BookingProvider({ children }) {
             try {
                 const parsed = JSON.parse(storedData);
                 Object.entries(parsed).forEach(([key, value]) => {
-                    if (values[key] !== value) {
+                    if (key === "studio") {
+                        // Only set studio if it's valid
+                        if (isValidStudio(value)) {
+                            setBookingField("studio", value);
+                        } else {
+                            console.warn("Invalid studio data in localStorage:", value);
+                            setBookingField("studio", null);
+                        }
+                    } else if (values[key] !== value) {
                         setBookingField(key, value);
                     }
                 });
@@ -71,15 +95,20 @@ export default function BookingProvider({ children }) {
         const slug = STEP_LABELS[currentStep - 1]?.toLowerCase().replace(/ /g, "-");
 
         if (slug) {
+            // Only pass studio if it's valid
+            const studioToPass = isValidStudio(values.studio) ? values.studio : null;
             navigate(`/booking?step=${slug}`, {
-                state: { step: currentStep, selectedStudio: values?.studio },
+                state: { step: currentStep, studio: studioToPass },
             });
         }
-    }, [currentStep]);
+    }, [currentStep, values.studio]);
 
     // Save booking data in localStorage whenever it changes
     useEffect(() => {
-        localStorage.setItem("bookingData", JSON.stringify(values));
+        // Only save if studio is valid or null
+        if (isValidStudio(values.studio) || values.studio === null) {
+            localStorage.setItem("bookingData", JSON.stringify(values));
+        }
     }, [values]);
 
     // Navigation handlers
@@ -124,7 +153,7 @@ export default function BookingProvider({ children }) {
         handleNextStep,
         handlePrevStep,
         resetBooking,
-        handleSubmit:formik.handleSubmit,
+        handleSubmit: formik.handleSubmit,
         formik,
     };
 
