@@ -5,6 +5,13 @@ const HTTP_STATUS_TEXT = Object.freeze({
     FAIL: 'fail'
 });
 
+const USER_ROLE = Object.freeze({
+    USER: 'user',
+    ADMIN: 'admin',
+    SUPER_ADMIN: 'super_admin'
+})
+
 module.exports = {
-    HTTP_STATUS_TEXT
+    HTTP_STATUS_TEXT,
+    USER_ROLE
 };

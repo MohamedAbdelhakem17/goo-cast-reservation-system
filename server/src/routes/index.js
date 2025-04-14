@@ -1,3 +1,4 @@
+const AuthRouter = require("./auth-route/auth-route");
 const home = async (req, res) => {
     res.status(200).json({
         message: "Welcome to Amount API",
@@ -9,8 +10,10 @@ const home = async (req, res) => {
     });
 }
 
+
 const amountRoutes = (app) => {
-    app.use("/home", home);
+    app.use("/api/v1/home", home);
+    app.use("/api/v1/auth", AuthRouter);
 }
 
 module.exports = amountRoutes
