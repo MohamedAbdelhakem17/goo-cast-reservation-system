@@ -69,7 +69,7 @@ export default function AddOns() {
 
   const { bookingData, setBookingField } = useBooking()
 
-  const handleAddOnChange = (id, name, quantity) => {
+  const handleAddOnChange = (id, name, quantity, price) => {
     let updatedAddOns = [...bookingData.selectedAddOns]
 
     const index = updatedAddOns.findIndex(addon => addon.id === id)
@@ -78,8 +78,14 @@ export default function AddOns() {
       updatedAddOns.splice(index, 1)
     } else if (index !== -1) {
       updatedAddOns[index].quantity = quantity
+      updatedAddOns[index].totalPrice = price * quantity // Update total price based on quantity
     } else {
-      updatedAddOns.push({ id, name, quantity })
+      updatedAddOns.push({
+        id,
+        name,
+        quantity,
+        price,
+      })
     }
 
     setBookingField("selectedAddOns", updatedAddOns)
@@ -90,15 +96,15 @@ export default function AddOns() {
     return found ? found.quantity : 0
   }
 
-  const handleIncrement = (id, name) => {
+  const handleIncrement = (id, name, price) => {
     const currentQty = getQuantity(id)
-    handleAddOnChange(id, name, currentQty + 1)
+    handleAddOnChange(id, name, currentQty + 1, price)
   }
 
-  const handleDecrement = (id, name) => {
+  const handleDecrement = (id, name, price) => {
     const currentQty = getQuantity(id)
     if (currentQty > 0) {
-      handleAddOnChange(id, name, currentQty - 1)
+      handleAddOnChange(id, name, currentQty - 1, price)
     }
   }
 
@@ -122,11 +128,6 @@ export default function AddOns() {
       transition: { type: "spring", stiffness: 50 },
     },
   }
-
-  const totalAddOnPrice = bookingData.selectedAddOns?.reduce((acc, item) => {
-    const addon = addOns.find(a => a.id === item.id)
-    return acc + (addon ? addon.price * item.quantity : 0)
-  }, 0)
 
   return (
     <>
@@ -160,7 +161,7 @@ export default function AddOns() {
                     <motion.button
                       whileTap={{ scale: 0.9 }}
                       className="w-8 h-8 cursor-pointer flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300 transition-colors"
-                      onClick={() => handleDecrement(addon.id, addon.name)}
+                      onClick={() => handleDecrement(addon.id, addon.name, addon.price)}
                       disabled={quantity === 0}
                     >
                       <i className="fa-solid fa-minus h-5 w-5"></i>
@@ -171,7 +172,7 @@ export default function AddOns() {
                     <motion.button
                       whileTap={{ scale: 0.9 }}
                       className="w-8 h-8 cursor-pointer flex items-center justify-center bg-main text-white rounded-full hover:bg-main/80 transition-colors"
-                      onClick={() => handleIncrement(addon.id, addon.name)}
+                      onClick={() => handleIncrement(addon.id, addon.name, addon.price)}
                     >
                       <i className="fa-solid fa-plus h-5 w-5"></i>
                     </motion.button>
@@ -182,12 +183,6 @@ export default function AddOns() {
           )
         })}
       </motion.div>
-
-      {totalAddOnPrice > 0 && (
-        <div className="mt-6 text-right font-bold text-lg">
-          Total Add-ons: {totalAddOnPrice.toLocaleString()} EGP
-        </div>
-      )}
     </>
   )
 }
