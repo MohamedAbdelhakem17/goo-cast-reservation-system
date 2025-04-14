@@ -39,7 +39,7 @@ export default function SelectDurationPersonsPar() {
     }, [state.duration, state.persons]);
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 p-2 divide-x-1 divide-gray-300">
+        <div className="grid grid-cols-1 lg:grid-cols-2 p-2 divide-x-1 divide-gray-300">
             {/* Duration */}
             <div className="col-span-1 flex items-center justify-between px-4 py-2 md:flex-row flex-col gap-2">
                 <p className="text-sm font-medium">Session duration</p>

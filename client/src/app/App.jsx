@@ -1,21 +1,21 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { HashRouter as Router } from 'react-router-dom';
 
 import AppRouter from "../Routes/Router";
+import AuthProvider from '../context/Auth-Context/AuthContext';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Main Project Content */}
-      <Router >
-        <AppRouter />
-      </Router>
-      
-      {/* React Query Debugger */}
+      <AuthProvider>
+        <Router>
+          <AppRouter />
+        </Router>
+      </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  )
+  );
 }
