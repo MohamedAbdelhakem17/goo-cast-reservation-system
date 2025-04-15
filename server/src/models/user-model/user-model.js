@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
 
 const { USER_ROLE } = require('../../config/system-variables');
-console.log(USER_ROLE);
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
         enum: Object.values(USER_ROLE),
         default: 'user'
     },
+    active: {
+        type: Boolean,
+        default: false
+    }
+    
 }, { timestamps: true });
 
 // Pre-save middleware to hash password
