@@ -26,6 +26,9 @@ app.use(cors("*"));
 // ====== API Routes ======
 amountRoutes(app);
 
+// ====== Serve Uploads Folder ======
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 // ====== Serve React Frontend ======
 app.use(express.static(path.join(__dirname, '../../client/dist')));
 
