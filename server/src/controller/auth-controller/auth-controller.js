@@ -74,27 +74,177 @@ exports.signup = asyncHandler(async (req, res) => {
     }
 });
 
+
 // activate email function to handle user activation
 exports.activateEmail = asyncHandler(async (req, res) => {
     const { token } = req.params;
 
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    // Find the user by token
-    const user = await AuthModel.findById(decodedToken.id);
+    try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await AuthModel.findById(decodedToken.id);
 
-    if (!user) {
-        throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "User not found");
+        if (!user) {
+            throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "User not found");
+        }
+
+        if (user.active) {
+            return res.status(400).send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Already Active</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ece9e6, #ffffff);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #2c3e50;
+        }
+        .card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            max-width: 400px;
+        }
+        .card h1 { color: #e74c3c; font-size: 24px; margin-bottom: 12px; }
+        .card p { color: #555; margin-bottom: 24px; }
+        .card a {
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .card a:hover { background-color: #0056b3; }
+    </style>
+    <script>
+        setTimeout(() => { window.location.href = "/"; }, 2000);
+    </script>
+</head>
+<body>
+    <div class="card">
+        <h1>Email Already Active</h1>
+        <p>Your email is already activated. Redirecting to home...</p>
+        <a href="/">Go to Home Now</a>
+    </div>
+</body>
+</html>`);
+        }
+
+        // Activate and save
+        user.active = true;
+        await user.save();
+
+        // Redirect after success
+        res.send(`
+        <html>
+          <head>
+            <script>
+              localStorage.setItem("emailActivated", "true");
+              window.location.href = "/";
+            </script>
+          </head>
+          <body>
+            Redirecting...
+          </body>
+        </html>`);
+    } catch (err) {
+        // Handle token expiration specifically
+        if (err.name === "TokenExpiredError") {
+            return res.status(400).send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>Activation Link Expired</title>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+                <style>
+                    body {
+                        font-family: 'Inter', sans-serif;
+                        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+                        height: 100vh;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        color: #2c3e50;
+                    }
+                    .card {
+                        background: #fff;
+                        padding: 40px;
+                        border-radius: 16px;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                        text-align: center;
+                        max-width: 400px;
+                    }
+                    .card h1 { color: #e67e22; font-size: 24px; margin-bottom: 12px; }
+                    .card p { color: #555; margin-bottom: 24px; }
+                    .card input {
+                        padding: 10px;
+                        border-radius: 8px;
+                        border: 1px solid #ccc;
+                        width: 100%;
+                        margin-bottom: 12px;
+                    }
+                    .card button {
+                        padding: 10px 16px;
+                        background-color: #28a745;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: 500;
+                    }
+                    .card button:hover {
+                        background-color: #218838;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="card">
+                    <h1>Activation Link Expired</h1>
+                    <p>Your activation link has expired. Please enter your email to resend the activation link.</p>
+                    <input type="email" id="emailInput" placeholder="Enter your email" />
+                    <button onclick="resendActivation()">Resend Activation Link</button>
+                    <p id="responseMsg" style="margin-top: 12px;"></p>
+                </div>
+                <script>
+                    function resendActivation() {
+                        const email = document.getElementById('emailInput').value;
+                        fetch('/api/v1/auth//resend-activation-link', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            document.getElementById('responseMsg').textContent = data.message || 'Check your inbox!';
+                        })
+                        .catch(() => {
+                            document.getElementById('responseMsg').textContent = 'Error sending activation link.';
+                        });
+                    }
+                </script>
+            </body>
+            </html>
+            `);
+        }
+
+        // Fallback for other JWT errors
+        return res.status(400).json({
+            status: "fail",
+            message: "Invalid or expired token"
+        });
     }
-
-    // Update the user's activation status
-    user.active = true;
-    await user.save();
-
-    res.status(200).json({
-        status: HTTP_STATUS_TEXT.SUCCESS,
-        data: "User activated successfully",
-    });
 });
+
 
 // resend activation email
 exports.resendActivationLink = asyncHandler(async (req, res) => {
@@ -110,8 +260,15 @@ exports.resendActivationLink = asyncHandler(async (req, res) => {
         throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "User not found");
     }
 
+    if (user.active) {
+        return res.status(400).json({
+            status: HTTP_STATUS_TEXT.FAIL,
+            message: "User already activated",
+        });
+    }
+
     // Generate token and mail options
-    const { mailOptions } = generateActivationEmail(user._id, email, "activate");
+    const mailOptions = generateActivationEmail(user._id, email, "activate");
 
     try {
         await sendEmail(mailOptions);
@@ -120,6 +277,7 @@ exports.resendActivationLink = asyncHandler(async (req, res) => {
             data: "Activation link resent to your email.",
         });
     } catch (error) {
+        console.log(error);
         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send activation email");
     }
 });
