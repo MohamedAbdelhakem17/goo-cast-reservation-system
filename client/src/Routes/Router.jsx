@@ -3,7 +3,6 @@ import React, { Suspense, lazy, useEffect } from "react";
 import Navbar from "../components/layout/Navbar/Navbar";
 import Footer from "../components/layout/Footer/Footer";
 import LoadingScreen from "../components/loading-screen/LoadingScreen";
-import BookingProvider from "../context/Booking-Context/BookingContext";
 import ProtectedRoute from "../components/Protected-Route/ProtectedRoute";
 // import FackHeader from "../test/fack-token";
 
@@ -45,13 +44,11 @@ export default function AppRouter() {
 
                 <Routes location={location} key={location.pathname}>
                     <Route path="/" element={<Home />} />
-                    <Route path="/studios" element={<Studios />} />
-                    <Route path="/studio/:id" element={<StudioDetails />} />
-                    <Route path="/booking" element={
-                        <BookingProvider>
+                        <Route path="/studios" element={<Studios />} />
+                        <Route path="/studio/:id" element={<StudioDetails />} />
+                        <Route path="/booking" element={
                             <Booking />
-                        </BookingProvider>
-                    } />
+                        } />
                     <Route path="/admin" element={
                         <ProtectedRoute allowedRoles={['admin']}>
                             <AdminDashboard />
