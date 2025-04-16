@@ -17,10 +17,12 @@ export default function Cart() {
         return <div>Loading...</div>
     }
 
+    console.log({"price": bookingData.studio.price}, bookingData.duration)
+
     return (
         <div>
             {/* Selected Studio */}
-            {bookingData.studio &&(
+            {bookingData.studio && (
                 <>
                     <h4 className="text-xl font-semibold mb-4 text-gray-800">Selected Studio</h4>
                     <div className="bg-white p-4 rounded-xl border border-gray-200">
@@ -47,7 +49,7 @@ export default function Cart() {
                         </div>
                     </div>
                 </>
-            ) }
+            )}
 
             {/* Selected Package */}
             {bookingData.selectedPackage && Object.keys(bookingData.selectedPackage).length > 0 && (
@@ -93,7 +95,7 @@ export default function Cart() {
                         </div>
                     </div>
                 </>
-            ) }
+            )}
 
             {/* Total Price For All Cart */}
             <div className="flex items-center justify-between mt-4 p-3">

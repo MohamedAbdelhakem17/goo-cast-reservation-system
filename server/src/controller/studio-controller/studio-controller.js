@@ -69,7 +69,7 @@ exports.getAllStudios = asyncHandler(async (req, res) => {
 // get studio by id
 exports.getStudioById = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const studio = await StudioModel.findById(id);
+    const studio = await StudioModel.findOne({ slug: id });
     if (!studio) {
         res.status(404).json({
             status: HTTP_STATUS_TEXT.FAIL,
