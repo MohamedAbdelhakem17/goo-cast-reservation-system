@@ -89,6 +89,17 @@ const studioSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+
+        strateTime: {
+            type: String,
+            default: "09:00",
+        },
+        
+        endTime: {
+            type: String,
+            default: "18:00",
+        },
+        
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

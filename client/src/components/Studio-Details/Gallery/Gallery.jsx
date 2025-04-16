@@ -2,11 +2,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { studio, studio2 } from "../../../assets/images";
 
-export default function Gallery() {
+export default function Gallery({ images }) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
-    // Replace with actual image URLs
-    const images = [studio, studio2, studio, studio, studio2];
 
     // Function to go to the next image
     const nextImage = (e) => {
