@@ -7,14 +7,6 @@ import useQuickBooking from "../../hooks/useQuickBooking";
 import useGetAllStudios from "../../apis/studios/studios.api";
 export default function Studios() {
   // Sample studio data - using exactly what was provided
-  const studios = [
-    { id: 1, name: "Sunrise Studio", location: "Los Angeles", image: studio },
-    { id: 2, name: "Moonlight Records", location: "New York", image: studio2 },
-    { id: 3, name: "Echo Chamber", location: "Nashville", image: studio },
-    { id: 4, name: "Harmony House", location: "Austin", image: studio2 },
-    { id: 5, name: "Rhythm Works", location: "Chicago", image: studio },
-    { id: 6, name: "Sound Haven", location: "Miami", image: studio2 },
-  ];
 
   // Importing the useQuickBooking hook to handle quick booking functionality
   const { data: studiosData, isLoading } = useGetAllStudios();

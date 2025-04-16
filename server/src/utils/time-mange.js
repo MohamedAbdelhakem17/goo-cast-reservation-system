@@ -14,8 +14,27 @@ function minutesToTime(mins) {
     return `${hours}:${minutes}`;
 }
 
+function getAllDay(inputDate) {
+    const date = new Date(inputDate);
+    const startOfDay = new Date(Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        0, 0, 0
+    ));
+    const endOfDay = new Date(Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate() + 1,
+        0, 0, 0
+    ));
+
+    return { startOfDay, endOfDay };
+}
+
 
 module.exports = {
     timeToMinutes,
-    minutesToTime
+    minutesToTime,
+    getAllDay,
 }

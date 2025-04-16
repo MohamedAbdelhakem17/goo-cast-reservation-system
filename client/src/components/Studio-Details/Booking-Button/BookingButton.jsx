@@ -2,9 +2,16 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { studio } from '../../../assets/images'
 import useQuickBooking from '../../../hooks/useQuickBooking'
-export default function BookingButton({studio}) {
+import { useBooking } from '../../../context/Booking-Context/BookingContext'
+export default function BookingButton({ studio }) {
 
     const { handleQuickBooking } = useQuickBooking()
+    const {setBookingField} = useBooking()
+
+    const handleBooking = (st) => {
+        handleQuickBooking(2, st)
+        // setBookingField("studio", st)
+    }
 
 
     return (
@@ -16,7 +23,7 @@ export default function BookingButton({studio}) {
         >
             <p className="text-main font-bold">100 $ per hour</p>
 
-            <motion.button onClick={() => handleQuickBooking(2,studio)}
+            <motion.button onClick={() => handleBooking(studio)}
                 className="bg-main text-white py-3 px-6 rounded-lg shadow-lg relative overflow-hidden"
                 whileHover={{ scale: 1.05, boxShadow: "0px 0px 15px rgba(0,0,0,0.3)" }}
                 whileTap={{ scale: 0.95 }}
