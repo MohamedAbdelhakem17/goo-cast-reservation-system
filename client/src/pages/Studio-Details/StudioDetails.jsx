@@ -12,7 +12,6 @@ export default function StudioDetails() {
 
     if (isLoading) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>
 
-    console.log(data.data)
     return <>
         <Header title={`Goocast ${id}`} rate={4.5} location={"Location"} />
         <Gallery images={[data.data.thumbnail, ...data.data.imagesGallery]} />

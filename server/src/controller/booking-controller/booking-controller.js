@@ -72,7 +72,7 @@ exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
     console.log(`Studio working hours in minutes: ${startOfDay} to ${endOfDay}`);
 
     // Get bookings for the specified date
-    const inputDate =getAllDay(date);
+    const inputDate = getAllDay(date);
 
     const bookings = await BookingModel.find({
         studio: studioId,
