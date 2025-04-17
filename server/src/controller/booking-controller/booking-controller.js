@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 
 const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
-const { timeToMinutes, minutesToTime } = require("../../utils/time-mange")
+const { timeToMinutes, minutesToTime, getAllDay } = require("../../utils/time-mange")
 const AppError = require("../../utils/app-error");
 const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model")
@@ -12,7 +12,7 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     const { studioId } = req.params;
     const bookings = await BookingModel.find({ studio: studioId });
     if (bookings.length === 0) {
-       res.status(200).json({
+        return res.status(200).json({
             status: HTTP_STATUS_TEXT.SUCCESS,
             data: [],
         });
@@ -35,7 +35,7 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     if (!studio) return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
 
     const startOfDay = timeToMinutes(studio?.strateTime)
-    const endOfDay = timeToMinutes(studio?.strateTime)
+    const endOfDay = timeToMinutes(studio?.endTime)
     const totalMinutesInDay = endOfDay - startOfDay
 
     // Check if the total minutes for each day is greater than or equal to the studio's working hours
@@ -48,7 +48,6 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     });
 });
 
-// Get Available Slots for a studio
 exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
     const { studioId, date, duration = 1 } = req.body;
 
@@ -73,10 +72,18 @@ exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
     console.log(`Studio working hours in minutes: ${startOfDay} to ${endOfDay}`);
 
     // Get bookings for the specified date
-    const bookings = await BookingModel.find({ studio: studioId, date: date });
+    const inputDate = getAllDay(date);
+
+    const bookings = await BookingModel.find({
+        studio: studioId,
+        date: {
+            $gte: inputDate.startOfDay,
+            $lt: inputDate.endOfDay,
+        },
+    });
+
     console.log(`Bookings for date ${date}:`, bookings);
 
-    // Note: .find() always returns an array, so this condition is improved
     if (bookings.length === 0) {
         console.log("No bookings found for this date");
     }
@@ -92,12 +99,16 @@ exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
     // Calculate available slots
     const availableSlots = [];
 
-    // durationInMinutes created from client
+    // Check available slots within the studio's working hours
     for (let time = startOfDay; time + durationInMinutes <= endOfDay; time += 60) {
 
         const slotStart = time;
-
         const slotEnd = time + durationInMinutes;
+
+        // Skip slot if it exceeds the studio's working hours
+        if (slotEnd > endOfDay) {
+            continue;
+        }
 
         const isOverlapping = bookedSlots.some(b =>
             (slotStart < b.end && slotEnd > b.start)
@@ -109,6 +120,7 @@ exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
             });
         }
     }
+
 
     console.log('Available slots:', availableSlots);
 
