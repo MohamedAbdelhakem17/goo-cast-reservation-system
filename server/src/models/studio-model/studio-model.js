@@ -27,10 +27,15 @@ const studioSchema = new mongoose.Schema(
             maxLength: [100, "Address must be less than 100 characters"],
         },
 
-        pricePerHour: {
+        basePricePerSlot: {
             type: Number,
-            required: [true, "Please provide a price per hour"],
-            min: [0, "Price must be greater than or equal to 0"],
+            default: 0,
+            min: [0, "Base price must be greater than or equal to 0"],
+        },
+
+        isFixedHourly: {
+            type: Boolean,
+            default: true,
         },
 
         description: {
@@ -94,12 +99,12 @@ const studioSchema = new mongoose.Schema(
             type: String,
             default: "09:00",
         },
-        
+
         endTime: {
             type: String,
             default: "18:00",
         },
-        
+
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
