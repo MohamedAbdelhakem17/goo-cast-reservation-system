@@ -4,6 +4,7 @@ import Navbar from "../components/layout/Navbar/Navbar";
 import Footer from "../components/layout/Footer/Footer";
 import LoadingScreen from "../components/loading-screen/LoadingScreen";
 import ProtectedRoute from "../components/Protected-Route/ProtectedRoute";
+import BookingProvider from "../context/Booking-Context/BookingContext";
 // import FackHeader from "../test/fack-token";
 
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -28,7 +29,6 @@ export default function AppRouter() {
                 !location.search.startsWith("?step=")
             ) {
                 localStorage.removeItem("bookingData");
-                localStorage.removeItem("bookingStep");
             }
         };
         cleanLocalStorage();
@@ -44,11 +44,13 @@ export default function AppRouter() {
 
                 <Routes location={location} key={location.pathname}>
                     <Route path="/" element={<Home />} />
-                        <Route path="/studios" element={<Studios />} />
-                        <Route path="/studio/:id" element={<StudioDetails />} />
-                        <Route path="/booking" element={
+                    <Route path="/studios" element={<Studios />} />
+                    <Route path="/studio/:id" element={<StudioDetails />} />
+                    <Route path="/booking" element={
+                        <BookingProvider>
                             <Booking />
-                        } />
+                        </BookingProvider>
+                    } />
                     <Route path="/admin" element={
                         <ProtectedRoute allowedRoles={['admin']}>
                             <AdminDashboard />
