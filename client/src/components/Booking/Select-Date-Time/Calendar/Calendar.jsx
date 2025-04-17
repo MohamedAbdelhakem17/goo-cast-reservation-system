@@ -4,7 +4,7 @@ import "./datePicker.css";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetFullBookedStudios } from "../../../../apis/Booking/booking.api";
 
-export default function Calendar() {
+export default function Calendar({ getSlots }) {
     const startDate = new Date();
     const { setBookingField, bookingData } = useBooking();
 
@@ -32,7 +32,10 @@ export default function Calendar() {
         <div className="border-b-1 border-t-1 border-gray-300 rounded-lg md:p-4">
             <DatePicker
                 selected={bookingData.date || startDate}
-                onChange={(date) => setBookingField("date", date)}
+                onChange={(date) => {
+                    setBookingField("date", date);
+                    getSlots();
+                }}
                 dateFormat="dd/MM/yyyy"
                 calendarClassName="w-full"
                 inline

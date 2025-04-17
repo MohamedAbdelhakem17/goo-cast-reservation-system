@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import BASE_URL from "../BASE_URL";
+import { useLocation } from "react-router-dom";
 
 const GetFullBookedStudios = (studioId) => {
     return useQuery({
@@ -18,10 +19,11 @@ const GetFullBookedStudios = (studioId) => {
     });
 };
 const GetAvailableSlots = () => {
+    const { state } = useLocation()
     return useMutation({
         mutationFn: async ({ studioId, date, duration }) => {
             const res = await axios.post(`${BASE_URL}/bookings/available-slots`, {
-                studioId,
+                studioId: studioId || state.studio.id,
                 date,
                 duration,
             });
