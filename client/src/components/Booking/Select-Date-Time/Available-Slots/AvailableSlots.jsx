@@ -20,12 +20,12 @@ export default function AvailableSlots({ slots }) {
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300 }}
                         className={`flex items-center justify-center p-4 border border-gray-300 rounded-lg shadow-sm cursor-pointer
-                            ${bookingData.timeSlot === slot
+                            ${bookingData.timeSlot === slot.startTime
                                 ? "bg-main text-white"
                                 : "bg-white hover:bg-gray-100"
                             }
                         `}
-                        onClick={() => selectTimeSlot(slot)}
+                        onClick={() => selectTimeSlot(slot.startTime)}
                     >
                         <span className="text-sm font-medium">{slot.startTime}</span>
                     </motion.div>

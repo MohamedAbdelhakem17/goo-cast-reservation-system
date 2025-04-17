@@ -7,6 +7,8 @@ export default function SelectDateTime() {
     const { bookingData } = useBooking()
     const { mutate, data } = GetAvailableSlots();
 
+    const studioId = localStorage.getItem("studioId")
+
     const handelAvailableSlots = () => {
         mutate({
             studioId: bookingData?.studio?.id,
@@ -25,7 +27,7 @@ export default function SelectDateTime() {
                 <SelectDurationPersonsPar getSlots={handelAvailableSlots} />
 
                 {/* Calendar */}
-                <Calendar />
+                <Calendar getSlots={handelAvailableSlots} />
 
                 {/* Available Slots */}
                 <AvailableSlots slots={data?.data} />
