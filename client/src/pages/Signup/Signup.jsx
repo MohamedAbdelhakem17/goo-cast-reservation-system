@@ -4,7 +4,7 @@ import Input from "../../components/shared/Input/Input"
 import signupForm from "../../apis/auth/signup.api"
 
 export default function Signup({ closeModal, changeForm }) {
-  const {formik} = signupForm()
+  const { formik, serverError, successMessage } = signupForm(closeModal)
   const inputRef = useRef(null)
 
   return (
@@ -59,15 +59,15 @@ export default function Signup({ closeModal, changeForm }) {
             >
               <Input
                 type="text"
-                id="userName"
+                id="name"
                 label="Full Name"
                 inputRef={inputRef}
                 placeholder="Enter your name"
-                value={formik.values.userName}
+                value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                errors={formik.errors.userName}
-                touched={formik.touched.userName}
+                errors={formik.errors.name}
+                touched={formik.touched.name}
               />
             </motion.div>
 
@@ -149,6 +149,53 @@ export default function Signup({ closeModal, changeForm }) {
             >
               Sign Up
             </motion.button>
+
+            {/* Server Error */}
+            {
+              serverError && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className="mt-1 flex items-center space-x-1 text-sm text-red-500"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>{serverError}</span>
+                </motion.div>
+              )
+            }
+
+            {/* Success Message */}
+
+            {
+              successMessage && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className="mt-1 flex items-center space-x-1 text-sm text-green-500"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.293-11.293a1 1 0 00-1.414 0L9 10.586l-1.879-1.879a1 1 0 00-1.414 1.414l2.293 2.293a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>{successMessage}</span>
+                </motion.div>
+              )
+
+            }
+
           </form>
 
           {/* Switch to Sign In */}

@@ -1,48 +1,30 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 
-const AdminDashboardLayout = () => {
+const UserDashboardLayout = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside
-        className="fixed md:static w-64 bg-gray-800 text-white flex flex-col transform md:translate-x-0 transition-transform duration-300 z-50"
-      >
+      <aside className="w-64 bg-gray-800 text-white flex flex-col">
         <div className="p-4 text-center font-bold text-lg border-b border-gray-700">
-          Admin Dashboard
+          User Dashboard
         </div>
         <nav className="flex-1 p-4 space-y-2">
           <NavLink
-            to="/admin-dashboard/welcome"
+            to="/user-dashboard/profile"
             className={({ isActive }) =>
               `block px-4 py-2 rounded ${isActive ? 'bg-gray-700' : 'hover:bg-gray-600'}`
             }
           >
-            Welcome
+            Profile
           </NavLink>
           <NavLink
-            to="/admin-dashboard/studio-management"
+            to="/user-dashboard/bookings"
             className={({ isActive }) =>
               `block px-4 py-2 rounded ${isActive ? 'bg-gray-700' : 'hover:bg-gray-600'}`
             }
           >
-            Studio Management
-          </NavLink>
-          <NavLink
-            to="/admin-dashboard/price-management"
-            className={({ isActive }) =>
-              `block px-4 py-2 rounded ${isActive ? 'bg-gray-700' : 'hover:bg-gray-600'}`
-            }
-          >
-            Price Management
-          </NavLink>
-          <NavLink
-            to="/admin-dashboard/service-management"
-            className={({ isActive }) =>
-              `block px-4 py-2 rounded ${isActive ? 'bg-gray-700' : 'hover:bg-gray-600'}`
-            }
-          >
-            Service Management
+            My Bookings
           </NavLink>
           <NavLink
             to="/"
@@ -51,7 +33,7 @@ const AdminDashboardLayout = () => {
             Back to Website
           </NavLink>
           <button
-            onClick={() => console.log('Logout')}
+            onClick={() => dispatch({ type: 'LOGOUT' })}
             className="block w-full text-left px-4 py-2 rounded hover:bg-gray-600 text-white"
           >
             Logout
@@ -60,11 +42,11 @@ const AdminDashboardLayout = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto ml-0 md:ml-64">
+      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
         <Outlet />
       </main>
     </div>
   );
 };
 
-export default AdminDashboardLayout;
+export default UserDashboardLayout;
