@@ -10,7 +10,7 @@ export default function BookingButton({ studio }) {
 
     const handleBooking = (st) => {
         handleQuickBooking(2, st)
-        // setBookingField("studio", st)
+        // setBookingField("studio", st)gi
     }
 
 

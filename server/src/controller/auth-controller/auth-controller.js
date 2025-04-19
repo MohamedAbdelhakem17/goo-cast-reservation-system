@@ -318,24 +318,43 @@ exports.signin = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
+        data: {
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+            token,
+        },
         message: "User signed in successfully",
     });
 })
 
-// signout function to handle user logout
-exports.signout = asyncHandler(async (req, res) => {
-    // Clear the JWT token from the cookie
-    res.clearCookie('jwt', {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-    });
 
-    res.status(200).json({
-        status: HTTP_STATUS_TEXT.SUCCESS,
-        message: "User signed out successfully",
-    });
-})
+// Signout function to handle user logout
+exports.signout = asyncHandler(async (req, res) => {
+    try {
+        // Clear the JWT cookie
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            secure: true,      
+            sameSite: 'None'   
+        });
+
+        res.status(200).json({
+            status: HTTP_STATUS_TEXT.SUCCESS,
+            message: "User signed out successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: HTTP_STATUS_TEXT.ERROR,
+            message: "Failed to sign out user",
+            error: error.message
+        });
+    }
+}); 
+
 
 // resetPassword function to handle password reset
 exports.resetPassword = asyncHandler(async (req, res) => {

@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useReducer } from 'react';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
+
 const initialState = {
-    isAuthenticated: false,
+    isAuthenticated: localStorage.getItem('user') ? true : false,
     token: null,
     user: null,
 };
@@ -13,10 +14,10 @@ const initialState = {
 const authReducer = (state, action) => {
     switch (action.type) {
         case 'LOGIN':
+            console.log("Login action payload:", action.payload);
             localStorage.setItem('user', JSON.stringify(action.payload));
             localStorage.setItem('token', action.payload.token);
             return {
-                ...state,
                 isAuthenticated: true,
                 user: action.payload,
                 token: action.payload.token
@@ -54,7 +55,7 @@ export default function AuthProvider({ children }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ state, dispatch }}>
+        <AuthContext.Provider value={{ state, dispatch, isAuthenticated: state.isAuthenticated, user: state.user, token: state.token }}>
             {children}
         </AuthContext.Provider>
     );

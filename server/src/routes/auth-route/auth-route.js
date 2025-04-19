@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../../controller/auth-controller/auth-controller');
-
+const protectRoute = require('../../middleware/protect.middleware');
 
 router.post('/signup', authController.signup);
 router.post('/signin', authController.signin);
@@ -10,7 +10,7 @@ router.get('/activate/:token', authController.activateEmail);
 // actionUrl = `${baseUrl}/activate?token=${token}`;
 
 
-router.post('/signout', authController.signout);
+router.post('/signout', protectRoute , authController.signout);
 
 router.put('/reset-password', authController.resetPassword);
 router.put('/update-password', authController.updatePassword);
