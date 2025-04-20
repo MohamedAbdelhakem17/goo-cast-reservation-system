@@ -14,6 +14,7 @@ const AdminDashboardLayout = () => {
     { path: '/admin-dashboard/price-management', name: 'Price Management' },
     { path: '/admin-dashboard/studio-management', name: 'Studio Management' },
     { path: '/admin-dashboard/service-management', name: 'Service Management' },
+    { path: '/admin-dashboard/booking-management', name: 'Booking Management' },
     { path: '/', name: 'Back to Website' },
   ];
 
