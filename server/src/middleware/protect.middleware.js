@@ -30,6 +30,7 @@ const protectRoute = async (req, res, next) => {
 
         req.user = user;
         next();
+
     } catch (error) {
         next(new AppError(500, HTTP_STATUS_TEXT.FAIL, "Internal Server Error"));
     }

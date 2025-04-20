@@ -19,7 +19,7 @@ router
 router
     .route('/:id')
     .get(studioController.getStudioById)
-    .delete(allowTo(USER_ROLE.ADMIN), studioController.deleteStudio)
+    .delete(protectRoute, allowTo(USER_ROLE.ADMIN), studioController.deleteStudio)
     .put(
         protectRoute,
         allowTo(USER_ROLE.ADMIN),

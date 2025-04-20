@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import BASE_URL from "../BASE_URL";
 
 
@@ -38,5 +38,28 @@ const GetStudioByID = (studioId) => {
     });
 };
 
+const DeleteStudio = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (studioId) => {
+            try {
+                const { data } = await axios.delete(`${BASE_URL}/studio/${studioId}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: "Bearer " + localStorage.getItem("token"),
+                    },
+                });
+                return data;
+            } catch (error) {
+                console.error("Error fetching studios:", error);
+                throw error;
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["studios"]);
+        },
+    })
+};
+
 export default useGetAllStudios;
-export { GetStudioByID }
+export { GetStudioByID, DeleteStudio };
