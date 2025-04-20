@@ -58,7 +58,6 @@ const SignupForm = ({ closeModel }) => {
         },
         onSuccess: (data) => {
             setSuccessMessage(data.data); // Set success message
-            console.log("Signup success:", data);
             setServerError(null); // Clear server error on success
             if (!serverError) {
                 setTimeout(() => closeModel(), 1000) // Close the modal on success
@@ -68,7 +67,6 @@ const SignupForm = ({ closeModel }) => {
 
     // Form submission handler
     const onSubmit = (values) => {
-        console.log("Form data", values);
         signup(values);
     };
 

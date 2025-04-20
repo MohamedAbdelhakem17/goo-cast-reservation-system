@@ -323,11 +323,11 @@ exports.signin = asyncHandler(async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role,
             },
             token,
         },
         message: "User signed in successfully",
+
     });
 })
 
@@ -346,6 +346,7 @@ exports.signout = asyncHandler(async (req, res) => {
             status: HTTP_STATUS_TEXT.SUCCESS,
             message: "User signed out successfully",
         });
+        
     } catch (error) {
         res.status(500).json({
             status: HTTP_STATUS_TEXT.ERROR,

@@ -17,7 +17,6 @@ export default function Cart() {
         return <div>Loading...</div>
     }
 
-    console.log({"price": bookingData.studio.price}, bookingData.duration)
 
     return (
         <div>

@@ -1,7 +1,13 @@
 import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/Auth-Context/AuthContext';
+import Signout from '../../../apis/auth/signout.api';
 
 const AdminDashboardLayout = () => {
+  const { dispatch } = useAuth()
+  const navigate = useNavigate()
+  const { signout } = Signout()
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -49,7 +55,11 @@ const AdminDashboardLayout = () => {
             Back to Website
           </NavLink>
           <button
-            onClick={() => dispatch({ type: 'LOGOUT' })}
+            onClick={() => {
+              signout()
+              dispatch({ type: "LOGOUT" })
+              navigate("/")
+            }}
             className="block w-full text-left px-4 py-2 rounded hover:bg-gray-600 text-white"
           >
             Logout

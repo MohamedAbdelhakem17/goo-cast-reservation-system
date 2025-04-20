@@ -3,9 +3,11 @@ import { Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../../context/Auth-Context/AuthContext';
 import LoadingScreen from '../loading-screen/LoadingScreen';
+import Signout from '../../apis/auth/signout.api';
 
 export default function ProtectedRoute({ children, allowedRoles, redirectTo = "/" }) {
     const [userRole, setUserRole] = useState(null);
+    const { signout } = Signout()
     const [loading, setLoading] = useState(true);
     const { dispatch } = useAuth();
 
@@ -13,7 +15,9 @@ export default function ProtectedRoute({ children, allowedRoles, redirectTo = "/
         const checkToken = () => {
             const token = localStorage.getItem("token");
             if (!token) {
+                signout();
                 dispatch({ type: 'LOGOUT' });
+                <Navigate to="/" replace />;
                 return;
             }
 
@@ -34,6 +38,7 @@ export default function ProtectedRoute({ children, allowedRoles, redirectTo = "/
 
         checkToken();
         setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
     if (loading) {
