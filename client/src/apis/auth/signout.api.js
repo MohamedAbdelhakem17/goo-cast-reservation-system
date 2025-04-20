@@ -1,31 +1,29 @@
-import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import BASE_URL from "../BASE_URL";
-import { useAuth } from "../../context/Auth-Context/AuthContext";
 
 const Signout = () => {
-    const { token } = useAuth()
+    const userToken = localStorage.getItem("token");
 
-    // useMutation for signout request
-    const { mutate: signout } = useMutation({
-        mutationFn: async () => {
+    const signout = async () => {
+        try {
             const response = await axios.post(BASE_URL + "/auth/signout", {}, {
                 headers: {
-                    authorization: `Bearer ${token}`
+                    authorization: "Bearer " + userToken,
                 },
             });
             return response.data;
-        },
-        onError: (err) => {
+            
+        } catch (err) {
             const message =
                 err?.response?.data?.message ||
                 "Something went wrong. Please try again.";
-        },
-    });
+            console.error("Signout error:", message);
+        }
+    };
 
     // Return everything needed for the UI
     return {
-        signout
+        signout,
     };
 };
 
