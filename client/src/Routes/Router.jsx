@@ -7,16 +7,21 @@ import AdminDashboardLayout from "../components/layout/Admin-Dashboard/AdminDash
 import MainLayout from "../components/layout/Main-Layout/MainLayout";
 import UserDashboardLayout from "../components/layout/User-Dashboard/UserDashboard";
 
+// Pages Public
 const Home = lazy(() => import("../pages/Home/Home"));
 const Studios = lazy(() => import("../pages/Studios/Studios"));
 const StudioDetails = lazy(() => import("../pages/Studio-Details/StudioDetails"));
 const Booking = lazy(() => import("../pages/Booking/Booking"));
 const NotFound = lazy(() => import("../pages/Not-Found/NotFound"));
-const UserDashboard = lazy(() => import("../components/layout/User-Dashboard/UserDashboard"));
+
+// Authentication admin
+const Welcome = lazy(() => import("../pages/Admin-Dashboard/Wellcome/Welcome"));
 const StudioManagement = lazy(() => import("../pages/Admin-Dashboard/Studio-Management/StudioManagement"));
 const PriceManagement = lazy(() => import("../pages/Admin-Dashboard/Price-Management/PriceManagement"));
 const ServiceManagement = lazy(() => import("../pages/Admin-Dashboard/Service-Management/ServiceManagement"));
-const Welcome = lazy(() => import("../pages/Admin-Dashboard/Wellcome/Welcome"));
+const PageAnalytics = lazy(() => import("../pages/Admin-Dashboard/Page-Analytics/PageAnalytics"));
+
+// Authentication user
 const UserProfile = lazy(() => import("../pages/User-Dashboard/User-Profile/UserProfile"));
 const UserBookings = lazy(() => import("../pages/User-Dashboard/User-Bookings/UserBookings"));
 
@@ -65,6 +70,7 @@ export default function AppRouter() {
                     <Route path="studio-management" element={<StudioManagement />} />
                     <Route path="price-management" element={<PriceManagement />} />
                     <Route path="service-management" element={<ServiceManagement />} />
+                    <Route path="analytics" element={<PageAnalytics />} />
                 </Route>
 
                 {/* User Dashboard Layout */}
