@@ -27,7 +27,7 @@ export const GetPageAnalytics = () => {
         queryKey: ["pageAnalytics"],
         queryFn: async () => {
             try {
-                const response = await axios.get("http://localhost:9090/api/v1/analytics", {
+                const response = await axios.get(BASE_URL + "/analytics", {
                     headers: {
                         "Content-Type": "application/json",
                         authorization: "Bearer " + localStorage.getItem("token"),

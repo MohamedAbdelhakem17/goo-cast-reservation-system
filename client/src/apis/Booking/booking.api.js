@@ -80,6 +80,7 @@ const ChangeBookingStatus = () => {
         },
     })
 }
+
 export {
     GetFullBookedStudios, GetAvailableSlots, GetBookings, ChangeBookingStatus
 }
