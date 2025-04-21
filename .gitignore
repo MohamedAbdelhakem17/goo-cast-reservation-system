@@ -1,4 +1,8 @@
-# dependencies
+# Ignore all node_modules folders
 **/node_modules/
-./server/node_modules/
-./client/node_modules/
+
+# Ignore client build output
+/client/dist/
+
+# Ignore uploaded JPEGs in nested folders under server/uploads/
+server/uploads/*/*.jpeg

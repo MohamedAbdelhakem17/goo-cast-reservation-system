@@ -23,7 +23,7 @@ function reducer(state, action) {
     }
 }
 
-export default function SelectDurationPersonsPar() {
+export default function SelectDurationPersonsPar({ getSlots }) {
     const { bookingData, setBookingField } = useBooking();
 
     const initialState = {
@@ -35,8 +35,15 @@ export default function SelectDurationPersonsPar() {
 
     useEffect(() => {
         setBookingField('duration', state.duration);
+        getSlots();
+    }, [state.duration]);
+    
+    
+    useEffect(() => {
         setBookingField('persons', state.persons);
-    }, [state.duration, state.persons]);
+    }, [state.persons]);
+    
+
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 p-2 divide-x-1 divide-gray-300">

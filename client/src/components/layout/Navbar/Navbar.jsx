@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { logo } from "../../../assets/images";
 import Signin from "../../../pages/Signin/Signin";
 import Signup from "../../../pages/Signup/Signup";
+import { useAuth } from "../../../context/Auth-Context/AuthContext";
+import Signout from "../../../apis/auth/signout.api";
+import { jwtDecode } from "jwt-decode";
 
 export default function Navbar() {
     // Constants
@@ -21,8 +24,11 @@ export default function Navbar() {
     // States
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const { isAuthenticated, dispatch, token } = useAuth()
     const [isSignupOpen, setIsSignupOpen] = useState(false)
     const [isSigninOpen, setIsSigninOpen] = useState(false)
+    const { signout } = Signout()
+    const isAdmin = isAuthenticated && token ? jwtDecode(token).role === "admin" : false
 
     // Handle scroll effect for navbar
     useEffect(() => {
@@ -34,6 +40,24 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // Add functionality to close the menu when clicking on a link or anywhere else
+    const handleMenuClose = () => {
+        setMenuOpen(false);
+    };
+
+    // Add an event listener to close the menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest(".menu-container")) {
+                setMenuOpen(false);
+            }
+        };
+
+        document.addEventListener("click", handleClickOutside);
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
+    }, []);
 
     // NavLink class function for active link styling
     const navLinkClasses = ({ isActive }) => {
@@ -150,41 +174,90 @@ export default function Navbar() {
                                     },
                                 }}
                             >
-                                <NavLink to={page.path} className={navLinkClasses}>
+                                <NavLink to={page.path} className={navLinkClasses} onClick={handleMenuClose}>
                                     {page.name}
                                 </NavLink>
                             </motion.li>
                         ))}
                     </ul>
 
-                    <div className="hidden md:flex items-center space-x-4">
-                        {BUTTON_ACTIONS.map((button, index) => (
-                            <motion.button
-                                key={index}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{
-                                    opacity: 1,
-                                    scale: 1,
-                                    transition: {
-                                        delay: index * 0.1 + 0.5,
-                                        duration: 0.5,
-                                        ease: [0.22, 1, 0.36, 1],
-                                    },
-                                }}
-                                whileHover="hover"
-                                whileTap="tap"
-                                variants={buttonVariants}
-                                className={`${index === 0
-                                    ? "bg-white text-main/90 border border-main/50"
-                                    : "bg-main/90 text-white"
-                                    } px-5 py-2 rounded-md font-medium transition-colors duration-200 ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
-                                    }`}
-                                onClick={button.action}
-                            >
-                                {button.name}
-                            </motion.button>
-                        ))}
-                    </div>
+                    {/* Sign in / Sign up in Pc */}
+                    {
+                        !isAuthenticated
+                            ? <div className="hidden md:flex items-center space-x-4">
+                                {BUTTON_ACTIONS.map((button, index) => (
+                                    <motion.button
+                                        key={index}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{
+                                            opacity: 1,
+                                            scale: 1,
+                                            transition: {
+                                                delay: index * 0.1 + 0.5,
+                                                duration: 0.5,
+                                                ease: [0.22, 1, 0.36, 1],
+                                            },
+                                        }}
+                                        whileHover="hover"
+                                        whileTap="tap"
+                                        variants={buttonVariants}
+                                        className={`${index === 0
+                                            ? "bg-white text-main/90 border border-main/50"
+                                            : "bg-main/90 text-white"
+                                            } px-5 py-2 rounded-md font-medium transition-colors duration-200 ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
+                                            }`}
+                                        onClick={button.action}
+                                    >
+                                        {button.name}
+                                    </motion.button>
+                                ))}
+                            </div>
+                            : <div className="relative menu-container">
+                                <motion.button
+                                    onClick={() => setMenuOpen(!menuOpen)}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="p-1 flex items-center space-x-2"
+                                >
+                                    <i className="fa-solid fa-user-circle text-2xl"></i>
+                                    <i className="fa-solid fa-chevron-down"></i>
+                                </motion.button>
+                                {menuOpen && (
+                                    <motion.div
+                                        className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden z-50"
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                    >
+                                        <ul className="py-2">
+                                            <li>
+                                                <NavLink
+                                                    to={`${isAdmin ? "/admin-dashboard/welcome" : "/user-dashboard/profile"} `}
+                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={handleMenuClose}
+                                                >
+                                                    Dashboard
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <button
+                                                    onClick={() => {
+                                                        signout()
+                                                        dispatch({ type: "LOGOUT" });
+                                                        handleMenuClose();
+                                                    }}
+                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                >
+                                                    Logout
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </motion.div>
+                                )}
+                            </div>
+                    }
+
+
+
 
                     {/* Mobile Toggle */}
                     <motion.div
@@ -242,7 +315,10 @@ export default function Navbar() {
                                         <NavLink
                                             to={page.path}
                                             className={navLinkClasses}
-                                            onClick={() => setMenuOpen(false)}
+                                            onClick={() => {
+                                                setMenuOpen(false);
+                                                handleMenuClose();
+                                            }}
                                         >
                                             {page.name}
                                         </NavLink>
@@ -251,27 +327,29 @@ export default function Navbar() {
                             </ul>
 
                             {/* Button Actions */}
-                            <div className="space-y-3">
-                                {BUTTON_ACTIONS.map((button, index) => (
-                                    <motion.button
-                                        key={index}
-                                        variants={fadeItem}
-                                        whileHover="hover"
-                                        whileTap="tap"
-                                        className={`${index === 0
-                                            ? "bg-white text-main/90 border border-main/50"
-                                            : "bg-main/90 text-white"
-                                            } px-5 py-2 rounded-md font-medium transition-colors duration-200  w-full ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
-                                            }`}
-                                        onClick={() => {
-                                            button.action();
-                                            setMenuOpen(false);
-                                        }}
-                                    >
-                                        {button.name}
-                                    </motion.button>
-                                ))}
-                            </div>
+                            {
+                                !isAuthenticated && <div className="space-y-3">
+                                    {BUTTON_ACTIONS.map((button, index) => (
+                                        <motion.button
+                                            key={index}
+                                            variants={fadeItem}
+                                            whileHover="hover"
+                                            whileTap="tap"
+                                            className={`${index === 0
+                                                ? "bg-white text-main/90 border border-main/50"
+                                                : "bg-main/90 text-white"
+                                                } px-5 py-2 rounded-md font-medium transition-colors duration-200  w-full ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
+                                                }`}
+                                            onClick={() => {
+                                                button.action();
+                                                setMenuOpen(false);
+                                            }}
+                                        >
+                                            {button.name}
+                                        </motion.button>
+                                    ))}
+                                </div>
+                            }
                         </motion.div>
                     )}
                 </AnimatePresence>

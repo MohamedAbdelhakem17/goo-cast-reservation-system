@@ -4,16 +4,15 @@ import { HashRouter as Router } from 'react-router-dom';
 
 import AppRouter from "../Routes/Router";
 import AuthProvider from '../context/Auth-Context/AuthContext';
-
 const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
-          <AppRouter />
-        </Router>
+          <Router>
+            <AppRouter />
+          </Router>
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
