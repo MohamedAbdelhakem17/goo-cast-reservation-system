@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const mongoose = require("mongoose");
 
 const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
 const { timeToMinutes, minutesToTime, getAllDay } = require("../../utils/time-mange")
@@ -127,5 +128,107 @@ exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
         data: availableSlots,
+    });
+});
+
+// Get all bookings
+exports.getAllBookings = asyncHandler(async (req, res) => {
+    const { status, studioId, date, page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    let match = {};
+
+    if (status) {
+        match.status = status;
+    }
+
+    if (studioId) {
+        match.studio = new mongoose.Types.ObjectId(studioId);
+    }
+
+    if (date) {
+        const inputDate = getAllDay(date);
+        match.date = {
+            $gte: inputDate.startOfDay,
+            $lt: inputDate.endOfDay
+        };
+    }
+
+    const total = await BookingModel.countDocuments(match);
+
+    const bookings = await BookingModel.aggregate([
+        { $match: match },
+        {
+            $addFields: {
+                statusOrder: {
+                    $switch: {
+                        branches: [
+                            { case: { $eq: ["$status", "pending"] }, then: 1 },
+                            { case: { $eq: ["$status", "approved"] }, then: 2 },
+                            { case: { $eq: ["$status", "rejected"] }, then: 3 }
+                        ],
+                        default: 4
+                    }
+                }
+            }
+        },
+        { $sort: { statusOrder: 1, createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limitNum },
+        {
+            $lookup: {
+                from: 'studios',
+                localField: 'studio',
+                foreignField: '_id',
+                as: 'studio'
+            }
+        },
+        {
+            $unwind: {
+                path: '$studio',
+                preserveNullAndEmptyArrays: true
+            }
+        }
+    ]);
+
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        data: {
+            bookings,
+            total,
+            page: pageNum,
+            totalPages: Math.ceil(total / limitNum)
+        }
+    });
+});
+
+// Change booking status
+exports.changeBookingStatus = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    if (!status) {
+        throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Status is required");
+    }
+
+    if (status !== "pending" && status !== "approved" && status !== "rejected") {
+        throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid status");
+    }
+    
+    const booking = await BookingModel.findByIdAndUpdate(id, { status }, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!booking) {
+        throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
+    }
+
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        data: booking,
+        message: "Booking status updated successfully"
     });
 });

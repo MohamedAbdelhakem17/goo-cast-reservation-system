@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function BookingDetailsModal({ booking, onClose }) {
+export default function BookingDetailsModal({ booking, closeModel }) {
     if (!booking) return null
 
     const formatDate = (date) => {
@@ -12,19 +12,20 @@ export default function BookingDetailsModal({ booking, onClose }) {
     }
 
     return (
-        <AnimatePresence>
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <AnimatePresence mode="wait">
+            <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50 px-4">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                    exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white rounded-xl shadow-xl max-w-7xl w-full max-h-[90vh] overflow-y-auto"
                 >
                     <div className="p-6">
                         <div className="flex justify-between items-start mb-6">
                             <h2 className="text-2xl font-bold text-gray-800">Booking Details</h2>
                             <button
-                                onClick={onClose}
+                                onClick={closeModel}
                                 className="text-gray-500 hover:text-gray-700"
                             >
                                 <i className="fa-solid fa-xmark text-2xl"></i>
@@ -36,7 +37,7 @@ export default function BookingDetailsModal({ booking, onClose }) {
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-2">Studio Information</h3>
                                 <div className="bg-gray-50 p-4 rounded-lg">
-                                    <p className="text-sm text-gray-600">Name: {booking.studio.name}</p>
+                                    <p className="text-sm text-gray-600">Name: {booking?.studio?.name}</p>
                                 </div>
                             </div>
 
@@ -69,7 +70,7 @@ export default function BookingDetailsModal({ booking, onClose }) {
                                     <h3 className="text-lg font-semibold text-gray-800 mb-2">Package Details</h3>
                                     <div className="bg-gray-50 p-4 rounded-lg">
                                         <p className="text-sm text-gray-600">Name: {booking.package.name}</p>
-                                        <p className="text-sm text-gray-600">Price: {booking.package.price.toLocaleString()} EGP</p>
+                                        <p className="text-sm text-gray-600">Price: {booking?.package?.price?.toLocaleString()} EGP</p>
                                     </div>
                                 </div>
                             )}

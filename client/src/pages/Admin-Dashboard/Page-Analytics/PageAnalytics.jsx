@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import AnalyticsCard from "../../../components/Admin-Dashboard/Page-Analytics/Analytics-Card/AnalyticsCard";
-import Chart from "../../../components/Admin-Dashboard/Page-Analytics/chart/Chart";
+import Chart from "../../../components/Admin-Dashboard/Page-Analytics/Chart/Chart";
+import { GetPageAnalytics } from "../../../apis/analytics/analytics.api";
 
 const getPageName = (path) => {
   if (path === "/") return "Home";
@@ -29,26 +29,9 @@ const getPageName = (path) => {
 
 
 export default function PageAnalytics() {
-  const [analytics, setAnalytics] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: analytics, loading } = GetPageAnalytics()
 
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const response = await axios.get("http://localhost:9090/api/v1/analytics");
-        setAnalytics(response.data.data);
-      } catch (error) {
-        console.error("Error fetching analytics:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnalytics();
-    
-  }, []);
-
-  const chartData = analytics.map((item) => ({
+  const chartData = analytics?.map((item) => ({
     name: getPageName(item._id),
     visits: item.visitsCount,
   }));
@@ -87,7 +70,7 @@ export default function PageAnalytics() {
             animate={{ opacity: 1 }}
             transition={{ staggerChildren: 0.1 }}
           >
-            {analytics.map((item, index) => (
+            {analytics?.map((item, index) => (
               <motion.div
                 key={item._id}
                 initial={{ opacity: 0, y: 20 }}
