@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import useGetAllStudios, { DeleteStudio } from '../../../apis/studios/studios.api';
 import { motion, AnimatePresence } from 'framer-motion';
+import Alert from '../../../components/shared/Alert/Alert';
+import Popup from '../../../components/shared/Popup/Popup';
 
 const StudioManagement = () => {
     const { data: studiosData, isLoading } = useGetAllStudios();
     const { mutate: deleteStudio } = DeleteStudio();
+
     const [selectedStudio, setSelectedStudio] = useState(null);
+    
     const [showSuccess, setShowSuccess] = useState(false);
 
     const handleDelete = (studio) => {
@@ -98,49 +102,28 @@ const StudioManagement = () => {
 
             <AnimatePresence mode='wait'>
                 {selectedStudio && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.5 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0.5 }}
-                            className="bg-white p-6 rounded-lg shadow-xl"
-                        >
-                            <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
-                            <p className="mb-4">Are you sure you want to delete this studio?</p>
-                            <p className="text-red-500 text-center mb-6"><strong>{selectedStudio.name}</strong></p>
-                            <div className="flex justify-end gap-3">
-                                <button
-                                    onClick={() => setSelectedStudio(null)}
-                                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={confirmDelete}
-                                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
+                    <Popup>
+                        <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
+                        <p className="mb-4">Are you sure you want to delete this studio?</p>
+                        <p className="text-red-500 text-center mb-6"><strong>{selectedStudio.name}</strong></p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setSelectedStudio(null)}
+                                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </Popup>
                 )}
 
-                {showSuccess && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -50 }}
-                        className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg"
-                    >
-                        Successfully deleted!
-                    </motion.div>
-                )}
+                {showSuccess && (<Alert type="success">Studio deleted successfully.</Alert>)}
             </AnimatePresence>
         </div>
     );

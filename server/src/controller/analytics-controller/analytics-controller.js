@@ -3,7 +3,8 @@ const asyncHandler = require("express-async-handler");
 const AppError = require("../../utils/app-error");
 const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
 const AnalyticsModel = require("../../models/analytics-model/analytics-model");
-
+const BookingModel = require("../../models/booking-model/booking-model");
+const StudioModel = require("../../models/studio-model/studio-model");
 
 // add analytics
 exports.addAnalytics = asyncHandler(async (req, res, next) => {
@@ -37,7 +38,7 @@ exports.getAnalytics = asyncHandler(async (req, res) => {
     ]);
 
     analytics.forEach(stat => {
-        stat.averageTime = (stat.averageTime / 60).toFixed(2); 
+        stat.averageTime = (stat.averageTime / 60).toFixed(2);
         stat.totalSpent = (stat.totalSpent / 60).toFixed(2);
     });
 
@@ -50,5 +51,35 @@ exports.getAnalytics = asyncHandler(async (req, res) => {
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
         data: analytics,
+    });
+});
+
+// Get dashboard statistics
+exports.getDashboardStats = asyncHandler(async (req, res) => {
+    // Get total studios count
+    const totalStudios = await StudioModel.countDocuments();
+
+    // Get total bookings
+    const totalBookings = await BookingModel.countDocuments();
+
+    // Calculate total revenue from all bookings
+    const revenue = await BookingModel.aggregate([
+        {
+            $group: {
+                _id: null,
+                totalRevenue: { $sum: "$totalPrice" }
+            }
+        }
+    ]);
+
+    const totalRevenue = revenue.length > 0 ? revenue[0].totalRevenue : 0;
+
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        data: {
+            totalStudios,
+            totalBookings,
+            totalRevenue
+        }
     });
 });
