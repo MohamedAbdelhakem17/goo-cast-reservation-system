@@ -1,9 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { studio } from "../../../assets/images";
 import StarRating from "../../../hooks/useRate";
-
+import useGetAllStudios from "../../../apis/studios/studios.api";
 export default function Studio() {
     // Animation variants for staggered animations
     const containerVariants = {
@@ -54,14 +53,8 @@ export default function Studio() {
     };
 
     // Sample studio data
-    const studios = [
-        { id: 1, name: "Sunrise Studio", location: "Los Angeles", image: studio },
-        { id: 2, name: "Moonlight Records", location: "New York", image: studio },
-        { id: 3, name: "Echo Chamber", location: "Nashville", image: studio },
-        { id: 4, name: "Harmony House", location: "Austin", image: studio },
-        { id: 5, name: "Rhythm Works", location: "Chicago", image: studio },
-        { id: 6, name: "Sound Haven", location: "Miami", image: studio },
-    ];
+    const { data: studiosData, isLoading } = useGetAllStudios()
+
 
     const textVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -76,6 +69,14 @@ export default function Studio() {
         }),
     };
 
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <div className="loader"></div>
+            </div>
+        )
+    }
 
     return (
         <section className="py-8 my-8">
@@ -108,7 +109,7 @@ export default function Studio() {
                 initial="hidden"
                 animate="visible"
             >
-                {studios.map((studio) => (
+                {studiosData.data.map((studio) => (
                     <motion.div
                         key={studio.id}
                         className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
@@ -127,7 +128,7 @@ export default function Studio() {
                             }}
                         >
                             <img
-                                src={studio.image || "/placeholder.svg"}
+                                src={studio.thumbnail || "/placeholder.svg"}
                                 alt={studio.name}
                                 className="w-full h-full object-cover"
                             />
@@ -138,7 +139,7 @@ export default function Studio() {
                                 whileHover={{ opacity: 1 }}
                             >
                                 <div className="py-4 px-8 text-white">
-                                    <Link to={`/studio/${studio.id}`} className="font-bold">
+                                    <Link to={`/studio/${studio.slug}`} className="font-bold">
                                         View Details
                                     </Link>
                                 </div>
@@ -151,15 +152,15 @@ export default function Studio() {
                                 <h3 className="text-xl font-bold text-gray-800">
                                     {studio.name}
                                 </h3>
-                                <StarRating rating={4.5} />
+                                <StarRating rating={studio.ratingAverage} />
                             </div>
 
                             <p className="text-gray-600 flex items-center gap-2">
                                 <i className="fa-solid fa-location-dot text-main"></i>
-                                <span className="text-lg">{studio.location}</span>
+                                <span className="text-lg">{studio.address}</span>
                             </p>
 
-                            <p className="text-main font-bold">100 $ per hour</p>
+                            <p className="text-main font-bold">{studio.pricePerHour} Egp per hour</p>
 
                             <motion.div
                                 className="mt-3 h-1 bg-main rounded-full"

@@ -4,16 +4,13 @@ import { studio, studio2 } from "../../assets/images";
 import { useEffect, useState } from "react";
 import StarRating from "../../hooks/useRate";
 import useQuickBooking from "../../hooks/useQuickBooking";
+import useGetAllStudios from "../../apis/studios/studios.api";
 export default function Studios() {
   // Sample studio data - using exactly what was provided
-  const studios = [
-    { id: 1, name: "Sunrise Studio", location: "Los Angeles", image: studio },
-    { id: 2, name: "Moonlight Records", location: "New York", image: studio2 },
-    { id: 3, name: "Echo Chamber", location: "Nashville", image: studio },
-    { id: 4, name: "Harmony House", location: "Austin", image: studio2 },
-    { id: 5, name: "Rhythm Works", location: "Chicago", image: studio },
-    { id: 6, name: "Sound Haven", location: "Miami", image: studio2 },
-  ];
+
+  // Importing the useQuickBooking hook to handle quick booking functionality
+  const { data: studiosData, isLoading } = useGetAllStudios();
+
 
   const { handleQuickBooking } = useQuickBooking();
 
@@ -47,6 +44,15 @@ export default function Studios() {
     return () => window.removeEventListener("scroll", updateScrollDir);
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="loader"></div>
+      </div>
+    );
+  }
+
+
   return (
     <section className="py-10 px-4 ">
       <div className="max-w-6xl mx-auto">
@@ -65,9 +71,9 @@ export default function Studios() {
           initial="hidden"
           animate="visible"
         >
-          {studios.map((studio) => (
+          {studiosData.data.map((studio) => (
             <motion.div
-              key={studio.id}
+              key={studio._id}
               className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
               whileHover={{
                 y: -5,
@@ -99,7 +105,7 @@ export default function Studios() {
                     className="h-full"
                   >
                     <img
-                      src={studio.image || "/placeholder.svg"}
+                      src={studio.thumbnail}
                       alt={studio.name}
                       className="w-full h-full object-cover"
                     />
@@ -112,7 +118,7 @@ export default function Studios() {
                   >
                     <div className="p-4 text-white">
                       <Link
-                        to={`/studio/${studio.id}`}
+                        to={`/studio/${studio.slug}`}
                         className="text-xl font-semibold flex items-center gap-2"
                       >
                         <span>View Details</span>
@@ -130,42 +136,38 @@ export default function Studios() {
                       </h3>
                       <p className="text-gray-600 flex items-center gap-2 mb-3">
                         <i className="fa-solid fa-location-dot text-rose-500"></i>
-                        <span>{studio.location}</span>
+                        <span>{studio.address}</span>
                       </p>
                     </div>
 
                     <div className="flex flex-col items-end">
-                      <StarRating rating={3.5} />
+                      <StarRating rating={studio.ratingAverage} />
                       <span className="text-sm text-gray-500">
-                        5.0 (24 reviews)
+                        {studio.ratingAverage} ({studio.ratingQuantity} reviews)
                       </span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 my-4">
-                    <div className="flex items-center gap-2">
-                      <i className="fa-solid fa-music text-gray-400"></i>
-                      <span className="text-gray-600">
-                        Professional Equipment
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <i className="fa-solid fa-clock text-gray-400"></i>
-                      <span className="text-gray-600">24/7 Availability</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <i className="fa-solid fa-user-group text-gray-400"></i>
-                      <span className="text-gray-600">Engineer Included</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <i className="fa-solid fa-wifi text-gray-400"></i>
-                      <span className="text-gray-600">Free Wi-Fi</span>
-                    </div>
+                    {
+                      studio.facilities.map((facility, index) => (
+
+                        index <= 3 && (
+                          <div className="flex items-center gap-2" key={index}>
+                            <i className="fa-solid fa-ticket"></i>
+                            <span className="text-gray-600">
+                              {facility}
+                            </span>
+                          </div>
+                        )
+
+                      ))
+                    }
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-4 border-t border-gray-100">
                     <p className="text-rose-500 font-bold text-2xl mb-4 sm:mb-0">
-                      100 $ per hour
+                      {studio.pricePerHour} Egp per hour
                     </p>
 
                     <div className="flex gap-3">
@@ -175,10 +177,10 @@ export default function Studios() {
                       </button>
                       <button
                         onClick={() => handleQuickBooking(2, {
-                          image: studio2,
-                          name: "Studio 1",
-                          price: 100,
-                          id: 1
+                          image: studio.thumbnail,
+                          name: studio.name,
+                          price: studio.pricePerHour,
+                          id: studio._id,
                         })}
                         className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors cursor-pointer"
                       >

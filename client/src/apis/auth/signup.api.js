@@ -3,17 +3,19 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import BASE_URL from "../BASE_URL";
 
-const SignupForm = () => {
+const SignupForm = ({ closeModel }) => {
     // Server-side error state
     const [serverError, setServerError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     // Regex for password validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_]).{8,}$/;
 
     // Initial form values
     const initialValues = {
-        userName: "",
+        name: "",
         email: "",
         password: "",
         confirmPassword: ""
@@ -21,7 +23,7 @@ const SignupForm = () => {
 
     // Yup validation schema
     const validationSchema = Yup.object({
-        userName: Yup.string()
+        name: Yup.string()
             .trim()
             .required("Name is required to sign up"),
 
@@ -45,7 +47,7 @@ const SignupForm = () => {
     // useMutation for signup request
     const { mutate: signup, isLoading, isError, isSuccess, error } = useMutation({
         mutationFn: async (data) => {
-            const response = await axios.post("/api/signup", data);
+            const response = await axios.post(BASE_URL + "/auth/signup", data);
             return response.data;
         },
         onError: (err) => {
@@ -54,16 +56,18 @@ const SignupForm = () => {
                 "Something went wrong. Please try again.";
             setServerError(message);
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            setSuccessMessage(data.data); // Set success message
             setServerError(null); // Clear server error on success
+            if (!serverError) {
+                setTimeout(() => closeModel(), 1000) // Close the modal on success
+            }
         }
     });
 
     // Form submission handler
     const onSubmit = (values) => {
-        console.log("Form data", values);
-        alert("Form submitted successfully!");
-        // signup(values);
+        signup(values);
     };
 
     // useFormik hook
@@ -80,7 +84,8 @@ const SignupForm = () => {
         isError,
         isSuccess,
         error,
-        serverError
+        serverError , 
+        successMessage
     };
 };
 
