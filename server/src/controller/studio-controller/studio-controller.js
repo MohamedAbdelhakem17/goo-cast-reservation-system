@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const sharp = require('sharp');
+const mongoose = require("mongoose")
 const { v4: uuidv4 } = require("uuid");
 
 
@@ -69,7 +70,11 @@ exports.getAllStudios = asyncHandler(async (req, res) => {
 // get studio by id
 exports.getStudioById = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const studio = await StudioModel.findOne({ slug: id });
+    const studio = await StudioModel.findOne(
+        mongoose.Types.ObjectId.isValid(id)
+            ? { _id: id }
+            : { slug: id }
+    );
     if (!studio) {
         res.status(404).json({
             status: HTTP_STATUS_TEXT.FAIL,

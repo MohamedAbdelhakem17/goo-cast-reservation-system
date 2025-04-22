@@ -3,17 +3,25 @@ import useGetAllStudios, { DeleteStudio } from '../../../apis/studios/studios.ap
 import { motion, AnimatePresence } from 'framer-motion';
 import Alert from '../../../components/shared/Alert/Alert';
 import Popup from '../../../components/shared/Popup/Popup';
+import Loading from '../../../components/shared/Loading/Loading';
+import { Link, useNavigate } from 'react-router-dom';
+import usePriceFormat from '../../../hooks/usePriceFormat';
 
 const StudioManagement = () => {
     const { data: studiosData, isLoading } = useGetAllStudios();
     const { mutate: deleteStudio } = DeleteStudio();
+    const priceFormat = usePriceFormat();
+    const navigate = useNavigate();
 
     const [selectedStudio, setSelectedStudio] = useState(null);
-    
     const [showSuccess, setShowSuccess] = useState(false);
 
     const handleDelete = (studio) => {
         setSelectedStudio(studio);
+    };
+
+    const handleEdit = (studioId) => {
+        navigate(`/admin-dashboard/studio-management/add?edit=${studioId}`);
     };
 
     const confirmDelete = () => {
@@ -26,22 +34,18 @@ const StudioManagement = () => {
         });
     };
 
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="loader"></div>
-            </div>
-        );
-    }
+    if (isLoading) return <Loading />
 
     return (
         <div className="p-6">
+            {showSuccess && (<Alert type="success">Studio deleted successfully.</Alert>)}
+
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Studio Management</h1>
-                <button className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors">
+                <Link to="/admin-dashboard/studio-management/add" className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors">
                     <i className="fa-solid fa-plus mr-2"></i>
                     Add New Studio
-                </button>
+                </Link>
             </div>
 
             <div className="bg-white rounded-lg shadow overflow-x-auto">
@@ -70,7 +74,7 @@ const StudioManagement = () => {
                                     <div className="text-sm text-gray-500">{studio.address}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{studio.pricePerHour} EGP</div>
+                                    <div className="text-sm text-gray-900">{priceFormat(studio.pricePerHour || studio.basePricePerSlot)} </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm text-gray-900">
@@ -83,7 +87,7 @@ const StudioManagement = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                     <button
                                         className="text-indigo-600 hover:text-indigo-900 mr-3"
-                                        onClick={() => console.log('Edit:', studio._id)}
+                                        onClick={() => handleEdit(studio._id)}
                                     >
                                         <i className="fa-solid fa-edit"></i>
                                     </button>
@@ -123,7 +127,6 @@ const StudioManagement = () => {
                     </Popup>
                 )}
 
-                {showSuccess && (<Alert type="success">Studio deleted successfully.</Alert>)}
             </AnimatePresence>
         </div>
     );

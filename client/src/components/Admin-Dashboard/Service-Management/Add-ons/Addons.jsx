@@ -1,9 +1,13 @@
 import React from 'react'
 import { GetAllAddOns } from '../../../../apis/services/services.api';
+import usePriceFormat from '../../../../hooks/usePriceFormat';
 
 export default function Addons() {
     const { data: addons, isLoading } = GetAllAddOns();
     const TABLE_HEADERS = ['Name', 'Description', 'Price', 'Icon', 'Actions'];
+    
+    const formatPrice = usePriceFormat()
+
     if (isLoading) return (<div className="flex justify-center items-center h-96"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-main"></div></div>);
 
     const handleEdit = (id) => {
@@ -18,16 +22,9 @@ export default function Addons() {
 
     const handleAdd = () => {
         // TODO: Implement add functionality
-       alert('Add new addon');
+        alert('Add new addon');
     };
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-EG', {
-            style: 'currency',
-            currency: 'EGP',
-            minimumFractionDigits: 0
-        }).format(price);
-    };
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
@@ -83,7 +80,7 @@ export default function Addons() {
                                         onClick={() => handleDelete(addon._id)}
                                         className="text-red-600 hover:text-red-900"
                                     >
-                                        Delete 
+                                        Delete
                                     </button>
                                 </td>
                             </tr>

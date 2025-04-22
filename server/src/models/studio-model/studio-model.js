@@ -42,7 +42,6 @@ const studioSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please provide a description"],
             trim: true,
-            maxLength: [500, "Description must be less than 500 characters"],
         },
 
         facilities: {
