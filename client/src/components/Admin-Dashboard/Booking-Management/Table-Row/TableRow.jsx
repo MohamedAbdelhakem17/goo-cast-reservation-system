@@ -3,18 +3,22 @@ import { useState } from 'react'
 import { ChangeBookingStatus } from '../../../../apis/Booking/booking.api';
 import Alert from '../../../shared/Alert/Alert';
 import Popup from '../../../shared/Popup/Popup';
+import usePriceFormat from '../../../../hooks/usePriceFormat';
+import useDateFormat from '../../../../hooks/useDateFormat';
+import useTimeConvert from '../../../../hooks/useTimeConvert';
+import { UpdateStudio } from '../../../../apis/studios/studios.api';
 
-export default function TableRow({ booking, formatDate, setSelectedBooking }) {
-    const convertTo12HourFormat = (time) => {
-        const [hour, minute] = time.split(':');
-        const hour12 = hour % 12 || 12;
-        const amPm = hour < 12 ? 'AM' : 'PM';
-        return `${hour12}:${minute} ${amPm}`;
-    };
+export default function TableRow({ booking, setSelectedBooking }) {
+    const priceFormat = usePriceFormat()
+    const formatDate = useDateFormat()
+    const convertTo12HourFormat = useTimeConvert();
 
-    const { mutate: statusChange, isLoading } = ChangeBookingStatus()
+    const { mutate: statusChange, isLoading: statusLoading } = ChangeBookingStatus()
+    const { mutate: updateStudio, isLoading: updateLoading } = UpdateStudio()
     const [message, setMessage] = useState(null)
     const [confirmPopup, setConfirmPopup] = useState(null)
+    const [editMode, setEditMode] = useState(false)
+    const [editData, setEditData] = useState(null)
 
     const handleStatusChange = () => {
         statusChange({ id: booking._id, status: confirmPopup.status }, {
@@ -28,17 +32,58 @@ export default function TableRow({ booking, formatDate, setSelectedBooking }) {
         })
     }
 
+    const handleEdit = () => {
+        setEditMode(true)
+        setEditData({
+            name: booking?.studio?.name,
+            price: booking?.studio?.pricePerHour,
+            status: booking.status
+        })
+    }
+
+    const handleUpdate = () => {
+        if (!editData) return;
+
+        updateStudio({
+            id: booking.studio._id,
+            data: {
+                name: editData.name,
+                pricePerHour: editData.price
+            }
+        }, {
+            onSuccess: () => {
+                setMessage("Studio updated successfully");
+                setEditMode(false);
+                setEditData(null);
+                setTimeout(() => {
+                    setMessage(null);
+                }, 1000);
+            }
+        })
+    }
+
     return (
         <>
             <motion.tr
-                onDoubleClick={() => setSelectedBooking(booking)}
+                onDoubleClick={() => !editMode && setSelectedBooking(booking)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 className="hover:bg-gray-50"
             >
                 <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 cursor-pointer">{booking?.studio?.name || "Studio Name"}</div>
+                    {editMode ? (
+                        <input
+                            type="text"
+                            value={editData.name}
+                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                            className="border rounded px-2 py-1 text-sm"
+                        />
+                    ) : (
+                        <div className="text-sm font-medium text-gray-900 cursor-pointer">
+                            {booking?.studio?.name || "Studio Name"}
+                        </div>
+                    )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{formatDate(booking.date)}</div>
@@ -52,7 +97,7 @@ export default function TableRow({ booking, formatDate, setSelectedBooking }) {
                     <div className="text-sm text-gray-900">{booking.duration} hour(s)</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{booking.totalPrice.toLocaleString()} EGP</div>
+                    <div className="text-sm font-medium text-gray-900">{priceFormat(booking.totalPrice)} </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -63,22 +108,51 @@ export default function TableRow({ booking, formatDate, setSelectedBooking }) {
                     </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-md font-bold space-x-2">
-                    {booking.status === 'pending' && (
+                    {editMode ? (
                         <>
                             <button
-                                onClick={() => setConfirmPopup({ status: 'approved' })}
-                                disabled={isLoading}
+                                onClick={handleUpdate}
+                                disabled={updateLoading}
                                 className="text-green-600 hover:text-green-900 disabled:opacity-50"
                             >
-                                Approve
+                                Save
                             </button>
                             <button
-                                onClick={() => setConfirmPopup({ status: 'rejected' })}
-                                disabled={isLoading}
-                                className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                onClick={() => {
+                                    setEditMode(false)
+                                    setEditData(null)
+                                }}
+                                className="text-gray-600 hover:text-gray-900"
                             >
-                                Reject
+                                Cancel
                             </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                onClick={handleEdit}
+                                className="text-blue-600 hover:text-blue-900 mr-2"
+                            >
+                                <i className="fa-solid fa-edit"></i>
+                            </button>
+                            {booking.status === 'pending' && (
+                                <>
+                                    <button
+                                        onClick={() => setConfirmPopup({ status: 'approved' })}
+                                        disabled={statusLoading}
+                                        className="text-green-600 hover:text-green-900 disabled:opacity-50"
+                                    >
+                                        Approve
+                                    </button>
+                                    <button
+                                        onClick={() => setConfirmPopup({ status: 'rejected' })}
+                                        disabled={statusLoading}
+                                        className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                    >
+                                        Reject
+                                    </button>
+                                </>
+                            )}
                         </>
                     )}
                 </td>
@@ -108,7 +182,7 @@ export default function TableRow({ booking, formatDate, setSelectedBooking }) {
                             </button>
                             <button
                                 onClick={handleStatusChange}
-                                disabled={isLoading}
+                                disabled={statusLoading}
                                 className={`cursor-pointer px-4 py-2 ${confirmPopup.status === 'approved' ? 'bg-green-600 hover:bg-green-700' : 'bg-main/90 hover:bg-main'} text-white rounded-lg  transition-colors`}
                             >
                                 Confirm

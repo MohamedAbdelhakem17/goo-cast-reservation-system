@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { GetAllPackages } from '../../../../apis/services/services.api';
+import usePriceFormat from '../../../../hooks/usePriceFormat';
 
 export default function Packages() {
     const { data: packages, isLoading } = GetAllPackages();
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedPackage, setSelectedPackage] = useState(null);
+
+    const formatPrice = usePriceFormat()
 
     if (isLoading) return (
         <div className="flex justify-center items-center h-96">
@@ -23,14 +26,6 @@ export default function Packages() {
             // TODO: Implement delete functionality
             console.log('Delete package:', id);
         }
-    };
-
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-EG', {
-            style: 'currency',
-            currency: 'EGP',
-            minimumFractionDigits: 0
-        }).format(price);
     };
 
     function PriceCard({ title, price, saving }) {
