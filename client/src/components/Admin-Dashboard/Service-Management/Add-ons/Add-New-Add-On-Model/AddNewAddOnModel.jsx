@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { motion, AnimatePresence } from 'framer-motion'
 import Input from '../../../../shared/Input/Input'
 import Alert from '../../../../shared/Alert/Alert'
 import { AddNewAddOn } from '../../../../../apis/services/services.api'
+import { useToast } from '../../../../../context/Toaster-Context/ToasterContext'
 
 const validationSchema = Yup.object({
     name: Yup.string()
@@ -21,11 +21,9 @@ const validationSchema = Yup.object({
 })
 
 export default function AddNewAddOnModel({ closeModel }) {
-    const [showSuccessAlert, setShowSuccessAlert] = useState(false)
-    const [showErrorAlert, setShowErrorAlert] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
 
-    const { mutate: addNewAddOn } = AddNewAddOn()
+    const { mutate: addNewAddOn, isLoading } = AddNewAddOn()
+    const { addToast } = useToast()
 
     const formik = useFormik({
         initialValues: {
@@ -36,32 +34,21 @@ export default function AddNewAddOnModel({ closeModel }) {
         },
         validationSchema,
         onSubmit: async (values) => {
-            try {
-                await addNewAddOn(values)
-                setShowSuccessAlert(true)
-                setTimeout(() => {
+            addNewAddOn(values, {
+                onSuccess: () => {
+                    addToast('Add-on added successfully', 'success')
                     closeModel()
-                }, 2000)
-            } catch (error) {
-                setErrorMessage(error.message || 'Something went wrong')
-                setShowErrorAlert(true)
-                setTimeout(() => {
-                    setShowErrorAlert(false)
-                }, 3000)
-            }
+                },
+                onError: (error) => {
+                    addToast(error.message || 'Something went wrong', 'error')
+                }
+            })
         }
     })
 
     return (
         <>
-            <AnimatePresence>
-                {showSuccessAlert && (
-                    <Alert type="success">Add-on created successfully!</Alert>
-                )}
-                {showErrorAlert && (
-                    <Alert type="error">{errorMessage}</Alert>
-                )}
-            </AnimatePresence>
+
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -122,10 +109,10 @@ export default function AddNewAddOnModel({ closeModel }) {
 
                     <motion.button
                         type="submit"
+                        disabled={!formik.isValid || isLoading}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full bg-main text-white py-3 rounded-md font-medium hover:bg-main/90 transition-colors"
-                        disabled={formik.isSubmitting}
+                        className="w-full bg-main text-white py-3 rounded-md font-medium hover:bg-main/90 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                     >
                         {formik.isSubmitting ? 'Adding...' : 'Add Add-On'}
                     </motion.button>
