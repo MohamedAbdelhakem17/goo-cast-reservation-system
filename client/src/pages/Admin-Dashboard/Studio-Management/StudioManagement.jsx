@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useGetAllStudios, { DeleteStudio } from '../../../apis/studios/studios.api';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import Alert from '../../../components/shared/Alert/Alert';
 import Popup from '../../../components/shared/Popup/Popup';
 import Loading from '../../../components/shared/Loading/Loading';

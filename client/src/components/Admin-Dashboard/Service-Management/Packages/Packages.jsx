@@ -1,31 +1,46 @@
 import React, { useState } from 'react';
-import { GetAllPackages } from '../../../../apis/services/services.api';
+import { DeletePackage, GetAllPackages } from '../../../../apis/services/services.api';
 import usePriceFormat from '../../../../hooks/usePriceFormat';
+import AddNewPackageModel from './Add-New-Package-Model/AddNewPackageModel';
+import { motion, AnimatePresence } from 'framer-motion'
+import Alert from '../../../shared/Alert/Alert';
+import Loading from '../../../shared/Loading/Loading';
+import Popup from '../../../shared/Popup/Popup';
 
 export default function Packages() {
     const { data: packages, isLoading } = GetAllPackages();
+    const { mutate: deletePackage } = DeletePackage()
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedPackage, setSelectedPackage] = useState(null);
+    const [deleteMessage, setDeleteMessage] = useState(null);
+    const [deletedPackage, setDeletedPackage] = useState(null);
 
     const formatPrice = usePriceFormat()
 
-    if (isLoading) return (
-        <div className="flex justify-center items-center h-96">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-main"></div>
-        </div>
-    );
+    if (isLoading) return <Loading />
 
     const handleEdit = (pkg) => {
         setSelectedPackage(pkg);
         setShowEditModal(true);
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this package?')) {
-            // TODO: Implement delete functionality
-            console.log('Delete package:', id);
-        }
+    const handleDelete = (pke) => {
+        setDeletedPackage(pke);
+    }
+
+    const confirmDelete = (id) => {
+        deletePackage(id, {
+            onSuccess: (response) => {
+                setDeleteMessage(response.message);
+                setTimeout(() => {
+                    setDeleteMessage(null);
+                }, 1000);
+            },
+            onError: (error) => {
+                console.error('Error deleting package:', error);
+            }
+        });
     };
 
     function PriceCard({ title, price, saving }) {
@@ -95,7 +110,7 @@ export default function Packages() {
                                     <i className="fa-solid fa-edit"></i>
                                 </button>
                                 <button
-                                    onClick={() => handleDelete(pkg._id)}
+                                    onClick={() => handleDelete(pkg)}
                                     className="text-red-600 hover:bg-red-50 p-2 rounded-full"
                                 >
                                     <i className="fa-solid fa-trash"></i>
@@ -107,7 +122,48 @@ export default function Packages() {
             </div>
 
             {/* TODO: Add Modal Component */}
-            {/* {showAddModal && <AddPackageModal onClose={() => setShowAddModal(false)} />} */}
+            <AnimatePresence>
+
+
+                {deleteMessage && <Alert type="success">{deleteMessage}</Alert>}
+
+                {/* Delete Dialog */}
+
+                {deletedPackage && (
+                    <Popup>
+                        <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
+                        <p className="mb-4">Are you sure you want to delete this Package?</p>
+                        <p className="text-red-500 text-center mb-6"><strong>{deletedPackage.name}</strong></p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setDeletedPackage(null)}
+                                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </Popup>
+                )}
+            </AnimatePresence>
+            {showAddModal && (
+                <AnimatePresence>
+                    <motion.div
+                        className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50 px-4 overflow-Y-scroll"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <AddNewPackageModel closeModel={() => setShowAddModal(false)} />
+                    </motion.div>
+                </AnimatePresence>
+            )}
             {/* {showEditModal && <EditPackageModal package={selectedPackage} onClose={() => setShowEditModal(false)} />} */}
         </div>
     );

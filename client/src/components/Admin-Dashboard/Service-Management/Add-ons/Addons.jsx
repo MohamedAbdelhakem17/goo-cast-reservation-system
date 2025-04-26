@@ -5,14 +5,16 @@ import AddNewAddOnModel from './Add-New-Add-On-Model/AddNewAddOnModel';
 import usePriceFormat from '../../../../hooks/usePriceFormat';
 import Alert from '../../../shared/Alert/Alert';
 import Input from '../../../shared/Input/Input';
+import Popup from '../../../shared/Popup/Popup';
 
 export default function Addons() {
     const { data: addons, isLoading } = GetAllAddOns();
     const { mutate: deleteAddOn } = DeleteAddOn();
     const { mutate: updateAddOn } = UpdateAddOn();
     const [addNewAddOn, setAddNewAddOn] = useState(false);
-    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-    const [showUpdateAlert, setShowUpdateAlert] = useState(false);
+    const [deleteMessage, setDeleteMessage] = useState(false);
+    const [deletedAddon, setDeletedAddon] = useState(null);
+    const [editMessage, setEditMessage] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [editFormData, setEditFormData] = useState({
         name: '',
@@ -37,19 +39,21 @@ export default function Addons() {
     };
 
     const handleUpdate = async () => {
-        try {
-            await updateAddOn({
-                id: editingId,
-                data: editFormData
-            });
-            setEditingId(null);
-            setShowUpdateAlert(true);
-            setTimeout(() => {
-                setShowUpdateAlert(false);
-            }, 3000);
-        } catch (error) {
-            console.error('Error updating add-on:', error);
-        }
+        updateAddOn({
+            id: editingId,
+            data: editFormData
+        }, {
+            onSuccess: (response) => {
+                setEditMessage(response.message);
+                setEditingId(null);
+                setTimeout(() => {
+                    setEditMessage(false);
+                }, 1000);
+            },
+            onError: (error) => {
+                console.error('Error updating add-on:', error);
+            }
+        });
     };
 
     const handleCancelEdit = () => {
@@ -62,16 +66,24 @@ export default function Addons() {
         });
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await deleteAddOn(id);
-            setShowDeleteAlert(true);
-            setTimeout(() => {
-                setShowDeleteAlert(false);
-            }, 3000);
-        } catch (error) {
-            console.error('Error deleting add-on:', error);
-        }
+    const handleDelete = (addons) => {
+        setDeletedAddon(addons);
+        console.log(addons);
+    }
+    const confirmDelete = async () => {
+        deleteAddOn(deletedAddon._id, {
+            onSuccess: (response) => {
+                setDeleteMessage(response.message);
+                setDeletedAddon(null);
+                setTimeout(() => {
+                    setDeleteMessage(false);
+                }, 1000);
+            },
+            onError: (error) => {
+                console.error('Error deleting add-on:', error);
+            }
+        });
+
     };
 
     const handleAdd = () => {
@@ -81,11 +93,11 @@ export default function Addons() {
     return (
         <div className="p-6">
             <AnimatePresence>
-                {showDeleteAlert && (
-                    <Alert type="success">Add-on deleted successfully!</Alert>
+                {deleteMessage && (
+                    <Alert type="success">{deleteMessage}</Alert>
                 )}
-                {showUpdateAlert && (
-                    <Alert type="success">Add-on updated successfully!</Alert>
+                {editMessage && (
+                    <Alert type="success">{editMessage}</Alert>
                 )}
             </AnimatePresence>
 
@@ -191,7 +203,7 @@ export default function Addons() {
                                                 Edit
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(addon._id)}
+                                                onClick={() => handleDelete(addon)}
                                                 className="text-red-600 hover:text-red-900"
                                             >
                                                 Delete
@@ -205,8 +217,32 @@ export default function Addons() {
                 </table>
             </div>
 
-            {addNewAddOn && (
-                <AnimatePresence>
+            <AnimatePresence>
+                {/* Delete Dialog */}
+                {
+
+                    deletedAddon && <Popup>
+                        <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
+                        <p className="mb-4">Are you sure you want to delete this Add-on?</p>
+                        <p className="text-red-500 text-center mb-6"><strong>{deletedAddon.name}</strong></p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setDeletedAddon(null)}
+                                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </Popup>
+                }
+
+                {addNewAddOn && (
                     <motion.div
                         className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50 px-4"
                         initial={{ opacity: 0 }}
@@ -216,8 +252,8 @@ export default function Addons() {
                     >
                         <AddNewAddOnModel closeModel={() => setAddNewAddOn(false)} />
                     </motion.div>
-                </AnimatePresence>
-            )}
+                )}
+            </AnimatePresence>
         </div>
     );
 }
