@@ -3,6 +3,8 @@ import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import BASE_URL from '../BASE_URL';
+import { useToast } from '../../context/Toaster-Context/ToasterContext';
+import { useNavigate } from 'react-router-dom';
 
 const initialValues = {
     name: '',
@@ -29,6 +31,7 @@ const validationSchema = Yup.object({
         .typeError('Price must be a number')
         .min(0, 'Base price must be greater than or equal to 0')
         .required('Base price is required'),
+    isFixedHourly: Yup.boolean(), // Added this
     description: Yup.string()
         .required('Description is required')
         .min(50, 'Description must be at least 50 characters'),
@@ -50,7 +53,7 @@ const validationSchema = Yup.object({
         .test('fileType', 'Unsupported file type', value =>
             !value || ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type)
         ),
-        imagesGallery: Yup.array()
+    imagesGallery: Yup.array()
         .min(1, 'At least one gallery image is required')
         .max(5, 'Maximum 5 images allowed')
         .test('fileSize', 'One or more files are too large', values =>
@@ -70,20 +73,31 @@ const AddStudio = () => {
         mutationFn: async (values) => {
             const formData = new FormData();
 
-            // Handle basic fields
             Object.entries(values).forEach(([key, value]) => {
-                if (key === 'gallery' && Array.isArray(value)) {
-                    value.forEach((file) => {
-                        formData.append('imagesGallery', file);
-                    });
-                } else if (key === 'thumbnail' && value) {
-                    formData.append('thumbnail', value);
-                } else if (Array.isArray(value)) {
-                    value.forEach(item => formData.append(`${key}[]`, item));
-                } else if (key !== 'imagesGallery' && value !== null) {
-                    formData.append(key, value);
+                if (value === null || value === undefined) return;
+
+                if (key === 'imagesGallery' && Array.isArray(value)) {
+                    value.forEach(file => formData.append('imagesGallery', file));
+                    return;
                 }
+
+                if (key === 'thumbnail' && value) {
+                    formData.append('thumbnail', value);
+                    return;
+                }
+
+                if (Array.isArray(value)) {
+                    value.forEach(item => formData.append(`${key}[]`, item));
+                    return;
+                }
+
+                formData.append(key, value);
             });
+
+            // For debugging formData content
+            for (let pair of formData.entries()) {
+                console.log(`${pair[0]}:`, pair[1]);
+            }
 
             const { data } = await axios.post(`${BASE_URL}/studio`, formData, {
                 headers: {
@@ -98,15 +112,29 @@ const AddStudio = () => {
         },
         onError: (error) => {
             console.error("Error adding studio:", error);
-            throw error;
+            // No need to throw error here
         }
     });
 
+    const { addToast } = useToast()
+        const navigate = useNavigate();
+    
     const formik = useFormik({
         initialValues,
         validationSchema,
         onSubmit: (values) => {
-            addStudio(values);
+            addStudio(values, {
+                onSuccess: (response) => {
+                    addToast(response.message || 'Studio added successfully', 'success')
+                    setTimeout(() => {
+                        navigate('/admin-dashboard/studio-management')
+                    }, 1500)
+                },
+                onError: (error) => {
+                   addToast(error.response?.data?.message || 'Something went wrong', 'error')
+                   console.error("Error adding studio:", error);
+                }
+            });
         }
     });
 

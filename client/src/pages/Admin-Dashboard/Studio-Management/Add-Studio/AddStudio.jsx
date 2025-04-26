@@ -1,58 +1,98 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
 import { Editor } from 'primereact/editor';
 import Input from '../../../../components/shared/Input/Input';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import AddNewStudio from '../../../../apis/studios/Add.Studio.Api';
 import Alert from '../../../../components/shared/Alert/Alert';
+import { produce } from 'immer';
+
+const initialState = {
+    facilities: [],
+    equipment: [],
+    images: [],
+    thumbnail: null,
+    currentFacility: '',
+    currentEquipment: '',
+    error: '',
+    success: false,
+};
+
+function reducer(state, action) {
+    return produce(state, draft => {
+        switch (action.type) {
+            case 'SET_ERROR':
+                draft.error = action.payload;
+                break;
+            case 'SET_SUCCESS':
+                draft.success = action.payload;
+                break;
+            case 'SET_CURRENT_FACILITY':
+                draft.currentFacility = action.payload;
+                break;
+            case 'SET_CURRENT_EQUIPMENT':
+                draft.currentEquipment = action.payload;
+                break;
+            case 'ADD_FACILITY':
+                draft.facilities.push(draft.currentFacility);
+                draft.currentFacility = '';
+                break;
+            case 'REMOVE_FACILITY':
+                draft.facilities.splice(action.payload, 1);
+                break;
+            case 'ADD_EQUIPMENT':
+                draft.equipment.push(draft.currentEquipment);
+                draft.currentEquipment = '';
+                break;
+            case 'REMOVE_EQUIPMENT':
+                draft.equipment.splice(action.payload, 1);
+                break;
+            case 'SET_THUMBNAIL':
+                draft.thumbnail = action.payload;
+                break;
+            case 'SET_IMAGES':
+                draft.images = action.payload;
+                break;
+            default:
+                break;
+        }
+    });
+}
 
 export default function AddStudio() {
-    const navigate = useNavigate();
-    const { formik, isLoading } = AddNewStudio(); // تأكد أن handleSubmit مضمّن في الهوك
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
+    const { formik, isLoading } = AddNewStudio();
 
-    const [facilities, setFacilities] = useState([]);
-    const [equipment, setEquipment] = useState([]);
-    const [images, setImages] = useState([]);
-    const [thumbnail, setThumbnail] = useState(null);
-    const [currentFacility, setCurrentFacility] = useState('');
-    const [currentEquipment, setCurrentEquipment] = useState('');
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     const handleAddFacility = () => {
-        if (currentFacility.trim()) {
-            const updated = [...facilities, currentFacility];
-            setFacilities(updated);
-            formik.setFieldValue('facilities', updated);
-            setCurrentFacility('');
+        if (state.currentFacility.trim()) {
+            dispatch({ type: 'ADD_FACILITY' });
+            formik.setFieldValue('facilities', [...state.facilities, state.currentFacility]);
         }
     };
 
     const handleRemoveFacility = (index) => {
-        const updated = facilities.filter((_, i) => i !== index);
-        setFacilities(updated);
+        dispatch({ type: 'REMOVE_FACILITY', payload: index });
+        const updated = state.facilities.filter((_, i) => i !== index);
         formik.setFieldValue('facilities', updated);
     };
 
     const handleAddEquipment = () => {
-        if (currentEquipment.trim()) {
-            const updated = [...equipment, currentEquipment];
-            setEquipment(updated);
-            formik.setFieldValue('equipment', updated);
-            setCurrentEquipment('');
+        if (state.currentEquipment.trim()) {
+            dispatch({ type: 'ADD_EQUIPMENT' });
+            formik.setFieldValue('equipment', [...state.equipment, state.currentEquipment]);
         }
     };
 
     const handleRemoveEquipment = (index) => {
-        const updated = equipment.filter((_, i) => i !== index);
-        setEquipment(updated);
+        dispatch({ type: 'REMOVE_EQUIPMENT', payload: index });
+        const updated = state.equipment.filter((_, i) => i !== index);
         formik.setFieldValue('equipment', updated);
     };
 
     const handleThumbnailUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setThumbnail(file);
+            dispatch({ type: 'SET_THUMBNAIL', payload: file });
             formik.setFieldValue('thumbnail', file);
         }
     };
@@ -60,25 +100,23 @@ export default function AddStudio() {
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         if (files.length > 5) return;
-        setImages(files);
+        dispatch({ type: 'SET_IMAGES', payload: files });
         formik.setFieldValue('imagesGallery', files);
     };
 
-    console.log(!formik.isValid, "Formik Valid");
-    console.log(formik.errors, "Formik Errors");
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="container mx-auto p-8">
-            <AnimatePresence>
-                {error && <Alert type="error">{error}</Alert>}
-                {success && <Alert type="success">Studio added successfully!</Alert>}
-            </AnimatePresence>
 
             <div className="p-8">
                 <h2 className="text-3xl font-bold mb-8 text-gray-800 border-b pb-4 rounded-md border-main text-center">
                     Add New Studio
                 </h2>
 
-                <form onSubmit={formik.handleSubmit} className="space-y-8">
+                <form onSubmit={(e)=>{
+                    e.preventDefault();
+                    formik.handleSubmit();
+                }} className="space-y-8">
+                    {/* Studio Basic Info */}
                     <div className="grid md:grid-cols-2 gap-6">
                         <Input
                             label="Studio Name"
@@ -103,6 +141,7 @@ export default function AddStudio() {
                         />
                     </div>
 
+                    {/* Price + Fixed Hourly */}
                     <div className="flex gap-6">
                         <Input
                             type="number"
@@ -129,6 +168,7 @@ export default function AddStudio() {
                         </div>
                     </div>
 
+                    {/* Description */}
                     <div className="bg-gray-50 rounded-md p-6">
                         <label className="block text-sm font-medium mb-2 text-gray-700">Description</label>
                         <Editor
@@ -141,13 +181,13 @@ export default function AddStudio() {
                         )}
                     </div>
 
-                    {/* Facilities Input */}
+                    {/* Facilities */}
                     <div className="bg-gray-50 rounded-lg p-4 w-full">
                         <label className="block text-sm font-medium mb-4 text-gray-700">Facilities</label>
                         <div className="flex gap-5 mb-2 w-full items-center">
                             <Input
-                                value={currentFacility}
-                                onChange={(e) => setCurrentFacility(e.target.value)}
+                                value={state.currentFacility}
+                                onChange={(e) => dispatch({ type: 'SET_CURRENT_FACILITY', payload: e.target.value })}
                                 placeholder="Enter facility"
                                 className="w-full"
                             />
@@ -161,7 +201,7 @@ export default function AddStudio() {
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-2">
-                            {facilities.map((facility, index) => (
+                            {state.facilities.map((facility, index) => (
                                 <motion.div
                                     key={index}
                                     initial={{ opacity: 0, scale: 0.9 }}
@@ -181,13 +221,13 @@ export default function AddStudio() {
                         </div>
                     </div>
 
-                    {/* Equipment Input */}
+                    {/* Equipment */}
                     <div className="bg-gray-50 rounded-lg p-4 w-full">
                         <label className="block text-sm font-medium mb-4 text-gray-700">Equipment</label>
                         <div className="flex gap-5 mb-2 w-full items-center">
                             <Input
-                                value={currentEquipment}
-                                onChange={(e) => setCurrentEquipment(e.target.value)}
+                                value={state.currentEquipment}
+                                onChange={(e) => dispatch({ type: 'SET_CURRENT_EQUIPMENT', payload: e.target.value })}
                                 placeholder="Enter equipment"
                                 className="w-full"
                             />
@@ -201,7 +241,7 @@ export default function AddStudio() {
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-2">
-                            {equipment.map((item, index) => (
+                            {state.equipment.map((item, index) => (
                                 <motion.div
                                     key={index}
                                     initial={{ opacity: 0, scale: 0.9 }}
@@ -221,7 +261,7 @@ export default function AddStudio() {
                         </div>
                     </div>
 
-                    {/* Studio Hours */}
+                    {/* Studio Hours + Images */}
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="bg-gray-50 rounded-lg p-6">
                             <label className="block text-sm font-medium mb-4 text-gray-700">Studio Hours</label>
@@ -247,7 +287,6 @@ export default function AddStudio() {
                             </div>
                         </div>
 
-                        {/* Image Uploads */}
                         <div className="bg-gray-50 rounded-lg p-6">
                             <label className="block text-sm font-medium mb-4 text-gray-700">Images</label>
                             <div className="space-y-4">
@@ -259,7 +298,6 @@ export default function AddStudio() {
                                         onChange={handleThumbnailUpload}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
-
                                 </div>
 
                                 <div>
@@ -276,9 +314,9 @@ export default function AddStudio() {
                         </div>
                     </div>
 
+                    {/* Submit Button */}
                     <motion.button
                         type="submit"
-                        disabled={!formik.isValid}
                         className="bg-main/70 text-white px-8 py-3 rounded-lg hover:bg-main transition disabled:opacity-50"
                         whileHover={{ scale: !isLoading ? 1.02 : 1 }}
                         whileTap={{ scale: !isLoading ? 0.98 : 1 }}

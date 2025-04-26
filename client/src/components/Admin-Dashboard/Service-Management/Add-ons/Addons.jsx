@@ -4,16 +4,14 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { DeleteAddOn, GetAllAddOns, UpdateAddOn } from '../../../../apis/services/services.api'
 import AddNewAddOnModel from './Add-New-Add-On-Model/AddNewAddOnModel'
 import usePriceFormat from '../../../../hooks/usePriceFormat'
-import Alert from '../../../shared/Alert/Alert'
 import Input from '../../../shared/Input/Input'
 import Popup from '../../../shared/Popup/Popup'
+import { useToast } from '../../../../context/Toaster-Context/ToasterContext'
 
 // Initial State
 const initialState = {
     addNewAddOn: false,
-    deleteMessage: false,
     deletedAddon: null,
-    editMessage: false,
     editingId: null,
     editFormData: {
         name: '',
@@ -32,8 +30,6 @@ const actions = {
     CLOSE_ADD_NEW: 'CLOSE_ADD_NEW',
     SET_DELETE_ADDON: 'SET_DELETE_ADDON',
     CLEAR_DELETE_ADDON: 'CLEAR_DELETE_ADDON',
-    SET_DELETE_MESSAGE: 'SET_DELETE_MESSAGE',
-    SET_EDIT_MESSAGE: 'SET_EDIT_MESSAGE'
 }
 
 // Reducer
@@ -68,12 +64,6 @@ function reducer(state, action) {
             case actions.CLEAR_DELETE_ADDON:
                 draft.deletedAddon = null
                 break
-            case actions.SET_DELETE_MESSAGE:
-                draft.deleteMessage = action.payload
-                break
-            case actions.SET_EDIT_MESSAGE:
-                draft.editMessage = action.payload
-                break
             default:
                 break
         }
@@ -85,6 +75,7 @@ export default function Addons() {
     const { data: addons, isLoading } = GetAllAddOns()
     const { mutate: deleteAddOn } = DeleteAddOn()
     const { mutate: updateAddOn } = UpdateAddOn()
+    const { addToast } = useToast()
     const formatPrice = usePriceFormat()
 
     const [state, dispatch] = useReducer(reducer, initialState)
@@ -107,11 +98,8 @@ export default function Addons() {
             data: state.editFormData
         }, {
             onSuccess: (response) => {
-                dispatch({ type: actions.SET_EDIT_MESSAGE, payload: response.message })
+                addToast(response.message, 'success')
                 dispatch({ type: actions.CANCEL_EDIT })
-                setTimeout(() => {
-                    dispatch({ type: actions.SET_EDIT_MESSAGE, payload: false })
-                }, 1000)
             },
             onError: (error) => {
                 console.error('Error updating add-on:', error)
@@ -126,11 +114,8 @@ export default function Addons() {
     const confirmDelete = () => {
         deleteAddOn(state.deletedAddon._id, {
             onSuccess: (response) => {
-                dispatch({ type: actions.SET_DELETE_MESSAGE, payload: response.message })
+                addToast(response.message, 'success')
                 dispatch({ type: actions.CLEAR_DELETE_ADDON })
-                setTimeout(() => {
-                    dispatch({ type: actions.SET_DELETE_MESSAGE, payload: false })
-                }, 1000)
             },
             onError: (error) => {
                 console.error('Error deleting add-on:', error)
@@ -144,11 +129,6 @@ export default function Addons() {
 
     return (
         <div className="p-6">
-            <AnimatePresence>
-                {state.deleteMessage && (<Alert type="success">{state.deleteMessage}</Alert>)}
-                {state.editMessage && (<Alert type="success">{state.editMessage}</Alert>)}
-            </AnimatePresence>
-
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Service Add-ons</h2>
                 <button
