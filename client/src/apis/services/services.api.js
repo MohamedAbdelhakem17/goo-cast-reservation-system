@@ -19,6 +19,74 @@ export const GetAllPackages = () => {
     });
 };
 
+export const AddNewPackage = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data) => {
+            try {
+                const response = await axios.post(`${BASE_URL}/hourly-packages`, data, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: "Bearer " + localStorage.getItem("token"),
+                    },
+                });
+                return response.data;
+            } catch (error) {
+                console.error("Error adding new package:", error);
+                throw error;
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["packages"]);
+        },
+    });
+}
+
+export const DeletePackage = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (packageId) => {
+            try {
+                const { data } = await axios.delete(`${BASE_URL}/hourly-packages/${packageId}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: "Bearer " + localStorage.getItem("token"),
+                    },
+                });
+                return data;
+            } catch (error) {
+                console.error("Error deleting package:", error);
+                throw error;
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["packages"]);
+        },
+    });
+}
+
+export  const UpdatePackage = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ id, data }) => {
+            try {
+                const response = await axios.put(`${BASE_URL}/hourly-packages/${id}`, data, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: "Bearer " + localStorage.getItem("token"),
+                    },
+                });
+                return response.data;
+            } catch (error) {
+                console.error("Error updating package:", error);
+                throw error;
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["packages"]);
+        },
+    });     
+}
 
 // =========== ADD-ONS ============
 export const GetAllAddOns = () => {
