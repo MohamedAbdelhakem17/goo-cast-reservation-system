@@ -1,11 +1,12 @@
 import React, { useReducer } from 'react';
-import { DeletePackage, GetAllPackages } from '../../../../apis/services/services.api';
+import { DeletePackage, GetAllPackages, UpdatePackage } from '../../../../apis/services/services.api';
 import usePriceFormat from '../../../../hooks/usePriceFormat';
 import AddNewPackageModel from './Add-New-Package-Model/AddNewPackageModel';
 import { motion, AnimatePresence } from 'framer-motion';
 import Alert from '../../../shared/Alert/Alert';
 import Loading from '../../../shared/Loading/Loading';
 import Popup from '../../../shared/Popup/Popup';
+import Input from '../../../shared/Input/Input';
 import { produce } from 'immer';
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
     selectedPackage: null,
     deleteMessage: null,
     deletedPackage: null,
+    editingPackage: null,
 };
 
 function reducer(state, action) {
@@ -45,6 +47,23 @@ function reducer(state, action) {
             case 'CLEAR_DELETE_MESSAGE':
                 draft.deleteMessage = null;
                 break;
+            case 'START_EDIT':
+                draft.editingPackage = { ...action.payload };
+                break;
+            case 'CANCEL_EDIT':
+                draft.editingPackage = null;
+                break;
+            case 'UPDATE_EDIT_FIELD':
+                if (draft.editingPackage) {
+                    const { field, value } = action.payload;
+                    if (field.includes('.')) {
+                        const [parent, child] = field.split('.');
+                        draft.editingPackage[parent][child] = value;
+                    } else {
+                        draft.editingPackage[field] = value;
+                    }
+                }
+                break;
             default:
                 break;
         }
@@ -54,13 +73,42 @@ function reducer(state, action) {
 export default function Packages() {
     const { data: packages, isLoading } = GetAllPackages();
     const { mutate: deletePackage } = DeletePackage();
+    const { mutate: updatePackage } = UpdatePackage();
     const formatPrice = usePriceFormat();
     const [state, dispatch] = useReducer(reducer, initialState);
 
     if (isLoading) return <Loading />;
 
     const handleEdit = (pkg) => {
-        dispatch({ type: 'SHOW_EDIT_MODAL', payload: pkg });
+        dispatch({ type: 'START_EDIT', payload: pkg });
+    };
+
+    const handleSave = () => {
+        if (!state.editingPackage) return;
+
+        updatePackage(
+            {
+                id: state.editingPackage._id,
+                data: state.editingPackage
+            },
+            {
+                onSuccess: () => {
+                    dispatch({ type: 'CANCEL_EDIT' });
+                },
+                onError: (error) => {
+                    console.error('Error updating package:', error);
+                }
+            }
+        );
+    };
+
+
+    const handleCancelEdit = () => {
+        dispatch({ type: 'CANCEL_EDIT' });
+    };
+
+    const handleInputChange = (field, value) => {
+        dispatch({ type: 'UPDATE_EDIT_FIELD', payload: { field, value } });
     };
 
     const handleDelete = (pkg) => {
@@ -115,44 +163,176 @@ export default function Packages() {
                 {packages?.data.map((pkg) => (
                     <div key={pkg._id} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                         <div className="w-12 h-12 bg-main/10 rounded-full flex items-center justify-center my-2">
+
                             <i className={`fa-solid ${pkg.icon} text-main text-xl`}></i>
                         </div>
                         <div className="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 className="text-xl font-semibold text-gray-800">{pkg.name}</h3>
-                                <p className="text-sm text-gray-600">{pkg.description}</p>
+                            <div className="w-full">
+                                {state.editingPackage?._id === pkg._id ? (
+                                    <>
+                                        <Input
+                                            type="text"
+                                            value={state.editingPackage.name}
+                                            onChange={(e) => handleInputChange('name', e.target.value)}
+                                            placeholder="Enter package name"
+                                            label="Package Name"
+                                            className="mb-2"
+                                        />
+                                        <Input
+                                            value={state.editingPackage.description}
+                                            onChange={(e) => handleInputChange('description', e.target.value)}
+                                            placeholder="Enter package description"
+                                            label="Description"
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <h3 className="text-xl font-semibold text-gray-800">{pkg.name}</h3>
+                                        <p className="text-sm text-gray-600">{pkg.description}</p>
+                                    </>
+                                )}
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <div className="grid gap-4">
-                                <PriceCard title="2 Hours" price={pkg.prices.twoHours} saving={0} />
-                                <PriceCard title="Half Day" price={pkg.prices.halfDay} saving={pkg.savings.halfDay} />
-                                <PriceCard title="Full Day" price={pkg.prices.fullDay} saving={pkg.savings.fullDay} />
+                                {state.editingPackage?._id === pkg._id ? (
+                                    <>
+                                        <div className="bg-gray-50 p-3 rounded-lg">
+                                            <h4 className="text-sm font-medium text-gray-600 mb-2">2 Hours</h4>
+                                            <Input
+                                                type="number"
+                                                value={state.editingPackage.prices.twoHours}
+                                                onChange={(e) => handleInputChange('prices.twoHours', e.target.value)}
+                                                placeholder="Enter two hours price"
+                                                label="Two Hours Price"
+                                            />
+                                        </div>
+                                        <div className="bg-gray-50 p-3 rounded-lg">
+                                            <h4 className="text-sm font-medium text-gray-600 mb-2">Half Day</h4>
+                                            <Input
+                                                type="number"
+                                                value={state.editingPackage.prices.halfDay}
+                                                onChange={(e) => handleInputChange('prices.halfDay', e.target.value)}
+                                                placeholder="Enter half day price"
+                                                label="Half Day Price"
+                                                className="mb-2"
+                                            />
+                                            <Input
+                                                type="number"
+                                                value={state.editingPackage.savings.halfDay}
+                                                onChange={(e) => handleInputChange('savings.halfDay', e.target.value)}
+                                                placeholder="Enter half day savings"
+                                                label="Half Day Savings"
+                                            />
+                                        </div>
+                                        <div className="bg-gray-50 p-3 rounded-lg">
+                                            <h4 className="text-sm font-medium text-gray-600 mb-2">Full Day</h4>
+                                            <Input
+                                                type="number"
+                                                value={state.editingPackage.prices.fullDay}
+                                                onChange={(e) => handleInputChange('prices.fullDay', e.target.value)}
+                                                placeholder="Enter full day price"
+                                                label="Full Day Price"
+                                                className="mb-2"
+                                            />
+                                            <Input
+                                                type="number"
+                                                value={state.editingPackage.savings.fullDay}
+                                                onChange={(e) => handleInputChange('savings.fullDay', e.target.value)}
+                                                placeholder="Enter full day savings"
+                                                label="Full Day Savings"
+                                            />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <PriceCard title="2 Hours" price={pkg.prices.twoHours} saving={0} />
+                                        <PriceCard title="Half Day" price={pkg.prices.halfDay} saving={pkg.savings.halfDay} />
+                                        <PriceCard title="Full Day" price={pkg.prices.fullDay} saving={pkg.savings.fullDay} />
+                                    </>
+                                )}
                             </div>
 
                             <div className="mt-4">
                                 <h4 className="font-semibold mb-2">Package Includes:</h4>
-                                <ul className="list-disc list-inside space-y-1">
-                                    {pkg.details.map((detail, index) => (
-                                        <li key={index} className="text-sm text-gray-600">{detail}</li>
-                                    ))}
-                                </ul>
+                                {state.editingPackage?._id === pkg._id ? (
+                                    <div className="space-y-2">
+                                        {state.editingPackage.details.map((detail, index) => (
+                                            <div key={index} className="flex gap-2">
+                                                <Input
+                                                    type="text"
+                                                    value={detail}
+                                                    onChange={(e) => {
+                                                        const newDetails = [...state.editingPackage.details];
+                                                        newDetails[index] = e.target.value;
+                                                        handleInputChange('details', newDetails);
+                                                    }}
+                                                    placeholder="Enter detail"
+                                                    label={`Detail ${index + 1}`}
+                                                />
+                                                <button
+                                                    onClick={() => {
+                                                        const newDetails = state.editingPackage.details.filter((_, i) => i !== index);
+                                                        handleInputChange('details', newDetails);
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    <i className="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        ))}
+                                        <button
+                                            onClick={() => {
+                                                const newDetails = [...state.editingPackage.details, ''];
+                                                handleInputChange('details', newDetails);
+                                            }}
+                                            className="text-main hover:text-main/90 text-sm"
+                                        >
+                                            + Add Detail
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <ul className="list-disc list-inside space-y-1">
+                                        {pkg.details.map((detail, index) => (
+                                            <li key={index} className="text-sm text-gray-600">{detail}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
 
                             <div className="flex justify-end gap-2 mt-4">
-                                <button
-                                    onClick={() => handleEdit(pkg)}
-                                    className="text-blue-600 hover:bg-blue-50 p-2 rounded-full"
-                                >
-                                    <i className="fa-solid fa-edit"></i>
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(pkg)}
-                                    className="text-red-600 hover:bg-red-50 p-2 rounded-full"
-                                >
-                                    <i className="fa-solid fa-trash"></i>
-                                </button>
+                                {state.editingPackage?._id === pkg._id ? (
+                                    <>
+                                        <button
+                                            onClick={handleSave}
+                                            className="text-green-600 hover:bg-green-50 p-2 rounded-full"
+                                        >
+                                            <i className="fa-solid fa-check"></i>
+                                        </button>
+                                        <button
+                                            onClick={handleCancelEdit}
+                                            className="text-gray-600 hover:bg-gray-50 p-2 rounded-full"
+                                        >
+                                            <i className="fa-solid fa-times"></i>
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={() => handleEdit(pkg)}
+                                            className="text-blue-600 hover:bg-blue-50 p-2 rounded-full"
+                                        >
+                                            <i className="fa-solid fa-edit"></i>
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(pkg)}
+                                            className="text-red-600 hover:bg-red-50 p-2 rounded-full"
+                                        >
+                                            <i className="fa-solid fa-trash"></i>
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
