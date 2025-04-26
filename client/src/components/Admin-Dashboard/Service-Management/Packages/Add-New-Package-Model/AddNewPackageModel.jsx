@@ -1,11 +1,61 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
 import Input from '../../../../shared/Input/Input';
 import Alert from '../../../../shared/Alert/Alert';
 import { AddNewPackage } from '../../../../../apis/services/services.api';
+import { produce } from 'immer';
 
+// Reducer actions
+const ACTIONS = {
+    SET_DETAIL: 'SET_DETAIL',
+    ADD_DETAIL: 'ADD_DETAIL',
+    REMOVE_DETAIL: 'REMOVE_DETAIL',
+    SHOW_SUCCESS: 'SHOW_SUCCESS',
+    SHOW_ERROR: 'SHOW_ERROR',
+    HIDE_ALERTS: 'HIDE_ALERTS',
+};
+
+// Initial state
+const initialState = {
+    currentDetail: '',
+    showSuccessAlert: false,
+    showErrorAlert: false,
+    errorMessage: '',
+};
+
+// Reducer with Immer
+function reducer(state, action) {
+    return produce(state, draft => {
+        switch (action.type) {
+            case ACTIONS.SET_DETAIL:
+                draft.currentDetail = action.payload;
+                break;
+            case ACTIONS.ADD_DETAIL:
+                draft.currentDetail = '';
+                break;
+            case ACTIONS.REMOVE_DETAIL:
+                break;
+            case ACTIONS.SHOW_SUCCESS:
+                draft.showSuccessAlert = true;
+                break;
+            case ACTIONS.SHOW_ERROR:
+                draft.showErrorAlert = true;
+                draft.errorMessage = action.payload;
+                break;
+            case ACTIONS.HIDE_ALERTS:
+                draft.showSuccessAlert = false;
+                draft.showErrorAlert = false;
+                draft.errorMessage = '';
+                break;
+            default:
+                break;
+        }
+    });
+}
+
+// Validation schema
 const validationSchema = Yup.object({
     name: Yup.string().required('Package name is required').min(3, 'Name must be at least 3 characters'),
     description: Yup.string().required('Description is required').min(10, 'Description must be at least 10 characters'),
@@ -23,11 +73,8 @@ const validationSchema = Yup.object({
 });
 
 export default function AddNewPackageModel({ closeModel }) {
-    const [currentDetail, setCurrentDetail] = useState('');
-    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-    const [showErrorAlert, setShowErrorAlert] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const { currentDetail, showSuccessAlert, showErrorAlert, errorMessage } = state;
     const { mutate: addPackage } = AddNewPackage();
 
     const formik = useFormik({
@@ -54,15 +101,14 @@ export default function AddNewPackageModel({ closeModel }) {
                         fullDay: Number(values.savings.fullDay),
                     },
                 });
-                setShowSuccessAlert(true);
+                dispatch({ type: ACTIONS.SHOW_SUCCESS });
                 setTimeout(() => {
                     closeModel();
                 }, 2000);
             } catch (error) {
-                setErrorMessage(error.message || 'Something went wrong');
-                setShowErrorAlert(true);
+                dispatch({ type: ACTIONS.SHOW_ERROR, payload: error.message || 'Something went wrong' });
                 setTimeout(() => {
-                    setShowErrorAlert(false);
+                    dispatch({ type: ACTIONS.HIDE_ALERTS });
                 }, 3000);
             }
         },
@@ -71,7 +117,7 @@ export default function AddNewPackageModel({ closeModel }) {
     const handleAddDetail = () => {
         if (currentDetail.trim()) {
             formik.setFieldValue('details', [...formik.values.details, currentDetail.trim()]);
-            setCurrentDetail('');
+            dispatch({ type: ACTIONS.ADD_DETAIL });
         }
     };
 
@@ -109,7 +155,6 @@ export default function AddNewPackageModel({ closeModel }) {
                 {/* Form */}
                 <form onSubmit={formik.handleSubmit} className="space-y-6">
 
-                    {/* Basic Info */}
                     <Input
                         label="Name"
                         id="name"
@@ -138,7 +183,7 @@ export default function AddNewPackageModel({ closeModel }) {
                         <div className="flex gap-2 items-center">
                             <Input
                                 value={currentDetail}
-                                onChange={(e) => setCurrentDetail(e.target.value)}
+                                onChange={(e) => dispatch({ type: ACTIONS.SET_DETAIL, payload: e.target.value })}
                                 placeholder="Enter detail"
                                 className="flex-1"
                             />
