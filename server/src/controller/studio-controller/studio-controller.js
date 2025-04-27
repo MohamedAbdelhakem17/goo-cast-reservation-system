@@ -22,6 +22,11 @@ exports.studioImageUpload = uploadMultipleImages([
 ]);
 // studio image upload Store 
 exports.imageManipulation = async (req, res, next) => {
+    console.log("------ Uploaded Data ------");
+    console.log("req.files:", req.files);
+    console.log("req.body.existingImages:", req.body.existingImages);
+    console.log("----------------------------");
+
     // upload Thumbnail
     if (req.files.thumbnail) {
         const thumbnailName = `studio-${uuidv4()}-${Date.now()}.jpeg`;
@@ -31,12 +36,13 @@ exports.imageManipulation = async (req, res, next) => {
             .jpeg({ quality: 90 })
             .toFile(`uploads/studio/${thumbnailName}`);
         req.body.thumbnail = thumbnailName;
+    } else if (req.body.thumbnailUrl) {
+        req.body.thumbnail = req.body.thumbnailUrl;
     }
 
     // upload imagesGallery
     if (req.files.imagesGallery) {
-        req.body.imagesGallery = [];
-        await Promise.all(
+        const newImages = await Promise.all(
             req.files.imagesGallery.map(async (file, index) => {
                 const imageName = `studio-${uuidv4()}-${Date.now()}-${index + 1}.jpeg`;
                 await sharp(file.buffer)
@@ -44,13 +50,20 @@ exports.imageManipulation = async (req, res, next) => {
                     .toFormat("jpeg")
                     .jpeg({ quality: 90 })
                     .toFile(`uploads/studio/${imageName}`);
-                req.body.imagesGallery.push(imageName);
+                return imageName;
             })
         );
+
+        const existingImages = req.body.existingImages || [];
+
+        req.body.imagesGallery = [...existingImages, ...newImages];
+    } else if (req.body.existingImages) {
+        req.body.imagesGallery = req.body.existingImages;
     }
 
     next();
-}
+};
+
 // gat all studios
 exports.getAllStudios = asyncHandler(async (req, res) => {
     const studios = await StudioModel.find();

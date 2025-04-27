@@ -1,56 +1,72 @@
-import { useReducer } from 'react';
-import { Editor } from 'primereact/editor';
-import Input from '../../../../components/shared/Input/Input';
-import { motion, AnimatePresence } from 'framer-motion';
-import AddNewStudio from '../../../../apis/studios/Add.Studio.Api';
-import Alert from '../../../../components/shared/Alert/Alert';
-import { produce } from 'immer';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useReducer, useEffect, useMemo, useState } from "react";
+import { Editor } from "primereact/editor";
+import Input from "../../../../components/shared/Input/Input";
+import { motion } from "framer-motion";
+import AddNewStudio from "../../../../apis/studios/Add.Studio.Api";
+import { produce } from "immer";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import useFetchFiles from "../../../../hooks/useFetchFiles";
+import { GetStudioByID, UpdateStudio } from "../../../../apis/studios/studios.api";
+import { useToast } from "../../../../context/Toaster-Context/ToasterContext";
 
 const initialState = {
     facilities: [],
     equipment: [],
     images: [],
     thumbnail: null,
-    currentFacility: '',
-    currentEquipment: '',
-    error: '',
+    currentFacility: "",
+    currentEquipment: "",
+    error: "",
     success: false,
 };
 
 function reducer(state, action) {
-    return produce(state, draft => {
+    return produce(state, (draft) => {
         switch (action.type) {
-            case 'SET_ERROR':
+            case "SET_ERROR":
                 draft.error = action.payload;
                 break;
-            case 'SET_SUCCESS':
+            case "SET_SUCCESS":
                 draft.success = action.payload;
                 break;
-            case 'SET_CURRENT_FACILITY':
+            case "SET_CURRENT_FACILITY":
                 draft.currentFacility = action.payload;
                 break;
-            case 'SET_CURRENT_EQUIPMENT':
+            case "SET_CURRENT_EQUIPMENT":
                 draft.currentEquipment = action.payload;
                 break;
-            case 'ADD_FACILITY':
+            case "ADD_FACILITY":
                 draft.facilities.push(draft.currentFacility);
-                draft.currentFacility = '';
+                draft.currentFacility = "";
                 break;
-            case 'REMOVE_FACILITY':
+            case "REMOVE_FACILITY":
                 draft.facilities.splice(action.payload, 1);
                 break;
-            case 'ADD_EQUIPMENT':
+            case "ADD_EQUIPMENT":
                 draft.equipment.push(draft.currentEquipment);
-                draft.currentEquipment = '';
+                draft.currentEquipment = "";
                 break;
-            case 'REMOVE_EQUIPMENT':
+            case "REMOVE_EQUIPMENT":
                 draft.equipment.splice(action.payload, 1);
                 break;
-            case 'SET_THUMBNAIL':
+            case "SET_THUMBNAIL":
                 draft.thumbnail = action.payload;
                 break;
-            case 'SET_IMAGES':
+            case "REMOVE_THUMBNAIL":
+                draft.thumbnail = null;
+                break;
+            case "SET_IMAGES":
                 draft.images = action.payload;
+                break;
+            case "REMOVE_IMAGE":
+                draft.images.splice(action.payload, 1);
+                break;
+            case "SET_ALL":
+                draft.facilities = action.payload.facilities || [];
+                draft.equipment = action.payload.equipment || [];
+                draft.thumbnail = action.payload.thumbnail || null;
+                draft.images = action.payload.images || [];
                 break;
             default:
                 break;
@@ -59,63 +75,173 @@ function reducer(state, action) {
 }
 
 export default function AddStudio() {
+    const navigate = useNavigate();
+    const { addToast } = useToast()
     const { formik, isLoading } = AddNewStudio();
-
+    const [searchParams] = useSearchParams();
+    const [isLoaded, setIsLoaded] = useState(false);
+    const { data: updatedStudio } = GetStudioByID(searchParams.get("edit"));
+    const { mutate: updateStudio } = UpdateStudio()
+    const isEdit = Boolean(searchParams.get("edit"));
+    const imageToFile = useFetchFiles();
     const [state, dispatch] = useReducer(reducer, initialState);
+
+    const loadStudioData = async (data) => {
+        formik.setValues({
+            name: data.name || "",
+            address: data.address || "",
+            basePricePerSlot: data.basePricePerSlot || 0,
+            isFixedHourly: data.isFixedHourly || false,
+            description: data.description || "",
+            startTime: data.startTime || "00:00",
+            endTime: data.endTime || "00:00",
+            facilities: data.facilities || [],
+            equipment: data.equipment || [],
+            thumbnail: data.thumbnail || null,
+            imagesGallery: data.imagesGallery || [],
+        });
+
+        dispatch({
+            type: "SET_ALL",
+            payload: {
+                facilities: data.facilities || [],
+                equipment: data.equipment || [],
+                thumbnail: data.thumbnail || null,
+                images: data.imagesGallery || [],
+            },
+        });
+
+        setIsLoaded(true);
+    };
+
+
+    useEffect(() => {
+        if (isEdit && updatedStudio?.data && !isLoaded) {
+            loadStudioData(updatedStudio.data);
+        }
+    }, [isEdit, updatedStudio, isLoaded]);
+
+    // Memoize image URLs
+    const imageUrls = useMemo(() => {
+        const urls = new Map();
+
+        if (state.thumbnail instanceof File) {
+            urls.set('thumbnail', URL.createObjectURL(state.thumbnail));
+        }
+
+        state.images?.forEach((img, index) => {
+            if (img instanceof File) {
+                urls.set(`image-${index}`, URL.createObjectURL(img));
+            }
+        });
+
+        return urls;
+    }, [state.thumbnail, state.images]);
+
+    // Cleanup URLs when component unmounts or URLs change
+    useEffect(() => {
+        return () => {
+            imageUrls.forEach(url => URL.revokeObjectURL(url));
+        };
+    }, [imageUrls]);
 
     const handleAddFacility = () => {
         if (state.currentFacility.trim()) {
-            dispatch({ type: 'ADD_FACILITY' });
-            formik.setFieldValue('facilities', [...state.facilities, state.currentFacility]);
+            dispatch({ type: "ADD_FACILITY" });
+            formik.setFieldValue("facilities", [
+                ...state.facilities,
+                state.currentFacility,
+            ]);
         }
     };
 
     const handleRemoveFacility = (index) => {
-        dispatch({ type: 'REMOVE_FACILITY', payload: index });
+        dispatch({ type: "REMOVE_FACILITY", payload: index });
         const updated = state.facilities.filter((_, i) => i !== index);
-        formik.setFieldValue('facilities', updated);
+        formik.setFieldValue("facilities", updated);
     };
 
     const handleAddEquipment = () => {
         if (state.currentEquipment.trim()) {
-            dispatch({ type: 'ADD_EQUIPMENT' });
-            formik.setFieldValue('equipment', [...state.equipment, state.currentEquipment]);
+            dispatch({ type: "ADD_EQUIPMENT" });
+            formik.setFieldValue("equipment", [
+                ...state.equipment,
+                state.currentEquipment,
+            ]);
         }
     };
 
     const handleRemoveEquipment = (index) => {
-        dispatch({ type: 'REMOVE_EQUIPMENT', payload: index });
+        dispatch({ type: "REMOVE_EQUIPMENT", payload: index });
         const updated = state.equipment.filter((_, i) => i !== index);
-        formik.setFieldValue('equipment', updated);
+        formik.setFieldValue("equipment", updated);
     };
 
     const handleThumbnailUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            dispatch({ type: 'SET_THUMBNAIL', payload: file });
-            formik.setFieldValue('thumbnail', file);
+            dispatch({ type: "SET_THUMBNAIL", payload: file });
+            formik.setFieldValue("thumbnail", file);
         }
     };
 
     const handleImageUpload = (e) => {
-        const files = Array.from(e.target.files);
-        if (files.length > 5) return;
-        dispatch({ type: 'SET_IMAGES', payload: files });
-        formik.setFieldValue('imagesGallery', files);
+        const newFiles = Array.from(e.target.files);
+        if (newFiles.length === 0) return;
+
+        const existingImages = state.images || [];
+        const combinedImages = [...existingImages, ...newFiles].slice(0, 5);
+
+        dispatch({ type: "SET_IMAGES", payload: combinedImages });
+        formik.setFieldValue("imagesGallery", combinedImages);
     };
 
-    return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="container mx-auto p-8">
 
+    const handleRemoveThumbnail = () => {
+        dispatch({ type: "REMOVE_THUMBNAIL" });
+        formik.setFieldValue("thumbnail", null);
+    };
+
+    const handleRemoveImage = (index) => {
+        const updatedImages = state.images.filter((_, idx) => idx !== index);
+        dispatch({ type: "SET_IMAGES", payload: updatedImages });
+        formik.setFieldValue("imagesGallery", updatedImages);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (isEdit) {
+            updateStudio({ id: updatedStudio.data._id, data: formik.values }, {
+                onSuccess: (response) => {
+                    addToast(response.message || 'Studio updated successfully', 'success'),
+                        setTimeout(() => {
+                            navigate('/admin-dashboard/studio-management');
+                        }, 2000);
+                },
+                onError: (error) => {
+                    addToast(error.response?.data?.message || 'Something went wrong', 'error');
+                }
+            });
+        } else {
+            formik.handleSubmit();
+        }
+    }
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="container mx-auto p-8"
+        >
             <div className="p-8">
                 <h2 className="text-3xl font-bold mb-8 text-gray-800 border-b pb-4 rounded-md border-main text-center">
-                    Add New Studio
+                    {isEdit ? "Edit Studio" : "Add New Studio"}
                 </h2>
 
-                <form onSubmit={(e)=>{
-                    e.preventDefault();
-                    formik.handleSubmit();
-                }} className="space-y-8">
+                <form
+                    onSubmit={handleSubmit}
+                    className="space-y-8"
+                >
                     {/* Studio Basic Info */}
                     <div className="grid md:grid-cols-2 gap-6">
                         <Input
@@ -160,7 +286,12 @@ export default function AddStudio() {
                                 <input
                                     type="checkbox"
                                     checked={formik.values.isFixedHourly}
-                                    onChange={() => formik.setFieldValue('isFixedHourly', !formik.values.isFixedHourly)}
+                                    onChange={() =>
+                                        formik.setFieldValue(
+                                            "isFixedHourly",
+                                            !formik.values.isFixedHourly
+                                        )
+                                    }
                                     className="w-6 h-6 p-3 text-main rounded"
                                 />
                                 <span className="text-gray-700">Fixed Hourly Rate</span>
@@ -170,24 +301,37 @@ export default function AddStudio() {
 
                     {/* Description */}
                     <div className="bg-gray-50 rounded-md p-6">
-                        <label className="block text-sm font-medium mb-2 text-gray-700">Description</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-700">
+                            Description
+                        </label>
                         <Editor
                             value={formik.values.description}
-                            onTextChange={(e) => formik.setFieldValue('description', e.htmlValue)}
-                            style={{ height: '250px' }}
+                            onTextChange={(e) =>
+                                formik.setFieldValue("description", e.htmlValue)
+                            }
+                            style={{ height: "250px" }}
                         />
                         {formik.errors.description && formik.touched.description && (
-                            <div className="text-red-500 text-sm mt-1">{formik.errors.description}</div>
+                            <div className="text-red-500 text-sm mt-1">
+                                {formik.errors.description}
+                            </div>
                         )}
                     </div>
 
                     {/* Facilities */}
                     <div className="bg-gray-50 rounded-lg p-4 w-full">
-                        <label className="block text-sm font-medium mb-4 text-gray-700">Facilities</label>
+                        <label className="block text-sm font-medium mb-4 text-gray-700">
+                            Facilities
+                        </label>
                         <div className="flex gap-5 mb-2 w-full items-center">
                             <Input
                                 value={state.currentFacility}
-                                onChange={(e) => dispatch({ type: 'SET_CURRENT_FACILITY', payload: e.target.value })}
+                                onChange={(e) =>
+                                    dispatch({
+                                        type: "SET_CURRENT_FACILITY",
+                                        payload: e.target.value,
+                                    })
+                                }
                                 placeholder="Enter facility"
                                 className="w-full"
                             />
@@ -223,11 +367,18 @@ export default function AddStudio() {
 
                     {/* Equipment */}
                     <div className="bg-gray-50 rounded-lg p-4 w-full">
-                        <label className="block text-sm font-medium mb-4 text-gray-700">Equipment</label>
+                        <label className="block text-sm font-medium mb-4 text-gray-700">
+                            Equipment
+                        </label>
                         <div className="flex gap-5 mb-2 w-full items-center">
                             <Input
                                 value={state.currentEquipment}
-                                onChange={(e) => dispatch({ type: 'SET_CURRENT_EQUIPMENT', payload: e.target.value })}
+                                onChange={(e) =>
+                                    dispatch({
+                                        type: "SET_CURRENT_EQUIPMENT",
+                                        payload: e.target.value,
+                                    })
+                                }
                                 placeholder="Enter equipment"
                                 className="w-full"
                             />
@@ -264,23 +415,33 @@ export default function AddStudio() {
                     {/* Studio Hours + Images */}
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="bg-gray-50 rounded-lg p-6">
-                            <label className="block text-sm font-medium mb-4 text-gray-700">Studio Hours</label>
+                            <label className="block text-sm font-medium mb-4 text-gray-700">
+                                Studio Hours
+                            </label>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm mb-2 text-gray-600">Start Time</label>
+                                    <label className="block text-sm mb-2 text-gray-600">
+                                        Start Time
+                                    </label>
                                     <input
                                         type="time"
                                         value={formik.values.startTime}
-                                        onChange={(e) => formik.setFieldValue('startTime', e.target.value)}
+                                        onChange={(e) =>
+                                            formik.setFieldValue("startTime", e.target.value)
+                                        }
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm mb-2 text-gray-600">End Time</label>
+                                    <label className="block text-sm mb-2 text-gray-600">
+                                        End Time
+                                    </label>
                                     <input
                                         type="time"
                                         value={formik.values.endTime}
-                                        onChange={(e) => formik.setFieldValue('endTime', e.target.value)}
+                                        onChange={(e) =>
+                                            formik.setFieldValue("endTime", e.target.value)
+                                        }
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
                                 </div>
@@ -288,27 +449,71 @@ export default function AddStudio() {
                         </div>
 
                         <div className="bg-gray-50 rounded-lg p-6">
-                            <label className="block text-sm font-medium mb-4 text-gray-700">Images</label>
+                            <label className="block text-sm font-medium mb-4 text-gray-700">
+                                Images
+                            </label>
                             <div className="space-y-4">
+                                {/* Thumbnail */}
                                 <div>
-                                    <label className="block text-sm mb-2 text-gray-600">Thumbnail</label>
+                                    <label className="block mb-2">Thumbnail</label>
                                     <input
                                         type="file"
                                         accept="image/*"
                                         onChange={handleThumbnailUpload}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                        className="border border-gray-300 p-2 rounded-md"
                                     />
+                                    {state.thumbnail && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={state.thumbnail instanceof File ? imageUrls.get('thumbnail') : state.thumbnail}
+                                                alt="Thumbnail"
+                                                className="w-32 h-32 object-cover rounded"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleRemoveThumbnail}
+                                                className="text-red-500 mt-1 block"
+                                            >
+                                                Remove Thumbnail
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm mb-2 text-gray-600">Gallery Images (Max 5)</label>
+                                    <label className="block mb-2 font-semibold">
+                                        Images Gallery
+                                    </label>
                                     <input
                                         type="file"
                                         accept="image/*"
                                         multiple
                                         onChange={handleImageUpload}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                        className="border border-gray-300 p-2 rounded-md"
                                     />
+
+                                    {state.images.length > 0 && (
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
+                                            {state.images.map((img, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="relative rounded overflow-hidden shadow-md group"
+                                                >
+                                                    <img
+                                                        src={img instanceof File ? imageUrls.get(`image-${idx}`) : img}
+                                                        alt={`Gallery ${idx}`}
+                                                        className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveImage(idx)}
+                                                        className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 text-xs transition-colors"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -321,14 +526,7 @@ export default function AddStudio() {
                         whileHover={{ scale: !isLoading ? 1.02 : 1 }}
                         whileTap={{ scale: !isLoading ? 0.98 : 1 }}
                     >
-                        {isLoading ? (
-                            <div className="flex items-center">
-                                <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin mr-2"></div>
-                                Adding Studio...
-                            </div>
-                        ) : (
-                            'Add Studio'
-                        )}
+                        {isEdit ? "Update Studio" : "Add Studio"}
                     </motion.button>
                 </form>
             </div>
