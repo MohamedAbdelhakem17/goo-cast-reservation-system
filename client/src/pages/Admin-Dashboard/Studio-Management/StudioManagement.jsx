@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import useGetAllStudios, { DeleteStudio } from '../../../apis/studios/studios.api';
-import { AnimatePresence } from 'framer-motion';
-import Alert from '../../../components/shared/Alert/Alert';
-import Popup from '../../../components/shared/Popup/Popup';
-import Loading from '../../../components/shared/Loading/Loading';
-import { Link, useNavigate } from 'react-router-dom';
-import usePriceFormat from '../../../hooks/usePriceFormat';
+import React, { useState } from "react";
+import useGetAllStudios, {
+    DeleteStudio,
+} from "../../../apis/studios/studios.api";
+import { AnimatePresence } from "framer-motion";
+import Alert from "../../../components/shared/Alert/Alert";
+import Popup from "../../../components/shared/Popup/Popup";
+import Loading from "../../../components/shared/Loading/Loading";
+import { Link, useNavigate } from "react-router-dom";
+import usePriceFormat from "../../../hooks/usePriceFormat";
 
 const StudioManagement = () => {
     const { data: studiosData, isLoading } = useGetAllStudios();
@@ -30,19 +32,24 @@ const StudioManagement = () => {
                 setSelectedStudio(null);
                 setShowSuccess(true);
                 setTimeout(() => setShowSuccess(false), 1000);
-            }
+            },
         });
     };
 
-    if (isLoading) return <Loading />
+    if (isLoading) return <Loading />;
 
     return (
         <div className="p-6">
-            {showSuccess && (<Alert type="success">Studio deleted successfully.</Alert>)}
+            {showSuccess && (
+                <Alert type="success">Studio deleted successfully.</Alert>
+            )}
 
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Studio Management</h1>
-                <Link to="/admin-dashboard/studio-management/add" className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors">
+                <Link
+                    to="/admin-dashboard/studio-management/add"
+                    className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors"
+                >
                     <i className="fa-solid fa-plus mr-2"></i>
                     Add New Studio
                 </Link>
@@ -52,11 +59,21 @@ const StudioManagement = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price per Hour</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Image
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Name
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Price per Hour
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Rating
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -70,11 +87,17 @@ const StudioManagement = () => {
                                     />
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm font-medium text-gray-900">{studio.name}</div>
+                                    <div className="text-sm font-medium text-gray-900">
+                                        {studio.name}
+                                    </div>
                                     <div className="text-sm text-gray-500">{studio.address}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{priceFormat(studio.pricePerHour || studio.basePricePerSlot)} </div>
+                                    <div className="text-sm text-gray-900">
+                                        {priceFormat(
+                                            studio.pricePerHour || studio.basePricePerSlot
+                                        )}{" "}
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm text-gray-900">
@@ -104,12 +127,14 @@ const StudioManagement = () => {
                 </table>
             </div>
 
-            <AnimatePresence mode='wait'>
+            <AnimatePresence mode="wait">
                 {selectedStudio && (
                     <Popup>
                         <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
                         <p className="mb-4">Are you sure you want to delete this studio?</p>
-                        <p className="text-red-500 text-center mb-6"><strong>{selectedStudio.name}</strong></p>
+                        <p className="text-red-500 text-center mb-6">
+                            <strong>{selectedStudio.name}</strong>
+                        </p>
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setSelectedStudio(null)}
@@ -126,7 +151,6 @@ const StudioManagement = () => {
                         </div>
                     </Popup>
                 )}
-
             </AnimatePresence>
         </div>
     );

@@ -35,6 +35,7 @@ const GetStudioByID = (studioId) => {
         },
         refetchOnWindowFocus: false,
         retry: 1,
+        enabled: Boolean(studioId),
     });
 };
 
@@ -66,12 +67,56 @@ const UpdateStudio = () => {
     return useMutation({
         mutationFn: async ({ id, data }) => {
             try {
-                const response = await axios.patch(`${BASE_URL}/studio/${id}`, data, {
+                const formData = new FormData();
+
+                // Basic data
+                formData.append("name", data.name);
+                formData.append("address", data.address);
+                formData.append("basePricePerSlot", data.basePricePerSlot);
+                formData.append("isFixedHourly", data.isFixedHourly);
+                formData.append("description", data.description);
+                formData.append("startTime", data.startTime);
+                formData.append("endTime", data.endTime);
+
+                // Thumbnail
+                if (data.thumbnail instanceof File) {
+                    formData.append("thumbnail", data.thumbnail);
+                } else if (typeof data.thumbnail === "string") {
+                    // Remove base URL if present
+                    const thumbnailName = data.thumbnail.split('/').pop();
+                    formData.append("thumbnailUrl", thumbnailName);
+                }
+
+                // Images Gallery
+                if (data.imagesGallery) {
+                    data.imagesGallery.forEach((img) => {
+                        if (img instanceof File) {
+                            formData.append("imagesGallery", img);
+                        } else if (typeof img === "string") {
+                            // Remove base URL if present
+                            const imageName = img.split('/').pop();
+                            formData.append("existingImages[]", imageName);
+                        }
+                    });
+                }
+
+                // facilities
+                data.facilities.forEach(facility => {
+                    formData.append("facilities[]", facility);
+                });
+
+                // equipment
+                data.equipment.forEach(item => {
+                    formData.append("equipment[]", item);
+                });
+
+                const response = await axios.put(`${BASE_URL}/studio/${id}`, formData, {
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                         authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
+
                 return response.data;
             } catch (error) {
                 console.error("Error updating studio:", error);
@@ -83,6 +128,7 @@ const UpdateStudio = () => {
         },
     });
 };
+
 
 export default useGetAllStudios;
 export { GetStudioByID, DeleteStudio, UpdateStudio };
