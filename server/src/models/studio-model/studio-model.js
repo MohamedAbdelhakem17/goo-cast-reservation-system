@@ -94,7 +94,7 @@ const studioSchema = new mongoose.Schema(
             default: 0,
         },
 
-        strateTime: {
+        startTime: {
             type: String,
             default: "09:00",
         },
