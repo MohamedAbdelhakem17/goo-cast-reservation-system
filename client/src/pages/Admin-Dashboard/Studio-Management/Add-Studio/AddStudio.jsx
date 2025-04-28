@@ -245,13 +245,12 @@ export default function AddStudio() {
 
     const descriptionRef = useRef("");
 
-    // دالة استخراج النص من HTML
     const stripHtml = (html) => {
         const temp = document.createElement("div");
         temp.innerHTML = html;
         return temp.textContent || temp.innerText || "";
     };
-    
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
