@@ -82,18 +82,6 @@ const studioSchema = new mongoose.Schema(
             required: true,
         },
 
-        ratingAverage: {
-            type: Number,
-            default: 0,
-            min: [0, "Rating must be above 0"],
-            max: [5, "Rating must be below 5.0"],
-        },
-
-        ratingQuantity: {
-            type: Number,
-            default: 0,
-        },
-
         startTime: {
             type: String,
             default: "09:00",
@@ -104,6 +92,31 @@ const studioSchema = new mongoose.Schema(
             default: "18:00",
         },
 
+        minSlotsPerDay: {
+            type: Object,
+            default: {
+                sunday: 1,
+                monday: 1,
+                tuesday: 1,
+                wednesday: 1,
+                thursday: 1,
+                friday: 1,
+                saturday: 1,
+            },
+        },
+
+        dayOff: {
+            type: [String],
+            default: [],
+            validate: {
+                validator: function (val) {
+                    const allowedDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                    return val.every(day => allowedDays.includes(day));
+                },
+                message: "Invalid day in dayOff array",
+            }
+        }
+
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
@@ -113,21 +126,24 @@ studioSchema.pre("save", function (next) {
     if (this.isModified("name")) {
         this.slug = slugify(this.name, { lower: true });
     }
+
+    validateTimeRange(this.startTime, this.endTime);
+
     next();
 });
 
+studioSchema.pre("findOneAndUpdate", function (next) {
+    const update = this.getUpdate();
 
-// images url 
-const setImage = (doc) => {
-    if (doc.thumbnail) {
-        doc.thumbnail = `${process.env.BASE_URL}/uploads/studio/${doc.thumbnail}`;
-    }
-    if (doc.imagesGallery) {
-        doc.imagesGallery = doc.imagesGallery.map(
-            (img) => `${process.env.BASE_URL}/uploads/studio/${img}`
-        );
-    }
-};
+    const startTime = update.startTime || this.get("startTime");
+    const endTime = update.endTime || this.get("endTime");
+    const dayOff = update.dayOff || this.get("dayOff");
+    const minSlotsPerDay = update.minSlotsPerDay || this.get("minSlotsPerDay");
+
+    validateTimeRange(startTime, endTime);
+
+    next();
+});
 
 studioSchema.post("save", (doc) => {
     setImage(doc);
@@ -137,4 +153,29 @@ studioSchema.post("init", (doc) => {
     setImage(doc);
 });
 
+// Helper: Validate startTime < endTime
+function validateTimeRange(start, end) {
+    if (start && end) {
+        const [sh, sm] = start.split(":").map(Number);
+        const [eh, em] = end.split(":").map(Number);
+        if (sh > eh || (sh === eh && sm >= em)) {
+            throw new Error("Start time must be before end time.");
+        }
+    }
+}
+
+// Set full image URLs
+function setImage(doc) {
+    if (doc.thumbnail) {
+        doc.thumbnail = `${process.env.BASE_URL}/uploads/studio/${doc.thumbnail}`;
+    }
+
+    if (doc.imagesGallery) {
+        doc.imagesGallery = doc.imagesGallery.map(
+            (img) => `${process.env.BASE_URL}/uploads/studio/${img}`
+        );
+    }
+};
+
 module.exports = mongoose.model("Studio", studioSchema);
+

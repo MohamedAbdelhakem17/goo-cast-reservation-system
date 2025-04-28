@@ -69,9 +69,6 @@ const StudioManagement = () => {
                                 Price per Hour
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Rating
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
@@ -97,14 +94,6 @@ const StudioManagement = () => {
                                         {priceFormat(
                                             studio.pricePerHour || studio.basePricePerSlot
                                         )}{" "}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">
-                                        <span className="text-yellow-500 mr-1">
-                                            <i className="fa-solid fa-star"></i>
-                                        </span>
-                                        {studio.ratingAverage} ({studio.ratingQuantity})
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm">

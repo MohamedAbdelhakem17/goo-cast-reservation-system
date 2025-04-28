@@ -1,13 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useReducer, useEffect, useMemo, useState } from "react";
+import { useReducer, useEffect, useMemo, useState, useRef } from "react";
 import { Editor } from "primereact/editor";
 import Input from "../../../../components/shared/Input/Input";
 import { motion } from "framer-motion";
 import AddNewStudio from "../../../../apis/studios/Add.Studio.Api";
 import { produce } from "immer";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import useFetchFiles from "../../../../hooks/useFetchFiles";
-import { GetStudioByID, UpdateStudio } from "../../../../apis/studios/studios.api";
+import {
+    GetStudioByID,
+    UpdateStudio,
+} from "../../../../apis/studios/studios.api";
 import { useToast } from "../../../../context/Toaster-Context/ToasterContext";
 
 const initialState = {
@@ -18,6 +20,7 @@ const initialState = {
     currentFacility: "",
     currentEquipment: "",
     error: "",
+    description: "",
     success: false,
 };
 
@@ -62,11 +65,15 @@ function reducer(state, action) {
             case "REMOVE_IMAGE":
                 draft.images.splice(action.payload, 1);
                 break;
+            case "SET_DESCRIPTION":
+                draft.description = action.payload;
+                break;
             case "SET_ALL":
                 draft.facilities = action.payload.facilities || [];
                 draft.equipment = action.payload.equipment || [];
                 draft.thumbnail = action.payload.thumbnail || null;
                 draft.images = action.payload.images || [];
+                draft.description = action.payload.description || "";
                 break;
             default:
                 break;
@@ -76,14 +83,13 @@ function reducer(state, action) {
 
 export default function AddStudio() {
     const navigate = useNavigate();
-    const { addToast } = useToast()
+    const { addToast } = useToast();
     const { formik, isLoading } = AddNewStudio();
     const [searchParams] = useSearchParams();
     const [isLoaded, setIsLoaded] = useState(false);
     const { data: updatedStudio } = GetStudioByID(searchParams.get("edit"));
-    const { mutate: updateStudio } = UpdateStudio()
+    const { mutate: updateStudio } = UpdateStudio();
     const isEdit = Boolean(searchParams.get("edit"));
-    const imageToFile = useFetchFiles();
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const loadStudioData = async (data) => {
@@ -99,6 +105,8 @@ export default function AddStudio() {
             equipment: data.equipment || [],
             thumbnail: data.thumbnail || null,
             imagesGallery: data.imagesGallery || [],
+            minSlotsPerDay: data.minSlotsPerDay || [],
+            dayOff: data.dayOff
         });
 
         dispatch({
@@ -108,12 +116,12 @@ export default function AddStudio() {
                 equipment: data.equipment || [],
                 thumbnail: data.thumbnail || null,
                 images: data.imagesGallery || [],
+                description: data.description || []
             },
         });
 
         setIsLoaded(true);
     };
-
 
     useEffect(() => {
         if (isEdit && updatedStudio?.data && !isLoaded) {
@@ -126,7 +134,7 @@ export default function AddStudio() {
         const urls = new Map();
 
         if (state.thumbnail instanceof File) {
-            urls.set('thumbnail', URL.createObjectURL(state.thumbnail));
+            urls.set("thumbnail", URL.createObjectURL(state.thumbnail));
         }
 
         state.images?.forEach((img, index) => {
@@ -141,7 +149,7 @@ export default function AddStudio() {
     // Cleanup URLs when component unmounts or URLs change
     useEffect(() => {
         return () => {
-            imageUrls.forEach(url => URL.revokeObjectURL(url));
+            imageUrls.forEach((url) => URL.revokeObjectURL(url));
         };
     }, [imageUrls]);
 
@@ -196,7 +204,6 @@ export default function AddStudio() {
         formik.setFieldValue("imagesGallery", combinedImages);
     };
 
-
     const handleRemoveThumbnail = () => {
         dispatch({ type: "REMOVE_THUMBNAIL" });
         formik.setFieldValue("thumbnail", null);
@@ -211,22 +218,40 @@ export default function AddStudio() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isEdit) {
-            updateStudio({ id: updatedStudio.data._id, data: formik.values }, {
-                onSuccess: (response) => {
-                    addToast(response.message || 'Studio updated successfully', 'success'),
-                        setTimeout(() => {
-                            navigate('/admin-dashboard/studio-management');
-                        }, 2000);
-                },
-                onError: (error) => {
-                    addToast(error.response?.data?.message || 'Something went wrong', 'error');
+            updateStudio(
+                { id: updatedStudio.data._id, data: formik.values },
+                {
+                    onSuccess: (response) => {
+                        addToast(
+                            response.message || "Studio updated successfully",
+                            "success"
+                        ),
+                            setTimeout(() => {
+                                navigate("/admin-dashboard/studio-management");
+                            }, 2000);
+                    },
+                    onError: (error) => {
+                        addToast(
+                            error.response?.data?.message || "Something went wrong",
+                            "error"
+                        );
+                    },
                 }
-            });
+            );
         } else {
             formik.handleSubmit();
         }
-    }
+    };
 
+    const descriptionRef = useRef("");
+
+    // دالة استخراج النص من HTML
+    const stripHtml = (html) => {
+        const temp = document.createElement("div");
+        temp.innerHTML = html;
+        return temp.textContent || temp.innerText || "";
+    };
+    
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -238,11 +263,8 @@ export default function AddStudio() {
                     {isEdit ? "Edit Studio" : "Add New Studio"}
                 </h2>
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="space-y-8"
-                >
-                    {/* Studio Basic Info */}
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    {/* Studio Basic Info - Name , Address */}
                     <div className="grid md:grid-cols-2 gap-6">
                         <Input
                             label="Studio Name"
@@ -305,12 +327,23 @@ export default function AddStudio() {
                             Description
                         </label>
                         <Editor
-                            value={formik.values.description}
-                            onTextChange={(e) =>
-                                formik.setFieldValue("description", e.htmlValue)
-                            }
+                            value={state.description}
+                            onTextChange={(e) => {
+                                const htmlValue = e.htmlValue;
+                                const plainText = stripHtml(htmlValue);
+                                const lastText = stripHtml(descriptionRef.current);
+
+                                // لو النص فعلاً اتغير
+                                if (plainText !== lastText) {
+                                    descriptionRef.current = htmlValue;
+                                    dispatch({ type: "SET_DESCRIPTION", payload: htmlValue });
+                                    formik.setFieldValue("description", htmlValue);
+                                }
+                            }}
                             style={{ height: "250px" }}
                         />
+
+
                         {formik.errors.description && formik.touched.description && (
                             <div className="text-red-500 text-sm mt-1">
                                 {formik.errors.description}
@@ -412,7 +445,7 @@ export default function AddStudio() {
                         </div>
                     </div>
 
-                    {/* Studio Hours + Images */}
+                    {/* Studio Hours + Day OFF */}
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="bg-gray-50 rounded-lg p-6">
                             <label className="block text-sm font-medium mb-4 text-gray-700">
@@ -448,73 +481,149 @@ export default function AddStudio() {
                             </div>
                         </div>
 
+                        {/* Day Off */}
                         <div className="bg-gray-50 rounded-lg p-6">
                             <label className="block text-sm font-medium mb-4 text-gray-700">
-                                Images
+                                Days Off
                             </label>
-                            <div className="space-y-4">
-                                {/* Thumbnail */}
-                                <div>
-                                    <label className="block mb-2">Thumbnail</label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleThumbnailUpload}
-                                        className="border border-gray-300 p-2 rounded-md"
-                                    />
-                                    {state.thumbnail && (
-                                        <div className="mt-2">
-                                            <img
-                                                src={state.thumbnail instanceof File ? imageUrls.get('thumbnail') : state.thumbnail}
-                                                alt="Thumbnail"
-                                                className="w-32 h-32 object-cover rounded"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={handleRemoveThumbnail}
-                                                className="text-red-500 mt-1 block"
-                                            >
-                                                Remove Thumbnail
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block mb-2 font-semibold">
-                                        Images Gallery
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                {[
+                                    "sunday",
+                                    "monday",
+                                    "tuesday",
+                                    "wednesday",
+                                    "thursday",
+                                    "friday",
+                                    "saturday",
+                                ].map((day) => (
+                                    <label key={day} className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={formik.values.dayOff?.includes(day)}
+                                            onChange={(e) => {
+                                                const updatedDays = formik.values.dayOff || [];
+                                                const isChecked = e.target.checked;
+                                                const newValue = isChecked
+                                                    ? [...updatedDays, day]
+                                                    : updatedDays.filter((d) => d !== day);
+
+                                                formik.setFieldValue("dayOff", newValue);
+                                            }}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="capitalize">{day}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Min Slots Per Day */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                        <label className="block text-sm font-medium mb-4 text-gray-700">
+                            Minimum Slots Per Day
+                        </label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            {Object.keys(formik.values.minSlotsPerDay || {}).map((day) => (
+                                <div key={day} className="flex flex-col">
+                                    <label className="capitalize mb-1 text-sm text-gray-600">
+                                        {day}
                                     </label>
                                     <input
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleImageUpload}
-                                        className="border border-gray-300 p-2 rounded-md"
+                                        type="number"
+                                        min={0}
+                                        value={formik.values.minSlotsPerDay[day]}
+                                        onChange={(e) =>
+                                            formik.setFieldValue("minSlotsPerDay", {
+                                                ...formik.values.minSlotsPerDay,
+                                                [day]: parseInt(e.target.value, 10),
+                                            })
+                                        }
+                                        className="border border-gray-300 rounded-md px-3 py-2"
                                     />
-
-                                    {state.images.length > 0 && (
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
-                                            {state.images.map((img, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className="relative rounded overflow-hidden shadow-md group"
-                                                >
-                                                    <img
-                                                        src={img instanceof File ? imageUrls.get(`image-${idx}`) : img}
-                                                        alt={`Gallery ${idx}`}
-                                                        className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleRemoveImage(idx)}
-                                                        className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 text-xs transition-colors"
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
                                 </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Images and Thumbnail */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                        <label className="block text-sm font-medium mb-4 text-gray-700">
+                            Images
+                        </label>
+                        <div className="flex flex-wrap gap-6">
+                            {/* Thumbnail */}
+                            <div className="flex-1 min-w-[200px]">
+                                <label className="block mb-2 font-semibold">Thumbnail</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleThumbnailUpload}
+                                    className="border border-gray-300 p-2 rounded-md w-full"
+                                />
+                                {state.thumbnail && (
+                                    <div className="mt-2">
+                                        <img
+                                            src={
+                                                state.thumbnail instanceof File
+                                                    ? imageUrls.get("thumbnail")
+                                                    : state.thumbnail
+                                            }
+                                            alt="Thumbnail"
+                                            className="w-32 h-32 object-cover rounded"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleRemoveThumbnail}
+                                            className="text-red-500 mt-1 block"
+                                        >
+                                            Remove Thumbnail
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Images Gallery */}
+                            <div className="flex-1 min-w-[200px]">
+                                <label className="block mb-2 font-semibold">
+                                    Images Gallery
+                                </label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageUpload}
+                                    className="border border-gray-300 p-2 rounded-md w-full"
+                                />
+                                {state.images.length > 0 && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
+                                        {state.images.map((img, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="relative rounded overflow-hidden shadow-md group"
+                                            >
+                                                <img
+                                                    src={
+                                                        img instanceof File
+                                                            ? imageUrls.get(`image-${idx}`)
+                                                            : img
+                                                    }
+                                                    alt={`Gallery
+                                    ${idx}`}
+                                                    className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveImage(idx)}
+                                                    className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white
+                                    rounded-full p-1 text-xs transition-colors"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
