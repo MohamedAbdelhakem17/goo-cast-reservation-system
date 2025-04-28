@@ -1,7 +1,8 @@
-require('dotenv').config(".env");
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
+
 const express = require('express');
 const morgan = require('morgan');
-const path = require("path");
 const cors = require("cors");
 
 const databaseConnect = require('./config/database-connection');
