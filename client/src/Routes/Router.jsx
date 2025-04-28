@@ -41,6 +41,8 @@ export default function AppRouter() {
                 !location.search.startsWith("?step=")
             ) {
                 localStorage.removeItem("bookingData");
+                localStorage.removeItem("bookingStep");
+                
             }
         };
         cleanLocalStorage();
