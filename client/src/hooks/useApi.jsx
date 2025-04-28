@@ -5,7 +5,7 @@ export const useGetData = (key, url, filters = {}) => {
     const { status, studioId, date, page = 1, limit = 10 } = filters;
 
     return useQuery({
-        queryKey: [...key, status, studioId, date, page, limit],  
+        queryKey: [...key, status, studioId, date, page, limit],
         queryFn: async () => {
             try {
                 const params = new URLSearchParams();
@@ -25,7 +25,7 @@ export const useGetData = (key, url, filters = {}) => {
                 return data;
             } catch (error) {
                 console.error("Error fetching data:", error);
-                throw error;  
+                throw error;
             }
         },
     });
@@ -48,8 +48,8 @@ export const useUpdateData = (key, url) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ id, payload }) => {
-            console.log(id, payload);
-            const { data } = await axiosInstance.put(`${url}/${id}`, payload);
+            const base_url = id ? `${url}/${id}` : url;
+            const { data } = await axiosInstance.put(base_url, payload);
             return data;
         },
         onSuccess: () => {
@@ -60,9 +60,15 @@ export const useUpdateData = (key, url) => {
 
 export const useDeleteData = (key, url) => {
     const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: async (id) => {
-            const { data } = await axiosInstance.delete(`${url}/${id}`);
+        mutationFn: async ({ id, payload }) => {
+            const base_url = id ? `${url}/${id}` : url;
+            console.log(base_url);
+            console.log(payload);
+            const { data } = await axiosInstance.delete(base_url, {
+                data: payload, 
+            });
             return data;
         },
         onSuccess: () => {
@@ -70,3 +76,4 @@ export const useDeleteData = (key, url) => {
         },
     });
 };
+
