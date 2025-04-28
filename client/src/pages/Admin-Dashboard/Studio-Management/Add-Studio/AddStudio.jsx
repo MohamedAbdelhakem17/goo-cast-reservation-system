@@ -3,7 +3,7 @@ import { useReducer, useEffect, useMemo, useState, useRef } from "react";
 import { Editor } from "primereact/editor";
 import Input from "../../../../components/shared/Input/Input";
 import { motion } from "framer-motion";
-import AddNewStudio from "../../../../apis/studios/Add.Studio.Api";
+import AddNewStudio from "../../../../apis/studios/add.studio.api";
 import { produce } from "immer";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
