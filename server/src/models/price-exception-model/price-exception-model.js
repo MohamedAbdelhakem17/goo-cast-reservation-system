@@ -18,12 +18,20 @@ const priceExceptionSchema = new mongoose.Schema(
             default: true,
         },
 
-        overridePricePerSlot: {
+        defaultPricePerSlot: {
             type: Number,
             min: 0,
         },
+
+        perSlotDiscounts: {
+            type: Map,
+            of: Number,
+            default: {}
+        }
     },
+
     { timestamps: true }
 );
+
 
 module.exports = mongoose.model("PriceException", priceExceptionSchema);

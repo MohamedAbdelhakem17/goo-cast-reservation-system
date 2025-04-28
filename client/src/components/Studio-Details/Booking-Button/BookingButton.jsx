@@ -2,15 +2,12 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { studio } from '../../../assets/images'
 import useQuickBooking from '../../../hooks/useQuickBooking'
-import { useBooking } from '../../../context/Booking-Context/BookingContext'
 export default function BookingButton({ studio }) {
 
     const { handleQuickBooking } = useQuickBooking()
-    const {setBookingField} = useBooking()
 
     const handleBooking = (st) => {
         handleQuickBooking(2, st)
-        // setBookingField("studio", st)gi
     }
 
 

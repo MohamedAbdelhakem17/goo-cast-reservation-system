@@ -3,8 +3,11 @@ import { useState } from 'react'
 import { ChangeBookingStatus } from '../../../../apis/Booking/booking.api';
 import Alert from '../../../shared/Alert/Alert';
 import Popup from '../../../shared/Popup/Popup';
+import useDataFormat from '../../../../hooks/useDateFormat';
+import { useToast } from '../../../../context/Toaster-Context/ToasterContext';
 
-export default function TableRow({ booking, formatDate, setSelectedBooking }) {
+export default function TableRow({ booking, setSelectedBooking }) {
+    const formatDate = useDataFormat()
     const convertTo12HourFormat = (time) => {
         const [hour, minute] = time.split(':');
         const hour12 = hour % 12 || 12;
@@ -13,20 +16,19 @@ export default function TableRow({ booking, formatDate, setSelectedBooking }) {
     };
 
     const { mutate: statusChange, isLoading } = ChangeBookingStatus()
-    const [message, setMessage] = useState(null)
+    const { addToast } = useToast()
     const [confirmPopup, setConfirmPopup] = useState(null)
 
     const handleStatusChange = () => {
-        statusChange({ id: booking._id, status: confirmPopup.status }, {
-            onSuccess: () => {
-                setMessage("Status changed successfully");
-                setConfirmPopup(null);
-                setTimeout(() => {
-                    setMessage(null);
-                }, 1000);
+        statusChange(
+            { id: booking._id, payload: { status: confirmPopup.status } },
+            {
+                onSuccess: ({ message }) => addToast(message || "Status changed successfully", "success"),
+                onError: ({ response }) => addToast(response?.data?.message || "Something went wrong", "error"),
             }
-        })
-    }
+        );
+    };
+
 
     return (
         <>
@@ -117,7 +119,6 @@ export default function TableRow({ booking, formatDate, setSelectedBooking }) {
                     </Popup>
                 )}
 
-                {message && (<Alert type="success">{message}</Alert>)}
             </AnimatePresence>
         </>
     );

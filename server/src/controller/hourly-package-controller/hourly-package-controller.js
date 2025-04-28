@@ -23,7 +23,7 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
         return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide all required fields"));
     }
 
-    const hourlyPackage = await HourlyPackage.create({
+    const hourlyPackage = await HourlyPackageModel.create({
         name,
         description,
         details,

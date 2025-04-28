@@ -65,8 +65,9 @@ exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
     }
 
     // Convert start and end time to minutes
-    const startOfDay = timeToMinutes(studio.strateTime); // fixed typo
-    const endOfDay = timeToMinutes(studio.endTime);
+    const startOfDay = timeToMinutes(studio.startTime || "08:00");
+    const endOfDay = timeToMinutes(studio.endTime != 0 ? studio.endTime : "22:00");
+    console.log("============== Studio", studio)
 
     const durationInMinutes = duration * 60;
 
@@ -216,7 +217,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
     if (status !== "pending" && status !== "approved" && status !== "rejected") {
         throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid status");
     }
-    
+
     const booking = await BookingModel.findByIdAndUpdate(id, { status }, {
         new: true,
         runValidators: true,

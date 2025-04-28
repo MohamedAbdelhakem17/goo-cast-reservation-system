@@ -16,7 +16,7 @@ const priceTierSchema = new mongoose.Schema(
 
         maxSlots: {
             type: Number,
-            required: false, // لو null يبقى دي آخر شريحة
+            required: false, 
         },
 
         totalPrice: {
