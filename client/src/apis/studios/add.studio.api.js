@@ -17,7 +17,17 @@ const initialValues = {
     startTime: '09:00',
     endTime: '18:00',
     thumbnail: null,
-    imagesGallery: []
+    imagesGallery: [],
+    dayOff: [], // New field for days off
+    minSlotsPerDay: {
+        sunday: 1,
+        monday: 1,
+        tuesday: 1,
+        wednesday: 1,
+        thursday: 1,
+        friday: 1,
+        saturday: 1,
+    }, // New field for min slots per day
 };
 
 const validationSchema = Yup.object({
@@ -31,7 +41,7 @@ const validationSchema = Yup.object({
         .typeError('Price must be a number')
         .min(0, 'Base price must be greater than or equal to 0')
         .required('Base price is required'),
-    isFixedHourly: Yup.boolean(), // Added this
+    isFixedHourly: Yup.boolean(),
     description: Yup.string()
         .required('Description is required')
         .min(50, 'Description must be at least 50 characters'),
@@ -63,11 +73,27 @@ const validationSchema = Yup.object({
             !values || values.every(file =>
                 ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)
             )
-        )
+        ),
+    dayOff: Yup.array()
+        .of(Yup.string().oneOf([
+            'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'
+        ]))
+        .nullable(),
+    minSlotsPerDay: Yup.object().shape({
+        sunday: Yup.number().min(0, 'Minimum slots must be at least 0'),
+        monday: Yup.number().min(0, 'Minimum slots must be at least 0'),
+        tuesday: Yup.number().min(0, 'Minimum slots must be at least 0'),
+        wednesday: Yup.number().min(0, 'Minimum slots must be at least 0'),
+        thursday: Yup.number().min(0, 'Minimum slots must be at least 0'),
+        friday: Yup.number().min(0, 'Minimum slots must be at least 0'),
+        saturday: Yup.number().min(0, 'Minimum slots must be at least 0'),
+    }),
 });
 
 const AddStudio = () => {
     const queryClient = useQueryClient();
+    const { addToast } = useToast();
+    const navigate = useNavigate();
 
     const { mutate: addStudio, isLoading } = useMutation({
         mutationFn: async (values) => {
@@ -88,6 +114,13 @@ const AddStudio = () => {
 
                 if (Array.isArray(value)) {
                     value.forEach(item => formData.append(`${key}[]`, item));
+                    return;
+                }
+
+                if (typeof value === 'object' && value !== null) {
+                    Object.entries(value).forEach(([subKey, subValue]) => {
+                        formData.append(`${key}[${subKey}]`, subValue);
+                    });
                     return;
                 }
 
@@ -116,9 +149,6 @@ const AddStudio = () => {
         }
     });
 
-    const { addToast } = useToast()
-        const navigate = useNavigate();
-    
     const formik = useFormik({
         initialValues,
         validationSchema,
