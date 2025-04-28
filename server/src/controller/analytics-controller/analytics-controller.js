@@ -54,15 +54,10 @@ exports.getAnalytics = asyncHandler(async (req, res) => {
     });
 });
 
-// Get dashboard statistics
 exports.getDashboardStats = asyncHandler(async (req, res) => {
-    // Get total studios count
     const totalStudios = await StudioModel.countDocuments();
-
-    // Get total bookings
     const totalBookings = await BookingModel.countDocuments();
 
-    // Calculate total revenue from all bookings
     const revenue = await BookingModel.aggregate([
         {
             $group: {
@@ -71,15 +66,133 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
             }
         }
     ]);
-
     const totalRevenue = revenue.length > 0 ? revenue[0].totalRevenue : 0;
 
+    const mostBookedStudios = await BookingModel.aggregate([
+        { $match: { studioId: { $ne: null } } },
+        {
+            $group: {
+                _id: "$studioId",
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { count: -1 } },
+        { $limit: 5 },
+        {
+            $lookup: {
+                from: "studios",
+                localField: "_id",
+                foreignField: "_id",
+                as: "studio"
+            }
+        },
+        { $unwind: "$studio" },
+        {
+            $project: {
+                label: "$studio.name",
+                count: 1,
+                _id: 0
+            }
+        }
+    ]);
+
+    const mostBookedPackages = await BookingModel.aggregate([
+        { $match: { packageId: { $ne: null } } },
+        {
+            $group: {
+                _id: "$packageId",
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { count: -1 } },
+        { $limit: 5 },
+        {
+            $lookup: {
+                from: "packages",
+                localField: "_id",
+                foreignField: "_id",
+                as: "package"
+            }
+        },
+        { $unwind: "$package" },
+        {
+            $project: {
+                label: "$package.name",
+                count: 1,
+                _id: 0
+            }
+        }
+    ]);
+
+    const mostBookedAddOns = await BookingModel.aggregate([
+        { $unwind: "$addOnId" },
+        { $match: { addOnId: { $ne: null } } },
+        {
+            $group: {
+                _id: "$addOnId",
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { count: -1 } },
+        { $limit: 5 },
+        {
+            $lookup: {
+                from: "addons",
+                localField: "_id",
+                foreignField: "_id",
+                as: "addOn"
+            }
+        },
+        { $unwind: "$addOn" },
+        {
+            $project: {
+                label: "$addOn.name",
+                count: 1,
+                _id: 0
+            }
+        }
+    ]);
+
+    const mostBookedDay = await BookingModel.aggregate([
+        {
+            $group: {
+                _id: "$date",
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { _id: 1 } }, // علشان الرسمة تكون مرتبة حسب الوقت
+        {
+            $project: {
+                label: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
+                count: 1,
+                _id: 0
+            }
+        }
+    ]);
+
     res.status(200).json({
-        status: HTTP_STATUS_TEXT.SUCCESS,
+        status: "success",
         data: {
             totalStudios,
             totalBookings,
-            totalRevenue
+            totalRevenue,
+            mostBookedStudios: [
+                { label: "Studio A", count: 8 },
+                { label: "Studio B", count: 7 },
+                { label: "Studio C", count: 5 }
+            ],
+            mostBookedPackages: [
+                { label: "Go-Social", count: 12 },
+                { label: "Pro-Cast", count: 8 },
+                { label: "Basic", count: 3 }
+            ],
+            mostBookedAddOns: [
+                { label: "Extra Microphone", count: 15 },
+                { label: "Video Editing", count: 10 },
+                { label: "Thumbnail Design", count: 5 }
+            ],
+            mostBookedDay
         }
     });
 });
+

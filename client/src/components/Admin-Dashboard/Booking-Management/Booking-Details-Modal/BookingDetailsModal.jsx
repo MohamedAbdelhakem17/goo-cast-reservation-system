@@ -1,15 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion'
+import useDateFormat from '../../../../hooks/useDateFormat'
+import usePriceFormat from '../../../../hooks/usePriceFormat'
 
 export default function BookingDetailsModal({ booking, closeModel }) {
+    const formatDate = useDateFormat()
+    const priceFormat = usePriceFormat()
+
     if (!booking) return null
 
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        })
-    }
 
     return (
         <AnimatePresence mode="wait">
@@ -33,6 +31,20 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                         </div>
 
                         <div className="space-y-6">
+                            
+                            {/* Customer Information */}
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-2">Customer Information</h3>
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                    <p className="text-sm text-gray-600">Name: {booking.personalInfo.fullName}</p>
+                                    <p className="text-sm text-gray-600">Email: {booking.personalInfo.email}</p>
+                                    <p className="text-sm text-gray-600">Phone: {booking.personalInfo.phone}</p>
+                                    {booking.personalInfo.brand && (
+                                        <p className="text-sm text-gray-600">Brand: {booking.personalInfo.brand}</p>
+                                    )}
+                                </div>
+                            </div>
+
                             {/* Studio Information */}
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-2">Studio Information</h3>
@@ -51,18 +63,6 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                 </div>
                             </div>
 
-                            {/* Customer Information */}
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-2">Customer Information</h3>
-                                <div className="bg-gray-50 p-4 rounded-lg">
-                                    <p className="text-sm text-gray-600">Name: {booking.personalInfo.fullName}</p>
-                                    <p className="text-sm text-gray-600">Email: {booking.personalInfo.email}</p>
-                                    <p className="text-sm text-gray-600">Phone: {booking.personalInfo.phone}</p>
-                                    {booking.personalInfo.brand && (
-                                        <p className="text-sm text-gray-600">Brand: {booking.personalInfo.brand}</p>
-                                    )}
-                                </div>
-                            </div>
 
                             {/* Package Information */}
                             {booking.package && (
@@ -70,7 +70,7 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                     <h3 className="text-lg font-semibold text-gray-800 mb-2">Package Details</h3>
                                     <div className="bg-gray-50 p-4 rounded-lg">
                                         <p className="text-sm text-gray-600">Name: {booking.package.name}</p>
-                                        <p className="text-sm text-gray-600">Price: {booking?.package?.price?.toLocaleString()} EGP</p>
+                                        <p className="text-sm text-gray-600">Price: {priceFormat(booking?.package?.price) || "no"} </p>
                                     </div>
                                 </div>
                             )}
@@ -84,7 +84,7 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                             <div key={index} className="flex justify-between items-center mb-2">
                                                 <span className="text-sm text-gray-600">{addon.name}</span>
                                                 <span className="text-sm text-gray-600">
-                                                    {addon.quantity} x {addon.price.toLocaleString()} EGP
+                                                    {addon.quantity} x {priceFormat(addon.price)}
                                                 </span>
                                             </div>
                                         ))}
@@ -99,7 +99,7 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                     <div className="flex justify-between items-center">
                                         <span className="text-sm font-semibold text-gray-800">Total Price:</span>
                                         <span className="text-lg font-bold text-main">
-                                            {booking.totalPrice.toLocaleString()} EGP
+                                            {priceFormat(booking.totalPrice)}
                                         </span>
                                     </div>
                                 </div>

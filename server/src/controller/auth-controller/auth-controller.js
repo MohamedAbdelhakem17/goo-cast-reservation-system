@@ -338,15 +338,15 @@ exports.signout = asyncHandler(async (req, res) => {
         // Clear the JWT cookie
         res.clearCookie('jwt', {
             httpOnly: true,
-            secure: true,      
-            sameSite: 'None'   
+            secure: true,
+            sameSite: 'None'
         });
 
         res.status(200).json({
             status: HTTP_STATUS_TEXT.SUCCESS,
             message: "User signed out successfully",
         });
-        
+
     } catch (error) {
         res.status(500).json({
             status: HTTP_STATUS_TEXT.ERROR,
@@ -354,7 +354,7 @@ exports.signout = asyncHandler(async (req, res) => {
             error: error.message
         });
     }
-}); 
+});
 
 
 // resetPassword function to handle password reset

@@ -1,23 +1,26 @@
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {  useMutation } from "@tanstack/react-query";
 import BASE_URL from "../BASE_URL";
 import { useLocation } from "react-router-dom";
+import { useGetData   , useUpdateData} from "../../hooks/useApi";
 
-const GetFullBookedStudios = (studioId) => {
-    return useQuery({
-        queryKey: ["fullBookedStudios", studioId],
-        queryFn: async () => {
-            try {
-                const { data } = await axios.get(`${BASE_URL}/bookings/fully-booked/${`${studioId}`}`);
-                return data;
-            } catch (error) {
-                console.error("Error fetching studios:", error);
-                throw error;
-            }
-        },
-        enabled: !!studioId
-    });
-};
+// const GetFullBookedStudios = (studioId) => {
+//     return useQuery({
+//         queryKey: ["fullBookedStudios", studioId],
+//         queryFn: async () => {
+//             try {
+//                 const { data } = await axios.get(`${BASE_URL}/bookings/fully-booked/${`${studioId}`}`);
+//                 return data;
+//             } catch (error) {
+//                 console.error("Error fetching studios:", error);
+//                 throw error;
+//             }
+//         },
+//         enabled: !!studioId
+//     });
+// };
+
+const GetFullBookedStudios = (studioId) => useGetData(["fullBookedStudios", studioId], `/bookings/fully-booked/${`${studioId}`}`);
 
 const GetAvailableSlots = () => {
     const { state } = useLocation()
@@ -33,53 +36,11 @@ const GetAvailableSlots = () => {
     });
 };
 
-const GetBookings = (filters = {}) => {
-    const { status, studioId, date, page = 1, limit = 10 } = filters;
-    return useQuery({
-        queryKey: ["bookings", status, studioId, date, page, limit],
-        queryFn: async () => {
-            try {
-                const params = new URLSearchParams();
-                if (status) params.append("status", status);
-                if (studioId) params.append("studioId", studioId);
-                if (date) params.append("date", date);
-                params.append("page", page.toString());
-                params.append("limit", limit.toString());
+const GetBookings = (filters) => useGetData("bookings", `${BASE_URL}/bookings` , filters);
 
-                const { data } = await axios.get(`${BASE_URL}/bookings?${params.toString()}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
-                    },
-                });
-                return data;
-            } catch (error) {
-                console.error("Error fetching bookings:", error);
-                throw error; // Re-throw the error so react-query can handle it
-            }
-        },
-    });
-};
+const ChangeBookingStatus = () => useUpdateData("bookings", `${BASE_URL}/bookings`);
 
-const ChangeBookingStatus = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: async ({ id, status }) => {
-            console.log(id, status , "FROM API");
-            const res = await axios.put(`${BASE_URL}/bookings/${id}`, { status }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    authorization: "Bearer " + localStorage.getItem("token"),
-                },
-            });
-            return res.data;
-        },
 
-        onSuccess: () => {
-            queryClient.invalidateQueries(["bookings"]);
-        },
-    })
-}
 export {
     GetFullBookedStudios, GetAvailableSlots, GetBookings, ChangeBookingStatus
 }

@@ -4,6 +4,8 @@ const AddOnRouter = require("./add-on-route/add-on-route");
 const HourlyPackageRouter = require("./hourly-package-route/hourly-package-route");
 const BookingRouter = require("./booking-route/booking-route");
 const AnalyticsRouter = require("./analytics-route/analytics-route");
+const PriceRuleRouter = require("./price-rule-route/price-rule-route");
+
 
 const amountRoutes = (app) => {
     app.use("/api/v1/auth", AuthRouter);
@@ -12,7 +14,8 @@ const amountRoutes = (app) => {
     app.use("/api/v1/hourly-packages", HourlyPackageRouter);
     app.use("/api/v1/bookings", BookingRouter);
     app.use("/api/v1/analytics", AnalyticsRouter);
-}
+    app.use("/api/v1/price-rules", PriceRuleRouter);
+   }
 
 module.exports = amountRoutes
 
