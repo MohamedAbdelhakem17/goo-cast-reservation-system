@@ -10,9 +10,8 @@ router.get('/activate/:token', authController.activateEmail);
 // actionUrl = `${baseUrl}/activate?token=${token}`;
 
 
-router.post('/signout', protectRoute , authController.signout);
+router.post('/signout', protectRoute, authController.signout);
 
 router.put('/reset-password', authController.resetPassword);
-router.put('/update-password', authController.updatePassword);
 
-module.exports = router;    
+module.exports = router;
