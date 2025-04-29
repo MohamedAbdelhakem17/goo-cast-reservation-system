@@ -1,24 +1,18 @@
 import useGetAllStudios from '../../../../apis/studios/studios.api'
+import SelectInput from '../../../shared/Select-Input/SelectInput'
 
-export default function SelectStudio({ selectedStudio, setSelectedStudio}) {
+export default function SelectStudio({ selectedStudio, setSelectedStudio }) {
     const { data: studiosData } = useGetAllStudios()
+
     return (
         <div className="mb-10">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-                Select Studio
-            </label>
-            <select
+            <SelectInput
+                label={"🎙️ Choose a Studio"}
+                placeholder=" Select a Studio..."
                 value={selectedStudio}
                 onChange={(e) => setSelectedStudio(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 transition-shadow"
-            >
-                <option value="">Select a studio...</option>
-                {studiosData?.data?.map((studio) => (
-                    <option key={studio._id} value={studio._id}>
-                        {studio.name}
-                    </option>
-                ))}
-            </select>
+                options={studiosData?.data?.map((studio) => ({ value: studio._id, label: studio.name }))}
+            />
         </div>
     )
 }

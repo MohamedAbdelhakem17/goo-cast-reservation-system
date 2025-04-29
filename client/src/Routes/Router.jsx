@@ -6,6 +6,7 @@ import BookingProvider from "../context/Booking-Context/BookingContext";
 import AdminDashboardLayout from "../components/layout/Admin-Dashboard/AdminDashboard";
 import MainLayout from "../components/layout/Main-Layout/MainLayout";
 import UserDashboardLayout from "../components/layout/User-Dashboard/UserDashboard";
+import ErrorBoundary from "../components/Error-Boundary/ErrorBoundary";
 
 // Pages Public
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -41,6 +42,8 @@ export default function AppRouter() {
                 !location.search.startsWith("?step=")
             ) {
                 localStorage.removeItem("bookingData");
+                localStorage.removeItem("bookingStep");
+
             }
         };
         cleanLocalStorage();
@@ -49,45 +52,47 @@ export default function AppRouter() {
 
     return (
         <Suspense fallback={<LoadingScreen />}>
-            <Routes location={location} key={location.pathname}>
-                {/* Main Layout with Navbar and Footer */}
-                <Route element={<MainLayout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/studios" element={<Studios />} />
-                    <Route path="/studio/:id" element={<StudioDetails />} />
-                    <Route path="/booking" element={
-                        <BookingProvider>
-                            <Booking />
-                        </BookingProvider>
-                    } />
+            <ErrorBoundary>
+                <Routes location={location} key={location.pathname}>
+                    {/* Main Layout with Navbar and Footer */}
+                    <Route element={<MainLayout />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/studios" element={<Studios />} />
+                        <Route path="/studio/:id" element={<StudioDetails />} />
+                        <Route path="/booking" element={
+                            <BookingProvider>
+                                <Booking />
+                            </BookingProvider>
+                        } />
 
-                </Route>
+                    </Route>
 
-                {/* Admin Dashboard Layout */}
-                <Route path="/admin-dashboard/*" element={
-                    <ProtectedRoute allowedRoles={["admin"]}>
-                        <AdminDashboardLayout />
+                    {/* Admin Dashboard Layout */}
+                    <Route path="/admin-dashboard/*" element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminDashboardLayout />
+                        </ProtectedRoute>}>
+                        <Route path="welcome" element={<Welcome />} />
+                        <Route path="studio-management" element={<StudioManagement />} />
+                        <Route path="studio-management/add" element={<AddStudio />} />
+                        <Route path="price-management" element={<PriceManagement />} />
+                        <Route path="service-management" element={<ServiceManagement />} />
+                        <Route path="booking-management" element={<BookingManagement />} />
+                        <Route path="analytics" element={<PageAnalytics />} />
+                    </Route>
+
+                    {/* User Dashboard Layout */}
+                    <Route path="/user-dashboard/*" element={<ProtectedRoute allowedRoles={["user"]}>
+                        <UserDashboardLayout />
                     </ProtectedRoute>}>
-                    <Route path="welcome" element={<Welcome />} />
-                    <Route path="studio-management" element={<StudioManagement />} />
-                    <Route path="studio-management/add" element={<AddStudio />} />
-                    <Route path="price-management" element={<PriceManagement />} />
-                    <Route path="service-management" element={<ServiceManagement />} />
-                    <Route path="booking-management" element={<BookingManagement />} />
-                    <Route path="analytics" element={<PageAnalytics />} />
-                </Route>
+                        <Route path="profile" element={<UserProfile />} />
+                        <Route path="bookings" element={<UserBookings />} />
+                    </Route>
 
-                {/* User Dashboard Layout */}
-                <Route path="/user-dashboard/*" element={<ProtectedRoute allowedRoles={["user"]}>
-                    <UserDashboardLayout />
-                </ProtectedRoute>}>
-                    <Route path="profile" element={<UserProfile />} />
-                    <Route path="bookings" element={<UserBookings />} />
-                </Route>
-
-                {/* Not Found */}
-                <Route path="*" element={<NotFound />} />
-            </Routes>
+                    {/* Not Found */}
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </ErrorBoundary>
         </Suspense>
     );
 }

@@ -72,7 +72,7 @@ export default function Studios() {
           initial="hidden"
           animate="visible"
         >
-          {studiosData.data.map((studio) => (
+          {studiosData?.data?.map((studio) => (
             <motion.div
               key={studio._id}
               className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { studio } from '../../../assets/images'
 import useQuickBooking from '../../../hooks/useQuickBooking'
+import usePriceFormat from '../../../hooks/usePriceFormat'
 export default function BookingButton({ studio }) {
 
     const { handleQuickBooking } = useQuickBooking()
@@ -10,7 +11,7 @@ export default function BookingButton({ studio }) {
         handleQuickBooking(2, st)
     }
 
-
+    const priceFormat = usePriceFormat()
     return (
         <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.8, rotate: -10 }}
@@ -18,7 +19,7 @@ export default function BookingButton({ studio }) {
             transition={{ duration: 1, delay: .9, type: "spring", stiffness: 100, damping: 15, mass: 0.8 }}
             className="p-4 flex justify-between items-center rounded-lg border-b border-t border-main/50 max-w-3xl mx-auto"
         >
-            <p className="text-main font-bold">100 $ per hour</p>
+            <p className="text-main font-bold">{priceFormat(studio.price)} per hour</p>
 
             <motion.button onClick={() => handleBooking(studio)}
                 className="bg-main text-white py-3 px-6 rounded-lg shadow-lg relative overflow-hidden"

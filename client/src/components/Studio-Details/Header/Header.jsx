@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-export default function Header({ title, rate = 3, location }) {
+export default function Header({ title,  location }) {
     const container = {
         hidden: { opacity: 0 },
         show: {
@@ -59,13 +59,13 @@ export default function Header({ title, rate = 3, location }) {
                 </motion.p>
 
                 {/* Studio Rating */}
-                <motion.div
+                {/* <motion.div
                     className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-full"
                     whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}
                 >
                     <i className="fa-solid fa-star text-yellow-400"></i>
                     <span className="text-gray-700 font-bold">{rate.toFixed(1)}</span>
-                </motion.div>
+                </motion.div> */}
 
             </motion.div>
 
