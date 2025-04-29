@@ -23,7 +23,6 @@ export default function PageTracker() {
         } catch (error) {
             console.error('Error sending analytics data:', error);
         }
-        console.log('Analytics Data Sent:', data);
     };
 
     useEffect(() => {
@@ -44,7 +43,6 @@ export default function PageTracker() {
 
         sendAnalytics(analyticsData);
 
-        console.log(`User spent ${timeSpent.toFixed(2)} ms on ${analyticsData.prevPath}`);
 
         enterTime.current = leaveTime;
         prevPath.current = location.pathname;

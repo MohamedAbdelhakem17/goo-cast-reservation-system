@@ -10,17 +10,23 @@ export default function StudioDetails() {
 
     const { data, isLoading } = GetStudioByID(id)
 
+
     if (isLoading) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>
 
     return <>
-        <Header title={`Goocast ${id}`} rate={4.5} location={"Location"} />
+        <Header title={data.data.name}  location={data.data.address} />
         <Gallery images={[data.data.thumbnail, ...data.data.imagesGallery]} />
-        <Taps />
+        <Taps
+            description={data?.data?.description}
+            facilities={data?.data?.facilities}
+            equipment={data?.data?.equipment}
+        />
+
         <BookingButton studio={{
             id: data.data._id,
             name: data.data.name,
             image: data.data.thumbnail,
-            price: data.data.pricePerHour
+            price: data.data.basePricePerSlot
         }} />
     </>
 }
