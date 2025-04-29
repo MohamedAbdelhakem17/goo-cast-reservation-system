@@ -1,11 +1,6 @@
 import React, { useReducer, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import {
-    AddPriceRule,
-    DeletePriceRule,
-    GetPriceRules,
-    UpdatedPriceRules,
-} from "../../../../apis/price/price.api";
+import { DeletePriceExceptions, GetPriceExceptions, UpdatedPriceExceptions, AddPriceExceptions } from "../../../../apis/price/price.api";
 import Loading from "../../../shared/Loading/Loading";
 import usePriceFormat from "../../../../hooks/usePriceFormat";
 import { useToast } from "../../../../context/Toaster-Context/ToasterContext";
@@ -19,12 +14,10 @@ import {
 // Initial state and reducer (unchanged)
 const initialState = {
     newRule: {
-        dayOfWeek: "",
+        day: "",
         isFixedHourly: false,
         defaultPricePerSlot: "",
         perSlotDiscounts: {},
-        newSlotCount: "",
-        newDiscountPercent: "",
     },
     editingRuleId: null,
     editedRule: null,
@@ -80,28 +73,20 @@ function reducer(state, action) {
 }
 
 // Main PriceRule component
-export default function PriceRule({ selectedStudio }) {
-    const { data: priceRulesData, isLoading } = GetPriceRules(selectedStudio);
-    const { mutate: deletePriceRule } = DeletePriceRule(selectedStudio);
-    const { mutate: addNewRule } = AddPriceRule(selectedStudio);
-    const { mutate: updatePriceRule } = UpdatedPriceRules();
+export default function PriceExceptions({ selectedStudio }) {
+    const { data: priceRulesData, isLoading } = GetPriceExceptions(selectedStudio);
+    const { mutate: deletePriceRule } = DeletePriceExceptions(selectedStudio);
+    const { mutate: addNewRule } = AddPriceExceptions(selectedStudio);
+    const { mutate: updatePriceRule } = UpdatedPriceExceptions();
+
     const { addToast } = useToast();
     const formatPrice = usePriceFormat();
+
     const [state, dispatch] = useReducer(reducer, initialState);
     const [selectedRule, setSelectedRule] = useState(null);
 
     const { newRule } = state;
 
-    const getDayName = (day) =>
-        [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-        ][day];
 
     const handleAddDiscountToNewRule = () => {
         const { newSlotCount, newDiscountPercent } = newRule;
@@ -226,11 +211,10 @@ export default function PriceRule({ selectedStudio }) {
                 newRule={newRule}
                 dispatch={dispatch}
                 handleAddPriceRule={handleAddPriceRule}
-                getDayName={getDayName}
                 handleAddDiscountToNewRule={handleAddDiscountToNewRule}
                 handleRemoveDiscountFromNewRule={handleRemoveDiscountFromNewRule}
-                isDay = {true}
-                label={"Add New Price Rule"}
+                isDay={false}
+                label={"Add New Price Exception"}
             />
 
             <PriceRuleList
@@ -241,7 +225,6 @@ export default function PriceRule({ selectedStudio }) {
                 handleEditRule={handleEditRule}
                 handleSaveEdit={handleSaveEdit}
                 handleCancelEdit={handleCancelEdit}
-                getDayName={getDayName}
                 formatPrice={formatPrice}
                 handleAddDiscountToEditedRule={handleAddDiscountToEditedRule}
                 handleRemoveDiscountFromEditedRule={handleRemoveDiscountFromEditedRule}

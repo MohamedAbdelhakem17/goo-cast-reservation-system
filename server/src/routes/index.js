@@ -5,7 +5,9 @@ const HourlyPackageRouter = require("./hourly-package-route/hourly-package-route
 const BookingRouter = require("./booking-route/booking-route");
 const AnalyticsRouter = require("./analytics-route/analytics-route");
 const PriceRuleRouter = require("./price-rule-route/price-rule-route");
-const {SendEmailRoute} = require("./email-error");
+const PriceExceptionRouter = require("./price-exception-route/price-exception-route");
+
+
 
 const amountRoutes = (app) => {
     app.use("/api/v1/auth", AuthRouter);
@@ -15,9 +17,11 @@ const amountRoutes = (app) => {
     app.use("/api/v1/bookings", BookingRouter);
     app.use("/api/v1/analytics", AnalyticsRouter);
     app.use("/api/v1/price-rules", PriceRuleRouter);
+    app.use("/api/v1/price-exceptions", PriceExceptionRouter);
 
     // Error handling and sending email
-    app.use("/api/v1/error-notification", SendEmailRoute);
+    app.use("/api/v1/error-notification", require("./email-error").SendEmailRoute);
 };
 
 module.exports = amountRoutes;
+
