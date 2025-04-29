@@ -1,16 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-export default function EquipmentTap() {
+export default function EquipmentTap({equipment}) {
 
-    const photographyEquipment = [
-        "Multi-colored Backdrops",
-        "Professional Lighting",
-        "Light Reflectors",
-        "Camera Tripods",
-        "Softboxes",
-        "Light Umbrellas",
-        "Tables and Chairs for Photography"
-    ];
 
     const listVariants = {
         hidden: { opacity: 0 },
@@ -40,7 +31,7 @@ export default function EquipmentTap() {
                 </motion.h2>
             </div>
             <motion.ul className="space-y-3 text-gray-600" variants={listVariants}>
-                {photographyEquipment.map((rule, index) => (
+                {equipment?.map((rule, index) => (
                     <motion.li
                         key={index}
                         className="flex items-start"
