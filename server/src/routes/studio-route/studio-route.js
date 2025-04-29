@@ -29,5 +29,7 @@ router
         studioController.updateStudio
     );
 
+router.put("/changePrice/:id", protectRoute, allowTo(USER_ROLE.ADMIN), studioController.changePrice);
+
 module.exports = router;
 

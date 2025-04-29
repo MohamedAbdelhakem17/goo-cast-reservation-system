@@ -13,6 +13,7 @@ const priceRuleSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
     },
+
     defaultPricePerSlot: {
         type: Number,
         min: 0,

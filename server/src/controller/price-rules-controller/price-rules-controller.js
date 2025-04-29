@@ -31,15 +31,37 @@ exports.getAllPriceRules = asyncHandler(async (req, res, next) => {
 exports.addNewPriceRule = asyncHandler(async (req, res, next) => {
     const { studio, dayOfWeek, isFixedHourly, defaultPricePerSlot, perSlotDiscounts } = req.body;
 
-    console.log(req.body);
-    console.log(isValidDayOfWeek(dayOfWeek));
-    console.log(studio, "studio");
-    console.log(isFixedHourly, "isFixedHourly");
-    console.log(defaultPricePerSlot, "defaultPricePerSlot");
-    console.log(perSlotDiscounts, "perSlotDiscounts");
+    const isValidDay = isValidDayOfWeek(dayOfWeek);
+    if (!studio || defaultPricePerSlot === undefined || !isValidDay) {
+        return next(
+            new AppError(
+                400,
+                HTTP_STATUS_TEXT.FAIL,
+                "Please provide all required fields with a valid dayOfWeek (0-6 or null)"
+            )
+        );
+    }
 
-    if (!studio || !isFixedHourly || !defaultPricePerSlot || !isValidDayOfWeek(dayOfWeek) || !perSlotDiscounts) {
-        return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide all required fields with a valid dayOfWeek (0-6 or null)"));
+    if (!isFixedHourly && (!perSlotDiscounts || !Array.isArray(perSlotDiscounts) || perSlotDiscounts.length === 0)) {
+        return next(
+            new AppError(
+                400,
+                HTTP_STATUS_TEXT.FAIL,
+                "per Slot Discounts is required when is not Fixed Hourly "
+            )
+        );
+    }
+
+    // Check if a price rule already exists for this studio and dayOfWeek
+    const existingPriceRule = await PriceRuleModel.findOne({ studio, dayOfWeek });
+    if (existingPriceRule) {
+        return next(
+            new AppError(
+                400,
+                HTTP_STATUS_TEXT.FAIL,
+                "A price rule already exists for this studio and day of the week"
+            )
+        );
     }
 
     const studioExists = await StudioModel.findById(studio);
@@ -74,6 +96,7 @@ exports.editPriceRule = asyncHandler(async (req, res, next) => {
     if (!priceRule) {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Price Rule not found"));
     }
+
 
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
