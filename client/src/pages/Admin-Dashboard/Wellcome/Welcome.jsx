@@ -46,6 +46,7 @@ const Welcome = () => {
         })) || [];
     };
 
+
     return (
         <motion.div
             className="px-6 py-10 bg-gradient-to-b from-white to-gray-100 min-h-screen"

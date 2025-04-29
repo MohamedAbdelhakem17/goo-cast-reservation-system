@@ -10,6 +10,7 @@ const transporter = nodeMailer.createTransport({
     },
 });
 
+
 const sendEmail = async (options) => {
     const mailOptions = {
         from: process.env.EMAIL_FROM,
@@ -21,4 +22,4 @@ const sendEmail = async (options) => {
     return result;
 };
 
-module.exports = sendEmail;
+module.exports = sendEmail; 
