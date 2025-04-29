@@ -5,6 +5,7 @@ import SelectStudio from "../../../components/Admin-Dashboard/Price-Management/S
 import SelectInput from "../../../components/shared/Select-Input/SelectInput";
 import Tabs from "../../../components/shared/Tabs/Tabs";
 import ChangeBasePrice from "../../../components/Admin-Dashboard/Price-Management/Change-Base-Price/ChangeBasePrice";
+import PriceExceptions from "../../../components/Admin-Dashboard/Price-Management/Price-Exceptions/PriceExceptions";
 
 const PriceManagement = () => {
     const [selectedStudio, setSelectedStudio] = useState("");
@@ -63,6 +64,8 @@ const PriceManagement = () => {
                                 {activeTab === 1 && <ChangeBasePrice selectedStudio={selectedStudio} closeTab={() => setActiveTab(null)} />}
 
                                 {activeTab === 2 && <PriceRule selectedStudio={selectedStudio} />}
+
+                                {activeTab=== 3 && <PriceExceptions selectedStudio={selectedStudio}/>}
                             </>
                             }
                         </motion.div>

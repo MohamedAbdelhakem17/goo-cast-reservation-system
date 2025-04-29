@@ -29,7 +29,7 @@ class ErrorBoundary extends React.Component {
             }),
         });
 
-        sendToApi()
+        // sendToApi()
 
 
     }
