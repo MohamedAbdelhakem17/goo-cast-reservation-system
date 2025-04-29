@@ -18,10 +18,11 @@ export const DeletePriceRule = (studioId) => {
     return useDeleteData(["fullBookedStudios", studioId], `${BASE_URL}/price-rules`);
 };
 
-// ================== Price Tiers ================
+// ================== Price Base ================
 
-
-
+export const ChangePriceBase = () => {
+    return useUpdateData(["fullBookedStudios"], `${BASE_URL}/studio/changePrice`);
+}
 
 
 // ================== Price Expiation day  ================
