@@ -332,7 +332,6 @@ export default function AddStudio() {
                                 const plainText = stripHtml(htmlValue);
                                 const lastText = stripHtml(descriptionRef.current);
 
-                                // لو النص فعلاً اتغير
                                 if (plainText !== lastText) {
                                     descriptionRef.current = htmlValue;
                                     dispatch({ type: "SET_DESCRIPTION", payload: htmlValue });

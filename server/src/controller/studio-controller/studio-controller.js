@@ -22,11 +22,6 @@ exports.studioImageUpload = uploadMultipleImages([
 ]);
 // studio image upload Store 
 exports.imageManipulation = async (req, res, next) => {
-    console.log("------ Uploaded Data ------");
-    console.log("req.files:", req.files);
-    console.log("req.body.existingImages:", req.body.existingImages);
-    console.log("----------------------------");
-
     // upload Thumbnail
     if (req.files.thumbnail) {
         const thumbnailName = `studio-${uuidv4()}-${Date.now()}.jpeg`;
@@ -149,3 +144,22 @@ exports.deleteStudio = asyncHandler(async (req, res) => {
         message: "Studio deleted successfully"
     });
 });
+
+
+exports.changePrice = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const studio = await StudioModel.findByIdAndUpdate(id, req.body, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!studio) {
+        throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found");
+    }
+    
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        data: studio,
+        message: "Studio price updated successfully"
+    });
+})

@@ -5,12 +5,12 @@ import FacilitiesTap from "./FacilitiesTap/FacilitiesTap";
 import EquipmentTap from "./EquipmentTap/EquipmentTap";
 import ReviewsTap from "./ReviewsTap/ReviewsTap";
 
-export default function Taps() {
+export default function Taps({ description, facilities, equipment }) {
     const tabs = [
-        { label: "Description", id: 1, content: <DescriptionTap /> },
-        { label: "Facilities", id: 2, content: <FacilitiesTap /> },
-        { label: "Equipment", id: 3, content: <EquipmentTap /> },
-        { label: "Reviews", id: 4, content: <ReviewsTap /> },
+        { label: "Description", id: 1, content: <DescriptionTap description={description} /> },
+        { label: "Facilities", id: 2, content: <FacilitiesTap facilities={facilities} /> },
+        { label: "Equipment", id: 3, content: <EquipmentTap equipment={equipment} /> },
+        // { label: "Reviews", id: 4, content: <ReviewsTap /> },
     ];
 
     const defaultTabId = 1;

@@ -1,17 +1,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-export default function FacilitiesTap() {
+export default function FacilitiesTap({facilities}) {
 
-    const amenities = [
-        "High-speed Wi-Fi",
-        "Private Parking",
-        "Central Air Conditioning",
-        "Lounge",
-        "Relaxation Area",
-        "Recupboards",
-        "Kitchenette",
-        "Catering Service"
-    ];
+
 
     const listVariants = {
         hidden: { opacity: 0 },
@@ -41,7 +32,7 @@ export default function FacilitiesTap() {
                 </motion.h2>
             </div>
             <motion.ul className="space-y-3 text-gray-600" variants={listVariants}>
-                {amenities.map((rule, index) => (
+                {facilities?.map((rule, index) => (
                     <motion.li
                         key={index}
                         className="flex items-start"

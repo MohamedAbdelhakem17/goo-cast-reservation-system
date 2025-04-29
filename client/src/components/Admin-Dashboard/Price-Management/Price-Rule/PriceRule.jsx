@@ -6,13 +6,14 @@ import Loading from "../../../shared/Loading/Loading";
 import usePriceFormat from "../../../../hooks/usePriceFormat";
 import { useToast } from "../../../../context/Toaster-Context/ToasterContext";
 import Popup from "../../../shared/Popup/Popup";
-import {produce} from "immer";
+import { produce } from "immer";
+import SelectInput from "../../../shared/Select-Input/SelectInput";
 
 const initialState = {
     newRule: {
-        dayOfWeek: "0",
-        isFixedHourly: true,
-        defaultPricePerSlot: 8000,
+        dayOfWeek: "",
+        isFixedHourly: false,
+        defaultPricePerSlot: "",
         perSlotDiscounts: {},
         newSlotCount: "",
         newDiscountPercent: "",
@@ -168,8 +169,9 @@ export default function PriceRule({ selectedStudio }) {
                 {/* New Rule Form */}
                 <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <select
+                        <SelectInput
                             value={newRule.dayOfWeek}
+                            placeholder=" Select a day..."
                             onChange={(e) =>
                                 dispatch({
                                     type: "SET_NEW_RULE_FIELD",
@@ -177,15 +179,8 @@ export default function PriceRule({ selectedStudio }) {
                                     value: e.target.value,
                                 })
                             }
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 transition-shadow"
-                        >
-                            <option value="">Select day of week...</option>
-                            {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-                                <option key={day} value={day}>
-                                    {getDayName(day)}
-                                </option>
-                            ))}
-                        </select>
+                            options={[0, 1, 2, 3, 4, 5, 6].map((day) => ({ value: day, label: getDayName(day) }))}
+                        />
 
                         <Input
                             type="number"
@@ -219,76 +214,78 @@ export default function PriceRule({ selectedStudio }) {
                     </div>
 
                     {/* Discount Section */}
-                    <div className="bg-white p-6 rounded-lg shadow-sm">
-                        <h4 className="text-lg font-medium text-gray-800 mb-4">
-                            Add Discounts
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <Input
-                                type="number"
-                                label="Number of Slots"
-                                value={newRule.newSlotCount}
-                                onChange={(e) =>
-                                    dispatch({
-                                        type: "SET_NEW_RULE_FIELD",
-                                        field: "newSlotCount",
-                                        value: e.target.value,
-                                    })
-                                }
-                                min={1}
-                                placeholder="Enter number of slots"
-                            />
-                            <Input
-                                type="number"
-                                label="Discount Percentage"
-                                value={newRule.newDiscountPercent}
-                                onChange={(e) =>
-                                    dispatch({
-                                        type: "SET_NEW_RULE_FIELD",
-                                        field: "newDiscountPercent",
-                                        value: e.target.value,
-                                    })
-                                }
-                                min={0}
-                                max={100}
-                                placeholder="Enter discount percentage"
-                            />
-                        </div>
-                        <button
-                            onClick={handleAddDiscountToNewRule}
-                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
-                        >
-                            Add Discount
-                        </button>
-
-                        {/* Display discounts being added */}
-                        {Object.entries(newRule.perSlotDiscounts).length > 0 && (
-                            <div className="mt-4 space-y-3">
-                                {Object.entries(newRule.perSlotDiscounts).map(
-                                    ([slots, discount]) => (
-                                        <div
-                                            key={slots}
-                                            className="flex justify-between items-center text-sm bg-gray-50 p-3 rounded-lg text-gray-700"
-                                        >
-                                            <span>
-                                                {slots} slots:
-                                                <span className="font-semibold ml-2 text-rose-500">
-                                                    {discount}% discount
-                                                </span>
-                                            </span>
-                                            <button
-                                                onClick={() => handleRemoveDiscountFromNewRule(slots)}
-                                                className="text-red-500 hover:text-red-600"
-                                            >
-                                                Remove
-                                            </button>
-                                        </div>
-                                    )
+                    {
+                        !state.newRule.isFixedHourly && <>
+                            <div className="bg-white p-6 rounded-lg shadow-sm">
+                                <h4 className="text-lg font-medium text-gray-800 mb-4">
+                                    Add Discounts
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <Input
+                                        type="number"
+                                        label="Number of Slots"
+                                        value={newRule.newSlotCount}
+                                        onChange={(e) =>
+                                            dispatch({
+                                                type: "SET_NEW_RULE_FIELD",
+                                                field: "newSlotCount",
+                                                value: e.target.value,
+                                            })
+                                        }
+                                        min={1}
+                                        placeholder="Enter number of slots"
+                                    />
+                                    <Input
+                                        type="number"
+                                        label="Discount Percentage"
+                                        value={newRule.newDiscountPercent}
+                                        onChange={(e) =>
+                                            dispatch({
+                                                type: "SET_NEW_RULE_FIELD",
+                                                field: "newDiscountPercent",
+                                                value: e.target.value,
+                                            })
+                                        }
+                                        min={0}
+                                        max={100}
+                                        placeholder="Enter discount percentage"
+                                    />
+                                </div>
+                                <button
+                                    onClick={handleAddDiscountToNewRule}
+                                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                                >
+                                    Add Discount
+                                </button>
+                                {/* Display discounts being added */}
+                                {Object.entries(newRule.perSlotDiscounts).length > 0 && (
+                                    <div className="mt-4 space-y-3">
+                                        {Object.entries(newRule.perSlotDiscounts).map(
+                                            ([slots, discount]) => (
+                                                <div
+                                                    key={slots}
+                                                    className="flex justify-between items-center text-sm bg-gray-50 p-3 rounded-lg text-gray-700"
+                                                >
+                                                    <span>
+                                                        {slots} slots:
+                                                        <span className="font-semibold ml-2 text-rose-500">
+                                                            {discount}% discount
+                                                        </span>
+                                                    </span>
+                                                    <button
+                                                        onClick={() => handleRemoveDiscountFromNewRule(slots)}
+                                                        className="text-red-500 hover:text-red-600"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
                                 )}
                             </div>
-                        )}
-                    </div>
-
+                        </>
+                    }
                     <button
                         onClick={handleAddPriceRule}
                         className="w-full px-6 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors shadow-sm mt-6"
@@ -347,7 +344,7 @@ export default function PriceRule({ selectedStudio }) {
                                                 {getDayName(rule.dayOfWeek)}
                                             </h4>
                                             <span className="text-rose-500 font-semibold text-lg">
-                                                {formatPrice(rule.defaultPricePerSlot)} / slot
+                                                {formatPrice(rule.defaultPricePerSlot)} per slot
                                             </span>
                                         </>
                                     )}
