@@ -31,7 +31,6 @@ class ErrorBoundary extends React.Component {
 
         // sendToApi()
 
-
     }
 
     handleReload = () => {
