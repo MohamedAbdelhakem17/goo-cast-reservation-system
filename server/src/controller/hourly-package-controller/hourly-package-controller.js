@@ -17,9 +17,9 @@ exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
 
 // create hourly package
 exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
-    const { name, description, details, prices, savings, icon } = req.body;
+    const { name, description, details, icon } = req.body;
 
-    if (!name || !description || !details || !prices || !savings) {
+    if (!name || !description || !details) {
         return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide all required fields"));
     }
 
@@ -27,8 +27,6 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
         name,
         description,
         details,
-        prices,
-        savings,
         icon
     });
 
