@@ -16,8 +16,8 @@ const initialState = {
     editFormData: {
         name: '',
         description: '',
-        price: '',
-        icon: ''
+        image: null,
+        price: 0
     }
 }
 
@@ -30,6 +30,7 @@ const actions = {
     CLOSE_ADD_NEW: 'CLOSE_ADD_NEW',
     SET_DELETE_ADDON: 'SET_DELETE_ADDON',
     CLEAR_DELETE_ADDON: 'CLEAR_DELETE_ADDON',
+    UPDATE_IMAGE: 'UPDATE_IMAGE', // Action for image update
 }
 
 // Reducer
@@ -41,13 +42,13 @@ function reducer(state, action) {
                 draft.editFormData = {
                     name: action.payload.name,
                     description: action.payload.description,
-                    price: action.payload.price,
-                    icon: action.payload.icon
+                    image: action.payload.image,
+                    price: action.payload.price
                 }
                 break
             case actions.CANCEL_EDIT:
                 draft.editingId = null
-                draft.editFormData = { name: '', description: '', price: '', icon: '' }
+                draft.editFormData = { name: '', description: '', image: null, price: 0 }
                 break
             case actions.UPDATE_EDIT_FORM:
                 draft.editFormData[action.payload.field] = action.payload.value
@@ -63,6 +64,9 @@ function reducer(state, action) {
                 break
             case actions.CLEAR_DELETE_ADDON:
                 draft.deletedAddon = null
+                break
+            case actions.UPDATE_IMAGE:
+                draft.editFormData.image = action.payload
                 break
             default:
                 break
@@ -102,6 +106,7 @@ export default function Addons() {
                 dispatch({ type: actions.CANCEL_EDIT })
             },
             onError: (error) => {
+                addToast(error.response?.data?.message || 'Something went wrong', 'error')
                 console.error('Error updating add-on:', error)
             }
         })
@@ -127,6 +132,13 @@ export default function Addons() {
         dispatch({ type: actions.OPEN_ADD_NEW })
     }
 
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0]
+        if (file) {
+            dispatch({ type: actions.UPDATE_IMAGE, payload: file })
+        }
+    }
+
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
@@ -143,7 +155,7 @@ export default function Addons() {
                 <table className="min-w-full table-auto">
                     <thead className="bg-gray-50">
                         <tr>
-                            {['Name', 'Description', 'Price', 'Icon', 'Actions'].map((header, index) => (
+                            {['Name', 'Description', 'Price', 'Image', 'Actions'].map((header, index) => (
                                 <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     {header}
                                 </th>
@@ -165,6 +177,7 @@ export default function Addons() {
                                         <div className="text-sm font-medium text-gray-900">{addon.name}</div>
                                     )}
                                 </td>
+
                                 <td className="px-6 py-4">
                                     {state.editingId === addon._id ? (
                                         <Input
@@ -176,33 +189,51 @@ export default function Addons() {
                                         <div className="text-sm text-gray-500 max-w-md">{addon.description}</div>
                                     )}
                                 </td>
+                                {/* 
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900">{formatPrice(addon.price)}</div>
+                                </td> */}
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {state.editingId === addon._id ? (
                                         <Input
                                             type="number"
                                             value={state.editFormData.price}
-                                            onChange={(e) => dispatch({ type: actions.UPDATE_EDIT_FORM, payload: { field: 'price', value: Number(e.target.value) } })}
+                                            onChange={(e) =>
+                                                dispatch({
+                                                    type: actions.UPDATE_EDIT_FORM,
+                                                    payload: { field: 'price', value: parseFloat(e.target.value) }
+                                                })
+                                            }
                                             placeholder="Enter price"
-                                            min="0"
                                         />
                                     ) : (
                                         <div className="text-sm text-gray-900">{formatPrice(addon.price)}</div>
                                     )}
                                 </td>
+
+
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {state.editingId === addon._id ? (
                                         <div className="flex items-center gap-2">
-                                            <Input
-                                                value={state.editFormData.icon}
-                                                onChange={(e) => dispatch({ type: actions.UPDATE_EDIT_FORM, payload: { field: 'icon', value: e.target.value } })}
-                                                placeholder="fa-icon-name"
+                                            <input
+                                                type="file"
+                                                onChange={handleImageUpload}
+                                                className="cursor-pointer"
                                             />
-                                            <i className={`fas ${state.editFormData.icon} text-gray-600`}></i>
+                                            {state.editFormData.image && state.editFormData.image instanceof File && (
+                                                <img
+                                                    src={URL.createObjectURL(state.editFormData.image)}
+                                                    alt="Addon"
+                                                    className="w-14 h-14 rounded-full"
+                                                />
+                                            )}
                                         </div>
                                     ) : (
-                                        <i className={`fas ${addon.icon} text-gray-600`}></i>
+                                        <img src={addon.image} alt="Addon" className="w-14 h-14 rounded-full" />
                                     )}
                                 </td>
+
+
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     {state.editingId === addon._id ? (
                                         <>

@@ -65,7 +65,7 @@ export const DeletePackage = () => {
     });
 }
 
-export  const UpdatePackage = () => {
+export const UpdatePackage = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ id, data }) => {
@@ -85,7 +85,7 @@ export  const UpdatePackage = () => {
         onSuccess: () => {
             queryClient.invalidateQueries(["packages"]);
         },
-    });     
+    });
 }
 
 // =========== ADD-ONS ============
@@ -104,19 +104,34 @@ export const GetAllAddOns = () => {
     });
 };
 
-
 export const AddNewAddOn = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (data) => {
             try {
-                const response = await axios.post(`${BASE_URL}/add-ons`, data, {
+                const formData = new FormData();
+
+                // Iterate over data and handle serialization for objects
+                Object.entries(data).forEach(([key, value]) => {
+                    // Check if the value is an object (and not null or a File object)
+                    if (typeof value === 'object' && value !== null && !(value instanceof File)) {
+                        formData.append(key, JSON.stringify(value));
+                    } else {
+                        formData.append(key, value);
+                    }
+                });
+
+                console.log(data); // log the original data
+                console.log(formData); // log the FormData (will show up as [object FormData])
+
+                const response = await axios.post(`${BASE_URL}/add-ons`, formData, {
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                         authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
+
                 return response.data;
             } catch (error) {
                 console.error("Error adding new add-on:", error);
@@ -127,7 +142,7 @@ export const AddNewAddOn = () => {
             queryClient.invalidateQueries(["addons"]);
         },
     });
-}
+};
 
 export const DeleteAddOn = () => {
     const queryClient = useQueryClient();
@@ -152,14 +167,66 @@ export const DeleteAddOn = () => {
     });
 }
 
+// export const UpdateAddOn = () => {
+//     const queryClient = useQueryClient();
+//     return useMutation({
+//         mutationFn: async ({ id, data }) => {
+//             try {
+//                 const formData = new FormData();
+
+//                 // Iterate over data and handle serialization for objects
+//                 Object.entries(data).forEach(([key, value]) => {
+//                     // Check if the value is an object (and not null or a File object)
+//                     if (typeof value === 'object' && value !== null && !(value instanceof File)) {
+//                         formData.append(key, JSON.stringify(value));
+//                     } else {
+//                         formData.append(key, value);
+//                     }
+//                 })
+//                 const response = await axios.put(`${BASE_URL}/add-ons/${id}`, formData, {
+//                     headers: {
+//                         "Content-Type": "multipart/form-data",
+//                         authorization: "Bearer " + localStorage.getItem("token"),
+//                     },
+//                 });
+//                 return response.data;
+//             } catch (error) {
+//                 console.error("Error updating add-on:", error);
+//                 throw error;
+//             }
+//         },
+//         onSuccess: () => {
+//             queryClient.invalidateQueries(["addons"]);
+//         },
+//     });
+// }
+
 export const UpdateAddOn = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ id, data }) => {
             try {
-                const response = await axios.put(`${BASE_URL}/add-ons/${id}`, data, {
+                const formData = new FormData();
+
+                // Iterate over data and handle serialization for objects
+                Object.entries(data).forEach(([key, value]) => {
+                    if (key === 'image') {
+                        if (value instanceof File) {
+                            formData.append("image", value);
+                        } else if (typeof value === "string") {
+                            const imageName = value.split('/').pop();
+                            formData.append("imageUrl", imageName);
+                        }
+                    } else if (typeof value === 'object' && value !== null && !(value instanceof File)) {
+                        formData.append(key, JSON.stringify(value));
+                    } else {
+                        formData.append(key, value);
+                    }
+                });
+
+                const response = await axios.put(`${BASE_URL}/add-ons/${id}`, formData, {
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                         authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
@@ -173,4 +240,4 @@ export const UpdateAddOn = () => {
             queryClient.invalidateQueries(["addons"]);
         },
     });
-}
+};
