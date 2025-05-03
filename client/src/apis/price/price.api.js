@@ -42,3 +42,9 @@ export const UpdatedPriceExceptions = (studioId) => {
 export const DeletePriceExceptions = (studioId) => {
     return useDeleteData(["priceExceptions", studioId], `${BASE_URL}/price-exceptions`);
 };
+
+
+// ================== Package Price mange  ================
+export const EditPricePackage = () => {
+    return useUpdateData(["pricePackages"], `${BASE_URL}/hourly-packages/price-mange`);
+}
