@@ -17,7 +17,39 @@ const AddOnSchema = new mongoose.Schema({
         required: [true, "Please provide a price"],
         min: [0, "Price must be a positive number"],
     },
-    icon: String,
+
+    isFixed: {
+        type: Boolean,
+        default: false
+    },
+    image: {
+        type: String,
+        required: [true, "Please provide an image"],
+        trim: true,
+    },
+
+    perHourDiscounts: {
+        type: Map,
+        of: Number,
+        default: {}
+    }
+
+    // icon: String,
+});
+
+function setImage(doc) {
+    if (doc.image) {
+        doc.image = `${process.env.BASE_URL}/uploads/addons/${doc.image}`;
+    }
+};
+
+
+AddOnSchema.post("save", (doc) => {
+    setImage(doc);
+});
+
+AddOnSchema.post("init", (doc) => {
+    setImage(doc);
 });
 
 module.exports = mongoose.model("AddOn", AddOnSchema);
