@@ -8,7 +8,8 @@ const bookingController = require("../../controller/booking-controller/booking-c
 
 // get Fully booked dates for a studio
 router.route("/fully-booked/:studioId").get(bookingController.getFullyBookedDates);
-router.route("/available-slots").post(bookingController.getAvailableSlots);
+router.route("/available-slots").post(bookingController.getAvailableStartSlots);
+router.route("/available-end-slots").post(bookingController.getAvailableEndSlots);
 
 router.use(protectRoute, allowTo(USER_ROLE.ADMIN))
 router.route("/").get(bookingController.getAllBookings);
