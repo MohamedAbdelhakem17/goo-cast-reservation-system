@@ -16,21 +16,22 @@ class ErrorBoundary extends React.Component {
         this.setState({ errorInfo });
         console.error("Uncaught error:", error, errorInfo);
         // Send error details to backend
-        const sendToApi = fetch(BASE_URL + "/error-notification", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                error: error.toString(),
-                stack: errorInfo.componentStack,
-                userAgent: navigator.userAgent,
-                url: window.location.href,
-            }),
-        });
+        const sendToApi = () => {
+            fetch(BASE_URL + "/error-notification", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    error: error.toString(),
+                    stack: errorInfo.componentStack,
+                    userAgent: navigator.userAgent,
+                    url: window.location.href,
+                }),
+            });
 
+        }
         sendToApi()
-
 
     }
 

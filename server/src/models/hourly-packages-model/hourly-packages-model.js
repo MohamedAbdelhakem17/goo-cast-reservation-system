@@ -16,36 +16,57 @@ const HourlyPackageSchema = new mongoose.Schema({
         required: [true, "Please provide details"],
         set: arr => arr.map(s => s.trim()),
     },
-    prices: {
-        twoHours: {
-            type: Number,
-            required: [true, "Please provide a price"],
-            min: [0, "Price must be a positive number"],
-        },
-        halfDay: {
-            type: Number,
-            required: [true, "Please provide a price"],
-            min: [0, "Price must be a positive number"],
-        },
-        fullDay: {
-            type: Number,
-            required: [true, "Please provide a price"],
-            min: [0, "Price must be a positive number"],
-        },
-    },
-    savings: {
-        halfDay: {
-            type: Number,
-            required: [true, "Please provide a saving"],
-            min: [0, "Saving must be a positive number"],
-        },
-        fullDay: {
-            type: Number,
-            required: [true, "Please provide a saving"],
-            min: [0, "Saving must be a positive number"],
-        },
-    },
+
     icon: String,
+
+    price: {
+        type: Number,
+        // required: [true, "Please provide a price"],
+        min: [0, "Price must be a positive number"],
+    },
+
+    isFixed: {
+        type: Boolean,
+        default: false
+    },
+
+
+    perHourDiscounts: {
+        type: Map,
+        of: Number,
+        default: {}
+    }
+
+    // prices: {
+    //     twoHours: {
+    //         type: Number,
+    //         required: [true, "Please provide a price"],
+    //         min: [0, "Price must be a positive number"],
+    //     },
+    //     halfDay: {
+    //         type: Number,
+    //         required: [true, "Please provide a price"],
+    //         min: [0, "Price must be a positive number"],
+    //     },
+    //     fullDay: {
+    //         type: Number,
+    //         required: [true, "Please provide a price"],
+    //         min: [0, "Price must be a positive number"],
+    //     },
+    // },
+
+    // savings: {
+    //     halfDay: {
+    //         type: Number,
+    //         required: [true, "Please provide a saving"],
+    //         min: [0, "Saving must be a positive number"],
+    //     },
+    //     fullDay: {
+    //         type: Number,
+    //         required: [true, "Please provide a saving"],
+    //         min: [0, "Saving must be a positive number"],
+    //     },
+    // },
 });
 
 module.exports = mongoose.model("HourlyPackage", HourlyPackageSchema);
