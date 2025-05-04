@@ -247,7 +247,7 @@ const NewPriceRuleForm = ({ newRule, dispatch, handleAddPriceRule, getDayName, h
       {label}
     </h3>
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
 
         {
           isDay
@@ -263,9 +263,10 @@ const NewPriceRuleForm = ({ newRule, dispatch, handleAddPriceRule, getDayName, h
               }
               options={[0, 1, 2, 3, 4, 5, 6].map((day) => ({ value: day, label: getDayName(day) }))}
             />
-            : <Input
+            : <input
               type="Date"
-              label="Day of Month"
+              placeholder="Enter date"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 transition-shadow outline-none"
               value={newRule.dayOfMonth}
               onChange={(e) =>
                 dispatch({
