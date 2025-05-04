@@ -20,7 +20,11 @@ exports.getAllPriceExceptions = asyncHandler(async (req, res, next) => {
 
     // Check if no price rules found
     if (priceException.length === 0) {
-        return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No price rules found"));
+        res.status(200).json({
+            status: HTTP_STATUS_TEXT.SUCCESS,
+            message: "No price exceptions found",
+            data: null
+        })
     }
 
     res.status(200).json({
@@ -44,15 +48,15 @@ exports.addNewPriceException = asyncHandler(async (req, res, next) => {
         );
     }
 
-    // check if perSlotDiscounts is an array
-    if (!isFixedHourly && (!perSlotDiscounts || !Array.isArray(perSlotDiscounts) || perSlotDiscounts.length === 0)) {
-        return next(
-            new AppError(
-                400,
-                HTTP_STATUS_TEXT.FAIL,
-                "per Slot Discounts is required when is not Fixed Hourly "
-            )
-        );
+    // check if isFixedHourly is false and validate perSlotDiscounts
+    if (!isFixedHourly && !perSlotDiscounts) {
+            return next(
+                new AppError(
+                    400,
+                    HTTP_STATUS_TEXT.FAIL,
+                    "per Slot Discounts is required when is not Fixed Hourly"
+                )
+            );
     }
 
     // Check if a price rule already exists for this studio and dayOfWeek
@@ -155,7 +159,7 @@ exports.deletePriceException = asyncHandler(async (req, res, next) => {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
     }
 
-    const priceRule = await PriceExceptionModel.findOneAndDelete({ studio, dayOfWeek });
+    const priceRule = await PriceExceptionModel.findOneAndDelete({ studio, date });
 
     // Check if price rule exists
     if (!priceRule) {
