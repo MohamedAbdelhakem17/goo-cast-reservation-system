@@ -72,6 +72,7 @@ const PriceManagement = () => {
                 </div>
 
                 <AnimatePresence mode="wait">
+                    {/* Studio Management */}
                     {mangeType === "studio" && (
                         <motion.div
                             key="studio"
@@ -114,6 +115,7 @@ const PriceManagement = () => {
                         </motion.div>
                     )}
 
+                    {/* Service Management */}
                     {mangeType === "service" && (
                         <motion.div
                             key="service"
@@ -134,21 +136,29 @@ const PriceManagement = () => {
                             />
 
                             {/* Select Package */}
-                            <SelectInput
-                                value={selectedOption}
-                                onChange={(e) => dispatch({ type: "SET_OPTION_STUDIO", payload: e.target.value })}
-                                options={packageData?.data?.map((item) => ({
-                                    value: item._id,
-                                    label: item.name,
-                                }))}
-                                placeholder=" Select Package to manage ?."
-                                iconClass="fas fa-chevron-down"
-                            />
-
-                            {/* Selected Package */}
                             {
-                                packageData?.data?.find((item) => item._id === selectedOption) && <PackagePrice selectedPackage={packageData?.data?.find((item) => item._id === selectedOption)} />
+                                activeTab === 1 && <>
+                                    <SelectInput
+                                        value={selectedOption}
+                                        onChange={(e) => dispatch({ type: "SET_OPTION_STUDIO", payload: e.target.value })}
+                                        options={packageData?.data?.map((item) => ({
+                                            value: item._id,
+                                            label: item.name,
+                                        }))}
+                                        placeholder=" Select Package to manage ?."
+                                        iconClass="fas fa-chevron-down"
+                                    />
+                                    {packageData?.data?.find((item) => item._id === selectedOption) && <PackagePrice selectedPackage={packageData?.data?.find((item) => item._id === selectedOption)} />}
+                                </>
                             }
+
+                            {/* Select Addon */}
+                            {
+                                activeTab === 2 && <>
+                                    <h1>Addons</h1>
+                                </>
+                            }
+
                         </motion.div>
                     )}
                 </AnimatePresence>

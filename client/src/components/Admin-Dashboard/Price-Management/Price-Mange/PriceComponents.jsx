@@ -388,5 +388,6 @@ export {
   DiscountList,
   ActionButtons,
   RuleDisplay,
-  NewPriceRuleForm
+  NewPriceRuleForm,
+  DiscountEditor
 };
