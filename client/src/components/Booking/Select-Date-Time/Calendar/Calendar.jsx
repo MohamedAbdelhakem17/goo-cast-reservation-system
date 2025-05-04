@@ -3,13 +3,15 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./datePicker.css";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetFullBookedStudios } from "../../../../apis/Booking/booking.api";
+import Loading from "../../../shared/Loading/Loading";
 
 export default function Calendar({ getSlots }) {
     const startDate = new Date();
     const { setBookingField, bookingData } = useBooking();
 
 
-    const { isLoading, data } = GetFullBookedStudios(bookingData.studio?.id);
+    const { isLoading, data } = GetFullBookedStudios(bookingData.studio?.id||JSON.parse(localStorage.getItem("bookingData"))?.studio?.id);
+    console.log({ data , studioId: bookingData.studio?.id });
     const disabledDates = data?.data?.map(dateStr => new Date(dateStr)) || [];
 
     const isDateDisabled = (date) => {
@@ -20,14 +22,7 @@ export default function Calendar({ getSlots }) {
         );
     };
 
-    if (isLoading) {
-        return (
-
-            <div className="loader"></div>
-
-        )
-    }
-
+    if (isLoading) return <Loading />
     return (
         <div className="border-b-1 border-t-1 border-gray-300 rounded-lg md:p-4">
             <DatePicker

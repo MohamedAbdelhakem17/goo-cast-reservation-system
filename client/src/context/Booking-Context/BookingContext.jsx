@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useEffect, useCallback ,  useRef} from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useBookingFormik from "../Booking-Formik/useBookingFormik";
 
@@ -56,7 +56,7 @@ export default function BookingProvider({ children }) {
         if (!didSetStudio.current) {
             if (isValidStudio(studio)) {
                 setBookingField("studio", studio);
-            } 
+            }
             didSetStudio.current = true;
         }
     }, [studio]);
@@ -106,10 +106,13 @@ export default function BookingProvider({ children }) {
     // Save booking data in localStorage whenever it changes
     useEffect(() => {
         // Only save if studio is valid or null
+        console.log(values.studio);
+
         if (isValidStudio(values.studio) || values.studio === null) {
             localStorage.setItem("bookingData", JSON.stringify(values));
         }
     }, [values]);
+
 
     // Navigation handlers
     const handleNextStep = useCallback(() => {

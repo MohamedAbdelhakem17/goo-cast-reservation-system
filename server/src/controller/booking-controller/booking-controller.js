@@ -6,11 +6,17 @@ const { timeToMinutes, minutesToTime, getAllDay } = require("../../utils/time-ma
 const AppError = require("../../utils/app-error");
 const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model")
+const { calculateSlotPrices } = require("../../utils/priceCalculator");
 
 
 // get fully booked dates for a studio
 exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     const { studioId } = req.params;
+
+    // Check if studio exists
+    const studio = await StudioModel.findById(studioId)
+    if (!studio) return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+
     const bookings = await BookingModel.find({ studio: studioId });
     if (bookings.length === 0) {
         return res.status(200).json({
@@ -32,10 +38,8 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     });
 
     // Find fully booked dates
-    const studio = await StudioModel.findById(studioId)
-    if (!studio) return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
 
-    const startOfDay = timeToMinutes(studio?.strateTime)
+    const startOfDay = timeToMinutes(studio?.startTime)
     const endOfDay = timeToMinutes(studio?.endTime)
     const totalMinutesInDay = endOfDay - startOfDay
 
@@ -49,31 +53,100 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     });
 });
 
-exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
-    const { studioId, date, duration = 1 } = req.body;
+// exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
+//     const { studioId, date, duration = 1 } = req.body;
 
-    // Validate input
-    if (!studioId || !date || !duration) {
-        return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studioId, date, and duration are required"));
+//     // Validate input
+//     if (!studioId || !date || !duration) {
+//         return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studioId, date, and duration are required"));
+//     }
+
+//     // Get the studio's working hours
+//     const studio = await StudioModel.findById(studioId);
+
+//     if (!studio) {
+//         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+//     }
+
+//     // Convert start and end time to minutes
+//     const startOfDay = timeToMinutes(studio.startTime || "08:00");
+//     const endOfDay = timeToMinutes(studio.endTime != 0 ? studio.endTime : "22:00");
+
+//     const durationInMinutes = duration * 60;
+
+
+//     // Get bookings for the specified date
+//     const inputDate = getAllDay(date);
+
+//     const bookings = await BookingModel.find({
+//         studio: studioId,
+//         date: {
+//             $gte: inputDate.startOfDay,
+//             $lt: inputDate.endOfDay,
+//         },
+//     });
+
+
+//     if (bookings.length === 0) {
+//         // console.log("No bookings found for this date"); 
+//     }
+
+//     const bookedSlots = bookings.map(book => {
+//         const start = timeToMinutes(book.timeSlot);
+//         const end = start + (book.duration * 60);
+//         return { start, end };
+//     });
+
+//     // console.log('Booked slots:', bookedSlots);
+
+//     // Calculate available slots
+//     const availableSlots = [];
+
+//     // Check available slots within the studio's working hours
+//     for (let time = startOfDay; time + durationInMinutes <= endOfDay; time += 60) {
+
+//         const slotStart = time;
+//         const slotEnd = time + durationInMinutes;
+
+//         // Skip slot if it exceeds the studio's working hours
+//         if (slotEnd > endOfDay) {
+//             continue;
+//         }
+
+//         const isOverlapping = bookedSlots.some(b =>
+//             (slotStart < b.end && slotEnd > b.start)
+//         );
+
+//         if (!isOverlapping) {
+//             availableSlots.push({
+//                 startTime: minutesToTime(slotStart),
+//             });
+//         }
+//     }
+
+
+
+//     res.status(200).json({
+//         status: HTTP_STATUS_TEXT.SUCCESS,
+//         data: availableSlots,
+//     });
+// });
+
+exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
+    const { studioId, date } = req.body;
+
+    if (!studioId || !date) {
+        return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studioId and date are required"));
     }
 
-    // Get the studio's working hours
     const studio = await StudioModel.findById(studioId);
-
     if (!studio) {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
     }
 
-    // Convert start and end time to minutes
     const startOfDay = timeToMinutes(studio.startTime || "08:00");
-    const endOfDay = timeToMinutes(studio.endTime != 0 ? studio.endTime : "22:00");
-    console.log("============== Studio", studio)
+    const endOfDay = timeToMinutes(studio.endTime || "22:00");
 
-    const durationInMinutes = duration * 60;
-
-    console.log(`Studio working hours in minutes: ${startOfDay} to ${endOfDay}`);
-
-    // Get bookings for the specified date
     const inputDate = getAllDay(date);
 
     const bookings = await BookingModel.find({
@@ -84,11 +157,51 @@ exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
         },
     });
 
-    console.log(`Bookings for date ${date}:`, bookings);
+    const bookedSlots = bookings.map(book => {
+        const start = timeToMinutes(book.timeSlot);
+        const end = start + (book.duration * 60);
+        return { start, end };
+    });
 
-    if (bookings.length === 0) {
-        console.log("No bookings found for this date");
+    const availableSlots = [];
+
+    for (let time = startOfDay; time < endOfDay; time += 60) {
+        const slotEnd = time + 60;
+
+        const isOverlapping = bookedSlots.some(b =>
+            (time < b.end && slotEnd > b.start)
+        );
+
+        if (!isOverlapping) {
+            availableSlots.push({ startTime: minutesToTime(time) });
+        }
     }
+
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        data: availableSlots,
+    });
+});
+
+exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
+    const { studioId, date, startTime } = req.body;
+
+    console.log(date,  "date From Booking Controller");
+    // if (!studioId || !date || !startTime) {
+    //     return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studio, date, and startTime are required"));
+    // }
+
+    const studio = await StudioModel.findById(studioId);
+    if (!studio) {
+        return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+    }
+
+    const inputDate = getAllDay(date);
+
+    const bookings = await BookingModel.find({
+        studio: studioId,
+        date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
+    });
 
     const bookedSlots = bookings.map(book => {
         const start = timeToMinutes(book.timeSlot);
@@ -96,41 +209,23 @@ exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
         return { start, end };
     });
 
-    console.log('Booked slots:', bookedSlots);
+    const startSlotMinutes = timeToMinutes(startTime);
+    const endOfDay = timeToMinutes(studio.endTime || "22:00");
 
-    // Calculate available slots
-    const availableSlots = [];
-
-    // Check available slots within the studio's working hours
-    for (let time = startOfDay; time + durationInMinutes <= endOfDay; time += 60) {
-
-        const slotStart = time;
-        const slotEnd = time + durationInMinutes;
-
-        // Skip slot if it exceeds the studio's working hours
-        if (slotEnd > endOfDay) {
-            continue;
-        }
-
-        const isOverlapping = bookedSlots.some(b =>
-            (slotStart < b.end && slotEnd > b.start)
-        );
-
-        if (!isOverlapping) {
-            availableSlots.push({
-                startTime: minutesToTime(slotStart),
-            });
-        }
-    }
-
-
-    console.log('Available slots:', availableSlots);
+    const availableEndSlots = await calculateSlotPrices({
+        studio,
+        date,
+        startSlotMinutes,
+        endOfDay,
+        bookedSlots,
+    });
 
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
-        data: availableSlots,
+        data: availableEndSlots,
     });
 });
+
 
 // Get all bookings
 exports.getAllBookings = asyncHandler(async (req, res) => {
