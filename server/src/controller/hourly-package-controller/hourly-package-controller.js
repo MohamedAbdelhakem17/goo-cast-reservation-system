@@ -17,9 +17,9 @@ exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
 
 // create hourly package
 exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
-    const { name, description, details, prices, savings, icon } = req.body;
+    const { name, description, details, icon } = req.body;
 
-    if (!name || !description || !details || !prices || !savings) {
+    if (!name || !description || !details) {
         return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide all required fields"));
     }
 
@@ -27,8 +27,6 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
         name,
         description,
         details,
-        prices,
-        savings,
         icon
     });
 
@@ -70,4 +68,20 @@ exports.deleteHourlyPackage = asyncHandler(async (req, res, next) => {
     });
 });
 
+exports.packagePriceMange= asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const hourlyPackage = await HourlyPackageModel.findByIdAndUpdate(id, req.body, {
+        new: true,
+        runValidators: true,
+    })
 
+    if (!hourlyPackage) {
+        return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No hourly package found with this ID"));
+    }
+
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        data: hourlyPackage,
+        message: "hourly package found successfully",
+    });
+});

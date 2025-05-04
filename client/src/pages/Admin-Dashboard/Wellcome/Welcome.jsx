@@ -49,30 +49,29 @@ const Welcome = () => {
 
     return (
         <motion.div
-            className="px-6 py-10 bg-gradient-to-b from-white to-gray-100 min-h-screen"
+            className="px-6 py-10 min-h-screen"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
         >
-            <h1 className="text-4xl font-extrabold text-gray-800 mb-2">📊 Dashboard</h1>
-            <p className="text-gray-500 mb-8 text-lg">كل ما تحتاجه لإدارة الاستوديوهات والحجوزات</p>
+            <h1 className="text-4xl font-extrabold text-gray-800 mb-5">📊 Dashboard</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <StatCard
-                    label="الاستوديوهات"
+                    label="Studios"
                     value={totalStudios || 0}
                     color="indigo"
                     icon="🏢"
                 />
                 <StatCard
-                    label="الحجوزات"
+                    label="Bookings"
                     value={totalBookings || 0}
                     subValue={peakBookingDay ? `Peak: ${new Date(peakBookingDay.label).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (${peakBookingDay.count})` : null}
                     color="emerald"
                     icon="📅"
                 />
                 <StatCard
-                    label="الإيرادات"
+                    label="Revenue"
                     value={formatCurrency(totalRevenue || 0)}
                     color="amber"
                     icon="💰"
@@ -88,23 +87,7 @@ const Welcome = () => {
                         icon="🎥"
                         color="purple"
                     />
-                    <div className="mt-4 bg-white p-4 rounded-xl shadow-lg">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <BarChart data={formatChartData(mostBookedStudios)}>
-                                <XAxis dataKey="name" stroke="#9333ea" />
-                                <YAxis stroke="#9333ea" />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 4px 12px rgba(147, 51, 234, 0.1)'
-                                    }}
-                                />
-                                <Bar dataKey="value" fill="#9333ea" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+
                 </div>
 
                 <div>
@@ -114,23 +97,7 @@ const Welcome = () => {
                         icon="📦"
                         color="blue"
                     />
-                    <div className="mt-4 bg-white p-4 rounded-xl shadow-lg">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <BarChart data={formatChartData(mostBookedPackages)}>
-                                <XAxis dataKey="name" stroke="#3b82f6" />
-                                <YAxis stroke="#3b82f6" />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 4px 12px rgba(59, 130, 246, 0.1)'
-                                    }}
-                                />
-                                <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+
                 </div>
 
                 <div>
@@ -140,33 +107,17 @@ const Welcome = () => {
                         icon="➕"
                         color="pink"
                     />
-                    <div className="mt-4 bg-white p-4 rounded-xl shadow-lg">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <BarChart data={formatChartData(mostBookedAddOns)}>
-                                <XAxis dataKey="name" stroke="#ec4899" />
-                                <YAxis stroke="#ec4899" />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 4px 12px rgba(236, 72, 153, 0.1)'
-                                    }}
-                                />
-                                <Bar dataKey="value" fill="#ec4899" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+
                 </div>
             </div>
 
             {mostBookedDay && mostBookedDay.length > 0 && (
                 <div className="mb-8">
-                    <BookingTrendsChart data={mostBookedDay} />
+                    {/* <BookingTrendsChart data={mostBookedDay} /> */}
                 </div>
             )}
 
-            <GoogleCalendarConnect />
+            {/* <GoogleCalendarConnect /> */}
         </motion.div>
     );
 };

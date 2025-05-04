@@ -82,7 +82,9 @@ exports.addNewPriceRule = asyncHandler(async (req, res, next) => {
 exports.editPriceRule = asyncHandler(async (req, res, next) => {
     const { studio, dayOfWeek, isFixedHourly, defaultPricePerSlot, perSlotDiscounts } = req.body;
 
-    if (!studio || !isValidDayOfWeek(dayOfWeek) || !isFixedHourly || !defaultPricePerSlot) {
+    const isValidDay = isValidDayOfWeek(dayOfWeek);
+
+    if (!studio || !isValidDay || !isFixedHourly || !defaultPricePerSlot) {
         return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide all required fields with a valid dayOfWeek (0-6 or null)"));
     }
 

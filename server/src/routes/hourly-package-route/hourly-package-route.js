@@ -16,5 +16,6 @@ router.route('/:id')
     .put(hourlyPackageController.updateHourlyPackage) // Update hourly packages by ID    
     .delete(hourlyPackageController.deleteHourlyPackage); // Delete hourly packages by ID
 
+router.put("/price-mange/:id", hourlyPackageController.packagePriceMange);
 
 module.exports = router;

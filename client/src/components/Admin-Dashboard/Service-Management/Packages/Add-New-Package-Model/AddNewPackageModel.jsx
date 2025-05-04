@@ -6,6 +6,8 @@ import Input from '../../../../shared/Input/Input';
 import Alert from '../../../../shared/Alert/Alert';
 import { AddNewPackage } from '../../../../../apis/services/services.api';
 import { produce } from 'immer';
+import Textarea from '../../../../shared/Textarea/Textarea';
+import { useToast } from '../../../../../context/Toaster-Context/ToasterContext';
 
 // Reducer actions
 const ACTIONS = {
@@ -60,15 +62,15 @@ const validationSchema = Yup.object({
     name: Yup.string().required('Package name is required').min(3, 'Name must be at least 3 characters'),
     description: Yup.string().required('Description is required').min(10, 'Description must be at least 10 characters'),
     details: Yup.array().of(Yup.string().required('Detail is required')).min(1, 'At least one detail is required'),
-    prices: Yup.object({
-        twoHours: Yup.number().required('Two hours price is required').min(0, 'Price must be a positive number'),
-        halfDay: Yup.number().required('Half day price is required').min(0, 'Price must be a positive number'),
-        fullDay: Yup.number().required('Full day price is required').min(0, 'Price must be a positive number'),
-    }),
-    savings: Yup.object({
-        halfDay: Yup.number().required('Half day saving is required').min(0, 'Saving must be a positive number'),
-        fullDay: Yup.number().required('Full day saving is required').min(0, 'Saving must be a positive number'),
-    }),
+    // prices: Yup.object({
+    //     twoHours: Yup.number().required('Two hours price is required').min(0, 'Price must be a positive number'),
+    //     halfDay: Yup.number().required('Half day price is required').min(0, 'Price must be a positive number'),
+    //     fullDay: Yup.number().required('Full day price is required').min(0, 'Price must be a positive number'),
+    // }),
+    // savings: Yup.object({
+    //     halfDay: Yup.number().required('Half day saving is required').min(0, 'Saving must be a positive number'),
+    //     fullDay: Yup.number().required('Full day saving is required').min(0, 'Saving must be a positive number'),
+    // }),
     icon: Yup.string().required('Icon is required'),
 });
 
@@ -76,41 +78,41 @@ export default function AddNewPackageModel({ closeModel }) {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { currentDetail, showSuccessAlert, showErrorAlert, errorMessage } = state;
     const { mutate: addPackage } = AddNewPackage();
-
+    const { addToast } = useToast()
     const formik = useFormik({
         initialValues: {
             name: '',
             description: '',
             details: [],
-            prices: { twoHours: '', halfDay: '', fullDay: '' },
-            savings: { halfDay: '', fullDay: '' },
+            price: '',
+            // prices: { twoHours: '', halfDay: '', fullDay: '' },
+            // savings: { halfDay: '', fullDay: '' },
             icon: '',
         },
         validationSchema,
         onSubmit: async (values) => {
-            try {
-                await addPackage({
-                    ...values,
-                    prices: {
-                        twoHours: Number(values.prices.twoHours),
-                        halfDay: Number(values.prices.halfDay),
-                        fullDay: Number(values.prices.fullDay),
-                    },
-                    savings: {
-                        halfDay: Number(values.savings.halfDay),
-                        fullDay: Number(values.savings.fullDay),
-                    },
-                });
-                dispatch({ type: ACTIONS.SHOW_SUCCESS });
-                setTimeout(() => {
-                    closeModel();
-                }, 2000);
-            } catch (error) {
-                dispatch({ type: ACTIONS.SHOW_ERROR, payload: error.message || 'Something went wrong' });
-                setTimeout(() => {
-                    dispatch({ type: ACTIONS.HIDE_ALERTS });
-                }, 3000);
-            }
+            await addPackage({
+                ...values,
+                // prices: {
+                //     twoHours: Number(values.prices.twoHours),
+                //     halfDay: Number(values.prices.halfDay),
+                //     fullDay: Number(values.prices.fullDay),
+                // },
+                // savings: {
+                //     halfDay: Number(values.savings.halfDay),
+                //     fullDay: Number(values.savings.fullDay),
+                // },
+            }, {
+                onSuccess: (response) => {
+                    addToast(response.message || 'Package added successfully', 'success');
+                    setTimeout(() => {
+                        closeModel();
+                    }, 2000);
+                },
+                onError: (error) => {
+                    addToast(error.response.data.message || 'Something went wrong', 'error');
+                }
+            });
         },
     });
 
@@ -166,7 +168,7 @@ export default function AddNewPackageModel({ closeModel }) {
                         placeholder="Enter package name"
                     />
 
-                    <Input
+                    <Textarea
                         label="Description"
                         id="description"
                         value={formik.values.description}
@@ -218,75 +220,6 @@ export default function AddNewPackageModel({ closeModel }) {
                         </ul>
                     </div>
 
-                    {/* Prices & Savings */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                        {/* Two Hours Full Width */}
-                        <div className="col-span-1 md:col-span-2">
-                            <Input
-                                label="Two Hours Price"
-                                id="prices.twoHours"
-                                type="number"
-                                value={formik.values.prices.twoHours}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                errors={formik.touched.prices?.twoHours && formik.errors.prices?.twoHours}
-                                touched={formik.touched.prices?.twoHours}
-                                placeholder="Enter two hours price"
-                            />
-                        </div>
-
-                        {/* Half & Full Day Prices */}
-                        <Input
-                            label="Half Day Price"
-                            id="prices.halfDay"
-                            type="number"
-                            value={formik.values.prices.halfDay}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            errors={formik.touched.prices?.halfDay && formik.errors.prices?.halfDay}
-                            touched={formik.touched.prices?.halfDay}
-                            placeholder="Enter half day price"
-                        />
-
-                        <Input
-                            label="Full Day Price"
-                            id="prices.fullDay"
-                            type="number"
-                            value={formik.values.prices.fullDay}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            errors={formik.touched.prices?.fullDay && formik.errors.prices?.fullDay}
-                            touched={formik.touched.prices?.fullDay}
-                            placeholder="Enter full day price"
-                        />
-
-                        {/* Savings */}
-                        <Input
-                            label="Half Day Saving"
-                            id="savings.halfDay"
-                            type="number"
-                            value={formik.values.savings.halfDay}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            errors={formik.touched.savings?.halfDay && formik.errors.savings?.halfDay}
-                            touched={formik.touched.savings?.halfDay}
-                            placeholder="Enter half day saving"
-                        />
-
-                        <Input
-                            label="Full Day Saving"
-                            id="savings.fullDay"
-                            type="number"
-                            value={formik.values.savings.fullDay}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            errors={formik.touched.savings?.fullDay && formik.errors.savings?.fullDay}
-                            touched={formik.touched.savings?.fullDay}
-                            placeholder="Enter full day saving"
-                        />
-                    </div>
-
                     {/* Icon */}
                     <Input
                         label="Icon"
@@ -314,3 +247,74 @@ export default function AddNewPackageModel({ closeModel }) {
         </motion.div>
     );
 }
+
+
+
+{/* Prices & Savings */ }
+{/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+   
+    <div className="col-span-1 md:col-span-2">
+        <Input
+            label="Two Hours Price"
+            id="prices.twoHours"
+            type="number"
+            value={formik.values.prices.twoHours}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            errors={formik.touched.prices?.twoHours && formik.errors.prices?.twoHours}
+            touched={formik.touched.prices?.twoHours}
+            placeholder="Enter two hours price"
+        />
+    </div>
+
+   
+    <Input
+        label="Half Day Price"
+        id="prices.halfDay"
+        type="number"
+        value={formik.values.prices.halfDay}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        errors={formik.touched.prices?.halfDay && formik.errors.prices?.halfDay}
+        touched={formik.touched.prices?.halfDay}
+        placeholder="Enter half day price"
+    />
+
+    <Input
+        label="Full Day Price"
+        id="prices.fullDay"
+        type="number"
+        value={formik.values.prices.fullDay}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        errors={formik.touched.prices?.fullDay && formik.errors.prices?.fullDay}
+        touched={formik.touched.prices?.fullDay}
+        placeholder="Enter full day price"
+    />
+
+
+    <Input
+        label="Half Day Saving"
+        id="savings.halfDay"
+        type="number"
+        value={formik.values.savings.halfDay}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        errors={formik.touched.savings?.halfDay && formik.errors.savings?.halfDay}
+        touched={formik.touched.savings?.halfDay}
+        placeholder="Enter half day saving"
+    />
+
+    <Input
+        label="Full Day Saving"
+        id="savings.fullDay"
+        type="number"
+        value={formik.values.savings.fullDay}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        errors={formik.touched.savings?.fullDay && formik.errors.savings?.fullDay}
+        touched={formik.touched.savings?.fullDay}
+        placeholder="Enter full day saving"
+    />
+</div> */}
