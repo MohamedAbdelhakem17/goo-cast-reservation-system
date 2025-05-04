@@ -6,28 +6,39 @@ const bookingSchema = new mongoose.Schema({
         ref: "Studio",
         required: true,
     },
+
     date: {
         type: Date,
         required: true,
     },
-    timeSlot: {
+
+    startSlot: {
         type: String,
         required: true,
     },
+
+    endSlot: {
+        type: String,
+        required: true,
+    },
+
     duration: {
         type: Number,
         required: true,
         min: 1,
     },
+
     persons: {
         type: Number,
         required: true,
     },
+
     package: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "HourlyPackage",
         required: true,
     },
+
     addOns: [
         {
             item: {
@@ -46,6 +57,7 @@ const bookingSchema = new mongoose.Schema({
             }
         }
     ],
+
     personalInfo: {
         fullName: {
             type: String,
@@ -63,19 +75,27 @@ const bookingSchema = new mongoose.Schema({
             type: String,
         },
     },
+
     status: {
         type: String,
         enum: ["pending", "approved", "rejected"],
         default: "pending",
     },
+
     totalPrice: {
         type: Number,
         required: true,
     },
+
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
+
+    isGuest: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 
 bookingSchema.pre('^find', function (next) {
@@ -86,7 +106,7 @@ bookingSchema.pre('^find', function (next) {
         },
         {
             path: "package",
-            select: "name price duration",
+            select: "name price ",
         },
         {
             path: "addOns",

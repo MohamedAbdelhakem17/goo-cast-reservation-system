@@ -17,6 +17,8 @@ export default function Cart() {
         return <div>Loading...</div>
     }
 
+    console.log(bookingData.endSlot - +bookingData.startSlot)
+    console.log(bookingData.endSlot, bookingData.startSlot)
 
     return (
         <div>
@@ -34,7 +36,8 @@ export default function Cart() {
                             <div>
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.studio.name}</h5>
                                 <p className="text-sm text-gray-500">{formatDate(bookingData.date)}</p>
-                                <p className="text-sm text-gray-500">{bookingData.timeSlot}</p>
+                                <p className="text-sm text-gray-500">start time: {bookingData.startSlot}</p>
+                                <p className="text-sm text-gray-500">End time: {bookingData.endSlot}</p>
                                 <p className="text-sm text-gray-500">Duration: {bookingData.duration || 0} hour(s)</p>
                             </div>
                         </div>

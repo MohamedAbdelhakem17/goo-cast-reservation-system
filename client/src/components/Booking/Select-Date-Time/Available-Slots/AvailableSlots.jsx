@@ -6,10 +6,15 @@ export default function AvailableSlots({ slots }) {
     const priceFormat = usePriceFormat();
     const { bookingData, setBookingField } = useBooking()
     const { mutate: getSlots, data } = GetAvailableEndSlots()
-    console.log({});
-    const selectTimeSlot = (slot) => {
-        setBookingField("timeSlot", slot);
-        getSlots({ startTime: slot, studioId: bookingData.studio?.id, date: bookingData.date }, { onSuccess: () => console.log("success"), onError: (error) => console.log("error", error) });
+
+    const selectStartTimeSlot = (slot) => {
+        setBookingField("startSlot", slot);
+        getSlots({ startTime: slot, studioId: bookingData.studio?.id, date: bookingData.date }, { onError: (error) => console.log("error", error) });
+    };
+    const selectEndTimeSlot = (slot) => {
+        setBookingField("endSlot", slot.endTime);
+        setBookingField("studio.price", slot.totalPrice);
+        setBookingField("duration", +slot.endTime.split(":")[0] - +bookingData.startSlot.split(":")[0]);
     };
 
     return (
@@ -23,12 +28,12 @@ export default function AvailableSlots({ slots }) {
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300 }}
                         className={`flex items-center justify-center p-4 border border-gray-300 rounded-lg shadow-sm cursor-pointer
-                            ${bookingData.timeSlot === slot.startTime
+                            ${bookingData.startSlot === slot.startTime
                                 ? "bg-main text-white"
                                 : "bg-white hover:bg-gray-100"
                             }
                         `}
-                        onClick={() => selectTimeSlot(slot.startTime)}
+                        onClick={() => selectStartTimeSlot(slot.startTime)}
                     >
                         <span className="text-sm font-medium">{slot.startTime}</span>
                     </motion.div>
@@ -47,15 +52,15 @@ export default function AvailableSlots({ slots }) {
                                     whileTap={{ scale: 0.95 }}
                                     transition={{ type: "spring", stiffness: 300 }}
                                     className={`flex items-center justify-center flex-col p-3 gab-2 border border-gray-300 rounded-lg shadow-sm cursor-pointer
-                            ${bookingData.timeSlot === slot.startTime
+                            ${bookingData.endSlot === slot.endTime
                                             ? "bg-main text-white"
                                             : "bg-white hover:bg-gray-100"
                                         }
                         `}
-                                    onClick={() => selectTimeSlot(slot.end)}
+                                    onClick={() => selectEndTimeSlot(slot)}
                                 >
                                     <span className="text-sm font-medium">{slot.endTime}</span>
-                                    <span className="text-sm font-semibold text-main">{priceFormat(slot.totalPrice)}</span>
+                                    <span className={`text-sm font-semibold ${bookingData.endSlot === slot.endTime ? "text-white" : "text-main"}`}>{priceFormat(slot.totalPrice)}</span>
                                 </motion.div>
                             ))}
                         </div>
