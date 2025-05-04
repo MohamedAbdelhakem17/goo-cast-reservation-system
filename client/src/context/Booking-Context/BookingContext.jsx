@@ -91,23 +91,27 @@ export default function BookingProvider({ children }) {
 
     // Update step and URL
     useEffect(() => {
-        localStorage.setItem("bookingStep", currentStep);
         const slug = STEP_LABELS[currentStep - 1]?.toLowerCase().replace(/ /g, "-");
-
-        if (slug) {
-            // Only pass studio if it's valid
-            const studioToPass = isValidStudio(values.studio) ? values.studio : null;
+        if (!slug) return;
+    
+        const studioToPass = isValidStudio(values.studio) ? values.studio : null;
+    
+        const currentSlug = new URLSearchParams(location.search).get("step");
+        const currentState = location.state;
+    
+        // Avoid infinite loop by checking if the location is already correct
+        if (currentSlug !== slug || currentState?.step !== currentStep || currentState?.studio !== studioToPass) {
+            localStorage.setItem("bookingStep", currentStep);
             navigate(`/booking?step=${slug}`, {
                 state: { step: currentStep, studio: studioToPass },
             });
         }
     }, [currentStep, values.studio]);
+    
 
     // Save booking data in localStorage whenever it changes
     useEffect(() => {
         // Only save if studio is valid or null
-        console.log(values.studio);
-
         if (isValidStudio(values.studio) || values.studio === null) {
             localStorage.setItem("bookingData", JSON.stringify(values));
         }
