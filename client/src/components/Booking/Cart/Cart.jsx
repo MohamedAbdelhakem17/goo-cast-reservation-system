@@ -13,12 +13,13 @@ export default function Cart() {
         return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
     }, 0) || 0
 
+    const totalPrice = Number(bookingData.studio?.price || 0) + totalAddOnPrice + (bookingData.selectedPackage?.price || 0)
+
     if (!bookingData) {
         return <div>Loading...</div>
     }
 
-    console.log(bookingData.endSlot - +bookingData.startSlot)
-    console.log(bookingData.endSlot, bookingData.startSlot)
+
 
     return (
         <div>
@@ -46,7 +47,7 @@ export default function Cart() {
                         <div className="pt-3 flex items-center justify-between">
                             <p className="text-sm text-gray-400">Total Price</p>
                             <p className="text-lg font-bold text-main">
-                                {Number(bookingData.studio.price) * Number(bookingData.duration || 1)} EGP
+                                {Number(bookingData.studio.price)} EGP
                             </p>
                         </div>
                     </div>
@@ -103,7 +104,7 @@ export default function Cart() {
             <div className="flex items-center justify-between mt-4 p-3">
                 <h4 className="text-xl font-semibold mb-4 text-gray-800">Total Price</h4>
                 <p className="text-lg font-bold text-main">
-                    {Number(bookingData.studio?.price || 0) * Number(bookingData.duration || 1) + totalAddOnPrice + (bookingData.selectedPackage?.price || 0)} EGP
+                    {totalPrice} EGP
                 </p>
             </div>
         </div>

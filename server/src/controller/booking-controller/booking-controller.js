@@ -327,3 +327,10 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
         message: "Booking status updated successfully"
     });
 });
+
+// Create New Booking
+exports.createBooking = asyncHandler(async (req, res) => {
+    const {studio , date , startSlot , endSlot , duration , persons , package , addOns , personalInfo , totalPrice
+    } = req.body;
+})
+

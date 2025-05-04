@@ -25,7 +25,7 @@ export default function SelectStudio() {
             transition: { type: "spring", stiffness: 100 },
         },
     };
-    console.log(studiosData)
+    
     if (isLoading) return <Loading />
 
     return (

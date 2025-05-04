@@ -3,8 +3,11 @@ import { useFormik } from "formik";
 
 export default function useBookingFormik() {
 
+    const localStorageData = localStorage.getItem("bookingData");
+    const parsedData = localStorageData ? JSON.parse(localStorageData) : null;
+
     // Formik initial values
-    const bookingInitialValues = {
+    const bookingInitialValues = parsedData || {
         studio: {
             id: null,
             name: "",
@@ -24,6 +27,7 @@ export default function useBookingFormik() {
             email: "",
             brand: "",
         },
+        totalPrice: 0,
     };
 
     // Formik validation schema
@@ -44,6 +48,7 @@ export default function useBookingFormik() {
             email: Yup.string().email("Invalid email").required("Email is required"),
             brand: Yup.string().optional(),
         }),
+        totalPrice: Yup.number().required("Total price is required"),
     });
 
     // Formik handleSubmit function
@@ -51,10 +56,18 @@ export default function useBookingFormik() {
         initialValues: bookingInitialValues,
         validationSchema: bookingValidationSchema,
         onSubmit: (values) => {
-            console.log("Final Submit:", values);
+            const dataBaseObject = {
+                ...values,
+                studio: values.studio.id,
+                date: new Date(values.date),
+            };
+
+            console.log("Final Submit:", dataBaseObject);
+
         },
         enableReinitialize: true,
     });
+
 
 
     // Helpers Functions to access formik values and errors
