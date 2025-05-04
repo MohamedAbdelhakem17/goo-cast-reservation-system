@@ -186,10 +186,9 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
 exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
     const { studioId, date, startTime } = req.body;
 
-    console.log(date,  "date From Booking Controller");
-    // if (!studioId || !date || !startTime) {
-    //     return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studio, date, and startTime are required"));
-    // }
+    if (!studioId || !date || !startTime) {
+        return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studio, date, and startTime are required"));
+    }
 
     const studio = await StudioModel.findById(studioId);
     if (!studio) {
