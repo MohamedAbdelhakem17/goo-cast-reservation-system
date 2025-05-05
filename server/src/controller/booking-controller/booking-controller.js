@@ -6,7 +6,10 @@ const { timeToMinutes, minutesToTime, getAllDay } = require("../../utils/time-ma
 const AppError = require("../../utils/app-error");
 const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model")
+const AddOnModel = require("../../models/add-on-model/add-on-model")
+const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model")
 const { calculateSlotPrices } = require("../../utils/priceCalculator");
+const { calculatePackagePrices } = require("../../utils/pakage-price-calculator");
 
 
 // get fully booked dates for a studio
@@ -158,8 +161,8 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     });
 
     const bookedSlots = bookings.map(book => {
-        const start = timeToMinutes(book.timeSlot);
-        const end = start + (book.duration * 60);
+        const start = timeToMinutes(book.startSlot);
+        const end = timeToMinutes(book.endSlot);
         return { start, end };
     });
 
@@ -203,8 +206,8 @@ exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
     });
 
     const bookedSlots = bookings.map(book => {
-        const start = timeToMinutes(book.timeSlot);
-        const end = start + (book.duration * 60);
+        const start = timeToMinutes(book.startSlot);
+        const end = timeToMinutes(book.endSlot);
         return { start, end };
     });
 
@@ -224,7 +227,6 @@ exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
         data: availableEndSlots,
     });
 });
-
 
 // Get all bookings
 exports.getAllBookings = asyncHandler(async (req, res) => {
@@ -256,6 +258,8 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
 
     const bookings = await BookingModel.aggregate([
         { $match: match },
+
+        // Add statusOrder
         {
             $addFields: {
                 statusOrder: {
@@ -270,9 +274,12 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
                 }
             }
         },
+
         { $sort: { statusOrder: 1, createdAt: -1 } },
         { $skip: skip },
         { $limit: limitNum },
+
+        // Lookup for studio
         {
             $lookup: {
                 from: 'studios',
@@ -284,6 +291,88 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
         {
             $unwind: {
                 path: '$studio',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+
+        // Lookup for package.id
+        {
+            $lookup: {
+                from: 'hourlypackages',
+                localField: 'package.id',
+                foreignField: '_id',
+                as: 'packageDetails'
+            }
+        },
+        {
+            $unwind: {
+                path: '$packageDetails',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $addFields: {
+                'package.name': '$packageDetails.name',
+                'package.price': '$packageDetails.price'
+            }
+        },
+
+        // Unwind addOns for individual lookup
+        {
+            $unwind: {
+                path: '$addOns',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $lookup: {
+                from: 'addons',
+                localField: 'addOns.item',
+                foreignField: '_id',
+                as: 'addOnDetails'
+            }
+        },
+        {
+            $unwind: {
+                path: '$addOnDetails',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $addFields: {
+                'addOns.name': '$addOnDetails.name',
+                'addOns.pricePerUnit': '$addOnDetails.price'
+            }
+        },
+
+        // Group addOns back into array
+        {
+            $group: {
+                _id: '$_id',
+                doc: { $first: '$$ROOT' },
+                addOns: { $push: '$addOns' }
+            }
+        },
+        {
+            $replaceRoot: {
+                newRoot: {
+                    $mergeObjects: ['$doc', { addOns: '$addOns' }]
+                }
+            }
+        },
+
+        // Lookup for createdBy
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'createdBy',
+                foreignField: '_id',
+                as: 'createdBy'
+            }
+        },
+        {
+            $unwind: {
+                path: '$createdBy',
                 preserveNullAndEmptyArrays: true
             }
         }
@@ -328,9 +417,139 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
     });
 });
 
+
+
 // Create New Booking
 exports.createBooking = asyncHandler(async (req, res) => {
-    const {studio , date , startSlot , endSlot , duration , persons , package , addOns , personalInfo , totalPrice
+    const {
+        studio: studioId,
+        date,
+        startSlot,
+        endSlot,
+        duration,
+        persons,
+        package: selectedPackage,
+        selectedAddOns: addOns,
+        personalInfo,
+        totalPrice: totalPriceFromClient
     } = req.body;
-})
 
+    // Check if studio exists
+    const studio = await StudioModel.findById(studioId.id);
+    if (!studio) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found for booking");
+
+    // Check if package exists
+    const pkg = await PackageModel.findById(selectedPackage.id);
+    if (!pkg) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Package not found for booking");
+
+    const bookingDate = new Date(date);
+    const startSlotMinutes = timeToMinutes(startSlot);
+    const endSlotMinutes = timeToMinutes(endSlot);
+
+    // Get all bookings for the studio on that day
+    const { startOfDay, endOfDay } = getAllDay(bookingDate);
+    const sameDayBookings = await BookingModel.find({
+        studio: studio._id,
+        date: { $gte: startOfDay, $lt: endOfDay },
+    });
+
+    // Check for conflict
+    const hasConflict = sameDayBookings.some((book) => {
+        const bookStart = timeToMinutes(book.startSlot);
+        const bookEnd = timeToMinutes(book.endSlot);
+        return startSlotMinutes < bookEnd && endSlotMinutes > bookStart;
+    });
+
+    if (hasConflict) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "This time is already booked");
+
+    // Studio pricing
+    const bookedSlots = sameDayBookings.map((b) => ({
+        start: timeToMinutes(b.startSlot),
+        end: timeToMinutes(b.endSlot),
+    }));
+
+    const studioPricingResults = await calculateSlotPrices({
+        studio,
+        date: bookingDate,
+        startSlotMinutes,
+        endOfDay: timeToMinutes(endSlot),
+        bookedSlots,
+    });
+
+    const lastSlot = studioPricingResults[studioPricingResults.length - 1];
+    const studioPrice = lastSlot.totalPrice;
+    if (studioPrice !== studioId.price) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the studio price is incorrect");
+
+    // Package pricing
+    let packagePrice = 0;
+
+    if (pkg.isFixed) {
+        packagePrice = pkg.price * selectedPackage.slot.endTime;
+    } else {
+        const packagePriceInnDb = await calculatePackagePrices({
+            package: pkg,
+            hours: selectedPackage.slot.endTime
+        });
+
+        packagePrice = packagePriceInnDb[packagePriceInnDb.length - 1].totalPrice
+    }
+
+    if (packagePrice !== selectedPackage.slot.totalPrice) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the package price is incorrect");
+
+    // Add-on pricing
+    const addonsTotalPriceFromClient = addOns?.reduce((acc, item) => {
+        return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
+    }, 0) || 0
+
+    const addOnDetails = [];
+    let addOnsTotalPriceFromDb = 0;
+
+    if (Array.isArray(addOns)) {
+        for (const addOn of addOns) {
+            const addOnItem = await AddOnModel.findById(addOn._id);
+            if (!addOnItem) continue;
+
+            const addOnPrice = addOnItem.price * addOn.quantity;
+            addOnsTotalPriceFromDb += addOnPrice;
+
+            addOnDetails.push({
+                item: addOnItem._id,
+                quantity: addOn.quantity,
+                price: addOnItem.price,
+            });
+        }
+    }
+
+
+    // Check if total price is valid
+
+    if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the add-on price is incorrect");
+
+    const totalPrice = Math.round(studioPrice + addOnsTotalPriceFromDb + packagePrice);
+
+    if (totalPrice !== totalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the total price is incorrect");
+
+    const booking = await BookingModel.create({
+        studio: studio._id,
+        date: bookingDate,
+        startSlot,
+        endSlot,
+        duration,
+        persons,
+        package: {
+            id: pkg._id,
+            price: packagePrice,
+            duration: selectedPackage.slot.endTime
+        },
+        addOns: addOnDetails,
+        studioPrice: studioPrice,
+        totalAddOnsPrice: addOnsTotalPriceFromDb,
+        personalInfo,
+        totalPrice,
+        status: "pending", 
+        createdBy: req.user?._id, 
+        isGuest: req.user?._id ? false : true
+    });
+
+    res.status(201).json({ status: HTTP_STATUS_TEXT.SUCCESS, message: "Booking created successfully", booking });
+});

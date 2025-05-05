@@ -41,7 +41,7 @@ export default function PageTracker() {
             analyticsData.prevPath = `${location.pathname}?step=${step}`;
         }
 
-        sendAnalytics(analyticsData);
+        // sendAnalytics(analyticsData);
 
 
         enterTime.current = leaveTime;

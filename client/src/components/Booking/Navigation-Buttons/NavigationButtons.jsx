@@ -2,13 +2,15 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 
-export default function NavigationButtons() {
+export default function NavigationButtons({ handelGoToConfirmation }) {
     // Get the booking context
     const { TOTAL_STEPS, currentStep, handleNextStep, handlePrevStep, handleSubmit, hasError } = useBooking()
 
     const handelPaymentButton = () => {
         if (currentStep === TOTAL_STEPS) {
-            handleSubmit()
+            // handleSubmit()
+            handelGoToConfirmation()
+
         } else {
             handleNextStep()
         }
