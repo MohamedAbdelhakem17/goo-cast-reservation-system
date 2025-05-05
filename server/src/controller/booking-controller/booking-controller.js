@@ -436,11 +436,11 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
     // Check if studio exists
     const studio = await StudioModel.findById(studioId.id);
-    if (!studio) return res.status(404).json({ error: "Studio not found" });
+    if (!studio) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found for booking");
 
     // Check if package exists
     const pkg = await PackageModel.findById(selectedPackage.id);
-    if (!pkg) return res.status(404).json({ error: "Package not found" });
+    if (!pkg) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Package not found for booking");
 
     const bookingDate = new Date(date);
     const startSlotMinutes = timeToMinutes(startSlot);
@@ -460,9 +460,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
         return startSlotMinutes < bookEnd && endSlotMinutes > bookStart;
     });
 
-    if (hasConflict) {
-        return res.status(409).json({ error: "Time slot already booked" });
-    }
+    if (hasConflict) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "This time is already booked");
 
     // Studio pricing
     const bookedSlots = sameDayBookings.map((b) => ({
@@ -479,15 +477,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
     });
 
     const lastSlot = studioPricingResults[studioPricingResults.length - 1];
-
-    if (!lastSlot)
-        return res
-            .status(400)
-            .json({ error: "Invalid duration or pricing error" });
-
     const studioPrice = lastSlot.totalPrice;
-    if (studioPrice !== studioId.price)
-        return res.status(400).json({ error: "Invalid studio price" });
+    if (studioPrice !== studioId.price) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the studio price is incorrect");
 
     // Package pricing
     let packagePrice = 0;
@@ -503,9 +494,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
         packagePrice = packagePriceInnDb[packagePriceInnDb.length - 1].totalPrice
     }
 
-    if (packagePrice !== selectedPackage.slot.totalPrice)
-        return res.status(400).json({ error: "Invalid package price" });
-
+    if (packagePrice !== selectedPackage.slot.totalPrice) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the package price is incorrect");
 
     // Add-on pricing
     const addonsTotalPriceFromClient = addOns?.reduce((acc, item) => {
@@ -534,11 +523,12 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
     // Check if total price is valid
 
-    if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient) {
-        return res.status(400).json({ error: "Invalid total price" });
-    }
+    if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the add-on price is incorrect");
 
     const totalPrice = Math.round(studioPrice + addOnsTotalPriceFromDb + packagePrice);
+
+    if (totalPrice !== totalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the total price is incorrect");
+
     const booking = await BookingModel.create({
         studio: studio._id,
         date: bookingDate,
@@ -556,8 +546,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
         totalAddOnsPrice: addOnsTotalPriceFromDb,
         personalInfo,
         totalPrice,
-        status: "pending", // default
-        createdBy: req.user?._id, // optional: if using authentication
+        status: "pending", 
+        createdBy: req.user?._id, 
         isGuest: req.user?._id ? false : true
     });
 
