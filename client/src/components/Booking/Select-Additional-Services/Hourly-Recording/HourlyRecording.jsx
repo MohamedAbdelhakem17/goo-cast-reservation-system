@@ -1,74 +1,25 @@
 import { motion } from "framer-motion";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
+import { GetAllPackages } from "../../../../apis/services/services.api";
+import Loading from "../../../shared/Loading/Loading";
+import usePriceFormat from "../../../../hooks/usePriceFormat";
 export default function HourlyRecording() {
   const { bookingData, setBookingField } = useBooking();
+  const { data: packages, isLoading } = GetAllPackages()
+  const priceFormat = usePriceFormat()
 
-  const handlePackageSelect = (pkg, duration) => {
-    const price = pkg.prices[duration.id];
+  const handlePackageSelect = (pkg, slot) => {
+
+    console.log(pkg, slot);
 
     setBookingField("selectedPackage", {
-      id: pkg.id,
+      id: pkg._id,
       name: pkg.name,
-      duration: duration.id,
-      durationLabel: duration.label,
-      price,
+      duration: slot.endTime,
+      price: slot.totalPrice,
+      slot,
     });
   };
-
-  const hourlyPackages = [
-    {
-      id: "go-social",
-      name: "Go-Social",
-      description: "For Content Creators who want to shoot solo videos",
-      details: [
-        "Fully equipped Podcast Set of your choice",
-        "1x Cinema Cameras sony fx30 and 1x Rode wireless mic",
-        "Professional audio mixer (will be replaced with the camera mixer)",
-        "Raw audio and video files transferred to your own hard drive",
-      ],
-      prices: {
-        "2hours": 8000,
-        halfday: 14000,
-        fullday: 25000,
-      },
-      savings: {
-        halfday: 2000,
-        fullday: 7000,
-      },
-      icon: <i className="fa-solid fa-video h-6 w-6 mr-3"></i>,
-    },
-    {
-      id: "go-podcast",
-      name: "Go-Podcast",
-      description:
-        "Recording + Live Mix For Content Creators who want to shoot Podcast videos, with good quality of editing",
-      details: [
-        "Fully equipped Podcast Set of your choice",
-        "Studio operator to record everything for you",
-        "2x Cinema Cameras and 2x Shure mics",
-        "Professional audio mixer",
-        "Live cutting of your video with synced audio",
-        "Raw audio and video files transferred to your own hard drive",
-        "Live mixed episode ready to be published in horizontal format",
-      ],
-      prices: {
-        "2hours": 10000,
-        halfday: 18000,
-        fullday: 30000,
-      },
-      savings: {
-        halfday: 2000,
-        fullday: 10000,
-      },
-      icon: <i className="fa-solid fa-microphone h-6 w-6 mr-3"></i>,
-    },
-  ];
-
-  const durations = [
-    { id: "2hours", label: "2 Hours" },
-    { id: "halfday", label: "Half Day (4 Hours)" },
-    { id: "fullday", label: "Full Day (8 Hours)" },
-  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -90,6 +41,7 @@ export default function HourlyRecording() {
     },
   };
 
+  if (isLoading) return <Loading />
   return (
     <div className="space-y-6">
       <motion.div
@@ -98,14 +50,14 @@ export default function HourlyRecording() {
         initial="hidden"
         animate="visible"
       >
-        {hourlyPackages.map((pkg) => (
+        {packages?.data?.map((pkg) => (
           <motion.div
             variants={cardVariants}
-            key={pkg.id}
+            key={pkg._id}
             className="border border-gray-300 rounded-lg overflow-hidden shadow-sm"
           >
             <div className="bg-gray-300 text-main p-4 flex items-center">
-              {pkg.icon}
+              <i className={`fa-solid ${pkg.icon} mx-4`}></i>
               <h3 className="text-lg font-semibold">{pkg.name}</h3>
             </div>
 
@@ -121,68 +73,30 @@ export default function HourlyRecording() {
                 ))}
               </div>
 
-              <div className="mt-6 space-y-3">
-                {durations.map((duration) => {
-                  const isSelected =
-                    bookingData.selectedPackage?.id === pkg.id &&
-                    bookingData.selectedPackage?.duration === duration.id;
-
-                  const price = pkg.prices[duration.id];
-                  const saving = pkg.savings[duration.id];
-
-                  return (
-                    <motion.button
-                      key={duration.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`w-full py-2 px-4 border border-main/60 rounded-md flex justify-between items-center transition-colors ${isSelected
-                          ? "bg-main text-white hover:bg-main"
-                          : "bg-white hover:bg-main/10"
-                        }`}
-                      onClick={() => handlePackageSelect(pkg, duration)}
-                    >
-                      <span>{duration.label}</span>
-                      <div className="text-right">
-                        <span
-                          className={`font-bold ${isSelected ? "text-white" : "text-main/60"
-                            }`}
-                        >
-                          {price.toLocaleString()} EGP
-                        </span>
-                        {saving && (
-                          <div className={`font-light text-sm ${isSelected ? "text-white" : "text-main/60"
-                          }`}>
-                            Save {saving.toLocaleString()} EGP
-                          </div>
-                        )}
-                      </div>
-                    </motion.button>
-                  );
-                })}
+              {/* Price */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 ">
+                {pkg?.hourlyPrices?.slice(0, bookingData.duration).map((item, index) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className={`flex flex-col  items-center justify-center p-1 border border-gray-300 rounded-lg shadow-sm cursor-pointer
+                        ? "bg-main text-white"
+                        : "bg-white hover:bg-gray-100"
+                      }
+                                          `}
+                    onClick={() => handlePackageSelect(pkg, item)}
+                  >
+                    <p className="text-sm text-gray-700">{item.endTime} hour</p>
+                    <p className="text-sm font-medium text-gray-800">{priceFormat(item.totalPrice)}</p>
+                  </motion.div>
+                ))}
               </div>
             </div>
           </motion.div>
         ))}
       </motion.div>
-
-      {/* Extra Hours */}
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <h3 className="font-semibold mb-2">Extra Hours</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-3 border border-main rounded-md bg-white">
-            <div className="flex justify-between">
-              <span>Extra Go-Social Hour</span>
-              <span className="font-semibold">4,000 EGP</span>
-            </div>
-          </div>
-          <div className="p-3 border border-main rounded-md bg-white">
-            <div className="flex justify-between">
-              <span>Extra Go-Podcast Hour</span>
-              <span className="font-semibold">5,000 EGP</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
     </div>
   );

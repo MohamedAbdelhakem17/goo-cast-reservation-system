@@ -10,8 +10,11 @@ const bookingController = require("../../controller/booking-controller/booking-c
 router.route("/fully-booked/:studioId").get(bookingController.getFullyBookedDates);
 router.route("/available-slots").post(bookingController.getAvailableStartSlots);
 router.route("/available-end-slots").post(bookingController.getAvailableEndSlots);
+router.route("/").post(bookingController.createBooking);
 
 router.use(protectRoute, allowTo(USER_ROLE.ADMIN))
 router.route("/").get(bookingController.getAllBookings);
 router.route("/:id").put(bookingController.changeBookingStatus);
+
+
 module.exports = router; 

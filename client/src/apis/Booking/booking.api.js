@@ -2,7 +2,7 @@ import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import BASE_URL from "../BASE_URL";
 import { useLocation } from "react-router-dom";
-import { useGetData, useUpdateData } from "../../hooks/useApi";
+import { useGetData, usePostData, useUpdateData } from "../../hooks/useApi";
 
 
 const GetFullBookedStudios = (studioId) => useGetData(["fullBookedStudios", studioId], `/bookings/fully-booked/${`${studioId || JSON.parse(localStorage.getItem("studio"))?.id}`}`);
@@ -39,8 +39,9 @@ const GetBookings = (filters) => useGetData("bookings", `${BASE_URL}/bookings`, 
 
 const ChangeBookingStatus = () => useUpdateData("bookings", `${BASE_URL}/bookings`);
 
+const CreateBooking = () => usePostData("bookings", `${BASE_URL}/bookings`);
 
 export {
-    GetFullBookedStudios, GetAvailableSlots, GetBookings, ChangeBookingStatus, GetAvailableEndSlots
+    GetFullBookedStudios, GetAvailableSlots, GetBookings, ChangeBookingStatus, GetAvailableEndSlots, CreateBooking
 }
 

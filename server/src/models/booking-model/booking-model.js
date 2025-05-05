@@ -34,9 +34,19 @@ const bookingSchema = new mongoose.Schema({
     },
 
     package: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "HourlyPackage",
-        required: true,
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "HourlyPackage",
+            required: true,
+        },
+        price: {
+            type: Number,
+            required: true,
+        },
+        duration: {
+            type: Number,
+            required: true,
+        }
     },
 
     addOns: [
@@ -87,6 +97,16 @@ const bookingSchema = new mongoose.Schema({
         required: true,
     },
 
+    totalAddOnsPrice: {
+        type: Number,
+        required: true,
+    },
+
+    studioPrice: {
+        type: Number,
+        required: true,
+    },
+
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -98,18 +118,18 @@ const bookingSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-bookingSchema.pre('^find', function (next) {
+bookingSchema.pre(/^find/, function (next) {
     this.populate([
         {
             path: "studio",
-            select: "name thumbnail",
+            select: "name thumbnail ",
         },
         {
-            path: "package",
-            select: "name price ",
+            path: "package.id",
+            select: "name price",
         },
         {
-            path: "addOns",
+            path: "addOns.item",
             select: "name price",
         },
         {

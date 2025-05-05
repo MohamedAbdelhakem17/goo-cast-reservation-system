@@ -2,18 +2,50 @@ const asyncHandler = require('express-async-handler');
 const HourlyPackageModel = require('../../models/hourly-packages-model/hourly-packages-model');
 const AppError = require('../../utils/app-error');
 const { HTTP_STATUS_TEXT } = require('../../config/system-variables');
+const { calculatePackagePrices } = require('../../utils/pakage-price-calculator');
 
 // get all Hourly Packages
+// exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
+//     const hourlyPackage = await HourlyPackageModel.find();
+//     if (hourlyPackage.length === 0) {
+//         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No hourly packages found"));
+//     }
+//     const price = calculatePackagePrices({ package: hourlyPackage[2], hours: 18 });
+//     res.status(200).json({
+//         status: HTTP_STATUS_TEXT.SUCCESS,
+//         data: {
+//             packages: hourlyPackage,
+//             price
+
+//         },
+//     });
+// });
 exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
-    const hourlyPackage = await HourlyPackageModel.find();
-    if (hourlyPackage.length === 0) {
+    const hourlyPackages = await HourlyPackageModel.find();
+
+    if (hourlyPackages.length === 0) {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No hourly packages found"));
     }
+
+    const maxHours = 9;
+
+    const packagesWithPrices = await Promise.all(
+        hourlyPackages.map(async (pkg) => {
+            const prices = await calculatePackagePrices({ package: pkg, hours: maxHours });
+            return {
+                ...pkg._doc,
+                hourlyPrices: prices
+            };
+        })
+    );
+
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
-        data: hourlyPackage
+        data: packagesWithPrices
+
     });
 });
+
 
 // create hourly package
 exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
@@ -68,7 +100,7 @@ exports.deleteHourlyPackage = asyncHandler(async (req, res, next) => {
     });
 });
 
-exports.packagePriceMange= asyncHandler(async (req, res, next) => {
+exports.packagePriceMange = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const hourlyPackage = await HourlyPackageModel.findByIdAndUpdate(id, req.body, {
         new: true,
