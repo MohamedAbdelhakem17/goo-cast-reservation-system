@@ -62,7 +62,7 @@ export default function Cart() {
                         <div className="flex justify-between items-start">
                             <div>
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.selectedPackage.name}</h5>
-                                <p className="text-sm text-gray-500">{bookingData.selectedPackage.durationLabel}</p>
+                                <p className="text-sm text-gray-500">{bookingData.selectedPackage.duration} hour</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-gray-400">Package Price</p>
@@ -82,7 +82,7 @@ export default function Cart() {
                     <div className="bg-white p-4 rounded-xl border border-gray-200">
                         <ul className="divide-y divide-gray-100">
                             {bookingData.selectedAddOns.map((addon) => (
-                                <li key={addon.id} className="py-2 flex justify-between items-center">
+                                <li key={addon._id} className="py-2 flex justify-between items-center">
                                     <span className="text-gray-700">{addon.name}</span>
                                     <span className="text-gray-500 text-sm">x{addon.quantity} / {addon.price} EGP</span>
                                 </li>

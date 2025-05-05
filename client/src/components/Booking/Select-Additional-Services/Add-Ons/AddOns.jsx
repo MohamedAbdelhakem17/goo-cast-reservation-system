@@ -2,34 +2,40 @@ import { motion } from "framer-motion";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetAllAddOns } from "../../../../apis/services/services.api";
 import Loading from "../../../shared/Loading/Loading";
-
+import { useCallback } from "react";
 export default function AddOns() {
   const { data: addOns, isLoading } = GetAllAddOns();
   const { bookingData, setBookingField } = useBooking();
 
-  const handleAddOnChange = (id, name, quantity, price) => {
-    let updatedAddOns = [...bookingData.selectedAddOns];
 
-    const index = updatedAddOns.findIndex((addon) => addon.id === id);
+  const handleAddOnChange = useCallback((id, name, quantity, price) => {
+    let updatedAddOns = [...bookingData.selectedAddOns];
+    const index = updatedAddOns.findIndex((addon) => addon._id === id);
 
     if (quantity === 0 && index !== -1) {
       updatedAddOns.splice(index, 1);
     } else if (index !== -1) {
-      updatedAddOns[index].quantity = quantity;
-      updatedAddOns[index].totalPrice = price * quantity; 
+      updatedAddOns[index] = {
+        ...updatedAddOns[index],
+        quantity,
+        totalPrice: price * quantity,
+      };
     } else {
       updatedAddOns.push({
-        id,
+        _id: id,
         name,
         quantity,
         price,
+        totalPrice: price * quantity,
       });
     }
+
     setBookingField("selectedAddOns", updatedAddOns);
-  };
+  }, [bookingData.selectedAddOns, setBookingField]);
+
 
   const getQuantity = (id) => {
-    const found = bookingData.selectedAddOns.find((item) => item.id === id);
+    const found = bookingData.selectedAddOns.find((item) => item._id === id);
     return found ? found.quantity : 0;
   };
 
@@ -77,10 +83,10 @@ export default function AddOns() {
         animate="visible"
       >
         {addOns?.data?.map((addon) => {
-          const quantity = getQuantity(addon.id);
+          const quantity = getQuantity(addon._id);
           return (
             <motion.div
-              key={addon.id}
+              key={addon._id}
               variants={cardVariants}
               className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300"
             >
@@ -112,7 +118,7 @@ export default function AddOns() {
                       whileTap={{ scale: 0.9 }}
                       className="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-gray-700"
                       onClick={() =>
-                        handleDecrement(addon.id, addon.name, addon.price)
+                        handleDecrement(addon._id, addon.name, addon.price)
                       }
                       disabled={quantity === 0}
                     >
@@ -127,7 +133,7 @@ export default function AddOns() {
                       whileTap={{ scale: 0.9 }}
                       className="w-8 h-8 bg-main hover:bg-main text-white rounded-full flex items-center justify-center"
                       onClick={() =>
-                        handleIncrement(addon.id, addon.name, addon.price)
+                        handleIncrement(addon._id, addon.name, addon.price)
                       }
                     >
                       <i className="fa-solid fa-plus text-sm"></i>

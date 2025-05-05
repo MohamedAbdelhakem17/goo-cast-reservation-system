@@ -40,15 +40,15 @@ export default function TableRow({ booking, setSelectedBooking }) {
                 className="hover:bg-gray-50"
             >
                 <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{booking.personalInfo.fullName}</div>
+                    <div className="text-sm text-gray-500">{booking.personalInfo.email}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900 cursor-pointer">{booking?.studio?.name || "Studio Name"}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{formatDate(booking.date)}</div>
-                    <div className="text-sm text-gray-500">{convertTo12HourFormat(booking.timeSlot)}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{booking.personalInfo.fullName}</div>
-                    <div className="text-sm text-gray-500">{booking.personalInfo.email}</div>
+                    <div className="text-sm text-gray-500">{convertTo12HourFormat(booking?.timeSlot || booking?.startSlot)} - {convertTo12HourFormat(booking?.timeSlot || booking?.endSlot)}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{booking.duration} hour(s)</div>

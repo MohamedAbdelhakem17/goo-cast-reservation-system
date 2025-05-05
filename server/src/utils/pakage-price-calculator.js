@@ -1,4 +1,4 @@
-const calculatePackagePrices = async ({ package, hours }) => {
+exports.calculatePackagePrices = async ({ package, hours }) => {
     // check if package is fixed
     if (package.isFixed) {
         let result = [];
@@ -29,3 +29,4 @@ const calculatePackagePrices = async ({ package, hours }) => {
 
     return result;
 };
+

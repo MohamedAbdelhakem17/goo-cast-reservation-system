@@ -1,10 +1,13 @@
 import * as Yup from "yup";
 import { useFormik } from "formik";
-
+import { CreateBooking } from "../../apis/Booking/booking.api";
+import { useMemo, useCallback } from "react";
 export default function useBookingFormik() {
 
-    const localStorageData = localStorage.getItem("bookingData");
-    const parsedData = localStorageData ? JSON.parse(localStorageData) : null;
+    const parsedData = useMemo(() => {
+        const localStorageData = localStorage.getItem("bookingData");
+        return localStorageData ? JSON.parse(localStorageData) : null;
+    }, []);
 
     // Formik initial values
     const bookingInitialValues = parsedData || {
@@ -51,18 +54,42 @@ export default function useBookingFormik() {
         totalPrice: Yup.number().required("Total price is required"),
     });
 
+    const { mutate: createBooking } = CreateBooking()
     // Formik handleSubmit function
     const formik = useFormik({
         initialValues: bookingInitialValues,
         validationSchema: bookingValidationSchema,
+
         onSubmit: (values) => {
+
+            const totalAddOnPrice = values.selectedAddOns?.reduce((acc, item) => {
+                return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
+            }, 0) || 0
+            const totalPrice = Number(values.studio?.price || 0) + totalAddOnPrice + (values.selectedPackage?.price || 0)
+
             const dataBaseObject = {
                 ...values,
-                studio: values.studio.id,
-                date: new Date(values.date),
+                studio: {
+                    id: values.studio.id,
+                    price: values.studio.price,
+                },
+                package: {
+                    id: values.selectedPackage.id,
+                    slot: values.selectedPackage.slot,
+                },
+                totalPrice
             };
 
-            console.log("Final Submit:", dataBaseObject);
+            createBooking(dataBaseObject, {
+                onSuccess: () => {
+                    alert("Booking submitted successfully");
+                },
+                onError: (error) => {
+                    console.error("Error creating booking:", error);
+                }
+            })
+
+            // console.log("Final Submit:", dataBaseObject);
 
         },
         enableReinitialize: true,
@@ -71,9 +98,10 @@ export default function useBookingFormik() {
 
 
     // Helpers Functions to access formik values and errors
-    const setBookingField = (field, value) => {
+    const setBookingField = useCallback((field, value) => {
         formik.setFieldValue(field, value);
-    };
+    }, [formik]);
+
 
     const getBookingField = (field) => {
         const keys = field.split(".");
