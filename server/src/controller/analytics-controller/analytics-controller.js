@@ -66,13 +66,148 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
             }
         }
     ]);
+
     const totalRevenue = revenue.length > 0 ? revenue[0].totalRevenue : 0;
 
-    const mostBookedStudios = await BookingModel.aggregate([
-        { $match: { studioId: { $ne: null } } },
+    const mostBookedUser = await BookingModel.aggregate([
+        {
+            $match: {
+                "personalInfo.email": { $ne: null }
+            }
+        },
         {
             $group: {
-                _id: "$studioId",
+                _id: "$personalInfo.email",
+                totalBookings: { $sum: 1 },
+                personalInfo: { $first: "$personalInfo" },
+                studios: { $push: "$studio" },
+                packages: { $push: "$package.id" },
+                addOns: { $push: "$addOns.item" }
+            }
+        },
+        { $sort: { totalBookings: -1 } },
+        { $limit: 1 },
+
+        {
+            $project: {
+                personalInfo: 1,
+                totalBookings: 1,
+                studios: 1,
+                packages: 1,
+                addOns: {
+                    $reduce: {
+                        input: "$addOns",
+                        initialValue: [],
+                        in: { $concatArrays: ["$$value", "$$this"] }
+                    }
+                }
+            }
+        },
+
+        { $unwind: "$studios" },
+        {
+            $group: {
+                _id: {
+                    email: "$personalInfo.email",
+                    studio: "$studios"
+                },
+                personalInfo: { $first: "$personalInfo" },
+                totalBookings: { $first: "$totalBookings" },
+                packages: { $first: "$packages" },
+                addOns: { $first: "$addOns" },
+                studioCount: { $sum: 1 }
+            }
+        },
+        { $sort: { studioCount: -1 } },
+        { $limit: 1 },
+
+        {
+            $lookup: {
+                from: "studios",
+                localField: "_id.studio",
+                foreignField: "_id",
+                as: "studio"
+            }
+        },
+        { $unwind: "$studio" },
+
+        { $unwind: { path: "$packages", preserveNullAndEmptyArrays: true } },
+        {
+            $group: {
+                _id: {
+                    email: "$_id.email",
+                    package: "$packages"
+                },
+                personalInfo: { $first: "$personalInfo" },
+                totalBookings: { $first: "$totalBookings" },
+                studio: { $first: "$studio" },
+                studioBookings: { $first: "$studioCount" },
+                addOns: { $first: "$addOns" },
+                packageCount: { $sum: 1 }
+            }
+        },
+        { $sort: { packageCount: -1 } },
+        { $limit: 1 },
+
+        {
+            $lookup: {
+                from: "hourlypackages",
+                localField: "_id.package",
+                foreignField: "_id",
+                as: "package"
+            }
+        },
+        { $unwind: { path: "$package", preserveNullAndEmptyArrays: true } },
+
+        { $unwind: { path: "$addOns", preserveNullAndEmptyArrays: true } },
+        {
+            $group: {
+                _id: {
+                    email: "$_id.email",
+                    addOn: "$addOns"
+                },
+                personalInfo: { $first: "$personalInfo" },
+                totalBookings: { $first: "$totalBookings" },
+                studio: { $first: "$studio" },
+                studioBookings: { $first: "$studioBookings" },
+                package: { $first: "$package" },
+                packageBookings: { $first: "$packageCount" },
+                addOnCount: { $sum: 1 }
+            }
+        },
+        { $sort: { addOnCount: -1 } },
+        { $limit: 1 },
+
+        {
+            $lookup: {
+                from: "addons",
+                localField: "_id.addOn",
+                foreignField: "_id",
+                as: "addOn"
+            }
+        },
+        { $unwind: { path: "$addOn", preserveNullAndEmptyArrays: true } },
+
+        {
+            $project: {
+                _id: 0,
+                personalInfo: 1,
+                totalBookings: 1,
+                mostBookedStudio: "$studio.name",
+                studioBookings: "$studioBookings",
+                mostBookedPackage: "$package.name",
+                packageBookings: "$packageBookings",
+                mostBookedAddOn: "$addOn.name",
+                addOnBookings: "$addOnCount"
+            }
+        }
+    ]);
+
+    const mostBookedStudios = await BookingModel.aggregate([
+        { $match: { studio: { $ne: null } } },
+        {
+            $group: {
+                _id: "$studio",
                 count: { $sum: 1 }
             }
         },
@@ -95,12 +230,13 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
             }
         }
     ]);
+    
 
     const mostBookedPackages = await BookingModel.aggregate([
-        { $match: { packageId: { $ne: null } } },
+        { $match: { "package.id": { $ne: null } } },
         {
             $group: {
-                _id: "$packageId",
+                _id: "$package.id",
                 count: { $sum: 1 }
             }
         },
@@ -108,7 +244,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
         { $limit: 5 },
         {
             $lookup: {
-                from: "packages",
+                from: "hourlypackages",
                 localField: "_id",
                 foreignField: "_id",
                 as: "package"
@@ -123,13 +259,14 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
             }
         }
     ]);
+    
 
     const mostBookedAddOns = await BookingModel.aggregate([
-        { $unwind: "$addOnId" },
-        { $match: { addOnId: { $ne: null } } },
+        { $unwind: "$addOns" },
+        { $match: { "addOns.item": { $ne: null } } },
         {
             $group: {
-                _id: "$addOnId",
+                _id: "$addOns.item",
                 count: { $sum: 1 }
             }
         },
@@ -160,7 +297,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
                 count: { $sum: 1 }
             }
         },
-        { $sort: { _id: 1 } }, // علشان الرسمة تكون مرتبة حسب الوقت
+        { $sort: { _id: 1 } },
         {
             $project: {
                 label: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
@@ -176,22 +313,11 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
             totalStudios,
             totalBookings,
             totalRevenue,
-            mostBookedStudios: [
-                { label: "Studio A", count: 8 },
-                { label: "Studio B", count: 7 },
-                { label: "Studio C", count: 5 }
-            ],
-            mostBookedPackages: [
-                { label: "Go-Social", count: 12 },
-                { label: "Pro-Cast", count: 8 },
-                { label: "Basic", count: 3 }
-            ],
-            mostBookedAddOns: [
-                { label: "Extra Microphone", count: 15 },
-                { label: "Video Editing", count: 10 },
-                { label: "Thumbnail Design", count: 5 }
-            ],
-            mostBookedDay
+            mostBookedStudios,
+            mostBookedPackages,
+            mostBookedAddOns,
+            mostBookedDay,
+            mostBookedUser
         }
     });
 });

@@ -8,6 +8,7 @@ import { GetBookings } from '../../../apis/Booking/booking.api';
 import { motion, AnimatePresence } from 'framer-motion';
 import BookingTrendsChart from '../../../components/Admin-Dashboard/BookingTrendsChart/BookingTrendsChart';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import MostUserActive from '../../../components/Admin-Dashboard/Wellcome/Most-User-Active/MostUserActive';
 
 const Welcome = () => {
     const { data: statsData, isLoading } = GetDashboardStats();
@@ -39,12 +40,12 @@ const Welcome = () => {
         (current.count > max.count) ? current : max
         , mostBookedDay[0]);
 
-    const formatChartData = (items) => {
-        return items?.map(item => ({
-            name: item.label,
-            value: item.count
-        })) || [];
-    };
+    // const formatChartData = (items) => {
+    //     return items?.map(item => ({
+    //         name: item.label,
+    //         value: item.count
+    //     })) || [];
+    // };
 
 
     return (
@@ -111,6 +112,7 @@ const Welcome = () => {
                 </div>
             </div>
 
+            <MostUserActive userData={statsData?.data.mostBookedUser[0]} />
             {mostBookedDay && mostBookedDay.length > 0 && (
                 <div className="mb-8">
                     {/* <BookingTrendsChart data={mostBookedDay} /> */}
