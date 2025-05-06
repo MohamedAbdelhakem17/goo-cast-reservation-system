@@ -172,15 +172,15 @@ export default function Studios() {
                     </p>
 
                     <div className="flex gap-3">
-                      <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                      {/* <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                         <i className="fa-solid fa-bookmark mr-2"></i>
                         Save
-                      </button>
+                      </button> */}
                       <button
                         onClick={() => handleQuickBooking(2, {
                           image: studio.thumbnail,
                           name: studio.name,
-                          price: studio.pricePerHour,
+                          price: studio.basePricePerSlot,
                           id: studio._id,
                         })}
                         className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors cursor-pointer"

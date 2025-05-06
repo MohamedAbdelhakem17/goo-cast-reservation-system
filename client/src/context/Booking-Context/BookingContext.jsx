@@ -14,7 +14,7 @@ export default function BookingProvider({ children }) {
     const TOTAL_STEPS = STEP_LABELS.length;
     const STEP_FIELDS = {
         1: ["studio"],
-        2: ["date", "startSlot", "endSlot", "persons"],
+        2: ["startSlot", "endSlot",],
         3: ["selectedPackage", "selectedAddOns"],
         4: ["personalInfo.fullName", "personalInfo.phone", "personalInfo.email"],
     };

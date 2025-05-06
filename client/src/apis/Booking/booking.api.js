@@ -4,8 +4,8 @@ import BASE_URL from "../BASE_URL";
 import { useLocation } from "react-router-dom";
 import { useGetData, usePostData, useUpdateData } from "../../hooks/useApi";
 
-
-const GetFullBookedStudios = (studioId) => useGetData(["fullBookedStudios", studioId], `/bookings/fully-booked/${`${studioId || JSON.parse(localStorage.getItem("studio"))?.id}`}`);
+const sortedStudioId = JSON.parse(localStorage.getItem("bookingData"))?.studio?.id
+const GetFullBookedStudios = (studioId) => useGetData(["fullBookedStudios", studioId], `/bookings/fully-booked/${`${studioId || sortedStudioId}`}`);
 
 const GetAvailableSlots = () => {
     const { state } = useLocation()
