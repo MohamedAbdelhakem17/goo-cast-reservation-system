@@ -4,6 +4,7 @@ import { studio } from '../../../assets/images'
 import StarRating from '../../../hooks/useRate'
 import { useBooking } from '../../../context/Booking-Context/BookingContext';
 import useGetAllStudios from '../../../apis/studios/studios.api'
+import Loading from '../../shared/Loading/Loading';
 export default function SelectStudio() {
     const [hoveredId, setHoveredId] = useState(null);
     const { handleNextStep, setBookingField } = useBooking()
@@ -24,20 +25,14 @@ export default function SelectStudio() {
             transition: { type: "spring", stiffness: 100 },
         },
     };
-
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="loader"></div>
-            </div>
-        )
-    }
+    
+    if (isLoading) return <Loading />
 
     return (
         <div className="space-y-2">
             <p className="text-gray-700 pb-3">Please select a studio to continue with your booking.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 cursor-pointer" >
-                {studiosData.data.map((studio) => (
+                {studiosData?.data.map((studio) => (
                     <motion.div
                         onHoverStart={() => setHoveredId(studio.id)}
                         onHoverEnd={() => setHoveredId(null)}
@@ -53,7 +48,7 @@ export default function SelectStudio() {
                                 id: studio._id,
                                 name: studio.name,
                                 image: studio.thumbnail,
-                                price: studio.pricePerHour,
+                                price: studio.basePricePerSlot,
                             }
                         )}
                     >
@@ -87,7 +82,7 @@ export default function SelectStudio() {
                                 <span className="text-lg">{studio.address}</span>
                             </p>
 
-                            <p className="text-main font-bold">{studio.pricePerHour} Egp per hour</p>
+                            <p className="text-main font-bold">{studio.basePricePerSlot} Egp per hour</p>
 
                             <motion.div
                                 className="mt-3 h-1 bg-main rounded-full"

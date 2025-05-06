@@ -13,9 +13,12 @@ export default function Cart() {
         return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
     }, 0) || 0
 
+    const totalPrice = Number(bookingData.studio?.price || 0) + totalAddOnPrice + (bookingData.selectedPackage?.price || 0)
+
     if (!bookingData) {
         return <div>Loading...</div>
     }
+
 
 
     return (
@@ -34,8 +37,9 @@ export default function Cart() {
                             <div>
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.studio.name}</h5>
                                 <p className="text-sm text-gray-500">{formatDate(bookingData.date)}</p>
-                                <p className="text-sm text-gray-500">{bookingData.timeSlot}</p>
-                                <p className="text-sm text-gray-500">Duration: {bookingData.duration || 0} hour(s)</p>
+                                <p className="text-sm text-gray-500">start time: {bookingData.startSlot}</p>
+                                <p className="text-sm text-gray-500">End time: {bookingData.endSlot}</p>
+                                <p className="text-sm text-gray-500">Duration: {bookingData.endSlot.split(":")[0] - bookingData.startSlot.split(":")[0]} hour(s)</p>
                             </div>
                         </div>
 
@@ -43,7 +47,7 @@ export default function Cart() {
                         <div className="pt-3 flex items-center justify-between">
                             <p className="text-sm text-gray-400">Total Price</p>
                             <p className="text-lg font-bold text-main">
-                                {Number(bookingData.studio.price) * Number(bookingData.duration || 1)} EGP
+                                {Number(bookingData.studio.price)} EGP
                             </p>
                         </div>
                     </div>
@@ -58,7 +62,7 @@ export default function Cart() {
                         <div className="flex justify-between items-start">
                             <div>
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.selectedPackage.name}</h5>
-                                <p className="text-sm text-gray-500">{bookingData.selectedPackage.durationLabel}</p>
+                                <p className="text-sm text-gray-500">{bookingData.selectedPackage.duration} hour</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-gray-400">Package Price</p>
@@ -78,7 +82,7 @@ export default function Cart() {
                     <div className="bg-white p-4 rounded-xl border border-gray-200">
                         <ul className="divide-y divide-gray-100">
                             {bookingData.selectedAddOns.map((addon) => (
-                                <li key={addon.id} className="py-2 flex justify-between items-center">
+                                <li key={addon._id} className="py-2 flex justify-between items-center">
                                     <span className="text-gray-700">{addon.name}</span>
                                     <span className="text-gray-500 text-sm">x{addon.quantity} / {addon.price} EGP</span>
                                 </li>
@@ -100,7 +104,7 @@ export default function Cart() {
             <div className="flex items-center justify-between mt-4 p-3">
                 <h4 className="text-xl font-semibold mb-4 text-gray-800">Total Price</h4>
                 <p className="text-lg font-bold text-main">
-                    {Number(bookingData.studio?.price || 0) * Number(bookingData.duration || 1) + totalAddOnPrice + (bookingData.selectedPackage?.price || 0)} EGP
+                    {totalPrice} EGP
                 </p>
             </div>
         </div>

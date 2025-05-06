@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useEffect, useCallback ,  useRef} from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useBookingFormik from "../Booking-Formik/useBookingFormik";
 
@@ -14,7 +14,7 @@ export default function BookingProvider({ children }) {
     const TOTAL_STEPS = STEP_LABELS.length;
     const STEP_FIELDS = {
         1: ["studio"],
-        2: ["date", "timeSlot", "duration", "persons"],
+        2: ["startSlot", "endSlot",],
         3: ["selectedPackage", "selectedAddOns"],
         4: ["personalInfo.fullName", "personalInfo.phone", "personalInfo.email"],
     };
@@ -56,7 +56,7 @@ export default function BookingProvider({ children }) {
         if (!didSetStudio.current) {
             if (isValidStudio(studio)) {
                 setBookingField("studio", studio);
-            } 
+            }
             didSetStudio.current = true;
         }
     }, [studio]);
@@ -91,17 +91,25 @@ export default function BookingProvider({ children }) {
 
     // Update step and URL
     useEffect(() => {
-        localStorage.setItem("bookingStep", currentStep);
         const slug = STEP_LABELS[currentStep - 1]?.toLowerCase().replace(/ /g, "-");
+        if (!slug) return;
 
-        if (slug) {
-            // Only pass studio if it's valid
-            const studioToPass = isValidStudio(values.studio) ? values.studio : null;
-            navigate(`/booking?step=${slug}`, {
-                state: { step: currentStep, studio: studioToPass },
-            });
+        const studioToPass = isValidStudio(values.studio) ? values.studio : null;
+
+        const currentSlug = new URLSearchParams(location.search).get("step");
+        const currentState = location.state;
+
+        // Avoid infinite loop by checking if the location is already correct
+        if (currentSlug !== slug || currentState?.step !== currentStep || currentState?.studio !== studioToPass) {
+            if (location.pathname !== "/booking/confirmation") {
+                localStorage.setItem("bookingStep", currentStep);
+                navigate(`/booking?step=${slug}`, {
+                    state: { step: currentStep, studio: studioToPass },
+                });
+            }
         }
     }, [currentStep, values.studio]);
+
 
     // Save booking data in localStorage whenever it changes
     useEffect(() => {
@@ -110,6 +118,7 @@ export default function BookingProvider({ children }) {
             localStorage.setItem("bookingData", JSON.stringify(values));
         }
     }, [values]);
+
 
     // Navigation handlers
     const handleNextStep = useCallback(() => {

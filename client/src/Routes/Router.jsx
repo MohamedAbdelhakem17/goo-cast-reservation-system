@@ -13,6 +13,7 @@ const Home = lazy(() => import("../pages/Home/Home"));
 const Studios = lazy(() => import("../pages/Studios/Studios"));
 const StudioDetails = lazy(() => import("../pages/Studio-Details/StudioDetails"));
 const Booking = lazy(() => import("../pages/Booking/Booking"));
+const ConfirmationBooking = lazy(() => import("../pages/Confirmation-Booking/ConfirmationBooking"));
 const NotFound = lazy(() => import("../pages/Not-Found/NotFound"));
 
 // Authentication admin
@@ -59,12 +60,8 @@ export default function AppRouter() {
                         <Route path="/" element={<Home />} />
                         <Route path="/studios" element={<Studios />} />
                         <Route path="/studio/:id" element={<StudioDetails />} />
-                        <Route path="/booking" element={
-                            <BookingProvider>
-                                <Booking />
-                            </BookingProvider>
-                        } />
-
+                        <Route path="/booking" element={<BookingProvider> <Booking /> </BookingProvider>} />
+                        <Route path="/booking/confirmation" element={<BookingProvider> <ConfirmationBooking /> </BookingProvider>} />
                     </Route>
 
                     {/* Admin Dashboard Layout */}
