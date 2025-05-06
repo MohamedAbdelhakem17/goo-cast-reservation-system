@@ -118,26 +118,26 @@ const bookingSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-bookingSchema.pre(/^find/, function (next) {
-    this.populate([
-        {
-            path: "studio",
-            select: "name thumbnail ",
-        },
-        {
-            path: "package.id",
-            select: "name price",
-        },
-        {
-            path: "addOns.item",
-            select: "name price",
-        },
-        {
-            path: "createdBy",
-            select: "fullName email",
-        }
-    ]);
-    next();
-});
+// bookingSchema.pre(/^find/, function (next) {
+//     this.populate([
+//         {
+//             path: "studio",
+//             select: "name thumbnail ",
+//         },
+//         {
+//             path: "package.id",
+//             select: "name price",
+//         },
+//         {
+//             path: "addOns.item",
+//             select: "name price",
+//         },
+//         {
+//             path: "createdBy",
+//             select: "fullName email",
+//         }
+//     ]);
+//     next();
+// });
 
 module.exports = mongoose.model("Booking", bookingSchema);
