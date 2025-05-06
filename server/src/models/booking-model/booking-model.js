@@ -6,28 +6,49 @@ const bookingSchema = new mongoose.Schema({
         ref: "Studio",
         required: true,
     },
+
     date: {
         type: Date,
         required: true,
     },
-    timeSlot: {
+
+    startSlot: {
         type: String,
         required: true,
     },
+
+    endSlot: {
+        type: String,
+        required: true,
+    },
+
     duration: {
         type: Number,
         required: true,
         min: 1,
     },
+
     persons: {
         type: Number,
         required: true,
     },
+
     package: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "HourlyPackage",
-        required: true,
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "HourlyPackage",
+            required: true,
+        },
+        price: {
+            type: Number,
+            required: true,
+        },
+        duration: {
+            type: Number,
+            required: true,
+        }
     },
+
     addOns: [
         {
             item: {
@@ -46,6 +67,7 @@ const bookingSchema = new mongoose.Schema({
             }
         }
     ],
+
     personalInfo: {
         fullName: {
             type: String,
@@ -63,33 +85,51 @@ const bookingSchema = new mongoose.Schema({
             type: String,
         },
     },
+
     status: {
         type: String,
         enum: ["pending", "approved", "rejected"],
         default: "pending",
     },
+
     totalPrice: {
         type: Number,
         required: true,
     },
+
+    totalAddOnsPrice: {
+        type: Number,
+        required: true,
+    },
+
+    studioPrice: {
+        type: Number,
+        required: true,
+    },
+
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
+
+    isGuest: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 
-bookingSchema.pre('^find', function (next) {
+bookingSchema.pre(/^find/, function (next) {
     this.populate([
         {
             path: "studio",
-            select: "name thumbnail",
+            select: "name thumbnail ",
         },
         {
-            path: "package",
-            select: "name price duration",
+            path: "package.id",
+            select: "name price",
         },
         {
-            path: "addOns",
+            path: "addOns.item",
             select: "name price",
         },
         {

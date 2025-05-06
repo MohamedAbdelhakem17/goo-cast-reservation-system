@@ -14,6 +14,7 @@ function minutesToTime(mins) {
     return `${hours}:${minutes}`;
 }
 
+
 function getAllDay(inputDate) {
     const date = new Date(inputDate);
     const startOfDay = new Date(Date.UTC(

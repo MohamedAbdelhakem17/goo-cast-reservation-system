@@ -31,7 +31,7 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                         </div>
 
                         <div className="space-y-6">
-                            
+
                             {/* Customer Information */}
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-2">Customer Information</h3>
@@ -58,8 +58,16 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                 <h3 className="text-lg font-semibold text-gray-800 mb-2">Booking Time</h3>
                                 <div className="bg-gray-50 p-4 rounded-lg">
                                     <p className="text-sm text-gray-600">Date: {formatDate(booking.date)}</p>
-                                    <p className="text-sm text-gray-600">Time Slot: {booking.timeSlot}</p>
+                                    <p className="text-sm text-gray-600">Time start: {booking.startSlot}</p>
+                                    <p className="text-sm text-gray-600">Time end: {booking.endSlot}</p>
                                     <p className="text-sm text-gray-600">Duration: {booking.duration} hour(s)</p>
+                                    <p className="text-sm text-gray-600">Duration: {booking.duration} hour(s)</p>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-semibold text-gray-800">Studio Price:</span>
+                                        <span className="text-lg font-bold text-main">
+                                            {priceFormat(booking.studioPrice)}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -69,8 +77,14 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-800 mb-2">Package Details</h3>
                                     <div className="bg-gray-50 p-4 rounded-lg">
-                                        <p className="text-sm text-gray-600">Name: {booking.package.name}</p>
-                                        <p className="text-sm text-gray-600">Price: {priceFormat(booking?.package?.price) || "no"} </p>
+                                        <p className="text-sm text-gray-600">Name: {booking.package.name} Package</p>
+                                        <p className="text-sm text-gray-600">duration: {(booking?.package?.duration) || "no"} hour</p>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm font-semibold text-gray-800">Package Price:</span>
+                                            <span className="text-lg font-bold text-main">
+                                                {priceFormat(booking?.package?.price) || "no"}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -88,6 +102,12 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                                 </span>
                                             </div>
                                         ))}
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm font-semibold text-gray-800">Total Add-on Price:</span>
+                                            <span className="text-lg font-bold text-main">
+                                                {priceFormat(booking.totalAddOnsPrice)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -101,6 +121,7 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                         <span className="text-lg font-bold text-main">
                                             {priceFormat(booking.totalPrice)}
                                         </span>
+
                                     </div>
                                 </div>
                             </div>

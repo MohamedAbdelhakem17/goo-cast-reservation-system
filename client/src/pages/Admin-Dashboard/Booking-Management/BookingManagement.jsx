@@ -10,9 +10,9 @@ import Loading from "../../../components/shared/Loading/Loading";
 export default function BookingManagement() {
   // Const variables
   const TABLE_HEADERS = [
+    "PERSONAL INFO",
     "STUDIO",
     "DATE",
-    "PERSONAL INFO",
     "DURATION",
     "TOTAL PRICE",
     "STATUS",

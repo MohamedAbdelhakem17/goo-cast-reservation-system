@@ -23,20 +23,20 @@ function reducer(state, action) {
     }
 }
 
-export default function SelectDurationPersonsPar({ getSlots }) {
+export default function SelectDurationPersonsPar() {
     const { bookingData, setBookingField } = useBooking();
 
     const initialState = {
-        duration: bookingData.duration || 1,
+        // duration: bookingData.duration || 1,
         persons: bookingData.persons || 1,
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    useEffect(() => {
-        setBookingField('duration', state.duration);
-        getSlots();
-    }, [state.duration]);
+    // useEffect(() => {
+    //     setBookingField('duration', state.duration);
+    //     getSlots();
+    // }, [state.duration]);
     
     
     useEffect(() => {
@@ -48,7 +48,7 @@ export default function SelectDurationPersonsPar({ getSlots }) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 p-2 divide-x-1 divide-gray-300">
             {/* Duration */}
-            <div className="col-span-1 flex items-center justify-between px-4 py-2 md:flex-row flex-col gap-2">
+            {/* <div className="col-span-1 flex items-center justify-between px-4 py-2 md:flex-row flex-col gap-2">
                 <p className="text-sm font-medium">Session duration</p>
                 <div className="flex items-center">
                     <motion.button
@@ -77,10 +77,10 @@ export default function SelectDurationPersonsPar({ getSlots }) {
                         <i className="fa-solid fa-plus"></i>
                     </motion.button>
                 </div>
-            </div>
+            </div> */}
 
             {/* Persons */}
-            <div className="col-span-1 flex items-center justify-between px-4 py-2 md:flex-row flex-col gap-2">
+            <div className="col-span-1 lg:col-span-2 flex items-center justify-between px-4 py-2 md:flex-row flex-col gap-2">
                 <label className="text-sm font-medium">Number of persons</label>
                 <div className="flex items-center">
                     <motion.button
