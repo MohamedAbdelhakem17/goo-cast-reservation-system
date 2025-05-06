@@ -419,8 +419,6 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
     });
 });
 
-
-
 // Create New Booking
 exports.createBooking = asyncHandler(async (req, res) => {
     const {

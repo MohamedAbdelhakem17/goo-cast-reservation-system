@@ -12,37 +12,41 @@ export default function useBookingFormik() {
     }, []);
 
     // Formik initial values
-    const bookingInitialValues = parsedData || {
-        studio: {
-            id: null,
-            name: "",
-            image: "",
-            price: 0,
-        },
-        date: null,
-        startSlot: null,
-        endSlot: null,
-        duration: null,
-        persons: 1,
-        selectedPackage: {},
-        selectedAddOns: [],
-        personalInfo: {
-            fullName: "",
-            phone: "",
-            email: "",
-            brand: "",
-        },
-        totalPrice: 0,
-    };
+    const bookingInitialValues = useMemo(() => {
+        if (parsedData) return parsedData;
+
+        const today = new Date();
+
+        return {
+            studio: {
+                id: null,
+                name: "",
+                image: "",
+                price: 0,
+            },
+            date: today, 
+            startSlot: null,
+            endSlot: null,
+            duration: 0,
+            persons: 1,
+            selectedPackage: {},
+            selectedAddOns: [],
+            personalInfo: {
+                fullName: "",
+                phone: "",
+                email: "",
+                brand: "",
+            },
+            totalPrice: 0,
+        };
+    }, [parsedData]);
+
 
     // Formik validation schema
     const bookingValidationSchema = Yup.object({
         studio: Yup.object().required("Studio is required"),
-        date: Yup.string().required("Date is required"),
-        endSlot: Yup.string().required("Time slot is required"),
-        startSlot: Yup.string().required("Time slot is required"),
-        duration: Yup.number().min(1).required("Duration is required"),
-        persons: Yup.number().min(1).required("Number of persons is required"),
+        endSlot: Yup.string().required("Time end slot is required"),
+        startSlot: Yup.string().required("Time  slot is required"),
         selectedPackage: Yup.object().nullable().notRequired(),
         selectedAddOns: Yup.array().nullable().notRequired(),
         personalInfo: Yup.object({
@@ -69,10 +73,10 @@ export default function useBookingFormik() {
             const totalAddOnPrice = values.selectedAddOns?.reduce((acc, item) => {
                 return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
             }, 0) || 0
+
             const totalPrice = Number(values.studio?.price || 0) + totalAddOnPrice + (values.selectedPackage?.price || 0)
             const user_id = JSON.parse(localStorage.getItem("user"))?.user?.id
 
-            console.log("Total Add-on Price:", user_id);
             const dataBaseObject = {
                 ...values,
                 studio: {
