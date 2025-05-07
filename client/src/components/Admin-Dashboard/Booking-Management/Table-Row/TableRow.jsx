@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { ChangeBookingStatus } from '../../../../apis/Booking/booking.api';
-import Alert from '../../../shared/Alert/Alert';
 import Popup from '../../../shared/Popup/Popup';
 import useDataFormat from '../../../../hooks/useDateFormat';
 import { useToast } from '../../../../context/Toaster-Context/ToasterContext';
