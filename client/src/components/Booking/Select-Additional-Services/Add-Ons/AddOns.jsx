@@ -13,7 +13,7 @@ export default function AddOns() {
     const index = updatedAddOns.findIndex((addon) => addon._id === id);
 
     if (quantity === 0 && index !== -1) {
-      updatedAddOns.splice(index, 1);
+      updatedAddOns?.splice(index, 1);
     } else if (index !== -1) {
       updatedAddOns[index] = {
         ...updatedAddOns[index],

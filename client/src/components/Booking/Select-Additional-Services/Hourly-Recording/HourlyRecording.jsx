@@ -10,7 +10,6 @@ export default function HourlyRecording() {
 
   const handlePackageSelect = (pkg, slot) => {
 
-    console.log(pkg, slot);
 
     setBookingField("selectedPackage", {
       id: pkg._id,
