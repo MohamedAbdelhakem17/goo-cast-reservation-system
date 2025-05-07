@@ -12,7 +12,8 @@ export default function Calendar({ getSlots }) {
     const { setBookingField, bookingData } = useBooking();
 
 
-    const { isLoading, data } = GetFullBookedStudios(bookingData.studio?.id || JSON.parse(localStorage.getItem("bookingData"))?.studio?.id || startDate);
+    const { isLoading, data } = GetFullBookedStudios(bookingData.studio?.id);
+
     const disabledDates = data?.data?.map(dateStr => new Date(dateStr)) || [];
 
     const isDateDisabled = (date) => {
@@ -26,9 +27,11 @@ export default function Calendar({ getSlots }) {
     useEffect(() => {
         const storedDate = JSON.parse(localStorage.getItem("bookingData"))?.date;
         if (storedDate) {
-            setBookingField("date", new Date(storedDate));
-            console.log("BOOKING DATA", bookingData);
+            setBookingField("date", storedDate);
+        } else {
+            setBookingField("date", startDate);
         }
+        getSlots();
     }, []);
 
 
@@ -36,8 +39,11 @@ export default function Calendar({ getSlots }) {
     return (
         <div className="border-b-1 border-t-1 border-gray-300 rounded-lg md:p-4">
             <DatePicker
+                selected={bookingData.date || startDate}
                 onChange={(date) => {
                     setBookingField("date", date);
+                    setBookingField("startSlot", null);
+                    setBookingField("endSlot", null);
                     getSlots();
                 }}
                 dateFormat="dd/MM/yyyy"

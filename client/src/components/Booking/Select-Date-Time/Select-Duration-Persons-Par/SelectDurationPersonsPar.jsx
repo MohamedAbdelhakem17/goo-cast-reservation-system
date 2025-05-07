@@ -23,20 +23,20 @@ function reducer(state, action) {
     }
 }
 
-export default function SelectDurationPersonsPar({ getSlots }) {
+export default function SelectDurationPersonsPar() {
     const { bookingData, setBookingField } = useBooking();
 
     const initialState = {
-        duration: bookingData.duration || 1,
+        // duration: bookingData.duration || 1,
         persons: bookingData.persons || 1,
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    useEffect(() => {
-        setBookingField('duration', state.duration);
-        getSlots();
-    }, [state.duration]);
+    // useEffect(() => {
+    //     setBookingField('duration', state.duration);
+    //     getSlots();
+    // }, [state.duration]);
     
     
     useEffect(() => {

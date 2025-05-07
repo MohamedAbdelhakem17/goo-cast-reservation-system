@@ -1,7 +1,9 @@
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { useToast } from "../../context/Toaster-Context/ToasterContext";
 import { CreateBooking } from "../../apis/Booking/booking.api";
 import { useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 export default function useBookingFormik() {
 
     const parsedData = useMemo(() => {
@@ -10,37 +12,41 @@ export default function useBookingFormik() {
     }, []);
 
     // Formik initial values
-    const bookingInitialValues = parsedData || {
-        studio: {
-            id: null,
-            name: "",
-            image: "",
-            price: 0,
-        },
-        date: null,
-        startSlot: null,
-        endSlot: null,
-        duration: null,
-        persons: 1,
-        selectedPackage: {},
-        selectedAddOns: [],
-        personalInfo: {
-            fullName: "",
-            phone: "",
-            email: "",
-            brand: "",
-        },
-        totalPrice: 0,
-    };
+    const bookingInitialValues = useMemo(() => {
+        if (parsedData) return parsedData;
+
+        const today = new Date();
+
+        return {
+            studio: {
+                id: null,
+                name: "",
+                image: "",
+                price: 0,
+            },
+            date: today, 
+            startSlot: null,
+            endSlot: null,
+            duration: 0,
+            persons: 1,
+            selectedPackage: {},
+            selectedAddOns: [],
+            personalInfo: {
+                fullName: "",
+                phone: "",
+                email: "",
+                brand: "",
+            },
+            totalPrice: 0,
+        };
+    }, [parsedData]);
+
 
     // Formik validation schema
     const bookingValidationSchema = Yup.object({
         studio: Yup.object().required("Studio is required"),
-        date: Yup.string().required("Date is required"),
-        endSlot: Yup.string().required("Time slot is required"),
-        startSlot: Yup.string().required("Time slot is required"),
-        duration: Yup.number().min(1).required("Duration is required"),
-        persons: Yup.number().min(1).required("Number of persons is required"),
+        endSlot: Yup.string().required("Time end slot is required"),
+        startSlot: Yup.string().required("Time  slot is required"),
         selectedPackage: Yup.object().nullable().notRequired(),
         selectedAddOns: Yup.array().nullable().notRequired(),
         personalInfo: Yup.object({
@@ -55,6 +61,8 @@ export default function useBookingFormik() {
     });
 
     const { mutate: createBooking } = CreateBooking()
+    const navigate = useNavigate()
+    const { addToast } = useToast()
     // Formik handleSubmit function
     const formik = useFormik({
         initialValues: bookingInitialValues,
@@ -65,7 +73,9 @@ export default function useBookingFormik() {
             const totalAddOnPrice = values.selectedAddOns?.reduce((acc, item) => {
                 return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
             }, 0) || 0
+
             const totalPrice = Number(values.studio?.price || 0) + totalAddOnPrice + (values.selectedPackage?.price || 0)
+            const user_id = JSON.parse(localStorage.getItem("user"))?.user?.id
 
             const dataBaseObject = {
                 ...values,
@@ -77,20 +87,21 @@ export default function useBookingFormik() {
                     id: values.selectedPackage.id,
                     slot: values.selectedPackage.slot,
                 },
-                totalPrice
+                totalPrice,
+                user_id
             };
 
             createBooking(dataBaseObject, {
-                onSuccess: () => {
-                    alert("Booking submitted successfully");
+                onSuccess: (res) => {
+                    addToast(res.message || "Booking submitted successfully", "success", 3000);
+                    setTimeout(() => {
+                        navigate("/")
+                    }, 3200)
                 },
                 onError: (error) => {
-                    console.error("Error creating booking:", error);
+                    addToast(error.response?.data?.message || "Something went wrong", "error");
                 }
             })
-
-            // console.log("Final Submit:", dataBaseObject);
-
         },
         enableReinitialize: true,
     });
