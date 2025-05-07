@@ -41,7 +41,9 @@ const ChangeBookingStatus = () => useUpdateData("bookings", `${BASE_URL}/booking
 
 const CreateBooking = () => usePostData("bookings", `${BASE_URL}/bookings`);
 
+const GetUserBookings = () => useGetData("userBookings", `${BASE_URL}/bookings/user-bookings`);
+
 export {
-    GetFullBookedStudios, GetAvailableSlots, GetBookings, ChangeBookingStatus, GetAvailableEndSlots, CreateBooking
+    GetFullBookedStudios, GetAvailableSlots, GetBookings, ChangeBookingStatus, GetAvailableEndSlots, CreateBooking , GetUserBookings
 }
 

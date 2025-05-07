@@ -1,87 +1,165 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import BookingReceiptPDF from '../../../components/Booking-Receipt-PDF/BookingReceiptPDF';
 import { motion, AnimatePresence } from 'framer-motion';
 import useDateFormat from '../../../hooks/useDateFormat';
 import usePriceFormat from '../../../hooks/usePriceFormat';
+import { GetUserBookings } from '../../../apis/Booking/booking.api';
 
 const statusClasses = {
-  approved: 'text-green-500 bg-green-100',
-  pending: 'text-yellow-500 bg-yellow-100',
-  rejected: 'text-red-500 bg-red-100',
-};
+  approved: "bg-gradient-to-r from-green-500 to-green-600 text-white",
+  pending: "bg-gradient-to-r from-amber-400 to-amber-500 text-white",
+  rejected: "bg-gradient-to-r from-red-500 to-red-600 text-white",
+}
 
-// Dummy data
-const dummyBookings = [
-  {
-    _id: '1',
-    studio: { name: 'Studio One' },
-    date: '2025-05-01',
-    timeSlot: '14:00',
-    duration: 2,
-    personalInfo: { fullName: 'John Doe' },
-    totalPrice: 150,
-    status: 'approved',
-    package: { name: 'Standard Package', price: 100 },
-    addOns: [
-      { name: 'Extra Light', quantity: 1, price: 25 },
-      { name: 'Backdrop', quantity: 1, price: 25 },
-    ],
-  },
-  {
-    _id: '2',
-    studio: { name: 'Studio Two' },
-    date: '2025-05-05',
-    timeSlot: '10:30',
-    duration: 1,
-    personalInfo: { fullName: 'Jane Smith' },
-    totalPrice: 90,
-    status: 'pending',
-    package: null,
-    addOns: [],
-  },
-  // Add more items if needed
-];
+const statusIcons = {
+  approved: "fa-solid fa-circle-check",
+  pending: "fa-solid fa-clock",
+  rejected: "fa-solid fa-circle-xmark",
+}
 
-const ITEMS_PER_PAGE = 6;
-
+// Using the provided data structure
 const UserBookings = () => {
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const formatDate = useDateFormat();
-  const priceFormat = usePriceFormat();
+  const { data: userBooking, isLoading } = GetUserBookings()
+  const [selectedBooking, setSelectedBooking] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [filterStatus, setFilterStatus] = useState("all")
+  const [searchTerm, setSearchTerm] = useState("")
+  const pdfRef = useRef();
+  const formatDate = useDateFormat()
+  const priceFormat = usePriceFormat()
 
-  const totalPages = Math.ceil(dummyBookings.length / ITEMS_PER_PAGE);
-  const bookings = dummyBookings.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+
+
+  const ITEMS_PER_PAGE = 6
+
+  // Filter bookings based on status and search term
+  const filteredBookings = userBooking?.data?.filter((booking) => {
+    const matchesStatus = filterStatus === "all" || booking.status === filterStatus
+    const matchesSearch =
+      booking.studio.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.personalInfo.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+    return matchesStatus && matchesSearch
+  })
+
+  const totalPages = Math.ceil(filteredBookings?.length / ITEMS_PER_PAGE)
+  const bookings = filteredBookings?.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   const convertTo12HourFormat = (time) => {
-    if (!time) return '';
-    const [hour, minute] = time.split(':');
-    const hour12 = hour % 12 || 12;
-    const amPm = hour < 12 ? 'AM' : 'PM';
-    return `${hour12}:${minute} ${amPm}`;
-  };
+    if (!time) return ""
+    const [hour, minute] = time.split(":")
+    const hour12 = hour % 12 || 12
+    const amPm = hour < 12 ? "AM" : "PM"
+    return `${hour12}:${minute} ${amPm}`
+  }
+
+  // Calculate days remaining until booking date
+  const getDaysRemaining = (dateString) => {
+    const bookingDate = new Date(dateString)
+    const today = new Date()
+    const diffTime = bookingDate - today
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+  }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-4xl font-bold mb-10 text-center text-gray-800"
-      >
-        My Bookings
-      </motion.h1>
+    <div className="max-w-7xl mx-auto p-4 md:p-6">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 text-center">
+        <h1 className="text-4xl font-bold mb-2 text-gray-800 bg-gradient-to-r from-main to-main/80 bg-clip-text text-transparent">
+          My Bookings
+        </h1>
+        <p className="text-gray-500 max-w-2xl mx-auto">Manage and track all your studio bookings in one place</p>
+      </motion.div>
 
-      {bookings.length === 0 ? (
+      {/* Search and Filter Controls */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="mb-8 bg-white rounded-2xl shadow-md p-4 md:p-6"
+      >
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative w-full md:w-2/3">
+            <i className="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input
+              type="text"
+              placeholder="Search by studio or name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-main/30 focus:border-main transition"
+            />
+          </div>
+          <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 no-scrollbar [&_button]:mb-2">
+            <button
+              onClick={() => setFilterStatus("all")}
+              className={`px-4 py-2 rounded-xl font-medium transition whitespace-nowrap ${filterStatus === "all" ? "bg-main text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+            >
+              All Bookings
+            </button>
+            <button
+              onClick={() => setFilterStatus("pending")}
+              className={`px-4 py-2 rounded-xl font-medium transition whitespace-nowrap ${filterStatus === "pending" ? "bg-amber-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+            >
+              <i className="fa-solid fa-clock mr-2"></i>Pending
+            </button>
+            <button
+              onClick={() => setFilterStatus("approved")}
+              className={`px-4 py-2 rounded-xl font-medium transition whitespace-nowrap ${filterStatus === "approved" ? "bg-green-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+            >
+              <i className="fa-solid fa-circle-check mr-2"></i>Approved
+            </button>
+            <button
+              onClick={() => setFilterStatus("rejected")}
+              className={`px-4 py-2 rounded-xl font-medium transition whitespace-nowrap ${filterStatus === "rejected" ? "bg-red-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+            >
+              <i className="fa-solid fa-circle-xmark mr-2"></i>Rejected
+            </button>
+          </div>
+        </div>
+      </motion.div>
+
+      {isLoading ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-white rounded-3xl shadow-md p-6 animate-pulse">
+              <div className="flex justify-between items-start mb-4">
+                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+              </div>
+              <div className="space-y-4">
+                <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-5 bg-gray-200 rounded w-2/3"></div>
+                <div className="h-5 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-5 bg-gray-200 rounded w-1/3"></div>
+              </div>
+              <div className="mt-6">
+                <div className="h-10 bg-gray-200 rounded-full w-full"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : bookings.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-16"
+          className="text-center py-16 bg-white rounded-3xl shadow-md"
         >
           <i className="fa-regular fa-calendar-xmark text-6xl text-gray-400 mb-4"></i>
           <h2 className="text-2xl font-semibold text-gray-600">No Bookings Found</h2>
-          <p className="text-gray-500 mt-2">You haven't made any bookings yet.</p>
+          <p className="text-gray-500 mt-2 max-w-md mx-auto">
+            {searchTerm || filterStatus !== "all"
+              ? "Try adjusting your search or filters to find what you're looking for."
+              : "You haven't made any bookings yet. Ready to book your first studio session?"}
+          </p>
+          {!searchTerm && filterStatus === "all" && (
+            <button className="mt-6 px-6 py-3 bg-main text-white rounded-xl font-medium hover:bg-main/90 transition">
+              Book a Studio
+            </button>
+          )}
         </motion.div>
       ) : (
         <motion.div
@@ -89,70 +167,103 @@ const UserBookings = () => {
           animate={{ opacity: 1 }}
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {bookings.map((booking) => (
-            <motion.div
-              key={booking._id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5 }}
-              className="bg-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-2xl font-semibold text-gray-800">{booking?.studio?.name}</h2>
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${statusClasses[booking.status]}`}
-                  >
-                    {booking.status}
-                  </span>
-                </div>
+          {userBooking?.data?.map((booking, index) => {
+            const daysRemaining = getDaysRemaining(booking.date)
+            const isUpcoming = daysRemaining >= 0
 
-                <div className="space-y-3">
-                  <div className="flex items-center text-gray-600">
-                    <i className="fa-solid fa-calendar-days mr-3 text-lg w-5"></i>
-                    <span>{formatDate(booking.date)}</span>
+            return (
+              <motion.div
+                key={booking._id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{
+                  y: -5,
+                  boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                }}
+                className="bg-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
+              >
+                {/* Studio Image */}
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={booking.studio.thumbnail || "/placeholder.svg?height=160&width=400"}
+                    alt={booking.studio.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <h2 className="text-2xl font-bold truncate">{booking.studio.name}</h2>
+                    <div className="flex items-center mt-1">
+                      <i className="fa-solid fa-calendar-days mr-2"></i>
+                      <span className="text-sm">{formatDate(booking.date, "short")}</span>
+                    </div>
                   </div>
-
-                  <div className="flex items-center text-gray-600">
-                    <i className="fa-solid fa-clock mr-3 text-lg w-5"></i>
-                    <span>{convertTo12HourFormat(booking.timeSlot)} ({booking.duration}hr)</span>
-                  </div>
-
-                  <div className="flex items-center text-gray-600">
-                    <i className="fa-solid fa-user mr-3 text-lg w-5"></i>
-                    <span>{booking.personalInfo.fullName}</span>
-                  </div>
-
-                  <div className="flex items-center text-gray-600">
-                    <i className="fa-solid fa-tag mr-3 text-lg w-5"></i>
-                    <span className="font-semibold text-main">
-                      {priceFormat(booking.totalPrice)}
+                  <div className="absolute top-3 right-3">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium capitalize flex items-center gap-1 ${statusClasses[booking.status]}`}
+                    >
+                      <i className={`${statusIcons[booking.status]} text-xs`}></i>
+                      {booking.status}
                     </span>
                   </div>
+                  {isUpcoming && booking.status !== "rejected" && (
+                    <div className="absolute top-3 left-3">
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-black/70 text-white">
+                        {daysRemaining === 0 ? "Today" : `${daysRemaining} days left`}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div className="mt-6 flex gap-2">
-                <button
-                  onClick={() => setSelectedBooking(booking)}
-                  className="flex-1 bg-main text-white py-2 rounded-full text-lg font-semibold transition hover:bg-main/90"
-                >
-                  View Details
-                </button>
-              </div>
-            </motion.div>
-          ))}
+                <div className="p-5">
+                  <div className="space-y-3">
+                    <div className="flex items-center text-gray-600">
+                      <i className="fa-solid fa-clock mr-3 text-lg w-5 text-main"></i>
+                      <span>
+                        {convertTo12HourFormat(booking.startSlot)} - {convertTo12HourFormat(booking.endSlot)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center text-gray-600">
+                      <i className="fa-solid fa-user mr-3 text-lg w-5 text-main"></i>
+                      <span className="truncate">{booking.personalInfo.fullName}</span>
+                    </div>
+
+                    <div className="flex items-center text-gray-600">
+                      <i className="fa-solid fa-box mr-3 text-lg w-5 text-main"></i>
+                      <span className="truncate">{booking.package?.id?.name || "Custom Booking"}</span>
+                    </div>
+
+                    <div className="flex items-center text-gray-600">
+                      <i className="fa-solid fa-tag mr-3 text-lg w-5 text-main"></i>
+                      <span className="font-semibold text-main">{priceFormat(booking.totalPrice)}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <button
+                      onClick={() => setSelectedBooking(booking)}
+                      className="w-full bg-gradient-to-r from-main to-main/80 text-white py-3 rounded-xl text-lg font-semibold transition hover:opacity-90 flex items-center justify-center gap-2"
+                    >
+                      <i className="fa-solid fa-circle-info"></i>
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
         </motion.div>
       )}
 
       {totalPages > 1 && (
-        <div className="mt-8 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <nav className="flex items-center gap-2">
             <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="p-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
             >
               <i className="fa-solid fa-chevron-left"></i>
             </button>
@@ -161,9 +272,9 @@ const UserBookings = () => {
               <button
                 key={idx}
                 onClick={() => setCurrentPage(idx + 1)}
-                className={`w-10 h-10 rounded-lg border ${currentPage === idx + 1
-                    ? 'bg-main text-white'
-                    : 'hover:bg-gray-50'
+                className={`w-10 h-10 rounded-lg border transition ${currentPage === idx + 1
+                  ? "bg-gradient-to-r from-main to-main/80 text-white border-main"
+                  : "hover:bg-gray-50"
                   }`}
               >
                 {idx + 1}
@@ -171,9 +282,9 @@ const UserBookings = () => {
             ))}
 
             <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="p-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
             >
               <i className="fa-solid fa-chevron-right"></i>
             </button>
@@ -188,90 +299,216 @@ const UserBookings = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={() => setSelectedBooking(null)}
           >
             <motion.div
+              ref={pdfRef}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-2xl shadow-xl max-w-[60%] w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">Booking Details</h2>
-                  <button
-                    onClick={() => setSelectedBooking(null)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <i className="fa-solid fa-xmark text-2xl"></i>
-                  </button>
-                </div>
 
+              {/* Modal Header with Studio Image */}
+              <div className="relative h-48">
+                <img
+                  src={selectedBooking.studio.thumbnail || "/placeholder.svg?height=192&width=672"}
+                  alt={selectedBooking.studio.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h2 className="text-3xl font-bold">{selectedBooking.studio.name}</h2>
+                      <div className="flex items-center mt-1">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium capitalize flex items-center gap-1 ${statusClasses[selectedBooking.status]}`}
+                        >
+                          <i className={`${statusIcons[selectedBooking.status]} text-xs`}></i>
+                          {selectedBooking.status}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setSelectedBooking(null)}
+                      className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 backdrop-blur-sm transition"
+                    >
+                      <i className="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6">
                 <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Studio Information</h3>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="text-gray-600">Name: {selectedBooking?.studio?.name}</p>
+                  {/* Booking Summary */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-gray-50 p-4 rounded-xl text-center">
+                      <i className="fa-solid fa-calendar-days text-main text-xl mb-2"></i>
+                      <p className="text-xs text-gray-500">Date</p>
+                      <p className="font-medium">{formatDate(selectedBooking.date, "short")}</p>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded-xl text-center">
+                      <i className="fa-solid fa-clock text-main text-xl mb-2"></i>
+                      <p className="text-xs text-gray-500">Time</p>
+                      <p className="font-medium">{convertTo12HourFormat(selectedBooking.startSlot)}</p>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded-xl text-center">
+                      <i className="fa-solid fa-hourglass-half text-main text-xl mb-2"></i>
+                      <p className="text-xs text-gray-500">Duration</p>
+                      <p className="font-medium">{selectedBooking.duration} hours</p>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded-xl text-center">
+                      <i className="fa-solid fa-users text-main text-xl mb-2"></i>
+                      <p className="text-xs text-gray-500">Persons</p>
+                      <p className="font-medium">{selectedBooking.persons}</p>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Booking Time</h3>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="text-gray-600">Date: {formatDate(selectedBooking.date)}</p>
-                      <p className="text-gray-600">Time: {convertTo12HourFormat(selectedBooking.timeSlot)}</p>
-                      <p className="text-gray-600">Duration: {selectedBooking.duration} hour(s)</p>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                      <i className="fa-solid fa-user-circle mr-2 text-main"></i>
+                      Personal Information
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded-xl">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-gray-500">Full Name</p>
+                          <p className="font-medium">{selectedBooking.personalInfo.fullName}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Email</p>
+                          <p className="font-medium">{selectedBooking.personalInfo.email}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Phone</p>
+                          <p className="font-medium">{selectedBooking.personalInfo.phone}</p>
+                        </div>
+                        {selectedBooking.personalInfo.brand && (
+                          <div>
+                            <p className="text-xs text-gray-500">Brand</p>
+                            <p className="font-medium">{selectedBooking.personalInfo.brand}</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {selectedBooking.package && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Package Details</h3>
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-gray-600">Name: {selectedBooking.package.name}</p>
-                        <p className="text-gray-600">Price: {priceFormat(selectedBooking.package.price)}</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <i className="fa-solid fa-box mr-2 text-main"></i>
+                        Package Details
+                      </h3>
+                      <div className="bg-gray-50 p-4 rounded-xl">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <p className="text-lg font-medium">{selectedBooking.package.id.name}</p>
+                            <p className="text-sm text-gray-500">{selectedBooking.package.duration} hours</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-gray-500">Base Price</p>
+                            <p className="font-medium">{priceFormat(selectedBooking.package.id.price)}</p>
+                          </div>
+                        </div>
+                        <div className="pt-2 border-t border-gray-200">
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">Total Package Price:</span>
+                            <span className="font-medium">{priceFormat(selectedBooking.package.price)}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {selectedBooking.addOns && selectedBooking.addOns.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Add-ons</h3>
-                      <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <i className="fa-solid fa-puzzle-piece mr-2 text-main"></i>
+                        Add-ons
+                      </h3>
+                      <div className="bg-gray-50 p-4 rounded-xl">
                         {selectedBooking.addOns.map((addon, index) => (
-                          <div key={index} className="flex justify-between items-center mb-2">
-                            <span className="text-gray-600">{addon.name}</span>
-                            <span className="text-gray-600">
-                              {addon.quantity} x {priceFormat(addon.price)}
-                            </span>
+                          <div
+                            key={index}
+                            className={`flex justify-between items-center py-2 ${index !== selectedBooking.addOns.length - 1 ? "border-b border-gray-200" : ""
+                              }`}
+                          >
+                            <div>
+                              <p className="font-medium">{addon.item.name}</p>
+                              <p className="text-sm text-gray-500">Quantity: {addon.quantity}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs text-gray-500">Price</p>
+                              <p className="font-medium">{priceFormat(addon.price)}</p>
+                            </div>
                           </div>
                         ))}
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">Total Add-ons:</span>
+                            <span className="font-medium">{priceFormat(selectedBooking.totalAddOnsPrice)}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
 
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Payment Details</h3>
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                      <i className="fa-solid fa-receipt mr-2 text-main"></i>
+                      Payment Summary
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded-xl space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-800 font-semibold">Total Price:</span>
-                        <span className="text-xl font-bold text-main">
-                          {priceFormat(selectedBooking.totalPrice)}
-                        </span>
+                        <span className="text-gray-600">Studio Price:</span>
+                        <span className="text-gray-600">{priceFormat(selectedBooking.studioPrice)}</span>
+                      </div>
+                      {selectedBooking.package && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Package Price:</span>
+                          <span className="text-gray-600">{priceFormat(selectedBooking.package.price)}</span>
+                        </div>
+                      )}
+                      {selectedBooking.totalAddOnsPrice > 0 && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Add-ons Price:</span>
+                          <span className="text-gray-600">{priceFormat(selectedBooking.totalAddOnsPrice)}</span>
+                        </div>
+                      )}
+                      <div className="pt-3 mt-1 border-t border-gray-200">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-800 font-semibold">Total Price:</span>
+                          <span className="text-xl font-bold text-main">{priceFormat(selectedBooking.totalPrice)}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Status</h3>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${statusClasses[selectedBooking.status]
-                          }`}
+                <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-end">
+                  <button
+                    onClick={() => setSelectedBooking(null)}
+                    className="px-6 py-3 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition"
+                  >
+                    Close
+                  </button>
+                  <PDFDownloadLink
+                    document={<BookingReceiptPDF booking={selectedBooking} />}
+                    fileName="booking-receipt.pdf"
+                  >
+                    {({ loading }) => (
+                      <button
+                        className="px-6 py-3 bg-main text-white rounded-xl hover:bg-main/90 transition flex items-center justify-center gap-2"
                       >
-                        {selectedBooking.status}
-                      </span>
-                    </div>
-                  </div>
+                        <i className="fa-solid fa-download"></i>
+                        {loading ? 'Preparing...' : 'Download Receipt'}
+                      </button>
+                    )}
+                  </PDFDownloadLink>
+
                 </div>
               </div>
             </motion.div>
@@ -279,7 +516,7 @@ const UserBookings = () => {
         )}
       </AnimatePresence>
     </div>
-  );
-};
+  )
+}
 
-export default UserBookings;
+export default UserBookings
