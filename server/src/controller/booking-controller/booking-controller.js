@@ -10,6 +10,8 @@ const AddOnModel = require("../../models/add-on-model/add-on-model")
 const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model")
 const { calculateSlotPrices } = require("../../utils/priceCalculator");
 const { calculatePackagePrices } = require("../../utils/pakage-price-calculator");
+const sendEmail = require("../../utils/send-email");
+const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
 
 
 // get fully booked dates for a studio
@@ -417,8 +419,6 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
     });
 });
 
-
-
 // Create New Booking
 exports.createBooking = asyncHandler(async (req, res) => {
     const {
@@ -431,7 +431,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
         package: selectedPackage,
         selectedAddOns: addOns,
         personalInfo,
-        totalPrice: totalPriceFromClient
+        totalPrice: totalPriceFromClient,
+        user_id
     } = req.body;
 
     // Check if studio exists
@@ -528,28 +529,68 @@ exports.createBooking = asyncHandler(async (req, res) => {
     const totalPrice = Math.round(studioPrice + addOnsTotalPriceFromDb + packagePrice);
 
     if (totalPrice !== totalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the total price is incorrect");
+    try {
+        const bookingData = {
+            studio: studio._id,
+            date: bookingDate,
+            startSlot,
+            endSlot,
+            duration,
+            persons,
+            package: {
+                id: pkg._id,
+                price: packagePrice,
+                duration: selectedPackage.slot.endTime
+            },
+            addOns: addOnDetails,
+            studioPrice: studioPrice,
+            totalAddOnsPrice: addOnsTotalPriceFromDb,
+            personalInfo,
+            totalPrice,
+            status: "pending",
+            createdBy: user_id,
+            isGuest: user_id ? false : true
+        };
+    
+        const tempBooking = new BookingModel(bookingData);
+        
+        const emailOptions = {
+            to: personalInfo.email,
+            subject: "Booking Confirmation",
+            message: bookingConfirmationEmailBody({
+                ...req.body,
+                bookingId: tempBooking._id, 
+                studio: {
+                    name: studio.name,
+                    image: studio.thumbnail,
+                    price: studioPrice
+                },
+                selectedAddOns: {
+                    items: [...addOns],
+                    totalPrice: addOnsTotalPriceFromDb
+                },
+                selectedPackage: {
+                    name: pkg.name,
+                    price: packagePrice,
+                    duration: selectedPackage.slot.endTime
+                }
+            }),
+        };
+    
+        await sendEmail(emailOptions);
+    
+        const booking = await tempBooking.save();
+    
+        res.status(201).json({
+            status: HTTP_STATUS_TEXT.SUCCESS,
+            message: "Booking created successfully and sent confirmation email",
+            booking
+        });
+    
+    } catch (error) {
+        console.log(error);
+        throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
+    }
+    
 
-    const booking = await BookingModel.create({
-        studio: studio._id,
-        date: bookingDate,
-        startSlot,
-        endSlot,
-        duration,
-        persons,
-        package: {
-            id: pkg._id,
-            price: packagePrice,
-            duration: selectedPackage.slot.endTime
-        },
-        addOns: addOnDetails,
-        studioPrice: studioPrice,
-        totalAddOnsPrice: addOnsTotalPriceFromDb,
-        personalInfo,
-        totalPrice,
-        status: "pending", 
-        createdBy: req.user?._id, 
-        isGuest: req.user?._id ? false : true
-    });
-
-    res.status(201).json({ status: HTTP_STATUS_TEXT.SUCCESS, message: "Booking created successfully", booking });
 });

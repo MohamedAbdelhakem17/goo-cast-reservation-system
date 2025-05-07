@@ -5,15 +5,17 @@ import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetAvailableEndSlots } from "../../../../apis/Booking/booking.api";
 import usePriceFormat from "../../../../hooks/usePriceFormat";
 import { GetStudioByID } from "../../../../apis/studios/studios.api";
+
 export default function AvailableSlots({ slots }) {
     const priceFormat = usePriceFormat();
-    const { bookingData, setBookingField } = useBooking()
-    const { data: singleStudio } = GetStudioByID(bookingData.studio?.id)
+    const { bookingData, setBookingField } = useBooking();
+    const { data: singleStudio } = GetStudioByID(bookingData.studio?.id);
     const day = new Date(bookingData.date).getDay();
     const weakDays = Object.values(singleStudio?.data?.minSlotsPerDay || {});
     const minSlotsPerDay = weakDays[day];
-    const { mutate: getSlots, data } = GetAvailableEndSlots()
+    const { mutate: getSlots, data } = GetAvailableEndSlots();
 
+    // 🔁 تحميل endSlots عند تغيير startSlot أو studio أو date
     useEffect(() => {
         if (bookingData.startSlot && bookingData.studio?.id && bookingData.date) {
             getSlots(
@@ -29,21 +31,29 @@ export default function AvailableSlots({ slots }) {
         }
     }, [bookingData.startSlot, bookingData.studio?.id, bookingData.date]);
 
+    // ✅ احسب المدة فقط عندما يكون startSlot و endSlot موجودين
+    useEffect(() => {
+        if (bookingData.startSlot && bookingData.endSlot) {
+            const startHour = parseInt(bookingData.startSlot.split(":")[0]);
+            const endHour = parseInt(bookingData.endSlot.split(":")[0]);
+            const duration = endHour - startHour;
+
+            setBookingField("duration", duration);
+        }
+    }, [bookingData.startSlot, bookingData.endSlot]);
+
+    // اختيار وقت البداية
     const selectStartTimeSlot = (slot) => {
         setBookingField("startSlot", slot);
-        // getSlots({ startTime: slot, studioId: bookingData.studio?.id, date: bookingData.date }, { onError: (error) => console.log("error", error) });
+        setBookingField("endSlot", null); // امسح النهاية لما تختار بداية جديدة
+        setBookingField("duration", 0); // وامسح المدة
     };
 
+    // اختيار وقت النهاية (من غير حساب المدة)
     const selectEndTimeSlot = (slot) => {
-        const startHour = parseInt(bookingData.startSlot.split(":")[0]);
-        const endHour = parseInt(slot.endTime.split(":")[0]);
-        const duration = endHour - startHour;
-
         setBookingField("endSlot", slot.endTime);
-        setBookingField("duration", duration);
         setBookingField("studio.price", slot.totalPrice || bookingData.studio?.price);
     };
-
 
     return (
         <div>
@@ -70,7 +80,9 @@ export default function AvailableSlots({ slots }) {
 
             {data?.data?.length > 0 && bookingData.startSlot && (
                 <>
-                    <p className="text-gray-700 pb-3 my-3 text-center text-main">The minimum duration  can be booked in this Day is {minSlotsPerDay} hours </p>
+                    <p className="text-gray-700 pb-3 my-3 text-center text-main">
+                        The minimum duration can be booked in this day is {minSlotsPerDay} hours
+                    </p>
                     <p className="text-gray-700 pb-3 mt-3">Available End Time</p>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         {data?.data?.map((slot, index) => {
@@ -78,6 +90,7 @@ export default function AvailableSlots({ slots }) {
                             const endHour = parseInt(slot.endTime.split(":")[0]);
                             const duration = endHour - startHour;
                             const isDisabled = duration < minSlotsPerDay;
+
                             return (
                                 <motion.div
                                     key={index}
@@ -85,13 +98,13 @@ export default function AvailableSlots({ slots }) {
                                     whileTap={!isDisabled ? { scale: 0.95 } : {}}
                                     transition={{ type: "spring", stiffness: 300 }}
                                     className={`flex items-center justify-center flex-col p-3 gap-2 border rounded-lg shadow-sm
-                            ${bookingData.endSlot === slot.endTime
+                                        ${bookingData.endSlot === slot.endTime
                                             ? "bg-main text-white"
                                             : isDisabled
                                                 ? "bg-gray-100 cursor-not-allowed text-gray-400 border-gray-200"
                                                 : "bg-white hover:bg-gray-100 cursor-pointer border-gray-300"
                                         }
-                        `}
+                                    `}
                                     onClick={() => !isDisabled && selectEndTimeSlot(slot)}
                                 >
                                     <span className="text-sm font-medium">{slot.endTime}</span>
@@ -104,7 +117,6 @@ export default function AvailableSlots({ slots }) {
                     </div>
                 </>
             )}
-
         </div>
     );
 }
