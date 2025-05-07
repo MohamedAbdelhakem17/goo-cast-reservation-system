@@ -115,12 +115,13 @@ export default function useBookingFormik() {
 
 
     const getBookingField = (field) => {
-        const keys = field.split(".");
+        const keys = field?.split(".");
         return keys.reduce((acc, key) => (acc ? acc[key] : undefined), formik.values);
     };
 
+
     const getBookingError = (field) => {
-        const keys = field.split(".");
+        const keys = field?.split(".");
         return keys.reduce((acc, key) => (acc ? acc[key] : undefined), formik.errors);
     };
 
