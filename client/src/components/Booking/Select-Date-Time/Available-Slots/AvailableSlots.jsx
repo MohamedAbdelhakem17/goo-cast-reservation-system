@@ -34,8 +34,8 @@ export default function AvailableSlots({ slots }) {
     // ✅ احسب المدة فقط عندما يكون startSlot و endSlot موجودين
     useEffect(() => {
         if (bookingData.startSlot && bookingData.endSlot) {
-            const startHour = parseInt(bookingData.startSlot.split(":")[0]);
-            const endHour = parseInt(bookingData.endSlot.split(":")[0]);
+            const startHour = parseInt(bookingData.startSlot?.split(":")[0]);
+            const endHour = parseInt(bookingData.endSlot?.split(":")[0]);
             const duration = endHour - startHour;
 
             setBookingField("duration", duration);

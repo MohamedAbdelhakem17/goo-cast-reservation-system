@@ -17,7 +17,7 @@ import Popup from "../../../shared/Popup/Popup"
 
 const initialState = {
     newException: {
-        date: new Date().toISOString().split("T")[0],
+        date: new Date().toISOString()?.split("T")[0],
         isFixedHourly: false,
         defaultPricePerSlot: "",
         perSlotDiscounts: {},
@@ -49,7 +49,7 @@ const reducerFunction = (state, action) => {
 
             case "RESET_NEW_RULE":
                 draft.newException = {
-                    date: new Date().toISOString().split("T")[0],
+                    date: new Date().toISOString()?.split("T")[0],
                     isFixedHourly: false,
                     defaultPricePerSlot: "",
                     perSlotDiscounts: {},
@@ -464,7 +464,7 @@ const RuleEditor = ({ state, dispatch }) => (
             <Input
                 type="date"
                 label="Exception Date"
-                value={new Date(state.editedRule.date).toISOString().split("T")[0]}
+                value={new Date(state.editedRule.date).toISOString()?.split("T")[0]}
                 onChange={(e) =>
                     dispatch({
                         type: "SET_EDITED_RULE_FIELD",

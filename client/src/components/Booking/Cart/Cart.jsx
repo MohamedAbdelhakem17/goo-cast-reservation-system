@@ -39,7 +39,7 @@ export default function Cart() {
                                 <p className="text-sm text-gray-500">{formatDate(bookingData.date)}</p>
                                 <p className="text-sm text-gray-500">start time: {bookingData.startSlot}</p>
                                 <p className="text-sm text-gray-500">End time: {bookingData.endSlot}</p>
-                                <p className="text-sm text-gray-500">Duration: {bookingData.endSlot.split(":")[0] - bookingData.startSlot.split(":")[0]} hour(s)</p>
+                                <p className="text-sm text-gray-500">Duration: {bookingData.endSlot?.split(":")[0] - bookingData.startSlot?.split(":")[0]} hour(s)</p>
                             </div>
                         </div>
 

@@ -11,7 +11,7 @@ export default function PageTracker() {
     const getQueryParams = () => {
         const hash = window.location.hash;
         if (hash) {
-            const params = new URLSearchParams(hash.split('?')[1]);
+            const params = new URLSearchParams(hash?.split('?')[1]);
             return params.get('step');
         }
         return null;
