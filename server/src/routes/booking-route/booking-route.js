@@ -12,9 +12,12 @@ router.route("/available-slots").post(bookingController.getAvailableStartSlots);
 router.route("/available-end-slots").post(bookingController.getAvailableEndSlots);
 router.route("/").post(bookingController.createBooking);
 
-router.use(protectRoute, allowTo(USER_ROLE.ADMIN))
-router.route("/").get(bookingController.getAllBookings);
-router.route("/:id").put(bookingController.changeBookingStatus);
+router.use(protectRoute)
+router.route("/").get( allowTo(USER_ROLE.ADMIN),bookingController.getAllBookings);
+router.route("/:id").put( allowTo(USER_ROLE.ADMIN) , bookingController.changeBookingStatus);
+
+router.route("/user-bookings").get(allowTo(USER_ROLE.USER),bookingController.getUserBookings);
 
 
 module.exports = router; 
+

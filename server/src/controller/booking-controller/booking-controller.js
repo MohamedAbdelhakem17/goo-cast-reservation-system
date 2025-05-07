@@ -252,8 +252,8 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
     if (date) {
         const inputDate = getAllDay(date);
         match.date = {
-            $gte: inputDate.startOfDay(),
-            $lt: inputDate.endOfDay()
+            $gte: inputDate.startOfDay,
+            $lt: inputDate.endOfDay
         };
     }
 
@@ -622,3 +622,20 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
 
 });
+
+
+// Get User Booking History
+exports.getUserBookings = asyncHandler(async (req, res, next) => {
+    const { _id } = req.user;
+    const bookings = await BookingModel.find({ createdBy: _id });
+    if (!bookings) res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        message: "No bookings found",
+        data: bookings
+    })
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        message: "Bookings fetched successfully",
+        data: bookings
+    });
+})
