@@ -259,139 +259,169 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
 
     const total = await BookingModel.countDocuments(match);
 
-    const bookings = await BookingModel.aggregate([
-        { $match: match },
+    const allBookings = await BookingModel.find(match)
+        .sort({ createdAt: -1 })
 
-        // Add statusOrder
-        {
-            $addFields: {
-                statusOrder: {
-                    $switch: {
-                        branches: [
-                            { case: { $eq: ["$status", "pending"] }, then: 0 },
-                            { case: { $eq: ["$status", "approved"] }, then: 1 },
-                            { case: { $eq: ["$status", "rejected"] }, then: 2 }
-                        ],
-                        default: 3
-                    }
-                }
-            }
-        },
+    const statusPriority = {
+        pending: 0,
+        approved: 1,
+        rejected: 2
+    };
 
-        // Sort first by statusOrder, then by createdAt
-        {
-            $sort: {
-                statusOrder: 1,  // First, sort by status order
-                createdAt: -1     // Then, sort by createdAt (most recent first)
-            }
-        },
+    const filtered = allBookings.filter(b => {
+        return true;
+    });
 
-        { $skip: skip },
-        { $limit: limitNum },
+    filtered.sort((a, b) => {
+        const statusA = statusPriority[a.status] ?? 3;
+        const statusB = statusPriority[b.status] ?? 3;
 
-        // Lookup for studio
-        {
-            $lookup: {
-                from: 'studios',
-                localField: 'studio',
-                foreignField: '_id',
-                as: 'studio'
-            }
-        },
-        {
-            $unwind: {
-                path: '$studio',
-                preserveNullAndEmptyArrays: true
-            }
-        },
-
-        // Lookup for package.id
-        {
-            $lookup: {
-                from: 'hourlypackages',
-                localField: 'package.id',
-                foreignField: '_id',
-                as: 'packageDetails'
-            }
-        },
-        {
-            $unwind: {
-                path: '$packageDetails',
-                preserveNullAndEmptyArrays: true
-            }
-        },
-        {
-            $addFields: {
-                'package.name': '$packageDetails.name',
-                'package.price': '$packageDetails.price'
-            }
-        },
-
-        // Unwind addOns for individual lookup
-        {
-            $unwind: {
-                path: '$addOns',
-                preserveNullAndEmptyArrays: true
-            }
-        },
-        {
-            $lookup: {
-                from: 'addons',
-                localField: 'addOns.item',
-                foreignField: '_id',
-                as: 'addOnDetails'
-            }
-        },
-        {
-            $unwind: {
-                path: '$addOnDetails',
-                preserveNullAndEmptyArrays: true
-            }
-        },
-        {
-            $addFields: {
-                'addOns.name': '$addOnDetails.name',
-                'addOns.pricePerUnit': '$addOnDetails.price'
-            }
-        },
-
-        // Group addOns back into array
-        {
-            $group: {
-                _id: '$_id',
-                doc: { $first: '$$ROOT' },
-                addOns: { $push: '$addOns' }
-            }
-        },
-        {
-            $replaceRoot: {
-                newRoot: {
-                    $mergeObjects: ['$doc', { addOns: '$addOns' }]
-                }
-            }
-        },
-
-        // Lookup for createdBy
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdBy'
-            }
-        },
-        {
-            $unwind: {
-                path: '$createdBy',
-                preserveNullAndEmptyArrays: true
-            }
+        if (statusA !== statusB) {
+            return statusA - statusB;
         }
-    ]);
+
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    // 5. Pagination
+    const paginated = filtered.slice(skip, skip + limitNum);
+
+
+
+
+    // const bookings = await BookingModel.aggregate([
+    //     { $match: match },
+
+    //     // Add statusOrder
+    //     {
+    //         $addFields: {
+    //             statusOrder: {
+    //                 $switch: {
+    //                     branches: [
+    //                         { case: { $eq: ["$status", "pending"] }, then: 0 },
+    //                         { case: { $eq: ["$status", "approved"] }, then: 1 },
+    //                         { case: { $eq: ["$status", "rejected"] }, then: 2 }
+    //                     ],
+    //                     default: 3
+    //                 }
+    //             }
+    //         }
+    //     },
+
+    //     // Sort first by statusOrder, then by createdAt
+    //     {
+    //         $sort: {
+    //             statusOrder: 1,  // First, sort by status order
+    //             createdAt: -1     // Then, sort by createdAt (most recent first)
+    //         }
+    //     },
+
+    //     { $skip: skip },
+    //     { $limit: limitNum },
+
+    //     // Lookup for studio
+    //     {
+    //         $lookup: {
+    //             from: 'studios',
+    //             localField: 'studio',
+    //             foreignField: '_id',
+    //             as: 'studio'
+    //         }
+    //     },
+    //     {
+    //         $unwind: {
+    //             path: '$studio',
+    //             preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+
+    //     // Lookup for package.id
+    //     {
+    //         $lookup: {
+    //             from: 'hourlypackages',
+    //             localField: 'package.id',
+    //             foreignField: '_id',
+    //             as: 'packageDetails'
+    //         }
+    //     },
+    //     {
+    //         $unwind: {
+    //             path: '$packageDetails',
+    //             preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+    //     {
+    //         $addFields: {
+    //             'package.name': '$packageDetails.name',
+    //             'package.price': '$packageDetails.price'
+    //         }
+    //     },
+
+    //     // Unwind addOns for individual lookup
+    //     {
+    //         $unwind: {
+    //             path: '$addOns',
+    //             preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+    //     {
+    //         $lookup: {
+    //             from: 'addons',
+    //             localField: 'addOns.item',
+    //             foreignField: '_id',
+    //             as: 'addOnDetails'
+    //         }
+    //     },
+    //     {
+    //         $unwind: {
+    //             path: '$addOnDetails',
+    //             preserveNullAndEmptyArrays: true
+    //         }
+    //     },
+    //     {
+    //         $addFields: {
+    //             'addOns.name': '$addOnDetails.name',
+    //             'addOns.pricePerUnit': '$addOnDetails.price'
+    //         }
+    //     },
+
+    //     // Group addOns back into array
+    //     {
+    //         $group: {
+    //             _id: '$_id',
+    //             doc: { $first: '$$ROOT' },
+    //             addOns: { $push: '$addOns' }
+    //         }
+    //     },
+    //     {
+    //         $replaceRoot: {
+    //             newRoot: {
+    //                 $mergeObjects: ['$doc', { addOns: '$addOns' }]
+    //             }
+    //         }
+    //     },
+
+    //     // Lookup for createdBy
+    //     {
+    //         $lookup: {
+    //             from: 'users',
+    //             localField: 'createdBy',
+    //             foreignField: '_id',
+    //             as: 'createdBy'
+    //         }
+    //     },
+    //     {
+    //         $unwind: {
+    //             path: '$createdBy',
+    //             preserveNullAndEmptyArrays: true
+    //         }
+    //     }
+    // ]);
 
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
         data: {
-            bookings,
+            bookings: paginated,
             total,
             page: pageNum,
             totalPages: Math.ceil(total / limitNum)
