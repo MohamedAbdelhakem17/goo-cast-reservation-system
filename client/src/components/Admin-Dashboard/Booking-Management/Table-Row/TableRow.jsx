@@ -99,7 +99,7 @@ export default function TableRow({ booking, setSelectedBooking }) {
                         <ul className="text-sm text-gray-700 mb-4 list-disc list-inside">
                             <li><strong>Studio:</strong> {booking?.studio?.name}</li>
                             <li><strong>Date:</strong> {formatDate(booking.date)}</li>
-                            <li><strong>Time:</strong> {convertTo12HourFormat(booking.timeSlot)}</li>
+                            <li><strong>Time:</strong> {convertTo12HourFormat(booking.startSlot)}</li>
                             <li><strong>Duration:</strong> {booking.duration} hour(s)</li>
                         </ul>
                         <div className="flex justify-end gap-3">

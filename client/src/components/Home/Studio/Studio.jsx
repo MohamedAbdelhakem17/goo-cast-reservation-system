@@ -155,7 +155,7 @@ export default function Studio() {
                                 <h3 className="text-xl font-bold text-gray-800">
                                     {studio.name}
                                 </h3>
-                                <StarRating rating={studio.ratingAverage} />
+                                {/* <StarRating rating={studio.ratingAverage} /> */}
                             </div>
 
                             <p className="text-gray-600 flex items-center gap-2">

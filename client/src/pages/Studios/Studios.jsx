@@ -142,9 +142,9 @@ export default function Studios() {
                     </div>
 
                     <div className="flex flex-col items-end">
-                      <StarRating rating={studio.ratingAverage} />
+                      {/* <StarRating rating={studio.ratingAverage} /> */}
                       <span className="text-sm text-gray-500">
-                        {studio.ratingAverage} ({studio.ratingQuantity} reviews)
+                        {/* {studio.ratingAverage} ({studio.ratingQuantity} reviews) */}
                       </span>
                     </div>
                   </div>
