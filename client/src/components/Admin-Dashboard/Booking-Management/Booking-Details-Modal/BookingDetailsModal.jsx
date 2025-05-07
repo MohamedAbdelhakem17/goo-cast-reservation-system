@@ -6,6 +6,7 @@ export default function BookingDetailsModal({ booking, closeModel }) {
     const formatDate = useDateFormat()
     const priceFormat = usePriceFormat()
 
+    console.log(booking)
     if (!booking) return null
 
 
@@ -61,7 +62,6 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                     <p className="text-sm text-gray-600">Time start: {booking.startSlot}</p>
                                     <p className="text-sm text-gray-600">Time end: {booking.endSlot}</p>
                                     <p className="text-sm text-gray-600">Duration: {booking.duration} hour(s)</p>
-                                    <p className="text-sm text-gray-600">Duration: {booking.duration} hour(s)</p>
                                     <div className="flex justify-between items-center">
                                         <span className="text-sm font-semibold text-gray-800">Studio Price:</span>
                                         <span className="text-lg font-bold text-main">
@@ -90,7 +90,7 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                             )}
 
                             {/* Add-ons */}
-                            {booking.addOns && booking.addOns.length > 0 && (
+                            {booking.addOns && booking.addOns.length > 0 && booking.addOns.some(addon => addon && Object.keys(addon).length > 0 && addon.name && addon.quantity) ? (
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-800 mb-2">Add-ons</h3>
                                     <div className="bg-gray-50 p-4 rounded-lg">
@@ -110,7 +110,10 @@ export default function BookingDetailsModal({ booking, closeModel }) {
                                         </div>
                                     </div>
                                 </div>
+                            ) : (
+                                <div className="bg-gray-50 p-4 rounded-lg"><p>Not Select Add-on</p></div>
                             )}
+
 
                             {/* Total Price */}
                             <div>

@@ -252,8 +252,8 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
     if (date) {
         const inputDate = getAllDay(date);
         match.date = {
-            $gte: inputDate.startOfDay,
-            $lt: inputDate.endOfDay
+            $gte: inputDate.startOfDay(),
+            $lt: inputDate.endOfDay()
         };
     }
 
@@ -268,17 +268,24 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
                 statusOrder: {
                     $switch: {
                         branches: [
-                            { case: { $eq: ["$status", "pending"] }, then: 1 },
-                            { case: { $eq: ["$status", "approved"] }, then: 2 },
-                            { case: { $eq: ["$status", "rejected"] }, then: 3 }
+                            { case: { $eq: ["$status", "pending"] }, then: 0 },
+                            { case: { $eq: ["$status", "approved"] }, then: 1 },
+                            { case: { $eq: ["$status", "rejected"] }, then: 2 }
                         ],
-                        default: 4
+                        default: 3
                     }
                 }
             }
         },
 
-        { $sort: { statusOrder: 1, createdAt: -1 } },
+        // Sort first by statusOrder, then by createdAt
+        {
+            $sort: {
+                statusOrder: 1,  // First, sort by status order
+                createdAt: -1     // Then, sort by createdAt (most recent first)
+            }
+        },
+
         { $skip: skip },
         { $limit: limitNum },
 
