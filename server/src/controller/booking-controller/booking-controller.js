@@ -12,6 +12,7 @@ const { calculateSlotPrices } = require("../../utils/priceCalculator");
 const { calculatePackagePrices } = require("../../utils/pakage-price-calculator");
 const sendEmail = require("../../utils/send-email");
 const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
+const changeBookingStatusEmail = require("../../utils/emails-body/booking-change-status")
 
 
 // get fully booked dates for a studio
@@ -406,10 +407,30 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
     const booking = await BookingModel.findByIdAndUpdate(id, { status }, {
         new: true,
         runValidators: true,
-    });
+    }).populate("studio", "name");
 
     if (!booking) {
         throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
+    }
+
+    if (status === "approved") {
+        // Send email to user
+        const mailOptions = {
+            to: booking.personalInfo.email,
+            subject: "Booking Approved",
+            message: changeBookingStatusEmail({ type: "approved", data: booking })
+        };
+        await sendEmail(mailOptions);
+    }
+
+    if (status === "rejected") {
+        // Send email to user
+        const mailOptions = {
+            to: booking.personalInfo.email,
+            subject: "Booking Rejected",
+            message: changeBookingStatusEmail({ type: "rejected", data: booking })
+        };
+        await sendEmail(mailOptions);
     }
 
     res.status(200).json({
@@ -551,15 +572,15 @@ exports.createBooking = asyncHandler(async (req, res) => {
             createdBy: user_id,
             isGuest: user_id ? false : true
         };
-    
+
         const tempBooking = new BookingModel(bookingData);
-        
+
         const emailOptions = {
             to: personalInfo.email,
             subject: "Booking Confirmation",
             message: bookingConfirmationEmailBody({
                 ...req.body,
-                bookingId: tempBooking._id, 
+                bookingId: tempBooking._id,
                 studio: {
                     name: studio.name,
                     image: studio.thumbnail,
@@ -576,21 +597,21 @@ exports.createBooking = asyncHandler(async (req, res) => {
                 }
             }),
         };
-    
+
         await sendEmail(emailOptions);
-    
+
         const booking = await tempBooking.save();
-    
+
         res.status(201).json({
             status: HTTP_STATUS_TEXT.SUCCESS,
             message: "Booking created successfully and sent confirmation email",
             booking
         });
-    
+
     } catch (error) {
         console.log(error);
         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
     }
-    
+
 
 });
