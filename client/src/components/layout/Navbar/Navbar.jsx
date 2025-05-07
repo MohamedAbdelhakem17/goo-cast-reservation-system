@@ -24,10 +24,10 @@ export default function Navbar() {
     // States
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const { isAuthenticated, dispatch, token } = useAuth()
+    const { isAuthenticated, token } = useAuth()
     const [isSignupOpen, setIsSignupOpen] = useState(false)
     const [isSigninOpen, setIsSigninOpen] = useState(false)
-    const { signout } = Signout()
+    const { handelLogout } = Signout()
     const isAdmin = isAuthenticated && token ? jwtDecode(token).role === "admin" : false
 
     // Handle scroll effect for navbar
@@ -240,11 +240,7 @@ export default function Navbar() {
                                             </li>
                                             <li>
                                                 <button
-                                                    onClick={() => {
-                                                        signout()
-                                                        dispatch({ type: "LOGOUT" });
-                                                        handleMenuClose();
-                                                    }}
+                                                    onClick={handelLogout}
                                                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                                 >
                                                     Logout

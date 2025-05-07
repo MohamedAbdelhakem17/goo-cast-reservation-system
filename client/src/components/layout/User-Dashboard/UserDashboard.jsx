@@ -1,7 +1,9 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-
+import Signout from '../../../apis/auth/signout.api';
 const UserDashboardLayout = () => {
+  const { handelLogout } = Signout();
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -33,7 +35,7 @@ const UserDashboardLayout = () => {
             Back to Website
           </NavLink>
           <button
-            onClick={() => dispatch({ type: 'LOGOUT' })}
+            onClick={handelLogout}
             className="block w-full text-left px-4 py-2 rounded hover:bg-gray-600 text-white"
           >
             Logout
