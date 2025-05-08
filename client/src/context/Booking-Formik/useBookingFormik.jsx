@@ -24,7 +24,7 @@ export default function useBookingFormik() {
                 image: "",
                 price: 0,
             },
-            date: today, 
+            date: today,
             startSlot: null,
             endSlot: null,
             duration: 0,
@@ -44,10 +44,14 @@ export default function useBookingFormik() {
 
     // Formik validation schema
     const bookingValidationSchema = Yup.object({
+        selectedPackage: Yup.object().test(
+            "is-not-empty",
+            "Package is required",
+            value => value && Object.keys(value).length > 0
+        ).required("Package is required"),
         studio: Yup.object().required("Studio is required"),
         endSlot: Yup.string().required("Time end slot is required"),
         startSlot: Yup.string().required("Time  slot is required"),
-        selectedPackage: Yup.object().nullable().notRequired(),
         selectedAddOns: Yup.array().nullable().notRequired(),
         personalInfo: Yup.object({
             fullName: Yup.string().required("Full name is required"),

@@ -10,13 +10,14 @@ export const useBooking = () => useContext(BookingContext);
 
 export default function BookingProvider({ children }) {
     // Constants
-    const STEP_LABELS = ["Select Studio", "Select Date & Time", "Select Additional Services", "Personal Information"];
+    const STEP_LABELS = ["Select Service", "Select Date ", "Select Studio & Time", "Personal Information", "Select Additional Services"];
     const TOTAL_STEPS = STEP_LABELS.length;
     const STEP_FIELDS = {
-        1: ["studio"],
-        2: ["startSlot", "endSlot",],
-        3: ["selectedPackage", "selectedAddOns"],
+        1: ["selectedPackage"],
+        2: ["studio"],
+        3: ["startSlot", "endSlot",],
         4: ["personalInfo.fullName", "personalInfo.phone", "personalInfo.email"],
+        5: ["selectedAddOns"],
     };
 
     // Hooks
@@ -114,9 +115,9 @@ export default function BookingProvider({ children }) {
     // Save booking data in localStorage whenever it changes
     useEffect(() => {
         // Only save if studio is valid or null
-        if (isValidStudio(values.studio) || values.studio === null) {
+        // if (isValidStudio(values.studio) || values.studio === null) {
             localStorage.setItem("bookingData", JSON.stringify(values));
-        }
+        // }
     }, [values]);
 
 
