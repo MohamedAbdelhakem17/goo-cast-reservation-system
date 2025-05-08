@@ -117,3 +117,16 @@ exports.packagePriceMange = asyncHandler(async (req, res, next) => {
         message: "hourly package found successfully",
     });
 });
+
+exports.getHourlyPackagesByCategory = asyncHandler(async (req, res, next) => {
+    const { category } = req.body;
+    const hourlyPackage = await HourlyPackageModel.find({ category });
+    if (!hourlyPackage) {
+        return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No hourly package found with this ID"));
+    }
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        data: hourlyPackage,
+        message: "hourly package found successfully",
+    });
+});

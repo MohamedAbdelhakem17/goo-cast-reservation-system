@@ -1,6 +1,13 @@
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import BASE_URL from "../BASE_URL";
+import { useDeleteData, useGetData, usePostData, useUpdateData } from "../../hooks/useApi";
+
+// ============ PACKAGES ============
+export const GetAllCategories = () => useGetData(["categories"], `${BASE_URL}/categories`);
+export const CreateCategory = () => usePostData(["categories"], `${BASE_URL}/categories`);
+export const UpdateCategory = (categoryId) => useUpdateData(["categories", categoryId], `${BASE_URL}/categories`);
+export const DeleteCategory = (categoryId) => useDeleteData(["categories", categoryId], `${BASE_URL}/categories`);
 
 
 // ============ PACKAGES ============
@@ -88,6 +95,17 @@ export const UpdatePackage = () => {
     });
 }
 
+export const GetPackagesByCategory = () => {
+    return useMutation({
+        mutationFn: async ({ category }) => {
+            const res = await axios.post(`${BASE_URL}/hourly-packages/category`, {
+                category
+            });
+            return res.data;
+        },
+    });
+};
+
 // =========== ADD-ONS ============
 export const GetAllAddOns = () => {
     return useQuery({
@@ -166,40 +184,6 @@ export const DeleteAddOn = () => {
         },
     });
 }
-
-// export const UpdateAddOn = () => {
-//     const queryClient = useQueryClient();
-//     return useMutation({
-//         mutationFn: async ({ id, data }) => {
-//             try {
-//                 const formData = new FormData();
-
-//                 // Iterate over data and handle serialization for objects
-//                 Object.entries(data).forEach(([key, value]) => {
-//                     // Check if the value is an object (and not null or a File object)
-//                     if (typeof value === 'object' && value !== null && !(value instanceof File)) {
-//                         formData.append(key, JSON.stringify(value));
-//                     } else {
-//                         formData.append(key, value);
-//                     }
-//                 })
-//                 const response = await axios.put(`${BASE_URL}/add-ons/${id}`, formData, {
-//                     headers: {
-//                         "Content-Type": "multipart/form-data",
-//                         authorization: "Bearer " + localStorage.getItem("token"),
-//                     },
-//                 });
-//                 return response.data;
-//             } catch (error) {
-//                 console.error("Error updating add-on:", error);
-//                 throw error;
-//             }
-//         },
-//         onSuccess: () => {
-//             queryClient.invalidateQueries(["addons"]);
-//         },
-//     });
-// }
 
 export const UpdateAddOn = () => {
     const queryClient = useQueryClient();
