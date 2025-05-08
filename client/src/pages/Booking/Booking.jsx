@@ -9,6 +9,7 @@ import PersonalInformation from "../../components/Booking/Personal-Information/P
 import { useBooking } from "../../context/Booking-Context/BookingContext";
 import Cart from "../../components/Booking/Cart/Cart";
 import { useNavigate } from "react-router-dom";
+import SelectPackage from "../../components/Booking/Select-Package/SelectPackage";
 
 export default function Booking() {
   const { currentStep } = useBooking();
@@ -70,6 +71,7 @@ export default function Booking() {
     navigate(`/booking/confirmation`);
   };
 
+
   return (
     <div className="py-12 lg:px-8">
 
@@ -115,12 +117,13 @@ export default function Booking() {
               >
                 <motion.div
                   variants={itemVariants}
-                  className="md:p-6 rounded-lg flex-1"
+                  className="md:p-1 rounded-lg flex-1"
                 >
-                  {currentStep === 1 && <SelectStudio />}
+                  {currentStep === 1 && <SelectPackage />}
                   {currentStep === 2 && <SelectDateTime />}
-                  {currentStep === 3 && <SelectAdditionalServices />}
+                  {currentStep === 3 && <SelectStudio />}
                   {currentStep === 4 && <PersonalInformation />}
+                  {currentStep === 5 && <SelectAdditionalServices />}
                 </motion.div>
 
                 {/* Cart Sidebar on Large Screens */}

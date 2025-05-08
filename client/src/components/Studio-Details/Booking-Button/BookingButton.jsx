@@ -1,20 +1,20 @@
 import { motion } from 'framer-motion'
 import useQuickBooking from '../../../hooks/useQuickBooking'
-import usePriceFormat from '../../../hooks/usePriceFormat'
+// import usePriceFormat from '../../../hooks/usePriceFormat'
 export default function BookingButton({ studio }) {
 
     const { handleQuickBooking } = useQuickBooking()
 
 
-    const priceFormat = usePriceFormat()
+    // const priceFormat = usePriceFormat()
     return (
         <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.8, rotate: -10 }}
             animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
             transition={{ duration: 1, delay: .9, type: "spring", stiffness: 100, damping: 15, mass: 0.8 }}
-            className="p-4 flex justify-between items-center rounded-lg border-b border-t border-main/50 max-w-3xl mx-auto"
+            className="p-4 flex justify-center items-center rounded-lg border-b border-t border-main/50 max-w-3xl mx-auto"
         >
-            <p className="text-main font-bold">{priceFormat(studio.price)} per hour</p>
+            {/* <p className="text-main font-bold">{priceFormat(studio.price)} per hour</p> */}
 
             <motion.button onClick={() => handleQuickBooking(2, {
                 image: studio.thumbnail,
