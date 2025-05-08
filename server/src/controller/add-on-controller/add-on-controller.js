@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const sharp = require("sharp");
+const fs = require("fs"); 
+const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
 const AppError = require("../../utils/app-error");
@@ -10,7 +11,6 @@ const AddOnModel = require("../../models/add-on-model/add-on-model");
 exports.addonsImageUpload = uploadSingleImage("image");
 
 exports.addonsImageManipulation = asyncHandler(async (req, res, next) => {
-    console.log(req.body)
     if (req.body.imageUrl) return next();
 
     if (!req.file) {
@@ -18,17 +18,15 @@ exports.addonsImageManipulation = asyncHandler(async (req, res, next) => {
             new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please upload an image")
         );
     }
-    const imageName = `addons-${uuidv4()}-${Date.now()}.jpeg`;
 
-    await sharp(req.file.buffer)
-        .resize({ width: 300, height: 300 })
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toFile(`uploads/addons/${imageName}`);
+    const imageName = `addons-${uuidv4()}-${Date.now()}.gif`;
+    const filePath = path.join(__dirname, "../../../uploads/addons", imageName);
+    fs.writeFileSync(filePath, req.file.buffer);
 
     req.body.image = imageName;
     next();
 });
+
 // get all add-ons
 exports.getAllAddOns = asyncHandler(async (req, res, next) => {
     const addOns = await AddOnModel.find();

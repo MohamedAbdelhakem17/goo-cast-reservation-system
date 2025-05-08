@@ -88,10 +88,10 @@ export default function AddOns() {
             <motion.div
               key={addon._id}
               variants={cardVariants}
-              className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300"
+              className="bg-white rounded-xl overflow-hidden shadow-sm border  flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300 border-gray-300"
             >
 
-              <div className="w-full h-40 overflow-hidden">
+              <div className="w-full h-50 overflow-hidden">
                 <img
                   src={addon.image}
                   alt={addon.name}
