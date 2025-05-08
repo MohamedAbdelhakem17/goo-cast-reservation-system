@@ -122,7 +122,7 @@ bookingSchema.pre(/^find/, function (next) {
     this.populate([
         {
             path: "studio",
-            select: "name thumbnail ",
+            select: "name thumbnail address",
         },
         {
             path: "package.id",
