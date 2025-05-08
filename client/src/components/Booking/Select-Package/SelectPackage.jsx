@@ -13,11 +13,11 @@ export default function SelectPackage() {
 
   const handelChange = (id) => {
     setActiveTab(id)
-    getPackages({ category: id }, { onSuccess: () => { console.log(data) } })
+    getPackages({ category: id })
   }
 
   useEffect(() => {
-    getPackages({ category: activeTab }, { onSuccess: () => { console.log(data) } })
+    getPackages({ category: activeTab  })
   }, [activeTab])
 
   if (isLoading) return <Loading />

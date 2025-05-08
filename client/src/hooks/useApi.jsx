@@ -5,7 +5,7 @@ export const useGetData = (key, url, filters = {}) => {
     const { status, studioId, date, page = 1, limit = 10 } = filters;
 
     return useQuery({
-        queryKey: [...key, status, studioId, date, page, limit],
+        queryKey: [...key],
         queryFn: async () => {
             try {
                 const params = new URLSearchParams();
