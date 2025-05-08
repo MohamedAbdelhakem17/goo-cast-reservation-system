@@ -4,15 +4,65 @@ const mongoose = require("mongoose");
 const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
 const { timeToMinutes, minutesToTime, getAllDay } = require("../../utils/time-mange")
 const AppError = require("../../utils/app-error");
-const BookingModel = require("../../models/booking-model/booking-model");
-const StudioModel = require("../../models/studio-model/studio-model")
-const AddOnModel = require("../../models/add-on-model/add-on-model")
-const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model")
+
 const { calculateSlotPrices } = require("../../utils/priceCalculator");
 const { calculatePackagePrices } = require("../../utils/pakage-price-calculator");
 const sendEmail = require("../../utils/send-email");
 const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
 const changeBookingStatusEmail = require("../../utils/emails-body/booking-change-status")
+
+// Models
+const BookingModel = require("../../models/booking-model/booking-model");
+const StudioModel = require("../../models/studio-model/studio-model")
+const AddOnModel = require("../../models/add-on-model/add-on-model")
+const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model")
+
+
+// Get Available Studio in a day
+exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
+    const { date } = req.params;
+
+    if (!date) {
+        return res.status(400).json({
+            status: HTTP_STATUS_TEXT.FAIL,
+            message: "Date is required",
+        });
+    }
+
+    const studios = await StudioModel.find();
+
+    const { startOfDay, endOfDay } = getAllDay(date);
+    const bookings = await BookingModel.find({
+        date: { $gte: startOfDay, $lt: endOfDay },
+    });
+
+    const studiosAvailability = [];
+
+    for (const studio of studios) {
+        const studioBookings = bookings.filter(
+            (booking) =>booking.studio.equals(studio._id )
+        );
+
+        const totalBookedMinutes = studioBookings.reduce((acc, booking) => {
+            return acc + timeToMinutes(booking.endSlot) - timeToMinutes(booking.startSlot); 
+        }, 0);
+
+        const studioStart = timeToMinutes(studio.startTime);
+        const studioEnd = timeToMinutes(studio.endTime);
+
+        const totalMinutesInDay = studioEnd - studioStart;
+
+        if (totalBookedMinutes < totalMinutesInDay) {
+            studiosAvailability.push(studio);
+        }
+    }
+
+    res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        data: studiosAvailability,
+    });
+});
+
 
 
 // get fully booked dates for a studio
@@ -51,7 +101,6 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
 
     // Check if the total minutes for each day is greater than or equal to the studio's working hours
     const fullyBookedDates = Object.keys(totalMinutesPerDay).filter(date => totalMinutesPerDay[date] >= totalMinutesInDay);
-
 
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,

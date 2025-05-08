@@ -14,8 +14,8 @@ export default function BookingProvider({ children }) {
     const TOTAL_STEPS = STEP_LABELS.length;
     const STEP_FIELDS = {
         1: ["selectedPackage"],
-        2: ["studio"],
-        3: ["startSlot", "endSlot",],
+        2: ["date", "persons"],
+        3: ["studio"], // start Slot & end Slot 
         4: ["personalInfo.fullName", "personalInfo.phone", "personalInfo.email"],
         5: ["selectedAddOns"],
     };
@@ -45,8 +45,7 @@ export default function BookingProvider({ children }) {
             typeof studio === "object" &&
             studio.id !== null &&
             studio.name &&
-            studio.image &&
-            studio.price > 0
+            studio.image
         );
     };
 
@@ -143,8 +142,11 @@ export default function BookingProvider({ children }) {
     const hasError = () => {
         const fields = STEP_FIELDS[currentStep] || [];
         return fields.some((field) => {
+            console.log(field);
             const value = getBookingField(field);
             const error = getBookingError(field);
+            console.log({value, error});
+            console.log(!value || error);
             return !value || error;
         });
     };

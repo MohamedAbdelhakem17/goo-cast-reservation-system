@@ -101,7 +101,7 @@ export default function ConfirmationBooking() {
                         >
                             <div className="flex flex-col md:flex-row gap-6 items-center  md:items-start">
                                 <div className="relative w-full md:w-40 h-40 overflow-hidden rounded-xl group">
-                                    {studio.image ? (
+                                    {studio?.image ? (
                                         <>
                                             <img
                                                 src={studio.image || "/placeholder.svg"}
@@ -119,10 +119,10 @@ export default function ConfirmationBooking() {
                                 </div>
                                 <div className="flex-1 text-center md:text-left ">
                                     <h3 className="text-2xl font-bold text-gray-800">
-                                        {studio.name}
+                                        {studio?.name}
                                     </h3>
                                     <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-main/80 text-white">
-                                        Base Price: {studio.price} EGP
+                                        {/* Base Price: {studio.price} EGP */}
                                     </div>
                                 </div>
                             </div>

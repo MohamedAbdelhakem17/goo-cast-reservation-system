@@ -3,18 +3,19 @@ import { motion } from 'framer-motion'
 import { studio } from '../../../assets/images'
 import StarRating from '../../../hooks/useRate'
 import { useBooking } from '../../../context/Booking-Context/BookingContext';
-import useGetAllStudios from '../../../apis/studios/studios.api'
 import Loading from '../../shared/Loading/Loading';
+import { useGetAvailableStudio } from '../../../apis/Booking/booking.api';
+
 export default function SelectStudio() {
     const [hoveredId, setHoveredId] = useState(null);
-    const { handleNextStep, setBookingField } = useBooking()
+    const { setBookingField } = useBooking()
 
     // Sample studio data
-    const { data: studiosData, isLoading } = useGetAllStudios()
+    const { data: studiosData, isLoading } = useGetAvailableStudio()
 
     const selectStudio = (studio) => {
         setBookingField("studio", studio)
-        handleNextStep()
+        // handleNextStep()
     }
 
     const itemVariants = {
@@ -25,7 +26,7 @@ export default function SelectStudio() {
             transition: { type: "spring", stiffness: 100 },
         },
     };
-    
+
     if (isLoading) return <Loading />
 
     return (
@@ -48,7 +49,6 @@ export default function SelectStudio() {
                                 id: studio._id,
                                 name: studio.name,
                                 image: studio.thumbnail,
-                                price: studio.basePricePerSlot,
                             }
                         )}
                     >
@@ -82,7 +82,7 @@ export default function SelectStudio() {
                                 <span className="text-lg">{studio.address}</span>
                             </p>
 
-                            <p className="text-main font-bold">{studio.basePricePerSlot} Egp per hour</p>
+                            {/* <p className="text-main font-bold">{studio.basePricePerSlot} Egp per hour</p> */}
 
                             <motion.div
                                 className="mt-3 h-1 bg-main rounded-full"
