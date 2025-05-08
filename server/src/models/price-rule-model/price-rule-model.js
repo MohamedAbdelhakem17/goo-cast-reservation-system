@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const priceRuleSchema = new mongoose.Schema({
-    studio: {
+    package: {
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: "Studio",
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Studio",
+        ref: "HourlyPackage",
         required: true,
     },
     dayOfWeek: {
