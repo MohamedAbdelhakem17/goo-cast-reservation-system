@@ -18,7 +18,6 @@ const useSigninForm = (onSuccessCallback) => {
         onSuccess: (data) => {
             dispatch({ type: "LOGIN", payload: data });
             setServerError("");
-            console.log("Signin success:", data);
             if (onSuccessCallback) onSuccessCallback(); // هنا
         },
         onError: (error) => {

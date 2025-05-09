@@ -15,7 +15,6 @@ export default function AvailableSlots({ slots }) {
     const minSlotsPerDay = weakDays[day];
     const { mutate: getSlots, data } = GetAvailableEndSlots();
 
-    // 🔁 تحميل endSlots عند تغيير startSlot أو studio أو date
     useEffect(() => {
         if (bookingData.startSlot && bookingData.studio?.id && bookingData.date) {
             getSlots(
@@ -31,7 +30,6 @@ export default function AvailableSlots({ slots }) {
         }
     }, [bookingData.startSlot, bookingData.studio?.id, bookingData.date]);
 
-    // ✅ احسب المدة فقط عندما يكون startSlot و endSlot موجودين
     useEffect(() => {
         if (bookingData.startSlot && bookingData.endSlot) {
             const startHour = parseInt(bookingData.startSlot?.split(":")[0]);
@@ -42,21 +40,19 @@ export default function AvailableSlots({ slots }) {
         }
     }, [bookingData.startSlot, bookingData.endSlot]);
 
-    // اختيار وقت البداية
     const selectStartTimeSlot = (slot) => {
         setBookingField("startSlot", slot);
-        setBookingField("endSlot", null); // امسح النهاية لما تختار بداية جديدة
-        setBookingField("duration", 0); // وامسح المدة
+        setBookingField("endSlot", null);
+        setBookingField("duration", 0);
     };
 
-    // اختيار وقت النهاية (من غير حساب المدة)
     const selectEndTimeSlot = (slot) => {
         setBookingField("endSlot", slot.endTime);
         setBookingField("studio.price", slot.totalPrice || bookingData.studio?.price);
     };
 
-    return (
-        <div>
+    return slots?.length > 0
+        ? <div className="mt-5">
             <p className="text-gray-700 pb-3">Available Start Time</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {slots?.map((slot, index) => (
@@ -118,5 +114,5 @@ export default function AvailableSlots({ slots }) {
                 </>
             )}
         </div>
-    );
+        : null
 }

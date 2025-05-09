@@ -75,7 +75,6 @@ export default function BookingProvider({ children }) {
                         if (isValidStudio(value)) {
                             setBookingField("studio", value);
                         } else {
-                            console.warn("Invalid studio data in localStorage:", value);
                             setBookingField("studio", null);
                         }
                     } else if (values[key] !== value) {
@@ -142,11 +141,8 @@ export default function BookingProvider({ children }) {
     const hasError = () => {
         const fields = STEP_FIELDS[currentStep] || [];
         return fields.some((field) => {
-            console.log(field);
             const value = getBookingField(field);
             const error = getBookingError(field);
-            console.log({value, error});
-            console.log(!value || error);
             return !value || error;
         });
     };

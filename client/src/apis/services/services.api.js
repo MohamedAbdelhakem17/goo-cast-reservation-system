@@ -139,10 +139,6 @@ export const AddNewAddOn = () => {
                         formData.append(key, value);
                     }
                 });
-
-                console.log(data); // log the original data
-                console.log(formData); // log the FormData (will show up as [object FormData])
-
                 const response = await axios.post(`${BASE_URL}/add-ons`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",

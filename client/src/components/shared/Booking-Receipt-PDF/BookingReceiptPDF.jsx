@@ -63,7 +63,6 @@ const BookingReceiptPDF = ({ booking }) => {
 
     const priceFormat = usePriceFormat()
     const dateFormat = useDateFormat()
-    console.log(booking)
     return < Document >
 
         <Page size="A4" style={styles.page}>
