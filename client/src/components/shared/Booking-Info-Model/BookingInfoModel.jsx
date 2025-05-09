@@ -20,7 +20,6 @@ const statusIcons = {
 }
 
 export default function BookingInfoModel({ selectedBooking, setSelectedBooking }) {
-    console.log(selectedBooking)
     const priceFormat = usePriceFormat()
     const convertTo12HourFormat = useTimeConvert()
     const formatDate = useDateFormat()

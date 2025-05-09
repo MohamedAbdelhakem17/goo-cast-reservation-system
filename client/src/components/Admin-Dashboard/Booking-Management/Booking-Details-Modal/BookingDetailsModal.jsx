@@ -6,7 +6,6 @@ export default function BookingDetailsModal({ booking, closeModel }) {
     const formatDate = useDateFormat()
     const priceFormat = usePriceFormat()
 
-    console.log(booking)
     if (!booking) return null
 
 

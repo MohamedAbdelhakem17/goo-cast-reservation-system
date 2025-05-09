@@ -6,7 +6,7 @@ const { timeToMinutes, minutesToTime, getAllDay } = require("../../utils/time-ma
 const AppError = require("../../utils/app-error");
 
 const { calculateSlotPrices } = require("../../utils/priceCalculator");
-const { calculatePackagePrices } = require("../../utils/pakage-price-calculator");
+const { calculatePackagePrices } = require("../../utils/package-price-calculator");
 const sendEmail = require("../../utils/send-email");
 const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
 const changeBookingStatusEmail = require("../../utils/emails-body/booking-change-status")
@@ -40,11 +40,11 @@ exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
 
     for (const studio of studios) {
         const studioBookings = bookings.filter(
-            (booking) =>booking.studio.equals(studio._id )
+            (booking) => booking.studio.equals(studio._id)
         );
 
         const totalBookedMinutes = studioBookings.reduce((acc, booking) => {
-            return acc + timeToMinutes(booking.endSlot) - timeToMinutes(booking.startSlot); 
+            return acc + timeToMinutes(booking.endSlot) - timeToMinutes(booking.startSlot);
         }, 0);
 
         const studioStart = timeToMinutes(studio.startTime);
@@ -199,8 +199,8 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
     }
 
-    const startOfDay = timeToMinutes(studio.startTime || "08:00");
-    const endOfDay = timeToMinutes(studio.endTime || "22:00");
+    const startOfDay = timeToMinutes(studio.startTime || "09:00");
+    const endOfDay = timeToMinutes(studio.endTime || "18:00");
 
     const inputDate = getAllDay(date);
 
@@ -219,9 +219,15 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     });
 
     const availableSlots = [];
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     for (let time = startOfDay; time < endOfDay; time += 60) {
         const slotEnd = time + 60;
+
+        if (date === now.toISOString().split('T')[0] && time < currentMinutes) {
+            continue;
+        }
 
         const isOverlapping = bookedSlots.some(b =>
             (time < b.end && slotEnd > b.start)

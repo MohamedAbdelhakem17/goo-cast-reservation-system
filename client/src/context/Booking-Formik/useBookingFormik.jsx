@@ -15,7 +15,12 @@ export default function useBookingFormik() {
     const bookingInitialValues = useMemo(() => {
         if (parsedData) return parsedData;
 
-        const today = new Date();
+        const handelStartDate = () => {
+            const date = new Date();
+            const hour = date.getHours();
+            hour > 18 ? date.setDate(date.getDate() + 1) : date.setDate(date.getDate());
+            return date
+        };
 
         return {
             studio: {
@@ -24,7 +29,7 @@ export default function useBookingFormik() {
                 image: "",
                 price: 0,
             },
-            date: today,
+            date: handelStartDate(),
             startSlot: null,
             endSlot: null,
             duration: 0,

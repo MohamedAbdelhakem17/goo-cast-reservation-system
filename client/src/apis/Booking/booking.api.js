@@ -31,13 +31,12 @@ const useGetAvailableStudio = () => {
 
 
 const GetAvailableSlots = () => {
-    const { state } = useLocation()
+    const sortedDate = JSON.parse(localStorage.getItem("bookingData"))
     return useMutation({
-        mutationFn: async ({ studioId, date, duration }) => {
+        mutationFn: async ({ studioId, date }) => {
             const res = await axios.post(`${BASE_URL}/bookings/available-slots`, {
-                studioId: studioId || state.studio.id,
-                date,
-                duration,
+                studioId: studioId || sortedDate?.studio?.id,
+                date : date || sortedDate?.date ,
             });
             return res.data;
         },

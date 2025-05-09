@@ -64,8 +64,6 @@ export const useDeleteData = (key, url) => {
     return useMutation({
         mutationFn: async ({ id, payload }) => {
             const base_url = id ? `${url}/${id}` : url;
-            console.log(base_url);
-            console.log(payload);
             const { data } = await axiosInstance.delete(base_url, {
                 data: payload, 
             });

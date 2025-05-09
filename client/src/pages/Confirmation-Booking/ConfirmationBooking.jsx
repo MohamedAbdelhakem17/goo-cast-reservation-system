@@ -94,19 +94,19 @@ export default function ConfirmationBooking() {
                             whileHover={{ y: -5, transition: { duration: 0.2 } }}
                             onMouseEnter={() => setActiveSection("studio")}
                             onMouseLeave={() => setActiveSection(null)}
-                            className={`bg-white p-6 rounded-2xl shadow-lg border ${activeSection === "studio"
-                                ? "border-main/70 ring-2 ring-main/50"
+                            className={`bg-white  rounded-2xl shadow-lg border ${activeSection === "studio"
+                                ? "border-main/70 ring-2 ring-main/10"
                                 : "border-gray-100"
                                 } transition-all duration-300`}
                         >
-                            <div className="flex flex-col md:flex-row gap-6 items-center  md:items-start">
-                                <div className="relative w-full md:w-40 h-40 overflow-hidden rounded-xl group">
+                            <div className="flex flex-col  gap-6 items-center">
+                                <div className="relative w-full h-80 overflow-hidden rounded-xl group">
                                     {studio?.image ? (
                                         <>
                                             <img
                                                 src={studio.image || "/placeholder.svg"}
                                                 alt={studio.name}
-                                                fill
+
                                                 className="object-cover transition-transform duration-500 group-hover:scale-110 h-full w-full"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -117,59 +117,17 @@ export default function ConfirmationBooking() {
                                         </div>
                                     )}
                                 </div>
-                                <div className="flex-1 text-center md:text-left ">
-                                    <h3 className="text-2xl font-bold text-gray-800">
+                                <div className="flex-1  py-4">
+                                    <h3 className="text-3xl font-bold text-gray-800 text-center border-2 border-transparent border-b-main/80 rounded-full px-4 py-1">
                                         {studio?.name}
                                     </h3>
-                                    <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-main/80 text-white">
-                                        {/* Base Price: {studio.price} EGP */}
-                                    </div>
+                                    {/* <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-main/80 text-white"> */}
+                                    {/* Base Price: {studio.price} EGP */}
+                                    {/* </div> */}
                                 </div>
                             </div>
                         </motion.div>
 
-                        {/* Date & Time */}
-                        <motion.div
-                            custom={1}
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeIn}
-                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                            onMouseEnter={() => setActiveSection("date")}
-                            onMouseLeave={() => setActiveSection(null)}
-                            className={`bg-white p-6 rounded-2xl shadow-lg border ${activeSection === "date"
-                                ? "border-main/70 ring-2 ring-main/50"
-                                : "border-gray-100"
-                                } transition-all duration-300`}
-                        >
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                                <div className="flex items-start gap-4">
-                                    <div className="bg-main/80 p-3 rounded-xl">
-                                        <i className="fa-regular fa-circle-check text-sm text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h4 className="font-semibold text-lg text-gray-800">
-                                            Date & Time
-                                        </h4>
-                                        <p className="text-gray-700 font-medium mt-1">
-                                            {formattedDate}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="mt-4 md:mt-0 md:ml-4 flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl">
-                                    <i className="fa-regular fa-clock text-sm text-white"></i>
-                                    <div>
-                                        <p className="text-gray-700 font-medium">
-                                            {startSlot} - {endSlot}
-                                        </p>
-                                        <p className="text-sm text-gray-500">
-                                            Duration: {duration} hours
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
 
                         {/* Selected Package */}
                         <motion.div
@@ -215,6 +173,49 @@ export default function ConfirmationBooking() {
                                                 {selectedPackage.price} EGP
                                             </p>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Date & Time */}
+                        <motion.div
+                            custom={1}
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeIn}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            onMouseEnter={() => setActiveSection("date")}
+                            onMouseLeave={() => setActiveSection(null)}
+                            className={`bg-white p-6 rounded-2xl shadow-lg border ${activeSection === "date"
+                                ? "border-main/70 ring-2 ring-main/50"
+                                : "border-gray-100"
+                                } transition-all duration-300`}
+                        >
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div className="flex items-start gap-4">
+                                    <div className="bg-main/80 p-3 rounded-xl">
+                                        <i className="fa-regular fa-circle-check text-sm text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-lg text-gray-800">
+                                            Date & Time
+                                        </h4>
+                                        <p className="text-gray-700 font-medium mt-1">
+                                            {formattedDate}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4 md:mt-0 md:ml-4 flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl">
+                                    <i className="fa-regular fa-clock text-sm text-white"></i>
+                                    <div>
+                                        <p className="text-gray-700 font-medium">
+                                            {startSlot} - {endSlot}
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                            Duration: {duration} hours
+                                        </p>
                                     </div>
                                 </div>
                             </div>
