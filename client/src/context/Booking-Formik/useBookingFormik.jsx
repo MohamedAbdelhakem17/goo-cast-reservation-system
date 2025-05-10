@@ -15,7 +15,12 @@ export default function useBookingFormik() {
     const bookingInitialValues = useMemo(() => {
         if (parsedData) return parsedData;
 
-        const today = new Date();
+        const handelStartDate = () => {
+            const date = new Date();
+            const hour = date.getHours();
+            hour > 18 ? date.setDate(date.getDate() + 1) : date.setDate(date.getDate());
+            return date
+        };
 
         return {
             studio: {
@@ -24,7 +29,7 @@ export default function useBookingFormik() {
                 image: "",
                 price: 0,
             },
-            date: today, 
+            date: handelStartDate(),
             startSlot: null,
             endSlot: null,
             duration: 0,
@@ -44,15 +49,19 @@ export default function useBookingFormik() {
 
     // Formik validation schema
     const bookingValidationSchema = Yup.object({
+        selectedPackage: Yup.object().test(
+            "is-not-empty",
+            "Package is required",
+            value => value && Object.keys(value).length > 0
+        ).required("Package is required"),
         studio: Yup.object().required("Studio is required"),
         endSlot: Yup.string().required("Time end slot is required"),
         startSlot: Yup.string().required("Time  slot is required"),
-        selectedPackage: Yup.object().nullable().notRequired(),
         selectedAddOns: Yup.array().nullable().notRequired(),
         personalInfo: Yup.object({
             fullName: Yup.string().required("Full name is required"),
             phone: Yup.string()
-                .matches(/^[0-9]{10,15}$/, "Phone number is not valid")
+                .matches(/^01(0|1|2|5)[0-9]{8}$/, "Phone number is not valid")
                 .required("Phone is required"),
             email: Yup.string().email("Invalid email").required("Email is required"),
             brand: Yup.string().optional(),
@@ -74,18 +83,16 @@ export default function useBookingFormik() {
                 return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
             }, 0) || 0
 
-            const totalPrice = Number(values.studio?.price || 0) + totalAddOnPrice + (values.selectedPackage?.price || 0)
+            const totalPrice = totalAddOnPrice + (values.totalPrice || 0)
             const user_id = JSON.parse(localStorage.getItem("user"))?.user?.id
 
             const dataBaseObject = {
                 ...values,
                 studio: {
                     id: values.studio.id,
-                    price: values.studio.price,
                 },
                 package: {
                     id: values.selectedPackage.id,
-                    slot: values.selectedPackage.slot,
                 },
                 totalPrice,
                 user_id

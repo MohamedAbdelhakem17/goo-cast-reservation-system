@@ -1,12 +1,11 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/Auth-Context/AuthContext';
 import Signout from '../../../apis/auth/signout.api';
 
 const AdminDashboardLayout = () => {
-  const { dispatch } = useAuth()
   const navigate = useNavigate()
-  const { signout } = Signout()
+  // const { signout } = Signout()
+  const { handelLogout } = Signout()
 
   const navigationLinks = [
     { path: '/admin-dashboard/welcome', name: 'Home' },
@@ -41,11 +40,7 @@ const AdminDashboardLayout = () => {
 
           {/* Logout button */}
           <button
-            onClick={() => {
-              signout()
-              dispatch({ type: "LOGOUT" })
-              navigate("/")
-            }}
+            onClick={handelLogout}
             className="block w-full text-left px-4 py-2 rounded hover:bg-gray-600 text-white"
           >
             Logout

@@ -10,7 +10,6 @@ const getPageName = (path) => {
   if (path.startsWith("/booking")) {
     const params = new URLSearchParams(path.split("?")[1]);
     const step = params.get("step");
-    console.log(step);
     switch (step) {
       case "select-studio":
         return "Select Studio Step";

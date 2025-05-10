@@ -127,11 +127,6 @@ const AddStudio = () => {
                 formData.append(key, value);
             });
 
-            // For debugging formData content
-            for (let pair of formData.entries()) {
-                console.log(`${pair[0]}:`, pair[1]);
-            }
-
             const { data } = await axios.post(`${BASE_URL}/studio`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",

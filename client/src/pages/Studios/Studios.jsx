@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import StarRating from "../../hooks/useRate";
 import useQuickBooking from "../../hooks/useQuickBooking";
 import useGetAllStudios from "../../apis/studios/studios.api";
-import usePriceFormat from "../../hooks/usePriceFormat";
+// import usePriceFormat from "../../hooks/usePriceFormat";
 export default function Studios() {
   // Sample studio data - using exactly what was provided
-  const priceFormat = usePriceFormat()
+  // const priceFormat = usePriceFormat()
 
   // Importing the useQuickBooking hook to handle quick booking functionality
   const { data: studiosData, isLoading } = useGetAllStudios();
@@ -142,9 +142,9 @@ export default function Studios() {
                     </div>
 
                     <div className="flex flex-col items-end">
-                      <StarRating rating={studio.ratingAverage} />
+                      {/* <StarRating rating={studio.ratingAverage} /> */}
                       <span className="text-sm text-gray-500">
-                        {studio.ratingAverage} ({studio.ratingQuantity} reviews)
+                        {/* {studio.ratingAverage} ({studio.ratingQuantity} reviews) */}
                       </span>
                     </div>
                   </div>
@@ -168,7 +168,7 @@ export default function Studios() {
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-4 border-t border-gray-100">
                     <p className="text-rose-500 font-bold text-2xl mb-4 sm:mb-0">
-                      {priceFormat(studio.pricePerHour || studio.basePricePerSlot)}  per hour
+                      {/* {priceFormat(studio.pricePerHour || studio.basePricePerSlot)}  per hour */}
                     </p>
 
                     <div className="flex gap-3">

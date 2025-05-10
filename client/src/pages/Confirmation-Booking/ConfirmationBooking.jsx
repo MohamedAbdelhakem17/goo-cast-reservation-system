@@ -4,9 +4,12 @@ import { useState } from "react";
 import { useAuth } from "../../context/Auth-Context/AuthContext";
 import { useBooking } from "../../context/Booking-Context/BookingContext";
 import { useNavigate } from "react-router-dom";
+import useTimeConvert from "../../hooks/useTimeConvert";
 
 export default function ConfirmationBooking() {
     const { bookingData, handleSubmit } = useBooking();
+    const timeFormat = useTimeConvert();
+
     const {
         studio,
         date,
@@ -14,6 +17,7 @@ export default function ConfirmationBooking() {
         endSlot,
         duration,
         selectedPackage,
+        totalPrice: totalPriceFromLocalStorage,
         selectedAddOns,
         personalInfo,
     } = bookingData;
@@ -47,9 +51,8 @@ export default function ConfirmationBooking() {
         }, 0) || 0;
 
     const totalPrice =
-        Number(studio?.price || 0) +
         totalAddOnPrice +
-        (selectedPackage?.price || 0);
+        totalPriceFromLocalStorage;
 
     const goBack = () => {
         localStorage.setItem("bookingStep", 4);
@@ -94,19 +97,19 @@ export default function ConfirmationBooking() {
                             whileHover={{ y: -5, transition: { duration: 0.2 } }}
                             onMouseEnter={() => setActiveSection("studio")}
                             onMouseLeave={() => setActiveSection(null)}
-                            className={`bg-white p-6 rounded-2xl shadow-lg border ${activeSection === "studio"
-                                ? "border-main/70 ring-2 ring-main/50"
+                            className={`bg-white  rounded-2xl shadow-lg border ${activeSection === "studio"
+                                ? "border-main/70 ring-2 ring-main/10"
                                 : "border-gray-100"
                                 } transition-all duration-300`}
                         >
-                            <div className="flex flex-col md:flex-row gap-6 items-center  md:items-start">
-                                <div className="relative w-full md:w-40 h-40 overflow-hidden rounded-xl group">
-                                    {studio.image ? (
+                            <div className="flex flex-col  gap-6 items-center">
+                                <div className="relative w-full h-80 overflow-hidden rounded-xl group">
+                                    {studio?.image ? (
                                         <>
                                             <img
                                                 src={studio.image || "/placeholder.svg"}
                                                 alt={studio.name}
-                                                fill
+
                                                 className="object-cover transition-transform duration-500 group-hover:scale-110 h-full w-full"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -117,12 +120,62 @@ export default function ConfirmationBooking() {
                                         </div>
                                     )}
                                 </div>
-                                <div className="flex-1 text-center md:text-left ">
-                                    <h3 className="text-2xl font-bold text-gray-800">
-                                        {studio.name}
+                                <div className="flex-1  py-4">
+                                    <h3 className="text-3xl font-bold text-gray-800 text-center border-2 border-transparent border-b-main/80 rounded-full px-4 py-1">
+                                        {studio?.name}
                                     </h3>
-                                    <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-main/80 text-white">
-                                        Base Price: {studio.price} EGP
+                                    {/* <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-main/80 text-white"> */}
+                                    {/* Base Price: {studio.price} EGP */}
+                                    {/* </div> */}
+                                </div>
+                            </div>
+                        </motion.div>
+
+
+                        {/* Selected Package */}
+                        <motion.div
+                            custom={2}
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeIn}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            onMouseEnter={() => setActiveSection("package")}
+                            onMouseLeave={() => setActiveSection(null)}
+                            className={`bg-white p-6 rounded-2xl shadow-lg border ${activeSection === "package"
+                                ? "border-main/70 ring-2 ring-main/50"
+                                : "border-gray-100"
+                                } transition-all duration-300`}
+                        >
+                            <div className="flex flex-col md:flex-row md:items-center gap-4">
+                                <div className="bg-main/80 p-3 rounded-xl">
+                                    <i className="fa-solid fa-cube text-sm text-white"></i>
+                                </div>
+
+                                <div className="flex-1">
+                                    <h4 className="font-semibold text-lg text-gray-800">
+                                        Selected Package
+                                    </h4>
+                                    <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="bg-gray-50 p-3 rounded-xl">
+                                            <p className="text-sm text-gray-500">Package Name</p>
+                                            <p className="font-medium text-gray-800">
+                                                {selectedPackage.name}
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-gray-50 p-3 rounded-xl">
+                                            <p className="text-sm text-gray-500">Duration</p>
+                                            <p className="font-medium text-gray-800">
+                                                {duration} hours
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-main/80 p-3 rounded-xl">
+                                            <p className="text-sm text-white">Package Price</p>
+                                            <p className="font-bold text-white">
+                                                {totalPrice} EGP
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -161,60 +214,11 @@ export default function ConfirmationBooking() {
                                     <i className="fa-regular fa-clock text-sm text-white"></i>
                                     <div>
                                         <p className="text-gray-700 font-medium">
-                                            {startSlot} - {endSlot}
+                                            {timeFormat(startSlot)} - {timeFormat(endSlot)}
                                         </p>
                                         <p className="text-sm text-gray-500">
                                             Duration: {duration} hours
                                         </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Selected Package */}
-                        <motion.div
-                            custom={2}
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeIn}
-                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                            onMouseEnter={() => setActiveSection("package")}
-                            onMouseLeave={() => setActiveSection(null)}
-                            className={`bg-white p-6 rounded-2xl shadow-lg border ${activeSection === "package"
-                                ? "border-main/70 ring-2 ring-main/50"
-                                : "border-gray-100"
-                                } transition-all duration-300`}
-                        >
-                            <div className="flex flex-col md:flex-row md:items-center gap-4">
-                                <div className="bg-main/80 p-3 rounded-xl">
-                                    <i className="fa-solid fa-cube text-sm text-white"></i>
-                                </div>
-
-                                <div className="flex-1">
-                                    <h4 className="font-semibold text-lg text-gray-800">
-                                        Selected Package
-                                    </h4>
-                                    <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div className="bg-gray-50 p-3 rounded-xl">
-                                            <p className="text-sm text-gray-500">Package Name</p>
-                                            <p className="font-medium text-gray-800">
-                                                {selectedPackage.name}
-                                            </p>
-                                        </div>
-
-                                        <div className="bg-gray-50 p-3 rounded-xl">
-                                            <p className="text-sm text-gray-500">Duration</p>
-                                            <p className="font-medium text-gray-800">
-                                                {selectedPackage.duration} hours
-                                            </p>
-                                        </div>
-
-                                        <div className="bg-main/80 p-3 rounded-xl">
-                                            <p className="text-sm text-white">Package Price</p>
-                                            <p className="font-bold text-white">
-                                                {selectedPackage.price} EGP
-                                            </p>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

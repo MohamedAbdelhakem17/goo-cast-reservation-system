@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { ChangeBookingStatus } from '../../../../apis/Booking/booking.api';
-import Alert from '../../../shared/Alert/Alert';
 import Popup from '../../../shared/Popup/Popup';
 import useDataFormat from '../../../../hooks/useDateFormat';
 import { useToast } from '../../../../context/Toaster-Context/ToasterContext';
@@ -99,7 +98,7 @@ export default function TableRow({ booking, setSelectedBooking }) {
                         <ul className="text-sm text-gray-700 mb-4 list-disc list-inside">
                             <li><strong>Studio:</strong> {booking?.studio?.name}</li>
                             <li><strong>Date:</strong> {formatDate(booking.date)}</li>
-                            <li><strong>Time:</strong> {convertTo12HourFormat(booking.timeSlot)}</li>
+                            <li><strong>Time:</strong> {convertTo12HourFormat(booking.startSlot)}</li>
                             <li><strong>Duration:</strong> {booking.duration} hour(s)</li>
                         </ul>
                         <div className="flex justify-end gap-3">

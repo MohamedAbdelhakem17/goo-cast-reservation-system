@@ -590,7 +590,6 @@ const bookingConfirmationEmailBody = (booking) => {
                 <img src="${booking.studio.image}" alt="${booking.studio.name}" class="studio-img" />
                 <div>
                     <h3 class="info-title">${booking.studio.name}</h3>
-                    <div class="label">Base Price: ${booking.studio.price} EGP</div>
                 </div>
             </div>
 
@@ -630,18 +629,7 @@ const bookingConfirmationEmailBody = (booking) => {
                     <div class="package-item">
                         <i class="fa-solid fa-box" style="font-size: 24px; color: #4f46e5; margin-bottom: 12px;"></i>
                         <p class="info-subtitle">Package Name</p>
-                        <p class="info-title">${booking.selectedPackage.name}</p>
-                    </div>
-                    <div class="package-item">
-                        <i class="fa-regular fa-clock"
-                            style="font-size: 24px; color: #4f46e5; margin-bottom: 12px;"></i>
-                        <p class="info-subtitle">Duration</p>
-                        <p class="info-title">${booking.selectedPackage.duration} hours</p>
-                    </div>
-                    <div class="package-item package-highlight">
-                        <i class="fa-solid fa-tag" style="font-size: 24px; color: white; margin-bottom: 12px;"></i>
-                        <p class="info-subtitle">Package Price</p>
-                        <p class="info-title">${booking.selectedPackage.price} EGP</p>
+                        <p class="info-title">${booking.selectedPackage}</p>
                     </div>
                 </div>
             </div>

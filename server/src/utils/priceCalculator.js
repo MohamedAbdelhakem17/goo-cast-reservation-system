@@ -1,26 +1,32 @@
 const PriceException = require("../models/price-exception-model/price-exception-model");
-const PriceRule = require("../models/price-exception-model/price-exception-model");
+const PriceRule = require("../models/price-rule-model/price-rule-model");
+const Category = require("../models/category-model/category-model");
 const { minutesToTime, getAllDay } = require("./time-mange");
 
-const calculateSlotPrices = async ({ studio, date, startSlotMinutes, endOfDay, bookedSlots }) => {
+
+const calculateSlotPrices = async ({ package, date, startSlotMinutes, endOfDay, bookedSlots }) => {
     const dayOfWeek = new Date(date).getDay();
     const inputDate = getAllDay(date);
 
+
     // Check if there is a price exception
     const exception = await PriceException.findOne({
-        studio: studio._id,
+        package: package._id,
         date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
     });
 
+
+
     // Check if there is a price rule
     const rule = await PriceRule.findOne({
-        studio: studio._id,
-        dayOfWeek: dayOfWeek,
+        package: package._id,
+        dayOfWeek
     });
 
+
     // Set default values
-    let defaultPricePerSlot = studio.basePricePerSlot;
-    let isFixedHourly = studio.isFixedHourly;
+    let defaultPricePerSlot = package.price;
+    let isFixedHourly = package.isFixed;
     let perSlotDiscounts = new Map();
 
     if (exception) {
@@ -39,7 +45,10 @@ const calculateSlotPrices = async ({ studio, date, startSlotMinutes, endOfDay, b
     let totalPrice = 0;
     let slotCount = 0;
 
-    for (let time = startSlotMinutes + 60; time <= endOfDay; time += 60) {
+    const categoryMinHour = await Category.findOne({ _id: package.category._id });
+    const minStartTime = categoryMinHour.minHours * 60;
+
+    for (let time = startSlotMinutes + minStartTime; time <= endOfDay; time += 60) {
         slotCount++;
 
         const isOverlapping = bookedSlots.some(b => startSlotMinutes < b.end && time > b.start);
@@ -58,6 +67,7 @@ const calculateSlotPrices = async ({ studio, date, startSlotMinutes, endOfDay, b
             totalPrice: Math.round(totalPrice),
         });
     }
+
 
     return results;
 };
