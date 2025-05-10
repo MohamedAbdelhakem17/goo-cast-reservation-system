@@ -1,6 +1,6 @@
-import React, { useReducer } from 'react';
+// import React, { useReducer } from 'react';
 import { useFormik } from 'formik';
-import { produce } from 'immer';
+// import { produce } from 'immer';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import Input from '../../../../shared/Input/Input';
@@ -43,31 +43,31 @@ const initialRuleState = {
     perSlotDiscounts: {},
 };
 
-function ruleReducer(state, action) {
-    return produce(state, (draft) => {
-        switch (action.type) {
-            case 'SET_NEW_RULE_FIELD':
-                draft[action.field] = action.value;
-                break;
-            case 'ADD_DISCOUNT':
-                if (!draft.newSlotCount || !draft.newDiscountPercent) return;
-                draft.perSlotDiscounts[draft.newSlotCount] = draft.newDiscountPercent;
-                draft.newSlotCount = '';
-                draft.newDiscountPercent = '';
-                break;
-            case 'REMOVE_DISCOUNT':
-                delete draft.perSlotDiscounts[action.payload];
-                break;
-            case 'RESET_DISCOUNTS':
-                draft.perSlotDiscounts = {};
-                break;
-            default:
-                break;
-        }
-    });
-}
+// function ruleReducer(state, action) {
+//     return produce(state, (draft) => {
+//         switch (action.type) {
+//             case 'SET_NEW_RULE_FIELD':
+//                 draft[action.field] = action.value;
+//                 break;
+//             case 'ADD_DISCOUNT':
+//                 if (!draft.newSlotCount || !draft.newDiscountPercent) return;
+//                 draft.perSlotDiscounts[draft.newSlotCount] = draft.newDiscountPercent;
+//                 draft.newSlotCount = '';
+//                 draft.newDiscountPercent = '';
+//                 break;
+//             case 'REMOVE_DISCOUNT':
+//                 delete draft.perSlotDiscounts[action.payload];
+//                 break;
+//             case 'RESET_DISCOUNTS':
+//                 draft.perSlotDiscounts = {};
+//                 break;
+//             default:
+//                 break;
+//         }
+//     });
+// }
 export default function AddNewAddOnModel({ closeModel }) {
-    const [newRule, dispatch] = useReducer(ruleReducer, initialRuleState);
+    // const [newRule, dispatch] = useReducer(ruleReducer, initialRuleState);
 
     const { mutate: addNewAddOn, isLoading } = AddNewAddOn();
     const { addToast } = useToast();
@@ -78,14 +78,13 @@ export default function AddNewAddOnModel({ closeModel }) {
             description: '',
             price: '',
             image: '',
-            perHourDiscounts: {},
             isFixed: false,
         },
         validationSchema,
         onSubmit: async (values) => {
             const finalValues = {
                 ...values,
-                perHourDiscounts: newRule.perSlotDiscounts,
+                // perHourDiscounts: newRule.perSlotDiscounts,
             };
             addNewAddOn(finalValues, {
                 onSuccess: () => {
@@ -99,15 +98,15 @@ export default function AddNewAddOnModel({ closeModel }) {
         },
     });
 
-    function handleAddDiscountToNewRule(e) {
-        e.preventDefault();
-        dispatch({ type: 'ADD_DISCOUNT' });
-    }
+    // function handleAddDiscountToNewRule(e) {
+    //     e.preventDefault();
+    //     dispatch({ type: 'ADD_DISCOUNT' });
+    // }
 
-    function handleRemoveDiscountFromNewRule(e, slot) {
-        e.preventDefault();
-        dispatch({ type: 'REMOVE_DISCOUNT', payload: slot });
-    }
+    // function handleRemoveDiscountFromNewRule(e, slot) {
+    //     e.preventDefault();
+    //     dispatch({ type: 'REMOVE_DISCOUNT', payload: slot });
+    // }
 
     function handleAddImageUpload(e) {
         const file = e.target.files[0];
@@ -116,14 +115,14 @@ export default function AddNewAddOnModel({ closeModel }) {
         }
     }
 
-    function handleResetDiscounts() {
-        const isChecked = !formik.values.isFixed;
-        formik.setFieldValue('isFixed', isChecked);
-        if (isChecked) {
-            formik.setFieldValue('perHourDiscounts', {});
-            dispatch({ type: 'RESET_DISCOUNTS' });
-        }
-    }
+    // function handleResetDiscounts() {
+    //     const isChecked = !formik.values.isFixed;
+    //     formik.setFieldValue('isFixed', isChecked);
+    //     if (isChecked) {
+    //         formik.setFieldValue('perHourDiscounts', {});
+    //         dispatch({ type: 'RESET_DISCOUNTS' });
+    //     }
+    // }
 
     return (
         <>
@@ -182,7 +181,7 @@ export default function AddNewAddOnModel({ closeModel }) {
                         />
 
                         {/* IS FIXED */}
-                        <div className="flex items-center gap-x-2 mb-3">
+                        {/* <div className="flex items-center gap-x-2 mb-3">
                             <input
                                 id="isFixed"
                                 name="isFixed"
@@ -192,11 +191,11 @@ export default function AddNewAddOnModel({ closeModel }) {
                                 onBlur={formik.handleBlur}
                             />
                             <label htmlFor="isFixed">Fixed Price</label>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Discounts For Add-on Per Hour */}
-                    {!formik.values.isFixed && (
+                    {/* {!formik.values.isFixed && (
                         <div>
                             <h4 className="text-lg font-medium text-gray-800 mb-4">Add Discounts</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -255,7 +254,7 @@ export default function AddNewAddOnModel({ closeModel }) {
                                 </div>
                             )}
                         </div>
-                    )}
+                    )} */}
 
                     {/* Add Image */}
                     <div className="flex flex-col gap-2">
