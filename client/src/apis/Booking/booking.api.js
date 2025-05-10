@@ -46,11 +46,12 @@ const GetAvailableSlots = () => {
 const GetAvailableEndSlots = () => {
     const { state } = useLocation()
     return useMutation({
-        mutationFn: async ({ studioId, date, startTime }) => {
+        mutationFn: async ({ studioId, date, startTime  ,   package_id}) => {
             const res = await axios.post(`${BASE_URL}/bookings/available-end-slots`, {
                 studioId: studioId || state.studio.id,
                 date,
                 startTime,
+                package: package_id
             });
             return res.data;
         },

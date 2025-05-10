@@ -12,30 +12,29 @@ exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No hourly packages found"));
     }
 
-    const maxHours = 9;
+    // const maxHours = 9;
 
-    const packagesWithPrices = await Promise.all(
-        hourlyPackages.map(async (pkg) => {
-            const prices = await calculatePackagePrices({ package: pkg, hours: maxHours });
-            return {
-                ...pkg._doc,
-                hourlyPrices: prices
-            };
-        })
-    );
+    // const packagesWithPrices = await Promise.all(
+    //     hourlyPackages.map(async (pkg) => {
+    //         const prices = await calculatePackagePrices({ package: pkg, hours: maxHours });
+    //         return {
+    //             ...pkg._doc,
+    //             hourlyPrices: prices
+    //         };
+    //     })
+    // );
 
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
-        data: packagesWithPrices
-
+        data: hourlyPackages
     });
 });
 
 // create hourly package
 exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
-    const { name, description, details, category, post_session_benefits , target_audience } = req.body;
+    const { name, description, details, category, post_session_benefits, target_audience } = req.body;
 
-    if (!name || !description || !details , !category || !post_session_benefits || !target_audience) {
+    if (!name || !description || !details, !category || !post_session_benefits || !target_audience) {
         return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide all required fields"));
     }
 

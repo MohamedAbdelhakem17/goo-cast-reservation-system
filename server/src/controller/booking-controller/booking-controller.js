@@ -21,29 +21,29 @@ const AddOnModel = require("../../models/add-on-model/add-on-model")
 {
     // exports.getAvailableSlots = asyncHandler(async (req, res, next) => {
     //     const { studioId, date, duration = 1 } = req.body;
-    
+
     //     // Validate input
     //     if (!studioId || !date || !duration) {
     //         return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studioId, date, and duration are required"));
     //     }
-    
+
     //     // Get the studio's working hours
     //     const studio = await StudioModel.findById(studioId);
-    
+
     //     if (!studio) {
     //         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
     //     }
-    
+
     //     // Convert start and end time to minutes
     //     const startOfDay = timeToMinutes(studio.startTime || "08:00");
     //     const endOfDay = timeToMinutes(studio.endTime != 0 ? studio.endTime : "22:00");
-    
+
     //     const durationInMinutes = duration * 60;
-    
-    
+
+
     //     // Get bookings for the specified date
     //     const inputDate = getAllDay(date);
-    
+
     //     const bookings = await BookingModel.find({
     //         studio: studioId,
     //         date: {
@@ -51,47 +51,47 @@ const AddOnModel = require("../../models/add-on-model/add-on-model")
     //             $lt: inputDate.endOfDay,
     //         },
     //     });
-    
-    
+
+
     //     if (bookings.length === 0) {
     //         // console.log("No bookings found for this date"); 
     //     }
-    
+
     //     const bookedSlots = bookings.map(book => {
     //         const start = timeToMinutes(book.timeSlot);
     //         const end = start + (book.duration * 60);
     //         return { start, end };
     //     });
-    
+
     //     // console.log('Booked slots:', bookedSlots);
-    
+
     //     // Calculate available slots
     //     const availableSlots = [];
-    
+
     //     // Check available slots within the studio's working hours
     //     for (let time = startOfDay; time + durationInMinutes <= endOfDay; time += 60) {
-    
+
     //         const slotStart = time;
     //         const slotEnd = time + durationInMinutes;
-    
+
     //         // Skip slot if it exceeds the studio's working hours
     //         if (slotEnd > endOfDay) {
     //             continue;
     //         }
-    
+
     //         const isOverlapping = bookedSlots.some(b =>
     //             (slotStart < b.end && slotEnd > b.start)
     //         );
-    
+
     //         if (!isOverlapping) {
     //             availableSlots.push({
     //                 startTime: minutesToTime(slotStart),
     //             });
     //         }
     //     }
-    
-    
-    
+
+
+
     //     res.status(200).json({
     //         status: HTTP_STATUS_TEXT.SUCCESS,
     //         data: availableSlots,
@@ -252,15 +252,20 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
 
 // Get Available End Slots
 exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
-    const { studioId, date, startTime } = req.body;
+    const { studioId, date, startTime, package } = req.body;
 
-    if (!studioId || !date || !startTime) {
-        return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studio, date, and startTime are required"));
+    if (!studioId || !date || !startTime, !package) {
+        return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "studio, date, and start , package Time are required "));
     }
 
     const studio = await StudioModel.findById(studioId);
     if (!studio) {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+    }
+
+    const selectedPackage = await PackageModel.findById(package);
+    if (!selectedPackage) {
+        return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Package not found"));
     }
 
     const inputDate = getAllDay(date);
@@ -280,7 +285,7 @@ exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
     const endOfDay = timeToMinutes(studio.endTime || "22:00");
 
     const availableEndSlots = await calculateSlotPrices({
-        studio,
+        package: selectedPackage,
         date,
         startSlotMinutes,
         endOfDay,
