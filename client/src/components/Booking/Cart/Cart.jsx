@@ -22,7 +22,6 @@ export default function Cart() {
     }
 
 
-    console.log(bookingData)
 
     return (
         <div>
