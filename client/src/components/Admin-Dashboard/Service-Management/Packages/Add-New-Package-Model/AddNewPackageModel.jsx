@@ -4,13 +4,20 @@ import * as Yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
 import Input from '../../../../shared/Input/Input';
 import Alert from '../../../../shared/Alert/Alert';
-import { AddNewPackage } from '../../../../../apis/services/services.api';
+import { AddNewPackage, GetAllCategories } from '../../../../../apis/services/services.api';
 import { produce } from 'immer';
 import Textarea from '../../../../shared/Textarea/Textarea';
+import SelectInput from '../../../../shared/Select-Input/SelectInput';
 import { useToast } from '../../../../../context/Toaster-Context/ToasterContext';
 
 // Reducer actions
 const ACTIONS = {
+    SET_Target_Audience: 'SET_Target_Audience',
+    ADD_Target_Audience: 'ADD_Target_Audience',
+    REMOVE_Target_Audience: 'REMOVE_Target_Audience',
+    SET_Post_Session_Benefits: 'SET_Post_Session_Benefits',
+    ADD_Post_Session_Benefits: 'ADD_Post_Session_Benefits',
+    REMOVE_Post_Session_Benefits: 'REMOVE_Post_Session_Benefits',
     SET_DETAIL: 'SET_DETAIL',
     ADD_DETAIL: 'ADD_DETAIL',
     REMOVE_DETAIL: 'REMOVE_DETAIL',
@@ -22,6 +29,8 @@ const ACTIONS = {
 // Initial state
 const initialState = {
     currentDetail: '',
+    currentTargetAudience: '',
+    currentPostSessionBenefits: '',
     showSuccessAlert: false,
     showErrorAlert: false,
     errorMessage: '',
@@ -31,6 +40,22 @@ const initialState = {
 function reducer(state, action) {
     return produce(state, draft => {
         switch (action.type) {
+            case ACTIONS.SET_Target_Audience:
+                draft.currentTargetAudience = action.payload;
+                break;
+            case ACTIONS.ADD_Target_Audience:
+                draft.currentTargetAudience = '';
+                break;
+            case ACTIONS.REMOVE_Target_Audience:
+                break;
+            case ACTIONS.SET_Post_Session_Benefits:
+                draft.currentPostSessionBenefits = action.payload;
+                break;
+            case ACTIONS.ADD_Post_Session_Benefits:
+                draft.currentPostSessionBenefits = '';
+                break;
+            case ACTIONS.REMOVE_Post_Session_Benefits:
+                break;
             case ACTIONS.SET_DETAIL:
                 draft.currentDetail = action.payload;
                 break;
@@ -71,12 +96,13 @@ const validationSchema = Yup.object({
     //     halfDay: Yup.number().required('Half day saving is required').min(0, 'Saving must be a positive number'),
     //     fullDay: Yup.number().required('Full day saving is required').min(0, 'Saving must be a positive number'),
     // }),
-    icon: Yup.string().required('Icon is required'),
 });
 
 export default function AddNewPackageModel({ closeModel }) {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { currentDetail, showSuccessAlert, showErrorAlert, errorMessage } = state;
+    const { currentDetail, showSuccessAlert, showErrorAlert, errorMessage, currentTargetAudience, currentPostSessionBenefits } = state;
+    const { data: packagesCategories } = GetAllCategories();
+
     const { mutate: addPackage } = AddNewPackage();
     const { addToast } = useToast()
     const formik = useFormik({
@@ -84,24 +110,15 @@ export default function AddNewPackageModel({ closeModel }) {
             name: '',
             description: '',
             details: [],
-            price: '',
-            // prices: { twoHours: '', halfDay: '', fullDay: '' },
-            // savings: { halfDay: '', fullDay: '' },
-            icon: '',
+            category: '',
+            post_session_benefits: [],
+            target_audience: [],
         },
         validationSchema,
-        onSubmit: async (values) => {
-            await addPackage({
+        onSubmit:  (values) => {
+            console.log(values);
+             addPackage({
                 ...values,
-                // prices: {
-                //     twoHours: Number(values.prices.twoHours),
-                //     halfDay: Number(values.prices.halfDay),
-                //     fullDay: Number(values.prices.fullDay),
-                // },
-                // savings: {
-                //     halfDay: Number(values.savings.halfDay),
-                //     fullDay: Number(values.savings.fullDay),
-                // },
             }, {
                 onSuccess: (response) => {
                     addToast(response.message || 'Package added successfully', 'success');
@@ -116,6 +133,7 @@ export default function AddNewPackageModel({ closeModel }) {
         },
     });
 
+    // Details
     const handleAddDetail = () => {
         if (currentDetail.trim()) {
             formik.setFieldValue('details', [...formik.values.details, currentDetail.trim()]);
@@ -127,6 +145,33 @@ export default function AddNewPackageModel({ closeModel }) {
         const updatedDetails = formik.values.details.filter((_, i) => i !== index);
         formik.setFieldValue('details', updatedDetails);
     };
+
+    // Target Audience
+    const handleAddTargetAudience = () => {
+        if (currentTargetAudience.trim()) {
+            formik.setFieldValue('target_audience', [...formik.values.target_audience, currentTargetAudience.trim()]);
+            dispatch({ type: ACTIONS.ADD_Target_Audience });
+        }
+    };
+
+    const handleRemoveTargetAudience = (index) => {
+        const updateTargetAudience = formik.values.target_audience.filter((_, i) => i !== index);
+        formik.setFieldValue('target_audience', updateTargetAudience);
+    };
+
+    // Target Post Session Benefits
+    const handleAddPostSessionBenefits = () => {
+        if (currentPostSessionBenefits.trim()) {
+            formik.setFieldValue('post_session_benefits', [...formik.values.post_session_benefits, currentPostSessionBenefits.trim()]);
+            dispatch({ type: ACTIONS.ADD_Post_Session_Benefits });
+        }
+    };
+
+    const handleRemovePostSessionBenefits = (index) => {
+        const updatePostSessionBenefits = formik.values.post_session_benefits.filter((_, i) => i !== index);
+        formik.setFieldValue('post_session_benefits', updatePostSessionBenefits);
+    };
+
 
     return (
         <motion.div
@@ -166,6 +211,13 @@ export default function AddNewPackageModel({ closeModel }) {
                         errors={formik.touched.name && formik.errors.name}
                         touched={formik.touched.name}
                         placeholder="Enter package name"
+                    />
+
+                    <SelectInput
+                        placeholder='Select package category'
+                        options={packagesCategories?.data?.map((category) => ({ value: category._id, label: category.name }))}
+                        onChange={(e) => formik.setFieldValue('category', e.target.value)}
+
                     />
 
                     <Textarea
@@ -220,17 +272,89 @@ export default function AddNewPackageModel({ closeModel }) {
                         </ul>
                     </div>
 
-                    {/* Icon */}
-                    <Input
-                        label="Icon"
-                        id="icon"
-                        value={formik.values.icon}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        errors={formik.touched.icon && formik.errors.icon}
-                        touched={formik.touched.icon}
-                        placeholder="Enter icon class (e.g., fa-solid fa-box)"
-                    />
+                    {/* Target Audience */}
+                    <div className="space-y-4">
+                        <label className="block text-sm font-medium text-gray-700">Target Audience</label>
+                        <div className="flex gap-2 items-center">
+                            <Input
+                                value={currentTargetAudience}
+                                onChange={(e) => dispatch({ type: ACTIONS.SET_Target_Audience, payload: e.target.value })}
+                                placeholder="Enter Target Audience"
+                                className="flex-1"
+                            />
+                            <motion.button
+                                type="button"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={handleAddTargetAudience}
+                                className="px-4 py-2 bg-main text-white rounded-md hover:bg-main/90"
+                            >
+                                Add
+                            </motion.button>
+                        </div>
+
+                        {formik.touched.target_audience && formik.errors.target_audience && (
+                            <div className="text-red-500 text-sm">{formik.errors.target_audience}</div>
+                        )}
+
+                        <ul className="space-y-2">
+                            {formik.values.target_audience.map((target, index) => (
+                                <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                    <span>{target}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveTargetAudience(index)}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <i className="fa-solid fa-trash"></i>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Post Session Benefits */}
+                    <div className="space-y-4">
+                        <label className="block text-sm font-medium text-gray-700">Post Session Benefits</label>
+                        <div className="flex gap-2 items-center">
+                            <Input
+                                value={currentPostSessionBenefits}
+                                onChange={(e) => dispatch({ type: ACTIONS.SET_Post_Session_Benefits, payload: e.target.value })}
+                                placeholder="Enter Post Session Benefits"
+                                className="flex-1"
+                            />
+                            <motion.button
+                                type="button"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={handleAddPostSessionBenefits}
+                                className="px-4 py-2 bg-main text-white rounded-md hover:bg-main/90"
+                            >
+                                Add
+                            </motion.button>
+                        </div>
+
+                        {formik.touched.post_session_benefits && formik.errors.post_session_benefits && (
+                            <div className="text-red-500 text-sm">{formik.errors.post_session_benefits}</div>
+                        )}
+
+                        <ul className="space-y-2">
+                            {formik.values.post_session_benefits.map((item, index) => (
+                                <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                    <span>{item}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemovePostSessionBenefits(index)}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <i className="fa-solid fa-trash"></i>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+
 
                     {/* Submit Button */}
                     <motion.button
