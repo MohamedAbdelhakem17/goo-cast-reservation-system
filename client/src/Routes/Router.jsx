@@ -23,6 +23,7 @@ const PriceManagement = lazy(() => import("../pages/Admin-Dashboard/Price-Manage
 const ServiceManagement = lazy(() => import("../pages/Admin-Dashboard/Service-Management/ServiceManagement"));
 const PageAnalytics = lazy(() => import("../pages/Admin-Dashboard/Page-Analytics/PageAnalytics"));
 const BookingManagement = lazy(() => import("../pages/Admin-Dashboard/Booking-Management/BookingManagement"));
+const CategoryManagement = lazy(() => import("../pages/Admin-Dashboard/Category-Management/CategoryManagement"));
 const AddStudio = lazy(() => import("../pages/Admin-Dashboard/Studio-Management/Add-Studio/AddStudio"));
 
 // Authentication user
@@ -71,6 +72,7 @@ export default function AppRouter() {
                         </ProtectedRoute>}>
                         <Route path="welcome" element={<Welcome />} />
                         <Route path="studio-management" element={<StudioManagement />} />
+                        <Route path="category-management" element={<CategoryManagement />} />
                         <Route path="studio-management/add" element={<AddStudio />} />
                         <Route path="price-management" element={<PriceManagement />} />
                         <Route path="service-management" element={<ServiceManagement />} />

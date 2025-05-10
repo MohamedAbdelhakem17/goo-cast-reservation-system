@@ -832,6 +832,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
             package:  pkg._id,
             addOns: addOnDetails,
             totalAddOnsPrice: addOnsTotalPriceFromDb,
+            totalPackagePrice: packagePrice,
             personalInfo,
             totalPrice,
             status: "pending",
