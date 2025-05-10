@@ -9,7 +9,6 @@ import Tabs from "../../../components/shared/Tabs/Tabs";
 import ChangeBasePrice from "../../../components/Admin-Dashboard/Price-Management/Change-Base-Price/ChangeBasePrice";
 import PriceExceptions from "../../../components/Admin-Dashboard/Price-Management/Price-Exceptions/PriceExceptions";
 import { GetAllPackages } from "../../../apis/services/services.api";
-import { NewPriceRuleForm, PriceRuleList } from "../../../components/Admin-Dashboard/Price-Management/Price-Mange/PriceComponents";
 import PackagePrice from "../../../components/Admin-Dashboard/Price-Management/Package-Price/PackagePrice";
 
 const fadeVariants = {
@@ -20,7 +19,7 @@ const fadeVariants = {
 
 const initialState = {
     selectedOption: "",
-    mangeType: "",
+    mangeType: "service",
     activeTab: 1,
 };
 
@@ -51,24 +50,25 @@ const PriceManagement = () => {
     const { selectedOption, mangeType, activeTab } = state;
 
     return (
-        <div className="container mx-auto py-8 px-4">
+        <div className="container mx-auto py-8 px-2">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-xl shadow-lg p-8"
             >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-2">
                     <h2 className="text-3xl font-bold text-gray-800">Price Management</h2>
-                    <SelectInput
+                    {/* <SelectInput
                         value={mangeType}
                         onChange={(e) => dispatch({ type: "SET_MANAGE_TYPE", payload: e.target.value })}
                         options={[
-                            { value: "studio", label: "Studio" },
+                            // { value: "studio", label: "Studio" },
                             { value: "service", label: "Service" },
                         ]}
+                        
                         placeholder=" What would you like to manage ?."
                         iconClass="fas fa-chevron-down"
-                    />
+                    /> */}
                 </div>
 
                 <AnimatePresence mode="wait">
@@ -109,7 +109,7 @@ const PriceManagement = () => {
                                         />
                                     )}
                                     {activeTab === 2 && <PriceRule selectedStudio={selectedOption} />}
-                                    {activeTab === 3 && <PriceExceptions selectedStudio={selectedOption} />}
+                                    {/* {activeTab === 3 && <PriceExceptions selectedStudio={selectedOption} />} */}
                                 </>
                             )}
                         </motion.div>

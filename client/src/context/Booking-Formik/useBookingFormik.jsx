@@ -61,7 +61,7 @@ export default function useBookingFormik() {
         personalInfo: Yup.object({
             fullName: Yup.string().required("Full name is required"),
             phone: Yup.string()
-                .matches(/^[0-9]{10,15}$/, "Phone number is not valid")
+                .matches(/^01(0|1|2|5)[0-9]{8}$/, "Phone number is not valid")
                 .required("Phone is required"),
             email: Yup.string().email("Invalid email").required("Email is required"),
             brand: Yup.string().optional(),

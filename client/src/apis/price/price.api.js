@@ -2,8 +2,8 @@ import { useDeleteData, useGetData, usePostData, useUpdateData } from "../../hoo
 import BASE_URL from "../BASE_URL";
 
 // ================== Price Rules ================
-export const GetPriceRules = (studioId) => {
-    return useGetData(["priceRules", studioId], `${BASE_URL}/price-rules/${studioId}`);
+export const GetPriceRules = (packageId) => {
+    return useGetData(["priceRules", packageId], `${BASE_URL}/price-rules/${packageId}`);
 };
 
 export const AddPriceRule = (studioId) => {
@@ -46,5 +46,5 @@ export const DeletePriceExceptions = (studioId) => {
 
 // ================== Package Price mange  ================
 export const EditPricePackage = () => {
-    return useUpdateData(["pricePackages"], `${BASE_URL}/hourly-packages/price-mange`);
+    return useUpdateData(["pricePackages"], `${BASE_URL}/price-rules/`);
 }

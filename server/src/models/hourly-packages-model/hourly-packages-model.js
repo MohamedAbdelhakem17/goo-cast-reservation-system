@@ -85,6 +85,18 @@ const HourlyPackageSchema = new mongoose.Schema({
     // min: [0, "Saving must be a positive number"],
     // },
     // },
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
+
+HourlyPackageSchema.pre(/^find/, function (next) {
+    this.populate([
+        {
+            path: "category",
+            select: "name slug",
+        }
+    ]);
+    next();
 });
+
 
 module.exports = mongoose.model("HourlyPackage", HourlyPackageSchema);

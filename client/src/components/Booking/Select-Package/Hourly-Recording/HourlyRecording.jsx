@@ -12,7 +12,8 @@ export default function HourlyRecording({ packages }) {
     setBookingField("selectedPackage", {
       id: pkg._id,
       name: pkg.name,
-      category: pkg.category,
+      category: pkg.category._id,
+      slug: pkg.category.slug, 
     });
     handleNextStep()
   };
