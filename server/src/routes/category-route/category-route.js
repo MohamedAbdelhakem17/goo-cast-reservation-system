@@ -16,7 +16,7 @@ router.route('/')
 router.use(protectRoute, allowTo(USER_ROLE.ADMIN))
 
 router.route('/')
-    .delete(CategoryController.addCategory)
+    .post(CategoryController.addCategory)
 
 router.route('/:id')
     .delete(CategoryController.deleteCategory)

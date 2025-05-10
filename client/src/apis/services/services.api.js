@@ -5,7 +5,7 @@ import { useDeleteData, useGetData, usePostData, useUpdateData } from "../../hoo
 
 // ============ PACKAGES ============
 export const GetAllCategories = () => useGetData(["categories"], `${BASE_URL}/categories`);
-export const CreateCategory = () => usePostData(["categories"], `${BASE_URL}/categories`);
+export const CreateCategory = () => usePostData(["category"], `${BASE_URL}/categories`);
 export const UpdateCategory = (categoryId) => useUpdateData(["categories", categoryId], `${BASE_URL}/categories`);
 export const DeleteCategory = (categoryId) => useDeleteData(["categories", categoryId], `${BASE_URL}/categories`);
 
