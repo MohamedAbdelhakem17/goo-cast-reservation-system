@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const HourlyPackageModel = require('../../models/hourly-packages-model/hourly-packages-model');
 const AppError = require('../../utils/app-error');
 const { HTTP_STATUS_TEXT } = require('../../config/system-variables');
-const { calculatePackagePrices } = require('../../utils/pakage-price-calculator');
+const { calculatePackagePrices } = require('../../utils/package-price-calculator');
 
 // get all Hourly Packages
 // exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
