@@ -40,14 +40,16 @@ function reducer(state, action) {
                 draft.editingPackage = null;
                 break;
             case "UPDATE_FIELD":
-                { const { field, value } = action.payload;
-                if (field.includes(".")) {
-                    const [parent, child] = field.split(".");
-                    draft.editingPackage[parent][child] = value;
-                } else {
-                    draft.editingPackage[field] = value;
+                {
+                    const { field, value } = action.payload;
+                    if (field.includes(".")) {
+                        const [parent, child] = field.split(".");
+                        draft.editingPackage[parent][child] = value;
+                    } else {
+                        draft.editingPackage[field] = value;
+                    }
+                    break;
                 }
-                break; }
             case "SET_DELETED_PACKAGE":
                 draft.deletedPackage = action.payload;
                 break;
@@ -85,8 +87,8 @@ const EditableList = ({ items, onChange, placeholder }) => (
                 </button>
             </div>
         ))}
-        <button 
-            onClick={() => onChange(items.length, "")} 
+        <button
+            onClick={() => onChange(items.length, "")}
             className="text-main hover:text-main/90 flex items-center gap-1 text-sm font-medium mt-1 bg-main/5 hover:bg-main/10 px-3 py-1.5 rounded-md transition-colors"
         >
             <i className="fa-solid fa-plus text-xs"></i> Add {placeholder}
@@ -164,19 +166,19 @@ export default function Packages() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <div className="bg-gradient-to-r from-main/10 to-main/5 px-6 py-4 ">
-                                {isEditing ? (
-                                    <Input
-                                        label="Name"
-                                        value={current.name}
-                                        onChange={(e) => updateField("name", e.target.value)}
-                                        className="mb-0"
-                                    />
-                                ) : (
-                                    <h3 className="text-xl font-semibold text-gray-800">{pkg.name}</h3>
-                                )}
+
+                            {isEditing ? 
+                                <Input
+                                    label="Name"
+                                    value={current.name}
+                                    onChange={(e) => updateField("name", e.target.value)}
+                                    className="mb-0"
+                                />
+                             : <div className="bg-gradient-to-r from-main/10 to-main/5 px-6 py-4 ">
+                                <h3 className="text-xl font-semibold text-gray-800">{pkg.name}</h3>
                             </div>
-                            
+                                }
+
                             <div className="p-6 flex-grow">
                                 {isEditing ? (
                                     <div className="space-y-4">
@@ -241,7 +243,7 @@ export default function Packages() {
                                             <span className="bg-main/10 text-main px-3 py-1 rounded-full text-xs font-medium">{pkg.category.name}</span>
                                             {pkg.isFixed && <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Fixed Price</span>}
                                         </div>
-                                        
+
                                         {pkg.target_audience.length > 0 && (
                                             <div className="mb-4">
                                                 <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
@@ -252,7 +254,7 @@ export default function Packages() {
                                                 </ul>
                                             </div>
                                         )}
-                                        
+
                                         {pkg.details.length > 0 && (
                                             <div className="mb-4">
                                                 <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
@@ -263,7 +265,7 @@ export default function Packages() {
                                                 </ul>
                                             </div>
                                         )}
-                                        
+
                                         {pkg.post_session_benefits.length > 0 && (
                                             <div>
                                                 <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
@@ -281,14 +283,14 @@ export default function Packages() {
                             <div className={`flex justify-end gap-2 p-4 border-t border-main ${isEditing ? 'bg-gray-50' : ''}`}>
                                 {isEditing ? (
                                     <>
-                                        <button 
-                                            onClick={handleSave} 
+                                        <button
+                                            onClick={handleSave}
                                             className="bg-green-500 text-white hover:bg-green-600 px-4 py-2 rounded-lg flex items-center gap-1 transition-colors"
                                         >
                                             <i className="fa-solid fa-check"></i> Save
                                         </button>
-                                        <button 
-                                            onClick={handleCancelEdit} 
+                                        <button
+                                            onClick={handleCancelEdit}
                                             className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg flex items-center gap-1 transition-colors"
                                         >
                                             <i className="fa-solid fa-times"></i> Cancel
@@ -296,14 +298,14 @@ export default function Packages() {
                                     </>
                                 ) : (
                                     <>
-                                        <button 
-                                            onClick={() => handleEdit(pkg)} 
+                                        <button
+                                            onClick={() => handleEdit(pkg)}
                                             className="text-blue-600 hover:bg-blue-50 p-2 rounded-lg flex items-center gap-1 transition-colors"
                                         >
                                             <i className="fa-solid fa-edit"></i> Edit
                                         </button>
-                                        <button 
-                                            onClick={() => handleDelete(pkg)} 
+                                        <button
+                                            onClick={() => handleDelete(pkg)}
                                             className="text-red-600 hover:bg-red-50 p-2 rounded-lg flex items-center gap-1 transition-colors"
                                         >
                                             <i className="fa-solid fa-trash"></i> Delete
@@ -381,7 +383,7 @@ export default function Packages() {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                     >
-                            <AddNewPackageModel closeModel={() => dispatch({ type: "HIDE_ADD_MODAL" })} />
+                        <AddNewPackageModel closeModel={() => dispatch({ type: "HIDE_ADD_MODAL" })} />
                     </motion.div>
                 </AnimatePresence>
             )}

@@ -11,6 +11,11 @@ const categorySchema = new mongoose.Schema(
         slug: {
             type: String,
             unique: true,
+        }, 
+        minHours: {
+            type: Number,
+            default: 0,
+            min: [0, "Min hours must be greater than or equal to 0"],
         },
     },
     { timestamps: true }
