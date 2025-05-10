@@ -4,22 +4,7 @@ const AppError = require('../../utils/app-error');
 const { HTTP_STATUS_TEXT } = require('../../config/system-variables');
 const { calculatePackagePrices } = require('../../utils/package-price-calculator');
 
-// get all Hourly Packages
-// exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
-//     const hourlyPackage = await HourlyPackageModel.find();
-//     if (hourlyPackage.length === 0) {
-//         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No hourly packages found"));
-//     }
-//     const price = calculatePackagePrices({ package: hourlyPackage[2], hours: 18 });
-//     res.status(200).json({
-//         status: HTTP_STATUS_TEXT.SUCCESS,
-//         data: {
-//             packages: hourlyPackage,
-//             price
-
-//         },
-//     });
-// });
+// get all hourly packages
 exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
     const hourlyPackages = await HourlyPackageModel.find();
 
@@ -46,12 +31,11 @@ exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
     });
 });
 
-
 // create hourly package
 exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
-    const { name, description, details, icon } = req.body;
+    const { name, description, details, category, post_session_benefits , target_audience } = req.body;
 
-    if (!name || !description || !details) {
+    if (!name || !description || !details , !category || !post_session_benefits || !target_audience) {
         return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide all required fields"));
     }
 
@@ -59,7 +43,9 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
         name,
         description,
         details,
-        icon
+        category,
+        post_session_benefits,
+        target_audience
     });
 
     res.status(201).json({
