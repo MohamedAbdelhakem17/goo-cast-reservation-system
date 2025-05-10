@@ -45,7 +45,7 @@ export default function AvailableSlots({ slots }) {
 
     const selectEndTimeSlot = (slot) => {
         setBookingField("endSlot", slot.endTime);
-        setBookingField("studio.price", slot.totalPrice || bookingData.studio?.price);
+        setBookingField("totalPrice", slot.totalPrice || bookingData.studio?.totalPrice);
     };
 
     return slots?.length > 0

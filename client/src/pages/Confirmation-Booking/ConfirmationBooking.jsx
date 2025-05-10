@@ -4,9 +4,12 @@ import { useState } from "react";
 import { useAuth } from "../../context/Auth-Context/AuthContext";
 import { useBooking } from "../../context/Booking-Context/BookingContext";
 import { useNavigate } from "react-router-dom";
+import useTimeConvert from "../../hooks/useTimeConvert";
 
 export default function ConfirmationBooking() {
     const { bookingData, handleSubmit } = useBooking();
+    const timeFormat = useTimeConvert();
+
     const {
         studio,
         date,
@@ -14,6 +17,7 @@ export default function ConfirmationBooking() {
         endSlot,
         duration,
         selectedPackage,
+        totalPrice: totalPriceFromLocalStorage,
         selectedAddOns,
         personalInfo,
     } = bookingData;
@@ -47,9 +51,8 @@ export default function ConfirmationBooking() {
         }, 0) || 0;
 
     const totalPrice =
-        Number(studio?.price || 0) +
         totalAddOnPrice +
-        (selectedPackage?.price || 0);
+        totalPriceFromLocalStorage;
 
     const goBack = () => {
         localStorage.setItem("bookingStep", 4);
@@ -163,14 +166,14 @@ export default function ConfirmationBooking() {
                                         <div className="bg-gray-50 p-3 rounded-xl">
                                             <p className="text-sm text-gray-500">Duration</p>
                                             <p className="font-medium text-gray-800">
-                                                {selectedPackage.duration} hours
+                                                {duration} hours
                                             </p>
                                         </div>
 
                                         <div className="bg-main/80 p-3 rounded-xl">
                                             <p className="text-sm text-white">Package Price</p>
                                             <p className="font-bold text-white">
-                                                {selectedPackage.price} EGP
+                                                {totalPrice} EGP
                                             </p>
                                         </div>
                                     </div>
@@ -211,7 +214,7 @@ export default function ConfirmationBooking() {
                                     <i className="fa-regular fa-clock text-sm text-white"></i>
                                     <div>
                                         <p className="text-gray-700 font-medium">
-                                            {startSlot} - {endSlot}
+                                            {timeFormat(startSlot)} - {timeFormat(endSlot)}
                                         </p>
                                         <p className="text-sm text-gray-500">
                                             Duration: {duration} hours

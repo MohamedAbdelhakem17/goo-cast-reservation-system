@@ -1,8 +1,10 @@
 import React from 'react'
 import { useBooking } from '../../../context/Booking-Context/BookingContext'
+import useTimeConvert from '../../../hooks/useTimeConvert'
 
 export default function Cart() {
     const { bookingData } = useBooking()
+    const formatTime = useTimeConvert()
 
     const formatDate = (dateString) => {
         const options = { year: "numeric", month: "short", day: "numeric" }
@@ -13,13 +15,14 @@ export default function Cart() {
         return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
     }, 0) || 0
 
-    const totalPrice = Number(bookingData.studio?.price || 0) + totalAddOnPrice + (bookingData.selectedPackage?.price || 0)
+    const totalPrice = totalAddOnPrice + (bookingData.totalPrice || 0)
 
     if (!bookingData) {
         return <div>Loading...</div>
     }
 
 
+    console.log(bookingData)
 
     return (
         <div>
@@ -37,19 +40,11 @@ export default function Cart() {
                             <div>
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.studio.name}</h5>
                                 <p className="text-sm text-gray-500">{formatDate(bookingData.date)}</p>
-                                <p className="text-sm text-gray-500">start time: {bookingData.startSlot}</p>
-                                <p className="text-sm text-gray-500">End time: {bookingData.endSlot}</p>
-                                <p className="text-sm text-gray-500">Duration: {bookingData.endSlot?.split(":")[0] - bookingData.startSlot?.split(":")[0]} hour(s)</p>
+                                <p className="text-sm text-gray-500">start time: {formatTime(bookingData.startSlot)}</p>
+                                <p className="text-sm text-gray-500">End time: {formatTime(bookingData.endSlot)}</p>
                             </div>
                         </div>
 
-                        {/* Total Price */}
-                        <div className="pt-3 flex items-center justify-between">
-                            <p className="text-sm text-gray-400">Total Price</p>
-                            <p className="text-lg font-bold text-main">
-                                {Number(bookingData.studio.price)} EGP
-                            </p>
-                        </div>
                     </div>
                 </>
             )}
@@ -62,12 +57,12 @@ export default function Cart() {
                         <div className="flex justify-between items-start">
                             <div>
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.selectedPackage.name}</h5>
-                                <p className="text-sm text-gray-500">{bookingData.selectedPackage.duration} hour</p>
+                                <p className="text-sm text-gray-500">{bookingData.duration} hour</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-gray-400">Package Price</p>
                                 <p className="text-lg font-bold text-main">
-                                    {bookingData.selectedPackage.price} EGP
+                                    {bookingData.totalPrice} EGP
                                 </p>
                             </div>
                         </div>
