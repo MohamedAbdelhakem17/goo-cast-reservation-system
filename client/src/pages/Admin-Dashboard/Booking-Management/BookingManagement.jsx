@@ -6,6 +6,7 @@ import TableRow from "../../../components/Admin-Dashboard/Booking-Management/Tab
 import { GetBookings } from "../../../apis/Booking/booking.api";
 import HeaderAndFilter from "../../../components/Admin-Dashboard/Booking-Management/Header-And-Filter/HeaderAndFilter";
 import Loading from "../../../components/shared/Loading/Loading";
+import BookingInfoModel from "../../../components/shared/Booking-Info-Model/BookingInfoModel";
 
 export default function BookingManagement() {
   // Const variables
@@ -170,7 +171,7 @@ export default function BookingManagement() {
       </div>
 
       {/* Booking Details Modal */}
-      {selectedBooking && <BookingDetailsModal booking={selectedBooking} closeModel={() => setSelectedBooking(null)} />}
+      {selectedBooking && <BookingInfoModel selectedBooking={selectedBooking} setSelectedBooking={setSelectedBooking} />}
     </div>
   );
 }

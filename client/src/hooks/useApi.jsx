@@ -5,7 +5,7 @@ export const useGetData = (key, url, filters = {}) => {
     const { status, studioId, date, page = 1, limit = 10 } = filters;
 
     return useQuery({
-        queryKey: [...key, status, studioId, date, page, limit],
+        queryKey: [...key],
         queryFn: async () => {
             try {
                 const params = new URLSearchParams();
@@ -64,8 +64,6 @@ export const useDeleteData = (key, url) => {
     return useMutation({
         mutationFn: async ({ id, payload }) => {
             const base_url = id ? `${url}/${id}` : url;
-            console.log(base_url);
-            console.log(payload);
             const { data } = await axiosInstance.delete(base_url, {
                 data: payload, 
             });

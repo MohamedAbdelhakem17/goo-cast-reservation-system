@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import StarRating from "../../../hooks/useRate";
 import useGetAllStudios from "../../../apis/studios/studios.api";
-import usePriceFormat from "../../../hooks/usePriceFormat";
+// import usePriceFormat from "../../../hooks/usePriceFormat";
 export default function Studio() {
 
-    const priceFormat = usePriceFormat()
+    // const priceFormat = usePriceFormat()
     // Animation variants for staggered animations
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -155,7 +155,7 @@ export default function Studio() {
                                 <h3 className="text-xl font-bold text-gray-800">
                                     {studio.name}
                                 </h3>
-                                <StarRating rating={studio.ratingAverage} />
+                                {/* <StarRating rating={studio.ratingAverage} /> */}
                             </div>
 
                             <p className="text-gray-600 flex items-center gap-2">
@@ -163,7 +163,7 @@ export default function Studio() {
                                 <span className="text-lg">{studio.address}</span>
                             </p>
 
-                            <p className="text-main font-bold">{priceFormat(studio.pricePerHour || studio.basePricePerSlot)}  per hour</p>
+                            {/* <p className="text-main font-bold">{priceFormat(studio.pricePerHour || studio.basePricePerSlot)}  per hour</p> */}
 
                             <motion.div
                                 className="mt-3 h-1 bg-main rounded-full"

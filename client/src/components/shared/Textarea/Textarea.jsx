@@ -63,7 +63,7 @@ const Textarea = ({
                         onBlur && onBlur(e);
                     }}
                     onFocus={() => setIsFocused(true)}
-                    rows={3}
+                    rows={2}
                 />
             </div>
 

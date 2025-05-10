@@ -34,19 +34,9 @@ const bookingSchema = new mongoose.Schema({
     },
 
     package: {
-        id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "HourlyPackage",
-            required: true,
-        },
-        price: {
-            type: Number,
-            required: true,
-        },
-        duration: {
-            type: Number,
-            required: true,
-        }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "HourlyPackage",
+        required: true,
     },
 
     addOns: [
@@ -102,10 +92,6 @@ const bookingSchema = new mongoose.Schema({
         required: true,
     },
 
-    studioPrice: {
-        type: Number,
-        required: true,
-    },
 
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -118,26 +104,26 @@ const bookingSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// bookingSchema.pre(/^find/, function (next) {
-//     this.populate([
-//         {
-//             path: "studio",
-//             select: "name thumbnail ",
-//         },
-//         {
-//             path: "package.id",
-//             select: "name price",
-//         },
-//         {
-//             path: "addOns.item",
-//             select: "name price",
-//         },
-//         {
-//             path: "createdBy",
-//             select: "fullName email",
-//         }
-//     ]);
-//     next();
-// });
+bookingSchema.pre(/^find/, function (next) {
+    this.populate([
+        {
+            path: "studio",
+            select: "name thumbnail address",
+        },
+        {
+            path: "package.id",
+            select: "name ",
+        },
+        {
+            path: "addOns.item",
+            select: "name price",
+        },
+        {
+            path: "createdBy",
+            select: "fullName email",
+        }
+    ]);
+    next();
+});
 
 module.exports = mongoose.model("Booking", bookingSchema);
