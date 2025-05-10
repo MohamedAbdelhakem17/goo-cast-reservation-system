@@ -83,18 +83,16 @@ export default function useBookingFormik() {
                 return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
             }, 0) || 0
 
-            const totalPrice = Number(values.studio?.price || 0) + totalAddOnPrice + (values.selectedPackage?.price || 0)
+            const totalPrice = totalAddOnPrice + (values.totalPrice || 0)
             const user_id = JSON.parse(localStorage.getItem("user"))?.user?.id
 
             const dataBaseObject = {
                 ...values,
                 studio: {
                     id: values.studio.id,
-                    price: values.studio.price,
                 },
                 package: {
                     id: values.selectedPackage.id,
-                    slot: values.selectedPackage.slot,
                 },
                 totalPrice,
                 user_id
