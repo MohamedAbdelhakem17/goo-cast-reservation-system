@@ -3,7 +3,7 @@ import { useBooking } from '../../../context/Booking-Context/BookingContext'
 import useTimeConvert from '../../../hooks/useTimeConvert'
 
 export default function Cart() {
-    const { bookingData } = useBooking()
+    const { bookingData  , handleNextStep} = useBooking()
     const formatTime = useTimeConvert()
 
     const formatDate = (dateString) => {
@@ -38,9 +38,9 @@ export default function Cart() {
                             />
                             <div>
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.studio.name}</h5>
-                                <p className="text-sm text-gray-500">{formatDate(bookingData.date)}</p>
-                                <p className="text-sm text-gray-500">start time: {formatTime(bookingData.startSlot)}</p>
-                                <p className="text-sm text-gray-500">End time: {formatTime(bookingData.endSlot)}</p>
+                                <p className="text-sm text-gray-500">in : {formatDate(bookingData.date)}</p>
+                                <p className="text-sm text-gray-500">From :  {formatTime(bookingData.startSlot)}</p>
+                                <p className="text-sm text-gray-500">To :  {formatTime(bookingData.endSlot)}</p>
                             </div>
                         </div>
 
@@ -56,7 +56,7 @@ export default function Cart() {
                         <div className="flex justify-between items-start">
                             <div>
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.selectedPackage.name}</h5>
-                                <p className="text-sm text-gray-500">{bookingData.duration} hour</p>
+                                <p className="text-sm text-gray-500">duration: {bookingData.duration} hour</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-gray-400">Package Price</p>
@@ -101,6 +101,11 @@ export default function Cart() {
                     {totalPrice} EGP
                 </p>
             </div>
+
+            <button onClick={handleNextStep} className="text-main flex items-baseline justify-center cursor-pointer mx-auto gap-1 text-md font-medium mt-1 bg-main/5 hover:bg-main/10 px-3 py-1.5 rounded-md transition-colors ">
+                <span className='m-0'>complete booking</span>
+                <i className="fa-solid fa-chevron-right text-xs m-0"></i>
+            </button>
         </div>
     )
 }

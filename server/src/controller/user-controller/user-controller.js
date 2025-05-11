@@ -66,6 +66,7 @@ exports.editLoginUserPassword = asyncHandler(async (req, res, next) => {
     })
 })
 
+
 // Get User Stats
 exports.getUserStats = asyncHandler(async (req, res, next) => {
     const { _id } = req.user;
