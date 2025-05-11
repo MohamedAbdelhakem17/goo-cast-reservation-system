@@ -134,18 +134,13 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
                                 <div className="bg-gray-50 p-4 rounded-xl">
                                     <div className="flex items-center justify-between mb-3">
                                         <div>
-                                            <p className="text-lg font-medium">{selectedBooking.package.id.name}</p>
-                                            <p className="text-sm text-gray-500">{selectedBooking.package.duration} hours</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-xs text-gray-500">Base Price</p>
-                                            <p className="font-medium">{priceFormat(selectedBooking.package.id.price)}</p>
+                                            <p className="text-lg font-medium">{selectedBooking.package.name}</p>
                                         </div>
                                     </div>
                                     <div className="pt-2 border-t border-gray-200">
                                         <div className="flex justify-between items-center">
                                             <span className="font-medium">Total Package Price:</span>
-                                            <span className="font-medium">{priceFormat(selectedBooking.package.price)}</span>
+                                            <span className="font-medium">{priceFormat(selectedBooking?.packagePrice  || 0)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -191,14 +186,10 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
                                 Payment Summary
                             </h3>
                             <div className="bg-gray-50 p-4 rounded-xl space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-600">Studio Price:</span>
-                                    <span className="text-gray-600">{priceFormat(selectedBooking.studioPrice)}</span>
-                                </div>
                                 {selectedBooking.package && (
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-600">Package Price:</span>
-                                        <span className="text-gray-600">{priceFormat(selectedBooking.package.price)}</span>
+                                        <span className="text-gray-600">{priceFormat(selectedBooking.packagePrice || 0)}</span>
                                     </div>
                                 )}
                                 {selectedBooking.totalAddOnsPrice > 0 && (

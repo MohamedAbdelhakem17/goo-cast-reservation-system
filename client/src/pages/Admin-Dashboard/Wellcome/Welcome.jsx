@@ -30,10 +30,11 @@ const Welcome = () => {
         totalStudios,
         totalBookings,
         totalRevenue,
-        mostBookedDay,
         mostBookedStudios,
         mostBookedPackages,
-        mostBookedAddOns
+        mostBookedAddOns,
+        mostBookedDay,
+        mostBookedUser
     } = statsData?.data || {};
 
     const peakBookingDay = mostBookedDay?.reduce((max, current) =>
@@ -112,7 +113,7 @@ const Welcome = () => {
                 </div>
             </div>
 
-            <MostUserActive userData={statsData?.data.mostBookedUser[0]} />
+            <MostUserActive userData={statsData?.data.mostBookedUser} />
             {mostBookedDay && mostBookedDay.length > 0 && (
                 <div className="mb-8">
                     {/* <BookingTrendsChart data={mostBookedDay} /> */}

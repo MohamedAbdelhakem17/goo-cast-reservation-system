@@ -99,13 +99,11 @@ const BookingReceiptPDF = ({ booking }) => {
                     <Text style={styles.sectionTitle}>Package</Text>
                     <View style={[styles.row, styles.tableHeader]}>
                         <Text>Name</Text>
-                        <Text>Duration</Text>
                         <Text>Price</Text>
                     </View>
                     <View style={[styles.row, styles.tableRow]}>
                         <Text>{booking.package.id.name}</Text>
-                        <Text>{booking.package.duration} hrs</Text>
-                        <Text>{priceFormat(booking.package.price)} </Text>
+                        <Text>{priceFormat(booking.packagePrice)} </Text>
                     </View>
                 </View>
             )}
@@ -132,14 +130,10 @@ const BookingReceiptPDF = ({ booking }) => {
             {/* Payment Summary */}
             <View style={{ marginBottom: 20 }}>
                 <Text style={styles.sectionTitle}>Payment Summary</Text>
-                <View style={styles.row}>
-                    <Text>Studio Price:</Text>
-                    <Text>{priceFormat(booking.studioPrice)} </Text>
-                </View>
                 {booking.package && (
                     <View style={styles.row}>
                         <Text>Package Price:</Text>
-                        <Text>{priceFormat(booking.package.price)} </Text>
+                        <Text>{priceFormat(booking.packagePrice)} </Text>
                     </View>
                 )}
                 {booking.totalAddOnsPrice > 0 && (

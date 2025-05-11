@@ -200,7 +200,7 @@ export default function MostUserActive({ userData }) {
                                 <p className="text-2xl font-semibold text-gray-800">{packageBookings}</p>
                             </div>
                             <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-1">Most Booked Package</h4>
-                            <p className="text-lg font-semibold text-gray-800">{mostBookedPackage}</p>
+                            <p className="text-lg font-semibold text-gray-800">{mostBookedPackage || 'unknown'}</p>
                         </motion.div>
 
                         {/* Add-On Card */}

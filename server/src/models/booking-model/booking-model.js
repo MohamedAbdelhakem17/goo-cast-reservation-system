@@ -92,7 +92,10 @@ const bookingSchema = new mongoose.Schema({
         required: true,
     },
 
-
+    totalPackagePrice: {
+        type: Number,
+        required: true,
+    } ,
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -111,7 +114,7 @@ bookingSchema.pre(/^find/, function (next) {
             select: "name thumbnail address",
         },
         {
-            path: "package.id",
+            path: "package",
             select: "name ",
         },
         {
