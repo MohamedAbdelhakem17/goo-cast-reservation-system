@@ -80,7 +80,7 @@ export default function Booking() {
         <StepIndicator />
 
         {/* Mobile Cart Button */}
-        {currentStep === 5&& (
+        {currentStep === 4&& (
           <div className="lg:hidden text-right px-4 my-1">
             <button
               onClick={() => setShowMobileCart(true)}
@@ -122,15 +122,15 @@ export default function Booking() {
                   {currentStep === 1 && <SelectPackage />}
                   {currentStep === 2 && <SelectDateTime />}
                   {currentStep === 3 && <SelectStudio />}
-                  {currentStep === 4 && <PersonalInformation />}
-                  {currentStep === 5 && <SelectAdditionalServices />}
+                  {currentStep === 4 && <SelectAdditionalServices />}
+                  {currentStep === 5 && <PersonalInformation />}
                 </motion.div>
 
                 {/* Cart Sidebar on Large Screens */}
-                {currentStep === 5 && (
+                {currentStep === 4 && (
                   <motion.div
                     variants={itemVariants}
-                    className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block bg-gray-50 shadow-md sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto"
+                    className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block bg-gray-50 shadow-md sticky top-24 max-h-auto overflow-y-auto"
                   >
                     <Cart />
                   </motion.div>

@@ -10,14 +10,14 @@ export const useBooking = () => useContext(BookingContext);
 
 export default function BookingProvider({ children }) {
     // Constants
-    const STEP_LABELS = ["Select Service", "Select Date ", "Select Studio & Time", "Personal Information", "Select Additional Services"];
+    const STEP_LABELS = ["Select Service", "Select Date ", "Select Studio & Time", "Select Additional Services" , "Personal Information"];
     const TOTAL_STEPS = STEP_LABELS.length;
     const STEP_FIELDS = {
         1: ["selectedPackage"],
         2: ["date", "persons"],
-        3: ["studio"], // start Slot & end Slot 
-        4: ["personalInfo.fullName", "personalInfo.phone", "personalInfo.email"],
-        5: ["selectedAddOns"],
+        3: ["studio" , "startSlot", "endSlot"], // start Slot & end Slot 
+        4: ["selectedAddOns"],
+        5: ["personalInfo.fullName", "personalInfo.phone", "personalInfo.email"],
     };
 
     // Hooks
