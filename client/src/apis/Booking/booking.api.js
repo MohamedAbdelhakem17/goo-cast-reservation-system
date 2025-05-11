@@ -62,7 +62,6 @@ const GetBookings = (filters) => useGetData("bookings", `${BASE_URL}/bookings`, 
 
 const ChangeBookingStatus = () => useUpdateData("bookings", `${BASE_URL}/bookings`);
 
-
 const CreateBooking = () => usePostData("bookings", `${BASE_URL}/bookings`);
 
 const GetUserBookings = () => useGetData("userBookings", `${BASE_URL}/bookings/user-bookings`);
