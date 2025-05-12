@@ -145,7 +145,11 @@ exports.getUserStats = asyncHandler(async (req, res, next) => {
         studioName: lastBookingBeforeToday[0]?.studio?.name,
         packageName: lastBookingBeforeToday[0]?.package?.name,
         bookingDate: lastBookingBeforeToday[0]?.date,
-        price: nextBookingAfterToday[0]?.totalPrice,
+        price: lastBookingBeforeToday[0]?.totalPrice,
+        startTime: lastBookingBeforeToday[0]?.startSlot,
+        endTime: lastBookingBeforeToday[0]?.endSlot,
+        duration: lastBookingBeforeToday[0]?.duration,
+        status: lastBookingBeforeToday[0]?.status,
       },
       nextBookingAfterToday: {
         studioName: nextBookingAfterToday[0]?.studio?.name,

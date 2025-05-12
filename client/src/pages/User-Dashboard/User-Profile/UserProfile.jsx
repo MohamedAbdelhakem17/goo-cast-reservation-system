@@ -25,6 +25,8 @@ const UserProfile = () => {
                     {/* Personal Information Card */}
                     <UserData user={user?.data} />
 
+                    <UpcomingBooking data={userStats?.data?.nextBookingAfterToday} label="Upcoming Booking" />
+
                     {/* Bookings and Favorites Section */}
                     <div className="grid md:grid-cols-2 gap-8">
                         {
@@ -33,9 +35,8 @@ const UserProfile = () => {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ duration: 0.5, delay: 0.4 }}
-                                    className="h-full"
                                 >
-                                    <UpcomingBooking data={userStats?.data?.nextBookingAfterToday} />
+                                    <UpcomingBooking data={userStats?.data?.lastBookingBeforeToday} label="Last Booking" />
                                 </motion.div>
                             )
                         }
@@ -43,9 +44,8 @@ const UserProfile = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 0.6 }}
-                            className="h-full"
                         >
-                            <FavoriteStudio favoriteStudio={userStats?.data?.mostStudioBooked} />
+                            <FavoriteStudio favoriteStudio={userStats?.data?.mostStudioBooked} favoritePackage={userStats?.data?.mostPackageBooked} />
                         </motion.div>
                     </div>
                 </div>
