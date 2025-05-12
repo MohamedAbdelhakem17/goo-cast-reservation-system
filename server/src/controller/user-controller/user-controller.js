@@ -26,7 +26,6 @@ exports.updateUserData = asyncHandler(async (req, res, next) => {
   const { _id } = req.user;
   const { name, phone } = req.body;
 
-
   const updateFields = { name, phone };
   const userData = await AuthModel.findByIdAndUpdate(_id, updateFields, {
     new: true,
@@ -138,27 +137,30 @@ exports.getUserStats = asyncHandler(async (req, res, next) => {
     console.log("=========================================");
   };
 
-  print(mostStudioBooked, "mostStudioBooked");
-
   // Return the data
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: {
       lastBookingBeforeToday: {
         studioName: lastBookingBeforeToday[0]?.studio?.name,
-        packageName: lastBookingBeforeToday[0]?.package?.name, 
+        packageName: lastBookingBeforeToday[0]?.package?.name,
         bookingDate: lastBookingBeforeToday[0]?.date,
         price: nextBookingAfterToday[0]?.totalPrice,
       },
       nextBookingAfterToday: {
         studioName: nextBookingAfterToday[0]?.studio?.name,
-        packageName: nextBookingAfterToday[0]?.package?.name, 
+        packageName: nextBookingAfterToday[0]?.package?.name,
         bookingDate: nextBookingAfterToday[0]?.date,
         price: nextBookingAfterToday[0]?.totalPrice,
+        startTime: nextBookingAfterToday[0]?.startSlot,
+        endTime: nextBookingAfterToday[0]?.endSlot,
+        duration: nextBookingAfterToday[0]?.duration,
+        status: nextBookingAfterToday[0]?.status,
       },
 
       mostStudioBooked: {
-        studioName: studioDetails?.studio?.name, 
+        name: studioDetails?.studio?.name,
+        location: studioDetails?.studio?.address,
         count: mostStudioBooked[0]?.count,
       },
 

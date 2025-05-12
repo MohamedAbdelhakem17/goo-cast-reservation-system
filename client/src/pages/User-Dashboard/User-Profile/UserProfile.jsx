@@ -27,21 +27,25 @@ const UserProfile = () => {
 
                     {/* Bookings and Favorites Section */}
                     <div className="grid md:grid-cols-2 gap-8">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
-                            className="h-full"
-                        >
-                            <UpcomingBooking />
-                        </motion.div>
+                        {
+                            Object.keys(userStats?.data?.nextBookingAfterToday).length > 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.4 }}
+                                    className="h-full"
+                                >
+                                    <UpcomingBooking data={userStats?.data?.nextBookingAfterToday} />
+                                </motion.div>
+                            )
+                        }
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 0.6 }}
                             className="h-full"
                         >
-                            <FavoriteStudio />
+                            <FavoriteStudio favoriteStudio={userStats?.data?.mostStudioBooked} />
                         </motion.div>
                     </div>
                 </div>
