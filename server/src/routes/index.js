@@ -7,7 +7,7 @@ const AnalyticsRouter = require("./analytics-route/analytics-route");
 const PriceRuleRouter = require("./price-rule-route/price-rule-route");
 const PriceExceptionRouter = require("./price-exception-route/price-exception-route");
 const CategoryRouter = require("./category-route/category-route");
-
+const UserRouter = require("./user-route/user-route");
 
 const amountRoutes = (app) => {
     app.use("/api/v1/auth", AuthRouter);
@@ -19,6 +19,7 @@ const amountRoutes = (app) => {
     app.use("/api/v1/price-rules", PriceRuleRouter);
     app.use("/api/v1/price-exceptions", PriceExceptionRouter);
     app.use("/api/v1/categories", CategoryRouter);
+    app.use("/api/v1/user", UserRouter);
 
     // Error handling and sending email
     app.use("/api/v1/error-notification", require("./email-error").SendEmailRoute);

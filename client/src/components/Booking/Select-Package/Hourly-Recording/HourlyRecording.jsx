@@ -5,7 +5,7 @@ import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 export default function HourlyRecording({ packages }) {
   const { setBookingField, handleNextStep, bookingData } = useBooking();
 
-  const [selectedPackage, setSelectedPackage] = useState(bookingData.selectedPackage?.id|| null);
+  const [selectedPackage, setSelectedPackage] = useState(bookingData.selectedPackage?.id || null);
 
   const handlePackageSelect = (pkg) => {
     setSelectedPackage(pkg._id);
@@ -13,8 +13,11 @@ export default function HourlyRecording({ packages }) {
       id: pkg._id,
       name: pkg.name,
       category: pkg.category._id,
-      slug: pkg.category.slug, 
+      slug: pkg.category.slug,
     });
+    setBookingField("startSlot", null);
+    setBookingField("endSlot", null);
+    setBookingField("studio", null);
     handleNextStep()
   };
 

@@ -11,8 +11,10 @@ export default function AvailableSlots({ slots }) {
     const { mutate: getSlots, data } = GetAvailableEndSlots();
     const timeFormat = useTimeConvert()
 
+    console.log(bookingData);
     useEffect(() => {
         if (bookingData.startSlot && bookingData.studio?.id && bookingData.date) {
+            setBookingField("endSlot", null);
             getSlots(
                 {
                     startTime: bookingData.startSlot,
@@ -47,6 +49,13 @@ export default function AvailableSlots({ slots }) {
         setBookingField("endSlot", slot.endTime);
         setBookingField("totalPrice", slot.totalPrice || bookingData.studio?.totalPrice);
     };
+
+    useEffect(() => {
+        const endSlot = bookingData.endSlot;
+        if (endSlot) {
+            setBookingField("endSlot", endSlot);
+        }
+    }, [])
 
     return slots?.length > 0
         ? <div className="mt-5">
