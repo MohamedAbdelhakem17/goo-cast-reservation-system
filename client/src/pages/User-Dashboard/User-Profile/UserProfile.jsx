@@ -25,12 +25,15 @@ const UserProfile = () => {
                     {/* Personal Information Card */}
                     <UserData user={user?.data} />
 
-                    <UpcomingBooking data={userStats?.data?.nextBookingAfterToday} label="Upcoming Booking" />
+                    {
+                        Boolean(Object.keys(userStats?.data?.nextBookingAfterToday).length) && <UpcomingBooking data={userStats?.data?.nextBookingAfterToday} label="Upcoming Booking" />
+
+                    }
 
                     {/* Bookings and Favorites Section */}
                     <div className="grid md:grid-cols-2 gap-8">
                         {
-                            Object.keys(userStats?.data?.nextBookingAfterToday).length > 0 && (
+                            Boolean(Object.keys(userStats?.data?.lastBookingBeforeToday).length) && (
                                 <motion.div
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
