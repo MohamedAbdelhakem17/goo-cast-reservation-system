@@ -30,7 +30,12 @@ const userSchema = new mongoose.Schema({
     active: {
         type: Boolean,
         default: false
-    }
+    }, 
+
+    phone: {
+        type: String,
+        trim: true,
+    },
     
 }, { timestamps: true });
 

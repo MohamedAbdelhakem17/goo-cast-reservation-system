@@ -140,7 +140,7 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
                                     <div className="pt-2 border-t border-gray-200">
                                         <div className="flex justify-between items-center">
                                             <span className="font-medium">Total Package Price:</span>
-                                            <span className="font-medium">{priceFormat(selectedBooking?.packagePrice  || 0)}</span>
+                                            <span className="font-medium">{priceFormat(selectedBooking?.totalPackagePrice  || 0)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -189,7 +189,7 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
                                 {selectedBooking.package && (
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-600">Package Price:</span>
-                                        <span className="text-gray-600">{priceFormat(selectedBooking.packagePrice || 0)}</span>
+                                        <span className="text-gray-600">{priceFormat(selectedBooking.totalPackagePrice || 0)}</span>
                                     </div>
                                 )}
                                 {selectedBooking.totalAddOnsPrice > 0 && (
