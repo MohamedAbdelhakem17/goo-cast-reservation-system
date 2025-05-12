@@ -41,7 +41,7 @@ export default function FavoriteStudio({ favoriteStudio, favoritePackage }) {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-white p-3 rounded-lg shadow-sm border border-slate-100">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <i className="fa-solid fa-calendar-days  text-indigo-500"></i>
+                                    <i className="fa-solid fa-calendar-days  text-rose-500"></i>
                                     <span className="text-sm font-medium text-slate-700">Bookings</span>
                                 </div>
                                 <p className="text-xl font-bold text-slate-900">{favoriteStudio.count}</p>
@@ -76,7 +76,7 @@ export default function FavoriteStudio({ favoriteStudio, favoritePackage }) {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-white p-3 rounded-lg shadow-sm border border-slate-100">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <i className="fa-solid fa-calendar-days  text-indigo-500"></i>
+                                    <i className="fa-solid fa-calendar-days  text-rose-500"></i>
                                     <span className="text-sm font-medium text-slate-700">Bookings</span>
                                 </div>
                                 <p className="text-xl font-bold text-slate-900">{favoriteStudio.count}</p>
