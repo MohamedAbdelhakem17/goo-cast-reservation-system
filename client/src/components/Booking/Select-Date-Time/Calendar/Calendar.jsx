@@ -18,6 +18,9 @@ export default function Calendar() {
                 selected={bookingData.date || handelStartDate}
                 onChange={(date) => {
                     setBookingField("date", date);
+                    setBookingField("startSlot", null);
+                    setBookingField("endSlot", null);
+                    setBookingField("studio", null);
                 }}
                 dateFormat="dd/MM/yyyy"
                 calendarClassName="w-full"

@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import StarRating from '../../../hooks/useRate'
 import { useBooking } from '../../../context/Booking-Context/BookingContext';
@@ -14,9 +15,11 @@ export default function SelectStudio() {
     // Sample studio data
     const { data: studiosData, isLoading } = useGetAvailableStudio()
     const { mutate: getSlots, data } = GetAvailableSlots()
-4
+    
     const selectStudio = (studio) => {
         setBookingField("studio", studio)
+        setBookingField("startSlot", null)
+        setBookingField("endSlot", null)
         getSlots({ studioId: studio.id, date: bookingData.date })
         setSelectedStudio(studio.id)
     }
@@ -29,6 +32,14 @@ export default function SelectStudio() {
             transition: { type: "spring", stiffness: 100 },
         },
     };
+
+    useEffect(() => {
+        const studioId = bookingData?.studio?.id
+        console.log(studioId)
+        if (studioId) {
+            getSlots({ studioId: studioId, date: bookingData.date })
+        }
+    },[])
 
     if (isLoading) return <Loading />
 

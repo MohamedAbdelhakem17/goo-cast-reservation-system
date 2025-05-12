@@ -32,7 +32,7 @@ export default function DescriptionTap({ description }) {
             animate="visible"
             variants={containerVariants}
         >
-            <motion.div className="mb-8 border-b pb-6 border-main/30" variants={itemVariants}>
+            <motion.div className="mb-8 border-b  border-t py-6 rounded-lg border-main/30" variants={itemVariants}>
                 {description && <div 
                 className="[&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-main [&_p]:text-sm [&_p]:text-gray-800 [&_p]:mt-2 [&_p]:leading-relaxed [&_p]:font-medium"
                 dangerouslySetInnerHTML={{ __html: description }} />}

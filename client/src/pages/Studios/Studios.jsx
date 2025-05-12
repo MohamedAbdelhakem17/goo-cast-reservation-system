@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import StarRating from "../../hooks/useRate";
-import useQuickBooking from "../../hooks/useQuickBooking";
+// import useQuickBooking from "../../hooks/useQuickBooking";
 import useGetAllStudios from "../../apis/studios/studios.api";
 // import usePriceFormat from "../../hooks/usePriceFormat";
 export default function Studios() {
@@ -13,7 +13,7 @@ export default function Studios() {
   const { data: studiosData, isLoading } = useGetAllStudios();
 
 
-  const { handleQuickBooking } = useQuickBooking();
+  // const { handleQuickBooking } = useQuickBooking();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -63,7 +63,7 @@ export default function Studios() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Find Your Perfect Studio
+          Find Your Perfect Setup
         </motion.h2>
 
         <motion.div
@@ -176,7 +176,7 @@ export default function Studios() {
                         <i className="fa-solid fa-bookmark mr-2"></i>
                         Save
                       </button> */}
-                      <button
+                      {/* <button
                         onClick={() => handleQuickBooking(2, {
                           image: studio.thumbnail,
                           name: studio.name,
@@ -186,7 +186,7 @@ export default function Studios() {
                         className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors cursor-pointer"
                       >
                         Book Now
-                      </button>
+                      </button> */}
                     </div>
                   </div>
 

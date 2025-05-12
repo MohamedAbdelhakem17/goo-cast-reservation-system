@@ -91,12 +91,12 @@ export default function Studio() {
                     animate="visible"
                     variants={headerVariants}
                 >
-                    Studios
+                    Setups
                 </motion.h2>
 
                 <motion.div initial="hidden" animate="visible" variants={linkVariants}>
                     <Link
-                        to="/studios"
+                        to="/setups"
                         className="flex items-center gap-2 text-gray-700 hover:text-main transition-all duration-300 group"
                     >
                         <span className="font-bold">See all</span>
