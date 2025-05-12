@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Hero from '../../components/Home/Hero/Hero'
 import Studio from '../../components/Home/Studio/Studio'
+import PackagesSection from '../../components/Home/Packages-Section/PackagesSection'
 
 const Home = () => {
   const [showMessage, setShowMessage] = useState(false)
@@ -21,7 +22,9 @@ const Home = () => {
   return (
     <>
       <Hero />
+      <PackagesSection />
       <Studio />
+
 
       <AnimatePresence>
         {showMessage && (
