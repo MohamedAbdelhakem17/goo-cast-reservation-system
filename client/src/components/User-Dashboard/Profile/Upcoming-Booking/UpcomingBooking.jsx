@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import useDateFormat from "../../../../hooks/useDateFormat";
 import usePriceFormat from "../../../../hooks/usePriceFormat";
 import useTimeConvert from "../../../../hooks/useTimeConvert";
-export default function UpcomingBooking({ data }) {
+export default function UpcomingBooking({ data , label }) {
     const formatDate = useDateFormat()
     const formatPrice = usePriceFormat()
     const timeConvert = useTimeConvert()
@@ -16,13 +16,13 @@ export default function UpcomingBooking({ data }) {
         <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 h-full">
             <div className="bg-gradient-to-r from-slate-100 to-slate-50 border-b border-slate-100 p-6">
                 <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-slate-800">Upcoming Booking</h2>
+                    <h2 className="text-xl font-bold text-slate-800">{label}</h2>
                     <span className="bg-emerald-100 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full">
                         {data.status}
                     </span>
                 </div>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-6">
                 <motion.div
                     className="flex justify-between items-center bg-slate-50 p-4 rounded-lg hover:bg-slate-100 transition-colors duration-200"
                     variants={itemVariants}
