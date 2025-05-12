@@ -13,7 +13,7 @@ export default function Navbar() {
     // Constants
     const PAGES_LINKS = [
         { name: "Home", path: "/" },
-        { name: "Studios", path: "/studios" },
+        { name: "Setups", path: "/setups" },
     ];
 
     const BUTTON_ACTIONS = [

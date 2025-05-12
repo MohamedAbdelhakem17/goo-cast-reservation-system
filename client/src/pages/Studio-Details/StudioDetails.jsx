@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import Header from '../../components/Studio-Details/Header/Header'
 import Gallery from '../../components/Studio-Details/Gallery/Gallery'
-import BookingButton from '../../components/Studio-Details/Booking-Button/BookingButton'
+// import BookingButton from '../../components/Studio-Details/Booking-Button/BookingButton'
 import Taps from '../../components/Studio-Details/Taps/Taps'
 import { GetStudioByID } from '../../apis/studios/studios.api'
 
@@ -22,12 +22,12 @@ export default function StudioDetails() {
             equipment={data?.data?.equipment}
         />
 
-        <BookingButton studio={{
+        {/* <BookingButton studio={{
             id: data.data._id,
             name: data.data.name,
             image: data.data.thumbnail,
             price: data.data.basePricePerSlot
-        }} />
+        }} /> */}
     </>
 }
 
