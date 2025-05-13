@@ -220,6 +220,8 @@ export default function PackagePrice({ selectedPackage }) {
                 </motion.span>
             </motion.div>
 
+            
+
             {/* Price Form */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
