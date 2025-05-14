@@ -5,6 +5,10 @@ import { motion } from "framer-motion"
 import { GetAllCoupons, CreateNewCoupon, UpdateCoupon, DeleteCoupon } from "../../../apis/coupon/coupon"
 import { useAnimationVariants } from "../../../hooks/useAnimationVariants"
 import { Pencil, Trash2, Plus, X, Tag, Calendar, Hash, Percent, RefreshCw } from "lucide-react"
+import Table from "../../../components/shared/Table/Table"
+import Loading from "../../../components/shared/Loading/Loading"
+
+const TABLE_HEADERS = ["NAME", "CODE", "DISCOUNT", "EXPIRES AT", "MAX USES", "ACTIONS"]
 
 export default function CouponManagement() {
     const { slideIn } = useAnimationVariants()
@@ -133,14 +137,14 @@ export default function CouponManagement() {
             animate="visible"
             exit="exit"
             variants={slideIn}
-            className="p-4 md:p-6 max-w-7xl mx-auto space-y-8"
+            className="p-4 md:p-6  mx-auto space-y-8"
         >
             {/* Toast notification */}
             {toast.show && (
                 <div
                     className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-md transform transition-transform duration-300 ease-in-out ${toast.type === "error"
-                            ? "bg-red-50 border border-red-200 text-red-700"
-                            : "bg-green-50 border border-green-200 text-green-700"
+                        ? "bg-red-50 border border-red-200 text-red-700"
+                        : "bg-green-50 border border-green-200 text-green-700"
                         }`}
                 >
                     <div className="flex items-center justify-between">
@@ -278,8 +282,8 @@ export default function CouponManagement() {
                         <button
                             type="submit"
                             className={`px-4 py-2 rounded-md text-white font-medium flex items-center ${editingCoupon
-                                    ? "bg-amber-500 hover:bg-amber-600 focus:ring-amber-500"
-                                    : "bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-500"
+                                ? "bg-amber-500 hover:bg-amber-600 focus:ring-amber-500"
+                                : "bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-500"
                                 } focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed`}
                             disabled={isCreating || isUpdating}
                         >
@@ -316,134 +320,69 @@ export default function CouponManagement() {
             </div>
 
             {/* Coupon List */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div className="bg-white  p-6 border border-gray-100">
                 <div className="pb-3 border-b border-gray-100 mb-6">
                     <h3 className="text-xl font-semibold">Available Coupons</h3>
                     <p className="text-gray-500 text-sm mt-1">Manage your existing discount coupons</p>
                 </div>
 
-                {isLoading ? (
-                    <div className="flex justify-center items-center py-12">
-                        <div className="flex flex-col items-center gap-2">
-                            <svg
-                                className="h-8 w-8 animate-spin text-gray-400"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
-                            <p className="text-gray-500">Loading coupons...</p>
-                        </div>
-                    </div>
-                ) : error ? (
+                {isLoading ? (<Loading />) : error ? (
                     <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-center">
                         <p>Error loading coupons. Please try refreshing the page.</p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    >
-                                        Name
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    >
-                                        Code
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    >
-                                        Discount
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    >
-                                        Expires
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    >
-                                        Max Uses
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    >
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {data?.data?.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={6} className="px-6 py-10 text-center text-gray-400">
-                                            No coupons found. Create your first coupon above.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    data?.data?.map((coupon) => (
-                                        <tr key={coupon._id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{coupon.name}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200 font-mono uppercase">
-                                                    {coupon.code}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700">
-                                                    {coupon.discount}%
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                {isExpired(coupon.expires_at) ? (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-red-50 text-red-700">
-                                                        Expired
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-sm">{formatDate(coupon.expires_at)}</span>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{coupon.max_uses}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div className="flex justify-end gap-2">
-                                                    <button
-                                                        onClick={() => handleEdit(coupon)}
-                                                        className="text-amber-600 hover:text-amber-900 p-1 rounded-full hover:bg-amber-50"
-                                                    >
-                                                        <Pencil className="h-4 w-4" />
-                                                        <span className="sr-only">Edit</span>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDeleteConfirm(coupon)}
-                                                        className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-50"
-                                                        disabled={isDeleting}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                        <span className="sr-only">Delete</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                    <Table headers={TABLE_HEADERS}>
+                        {data?.data?.length === 0 ? (
+                            <td colSpan={6} className="px-6 py-10 text-center text-gray-400" >
+                                No coupons found. Create your first coupon above.
+                            </td>
+                        ) :
+                            data?.data?.map((coupon, index) => (
+                                <>
+                                    <td key={`${coupon.name}-${index}`}>{coupon.name}</td>
+                                    <td key={`${coupon.code}-${index}`}>
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200 font-mono uppercase">
+                                            {coupon.code}
+                                        </span>
+                                    </td>
+                                    <td key={`${coupon.discount}-${index}`}>
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700">
+                                            {coupon.discount}%
+                                        </span>
+                                    </td>
+                                    <td key={`${coupon.expires_at}-${index}`}>
+                                        {isExpired(coupon.expires_at) ? (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-red-50 text-red-700">
+                                                Expired
+                                            </span>
+                                        ) : (
+                                            <span className="text-sm">{formatDate(coupon.expires_at)}</span>
+                                        )}
+                                    </td>
+                                    <td key={`${coupon.max_uses}-${index}`}>{coupon.max_uses}</td>
+                                    <td key={`${coupon._id}-${index}`}>
+                                        <div className="flex justify-end gap-2">
+                                            <button
+                                                onClick={() => handleEdit(coupon)}
+                                                className="text-amber-600 hover:text-amber-900 p-1 rounded-full hover:bg-amber-50"
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                                <span className="sr-only">Edit</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteConfirm(coupon)}
+                                                className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-50"
+                                                disabled={isDeleting}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                                <span className="sr-only">Delete</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </>
+                            ))}
+                    </Table>
+
                 )}
             </div>
 
