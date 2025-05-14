@@ -25,6 +25,7 @@ const PageAnalytics = lazy(() => import("../pages/Admin-Dashboard/Page-Analytics
 const BookingManagement = lazy(() => import("../pages/Admin-Dashboard/Booking-Management/BookingManagement"));
 const CategoryManagement = lazy(() => import("../pages/Admin-Dashboard/Category-Management/CategoryManagement"));
 const UserManagement = lazy(() => import("../pages/Admin-Dashboard/User-Management/UserManagement"));
+const CouponManagement = lazy(() => import("../pages/Admin-Dashboard/Coupon-Management/CouponManagement"));
 const AddStudio = lazy(() => import("../pages/Admin-Dashboard/Studio-Management/Add-Studio/AddStudio"));
 
 // Authentication user
@@ -79,6 +80,7 @@ export default function AppRouter() {
                         <Route path="service-management" element={<ServiceManagement />} />
                         <Route path="booking-management" element={<BookingManagement />} />
                         <Route path="user-management" element={<UserManagement />} />
+                        <Route path="coupon-management" element={<CouponManagement />} />
                         <Route path="analytics" element={<PageAnalytics />} />
                     </Route>
 
