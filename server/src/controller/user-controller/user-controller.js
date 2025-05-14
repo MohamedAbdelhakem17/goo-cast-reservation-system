@@ -14,6 +14,7 @@ exports.getUserData = asyncHandler(async (req, res, next) => {
     email: 1,
     name: 1,
     phone: 1,
+    active: 1,
   });
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
@@ -78,7 +79,7 @@ exports.getUserStats = asyncHandler(async (req, res, next) => {
   const { startOfDay } = getAllDay(new Date());
 
   const user = await AuthModel.findById(_id);
-  const userWorkSpace = user.work_space;
+  const userWorkSpace = user.workspace;
 
   // 1. Find the last booking before today
   const lastBookingBeforeToday = await BookingModel.find({
