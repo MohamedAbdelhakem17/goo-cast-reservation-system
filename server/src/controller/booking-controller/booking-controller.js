@@ -11,9 +11,6 @@ const AppError = require("../../utils/app-error");
 
 const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
 const changeBookingStatusEmail = require("../../utils/emails-body/booking-change-status");
-const {
-  calculatePackagePrices,
-} = require("../../utils/package-price-calculator");
 const { calculateSlotPrices } = require("../../utils/priceCalculator");
 const sendEmail = require("../../utils/send-email");
 
@@ -22,7 +19,7 @@ const PackageModel = require("../../models/hourly-packages-model/hourly-packages
 const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model");
 const AddOnModel = require("../../models/add-on-model/add-on-model");
-const saveOpportunityInGoHighLevel = require("../../utils/save-opportunitie-in-go-high-level");
+const saveOpportunityInGoHighLevel = require("../../utils/save-opportunity-in-go-high-level");
 
 // old code For getting available slots
 {
@@ -543,13 +540,10 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   });
 });
 
-const print = (val, lab) => {
-  console.log("===============", lab, " ================");
-  console.log(val);
-  console.log("=========================================");
-};
-// Create New Booking
-// exports.createBooking = asyncHandler(async (req, res) => {
+// old Creating Booking
+{
+  // Create New Booking
+  // exports.createBooking = asyncHandler(async (req, res) => {
 //     const {
 //         studio: studioId,
 //         date,
@@ -691,7 +685,7 @@ const print = (val, lab) => {
 //                 ...req.body,
 //                 bookingId: tempBooking._id,
 //                 studio: {
-//                     name: studio.name,
+  //                     name: studio.name,
 //                     image: studio.thumbnail,
 //                     price: studioPrice
 //                 },
@@ -718,14 +712,15 @@ const print = (val, lab) => {
 //         });
 
 //     } catch (error) {
-//         console.log(error);
-//         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
-//     }
+  //         console.log(error);
+  //         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
+  //     }
+  
+  // });
+}
 
-// });
-
-// Create New Booking
-exports.createBooking = asyncHandler(async (req, res) => {
+  // Create New Booking
+  exports.createBooking = asyncHandler(async (req, res) => {
   const {
     studio: studioId,
     date,
