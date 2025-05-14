@@ -908,7 +908,6 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
       booking,
     });
   } catch (error) {
-    console.log(error);
     throw new AppError(
       500,
       HTTP_STATUS_TEXT.FAIL,

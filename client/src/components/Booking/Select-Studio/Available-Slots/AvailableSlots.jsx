@@ -11,7 +11,6 @@ export default function AvailableSlots({ slots }) {
     const { mutate: getSlots, data } = GetAvailableEndSlots();
     const timeFormat = useTimeConvert()
 
-    console.log(bookingData);
     useEffect(() => {
         if (bookingData.startSlot && bookingData.studio?.id && bookingData.date) {
             setBookingField("endSlot", null);
@@ -23,7 +22,7 @@ export default function AvailableSlots({ slots }) {
                     package_id: bookingData.selectedPackage.id
                 },
                 {
-                    onError: (error) => console.log("error fetching end slots", error),
+                    onError: (error) => console.error("error fetching end slots", error),
                 }
             );
         }

@@ -49,7 +49,6 @@ exports.signup = asyncHandler(async (req, res) => {
                 data: "User already exists. Activation link resent to your email.",
             });
         } catch (error) {
-            console.log(error);
             throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send email");
         }
     } else if (existingUser) {
@@ -277,7 +276,6 @@ exports.resendActivationLink = asyncHandler(async (req, res) => {
             data: "Activation link resent to your email.",
         });
     } catch (error) {
-        console.log(error);
         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send activation email");
     }
 });

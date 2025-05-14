@@ -1,13 +1,10 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import Signout from '../../../apis/auth/signout.api';
-import { GetAllUser } from '../../../apis/user/user.api';
 
 const AdminDashboardLayout = () => {
   const navigate = useNavigate()
   // const { signout } = Signout()
-  const { data: userData } = GetAllUser()
-  console.log(userData)
   const { handelLogout } = Signout()
 
   const navigationLinks = [

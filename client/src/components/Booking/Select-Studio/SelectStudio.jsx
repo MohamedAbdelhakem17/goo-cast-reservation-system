@@ -35,7 +35,6 @@ export default function SelectStudio() {
 
     useEffect(() => {
         const studioId = bookingData?.studio?.id
-        console.log(studioId)
         if (studioId) {
             getSlots({ studioId: studioId, date: bookingData.date })
         }
