@@ -216,7 +216,6 @@ exports.manageWorkSpace = asyncHandler(async (req, res, next) => {
         );
       user.workspace = { name, link };
       await user.save();
-      console.log(user);
       res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
         message: `Workspace ${action}d successfully`,
