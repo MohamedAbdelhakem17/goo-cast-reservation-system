@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
+
 
 const generateToken = require("../../utils/create-token");
 const AppError = require("../../utils/app-error");
@@ -428,3 +430,24 @@ exports.isLogin = asyncHandler(async (req, res) => {
     res.json({ user: null });
   }
 });
+
+exports.login = (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      return res.status(info.statusCode || 401).json({
+        status: info.status || "fail",
+        message: info.message || "Login failed",
+      });
+    }
+
+    req.login(user, (err) => {
+      if (err) return next(err);
+      return res.json({
+        status: "success",
+        message: "Logged in successfully",
+        data: user,
+      });
+    });
+  })(req, res, next);
+};

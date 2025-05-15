@@ -1,4 +1,5 @@
 require("../../controller/auth-controller/auth/login-with-google");
+require("../../controller/auth-controller/auth/login-with-local");
 
 const express = require("express");
 const passport = require("passport");
@@ -22,11 +23,11 @@ router.put("/reset-password", authController.resetPassword);
 router.get("/is-login", authController.isLogin);
 
 // Google Auth
-
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
+
 router.get(
   "/google/callback",
   passport.authenticate("google", {
@@ -38,5 +39,8 @@ router.get(
     res.redirect("/");
   }
 );
+
+// Local Auth
+router.post("/login", authController.login);
 
 module.exports = router;
