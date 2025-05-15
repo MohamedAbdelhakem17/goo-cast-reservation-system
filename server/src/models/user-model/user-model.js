@@ -5,6 +5,11 @@ const { USER_ROLE } = require("../../config/system-variables");
 
 const userSchema = new mongoose.Schema(
   {
+    google: {
+      type: String,
+      sparse: true,
+      unique: true,
+    },
     name: {
       type: String,
       required: [true, "Please provide a name"],
@@ -20,7 +25,6 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Please provide a password"],
       minLength: [6, "Password must be at least 6 characters"],
     },
     role: {

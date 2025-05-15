@@ -7,6 +7,7 @@ import PackagesSection from '../../components/Home/Packages-Section/PackagesSect
 const Home = () => {
   const [showMessage, setShowMessage] = useState(false)
 
+
   useEffect(() => {
     const isActivated = localStorage.getItem("emailActivated");
     if (isActivated === "true") {

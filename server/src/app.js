@@ -2,6 +2,9 @@ const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
 const express = require("express");
+const passport = require("passport");
+const expressSession = require("express-session");
+
 const morgan = require("morgan");
 const cors = require("cors");
 
@@ -24,6 +27,17 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 
 app.use(express.json());
 app.use(cors("*"));
+
+app.use(
+  expressSession({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // ====== API Routes ======
 amountRoutes(app);
@@ -68,4 +82,3 @@ process.on("unhandledRejection", (error) => {
     process.exit(1);
   });
 });
-
