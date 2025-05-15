@@ -2,6 +2,7 @@ import React, { useRef } from "react"
 import { motion } from "framer-motion"
 import Input from "../../components/shared/Input/Input"
 import signupForm from "../../apis/auth/signup.api"
+import GoogleButton from "../../components/Google-Button/GoogleButton"
 
 export default function Signup({ closeModal, changeForm }) {
   const { formik, serverError, successMessage } = signupForm(closeModal)
@@ -195,6 +196,9 @@ export default function Signup({ closeModal, changeForm }) {
               )
 
             }
+
+            <hr className="border-gray-300 my-4"/>
+            <GoogleButton label="Sign up with Google" />
 
           </form>
 
