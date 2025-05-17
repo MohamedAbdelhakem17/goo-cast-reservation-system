@@ -4,6 +4,7 @@ require("dotenv").config({ path: path.join(__dirname, "../.env") });
 const express = require("express");
 const passport = require("passport");
 const expressSession = require("express-session");
+const connectMongo = require("connect-mongo");
 
 const morgan = require("morgan");
 const cors = require("cors");
@@ -13,7 +14,6 @@ const errorMiddlewareHandler = require("./middleware/error-middleware-handler");
 const amountRoutes = require("./routes/index");
 const AppError = require("./utils/app-error");
 const { HTTP_STATUS_TEXT } = require("./config/system-variables");
-const saveOpportunityInGoHighLevel = require("./utils/save-opportunity-in-go-high-level");
 
 const app = express();
 
@@ -28,11 +28,22 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 app.use(express.json());
 app.use(cors("*"));
 
+// ===== Session Configuration =====
 app.use(
   expressSession({
     secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: connectMongo.create({
+      mongoUrl: process.env.MONGODB_URL,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    },
   })
 );
 
