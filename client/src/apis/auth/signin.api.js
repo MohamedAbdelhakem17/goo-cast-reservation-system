@@ -12,7 +12,7 @@ const useSigninForm = (onSuccessCallback) => {
 
     const { mutate: signin, isLoading } = useMutation({
         mutationFn: async (data) => {
-            const response = await axios.post(`${BASE_URL}/auth/signin`, data);
+            const response = await axios.post(`${BASE_URL}/auth/login`, data);
             return response.data.data;
         },
         onSuccess: (data) => {

@@ -341,6 +341,8 @@ exports.signin = asyncHandler(async (req, res) => {
 
 // Signout function to handle user logout
 exports.signout = asyncHandler(async (req, res) => {
+  console.log("Signout", req.user);
+  console.log("Signout", req.isAuthenticated());
   req.logout((err) => {
     if (err) return res.status(500).json({ message: "Logout failed" });
     req.session.destroy();
@@ -424,8 +426,6 @@ exports.updatePassword = asyncHandler(async (req, res) => {
 });
 
 exports.isLogin = asyncHandler(async (req, res) => {
-  console.log("isLogin", req.user);
-  console.log("isLogin", req.isAuthenticated());
   if (req.isAuthenticated()) {
     res.json({ user: req.user });
   } else {
@@ -453,4 +453,3 @@ exports.login = (req, res, next) => {
     });
   })(req, res, next);
 };
-
