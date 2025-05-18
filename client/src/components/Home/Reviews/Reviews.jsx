@@ -220,10 +220,10 @@ export default function Reviews() {
 
             {/* Header */}
             <div className="flex flex-col items-center mb-12 relative">
-                <span className="text-rose-300 text-sm font-medium tracking-widest uppercase mb-2">
+                <span className="text-main text-sm font-medium tracking-widest uppercase mb-2">
                     Testimonials
                 </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-rose-600 mb-3 tracking-tight">
+                <h2 className="text-3xl md:text-4xl font-bold text-main mb-3 tracking-tight">
                     What Our Clients Say
                 </h2>
                 <div className="w-24 h-1.5 bg-gradient-to-r from-rose-300 to-rose-500 rounded-full mb-4"></div>
@@ -248,7 +248,7 @@ export default function Reviews() {
                         }
                         return (
                             <motion.div
-                                key={review.id}
+                                key={index}
                                 custom={index}
                                 variants={reviewVariants}
                                 initial="initial"

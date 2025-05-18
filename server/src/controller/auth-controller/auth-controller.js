@@ -1,7 +1,7 @@
+require("./auth/login-with-local");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-
 
 const generateToken = require("../../utils/create-token");
 const AppError = require("../../utils/app-error");
