@@ -28,32 +28,32 @@ export default function Studio() {
         },
     };
 
-    const headerVariants = {
-        hidden: { x: -20, opacity: 0 },
-        visible: {
-            x: 0,
-            opacity: 1,
-            transition: {
-                type: "spring",
-                stiffness: 100,
-                duration: 0.6,
-            },
-        },
-    };
+    // const headerVariants = {
+    //     hidden: { x: -20, opacity: 0 },
+    //     visible: {
+    //         x: 0,
+    //         opacity: 1,
+    //         transition: {
+    //             type: "spring",
+    //             stiffness: 100,
+    //             duration: 0.6,
+    //         },
+    //     },
+    // };
 
-    const linkVariants = {
-        hidden: { x: 20, opacity: 0 },
-        visible: {
-            x: 0,
-            opacity: 1,
-            transition: {
-                type: "spring",
-                stiffness: 100,
-                duration: 0.6,
-                delay: 0.2,
-            },
-        },
-    };
+    // const linkVariants = {
+    //     hidden: { x: 20, opacity: 0 },
+    //     visible: {
+    //         x: 0,
+    //         opacity: 1,
+    //         transition: {
+    //             type: "spring",
+    //             stiffness: 100,
+    //             duration: 0.6,
+    //             delay: 0.2,
+    //         },
+    //     },
+    // };
 
     // Sample studio data
     const { data: studiosData, isLoading } = useGetAllStudios()
@@ -84,7 +84,7 @@ export default function Studio() {
     return (
         <section className="py-8 my-8">
             {/* Header */}
-            <div className="flex justify-between items-center mb-8">
+            {/* <div className="flex justify-between items-center mb-8">
                 <motion.h2
                     className="text-4xl font-semibold font-sub text-main"
                     initial="hidden"
@@ -103,11 +103,25 @@ export default function Studio() {
                         <i className="fa-solid fa-play text-main text-[10px] transition-all duration-300"></i>
                     </Link>
                 </motion.div>
+            </div> */}
+
+            <div className="flex flex-col items-center mb-12 relative">
+                <span className="text-main text-sm font-medium tracking-widest uppercase mb-2">
+                    Setups
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-main mb-3 tracking-tight">
+                    Our Setups
+                </h2>
+                <div className="w-24 h-1.5 bg-gradient-to-r from-rose-300 to-rose-500 rounded-full mb-4"></div>
+                <p className="text-gray-600 text-center max-w-lg text-sm md:text-base">
+                    Explore our beautifully designed setups equipped with the latest gear to make your shoot perfect.
+                </p>
             </div>
+
 
             {/* Studios Grid */}
             <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 "
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -115,7 +129,7 @@ export default function Studio() {
                 {studiosData?.data?.map((studio) => (
                     <motion.div
                         key={studio.id}
-                        className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
+                        className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 mx-auto"
                         variants={itemVariants}
                         whileHover={{
                             y: -10,

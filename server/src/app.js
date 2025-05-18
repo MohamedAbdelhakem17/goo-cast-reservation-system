@@ -25,13 +25,24 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 }
 
 app.use(express.json());
-app.use(cors("*"));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(
   expressSession({
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET || "your-secret",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: false,
+      secure: false,
+      sameSite: "none",
+    },
   })
 );
 

@@ -4,6 +4,7 @@ import Hero from '../../components/Home/Hero/Hero'
 import Studio from '../../components/Home/Studio/Studio'
 import PackagesSection from '../../components/Home/Packages-Section/PackagesSection'
 import Reviews from '../../components/Home/Reviews/Reviews'
+import BookNow from '../../components/Home/Book-Now/BookNow'
 
 const Home = () => {
   const [showMessage, setShowMessage] = useState(false)
@@ -24,7 +25,8 @@ const Home = () => {
   return (
     <>
       <Hero />
-      {/* <PackagesSection /> */}
+      <PackagesSection />
+      <BookNow />
       <Studio />
       <Reviews />
 
