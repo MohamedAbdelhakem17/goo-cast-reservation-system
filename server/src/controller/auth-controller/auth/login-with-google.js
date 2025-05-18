@@ -12,8 +12,9 @@ passport.use(
       callbackURL: process.env.GOOGLE_REDIRECT_URI,
     },
     // 2 CallBake Function
-    async (req,accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log("Google profile:", profile);
         const email = profile?.emails?.[0]?.value;
 
         if (!email) {
@@ -42,6 +43,8 @@ passport.use(
           google: profile.id,
           active: true,
         });
+
+        console.log("Google login success:", user);
 
         return done(null, user);
       } catch (err) {
@@ -78,5 +81,3 @@ passport.deserializeUser(async (id, done) => {
     });
   }
 });
-
-
