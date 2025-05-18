@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Hero from '../../components/Home/Hero/Hero'
 import Studio from '../../components/Home/Studio/Studio'
 import PackagesSection from '../../components/Home/Packages-Section/PackagesSection'
+import Reviews from '../../components/Home/Reviews/Reviews'
 
 const Home = () => {
   const [showMessage, setShowMessage] = useState(false)
@@ -23,8 +24,9 @@ const Home = () => {
   return (
     <>
       <Hero />
-      <PackagesSection />
+      {/* <PackagesSection /> */}
       <Studio />
+      <Reviews />
 
 
       <AnimatePresence>
