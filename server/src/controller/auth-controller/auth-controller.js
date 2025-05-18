@@ -424,6 +424,8 @@ exports.updatePassword = asyncHandler(async (req, res) => {
 });
 
 exports.isLogin = asyncHandler(async (req, res) => {
+  console.log("isLogin", req.user);
+  console.log("isLogin", req.isAuthenticated());
   if (req.isAuthenticated()) {
     res.json({ user: req.user });
   } else {
