@@ -11,7 +11,6 @@ export default function ApplyDiscount() {
     const { mutate: applyCoupon } = ApplyCoupon()
 
     const handelApplyCoupon = () => {
-        console.log(setBookingField("coupon_code", coupon), "Set Coupon")
         applyCoupon(
             {
                 email: getBookingField("personalInfo.email"),
@@ -25,7 +24,6 @@ export default function ApplyDiscount() {
                     const discountPercentage = discount || 0
                     const totalPriceAfterDiscount = totalPrice - totalPrice * (discountPercentage / 100)
 
-                    console.log(setBookingField("totalPriceAfterDiscount", totalPriceAfterDiscount), "Set Price After Discount")
                     addToast(response.message || "Coupon Applied Successfully", "success")
                 },
                 onError: (error) => {

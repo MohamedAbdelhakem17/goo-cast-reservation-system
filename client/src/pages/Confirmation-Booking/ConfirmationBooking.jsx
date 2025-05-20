@@ -56,7 +56,7 @@ export default function ConfirmationBooking() {
         totalPriceFromLocalStorage;
 
     const goBack = () => {
-        localStorage.setItem("bookingStep", 4);
+        localStorage.setItem("bookingStep", 5);
         navigate("/booking?step=personal-information");
     };
 
