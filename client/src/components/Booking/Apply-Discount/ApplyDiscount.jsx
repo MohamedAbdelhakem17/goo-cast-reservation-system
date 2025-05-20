@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { ApplyCoupon } from '../../../apis/coupon/coupon'
-import useBookingFormik from '../../../context/Booking-Formik/useBookingFormik'
 import { useToast } from '../../../context/Toaster-Context/ToasterContext'
+import { useBooking } from '../../../context/Booking-Context/BookingContext'
 
 
 export default function ApplyDiscount() {
-    const { getBookingField, setBookingField } = useBookingFormik()
+    const { getBookingField, setBookingField } = useBooking()
     const [coupon, setCoupon] = useState(getBookingField("couponCode") || "")
     const { addToast } = useToast()
     const { mutate: applyCoupon } = ApplyCoupon()
@@ -17,23 +17,28 @@ export default function ApplyDiscount() {
                 coupon_id: coupon
             },
             {
+
                 onSuccess: (response) => {
                     setBookingField("couponCode", coupon)
                     const totalPrice = getBookingField("totalPrice")
-                    const { discount } = response.data
+                    const discount = response.data.discount
+                    const totalPriceAfterDiscount = totalPrice - totalPrice * (discount / 100);
+                    console.log({ totalPriceAfterDiscount, discount })
 
-                    const discountPercentage = discount || 0
-                    const totalPriceAfterDiscount = totalPrice - totalPrice * (discountPercentage / 100)
+                    setBookingField("totalPriceAfterDiscount", totalPriceAfterDiscount);
 
                     addToast(response.message || "Coupon Applied Successfully", "success")
                 },
                 onError: (error) => {
                     const errorMessage = error.response?.data?.message || "Coupon is not valid"
+                    console.log("error", error)
                     addToast(errorMessage, "error")
                 }
             }
         )
     }
+
+
 
     return (
 
@@ -47,11 +52,13 @@ export default function ApplyDiscount() {
                     placeholder="Enter coupon code"
                     value={coupon.toUpperCase()}
                     onChange={(e) => {
-                        setCoupon(e.target.value.toUpperCase())
+                        const value = e.target.value.toUpperCase()
+                        setCoupon(value)
                     }}
                     className="flex-grow px-2 py-3 text-gray-700 focus:outline-none bg-transparent"
                 />
-                <button onClick={handelApplyCoupon} className="bg-main text-white px-5 py-3 rounded-full hover:bg-main/90 transition-all duration-200 cursor-pointer" >
+                <button disabled={!coupon}
+                    onClick={handelApplyCoupon} className="bg-main text-white px-5 py-3 rounded-full hover:bg-main/90 transition-all duration-200 cursor-pointer" >
                     Apply
                 </button>
             </div>
