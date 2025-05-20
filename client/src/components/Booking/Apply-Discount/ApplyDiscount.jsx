@@ -5,9 +5,9 @@ import { useToast } from '../../../context/Toaster-Context/ToasterContext'
 
 
 export default function ApplyDiscount() {
-    const [coupon, setCoupon] = useState("")
-    const { addToast } = useToast()
     const { getBookingField, setBookingField } = useBookingFormik()
+    const [coupon, setCoupon] = useState(getBookingField("couponCode") || "")
+    const { addToast } = useToast()
     const { mutate: applyCoupon } = ApplyCoupon()
 
     const handelApplyCoupon = () => {
@@ -18,6 +18,7 @@ export default function ApplyDiscount() {
             },
             {
                 onSuccess: (response) => {
+                    setBookingField("couponCode", coupon)
                     const totalPrice = getBookingField("totalPrice")
                     const { discount } = response.data
 

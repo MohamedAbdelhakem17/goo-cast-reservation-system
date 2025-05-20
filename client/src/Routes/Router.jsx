@@ -44,6 +44,7 @@ export default function AppRouter() {
         const cleanLocalStorage = () => {
             if (
                 location.pathname !== "/booking" &&
+                location.pathname!== "/booking/confirmation" &&
                 !location.search.startsWith("?step=")
             ) {
                 localStorage.removeItem("bookingData");
