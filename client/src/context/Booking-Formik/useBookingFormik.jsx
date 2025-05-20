@@ -72,17 +72,17 @@ export default function useBookingFormik() {
         totalPrice: Yup.number()
             .required("Total price is required"),
 
-        totalPriceAfterDiscount: Yup.number()
-            .required("Discounted price is required")
-            .test(
-                "is-less-than-or-equal-total",
-                "Discounted price must be less than or equal to total price",
-                function (value) {
-                    const { totalPrice } = this.parent;
-                    if (value == null || totalPrice == null) return true;
-                    return value <= totalPrice;
-                }
-            )
+        // totalPriceAfterDiscount: Yup.number()
+        //     .required("Discounted price is required")
+        //     .test(
+        //         "is-less-than-or-equal-total",
+        //         "Discounted price must be less than or equal to total price",
+        //         function (value) {
+        //             const { totalPrice } = this.parent;
+        //             if (value == null || totalPrice == null) return true;
+        //             return value <= totalPrice;
+        //         }
+        //     )
 
     });
 
@@ -101,7 +101,6 @@ export default function useBookingFormik() {
             }, 0) || 0
 
             const totalPrice = totalAddOnPrice + (values.totalPrice || 0)
-            const user_id = JSON.parse(localStorage.getItem("user"))?.user?.id
 
             const dataBaseObject = {
                 ...values,
@@ -112,7 +111,6 @@ export default function useBookingFormik() {
                     id: values.selectedPackage.id,
                 },
                 totalPrice,
-                user_id
             };
 
             createBooking(dataBaseObject, {

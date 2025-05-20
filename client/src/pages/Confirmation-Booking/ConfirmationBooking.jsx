@@ -19,6 +19,7 @@ export default function ConfirmationBooking() {
         duration,
         selectedPackage,
         totalPrice: totalPriceFromLocalStorage,
+        totalPriceAfterDiscount,
         selectedAddOns,
         personalInfo,
     } = bookingData;
@@ -374,6 +375,21 @@ export default function ConfirmationBooking() {
                                     </div>
                                 </div>
                             </div>
+                            {
+                                (totalPriceAfterDiscount && totalPriceAfterDiscount !== 0) && <div className="relative p-6 md:p-8 rounded-2xl text-white">
+                                    <div className="flex flex-col md:flex-row justify-between items-center">
+                                        <div>
+                                            <h4 className="text-xl font-bold">Total Amount After Discount</h4>
+                                        </div>
+
+                                        <div className="mt-4 md:mt-0 text-center md:text-right">
+                                            <p className="text-sm text-white/80">Final Price</p>
+                                            <p className="text-4xl font-extrabold">{totalPriceAfterDiscount} EGP</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
                         </motion.div>
                     </div>
 
