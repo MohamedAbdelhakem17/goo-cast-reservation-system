@@ -1,9 +1,12 @@
 import React from 'react'
 import { useBooking } from '../../../context/Booking-Context/BookingContext'
 import useTimeConvert from '../../../hooks/useTimeConvert'
+import ApplyDiscount from '../Apply-Discount/ApplyDiscount'
+import { useAuth } from '../../../context/Auth-Context/AuthContext'
 
 export default function Cart() {
-    const { bookingData  , handleNextStep} = useBooking()
+    const { bookingData, handleNextStep } = useBooking()
+    const { isAuthenticated } = useAuth()
     const formatTime = useTimeConvert()
 
     const formatDate = (dateString) => {
@@ -93,6 +96,9 @@ export default function Cart() {
                     </div>
                 </>
             )}
+
+            {/* Apply Discount */}
+            {isAuthenticated && < ApplyDiscount />}
 
             {/* Total Price For All Cart */}
             <div className="flex items-center justify-between mt-4 p-3">

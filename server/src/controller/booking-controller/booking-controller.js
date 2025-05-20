@@ -987,6 +987,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
 
 // Create New Booking
 exports.createBooking = asyncHandler(async (req, res) => {
+  const user_id = req.isAuthenticated() ? req.user._id : "";
   const {
     studio: studioId,
     date,
@@ -998,7 +999,6 @@ exports.createBooking = asyncHandler(async (req, res) => {
     selectedAddOns: addOns,
     personalInfo,
     totalPrice: totalPriceFromClient,
-    user_id,
     coupon_code,
   } = req.body;
 
