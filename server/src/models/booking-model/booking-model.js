@@ -108,6 +108,8 @@ const bookingSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startSlotMinutes: { type: Number, required: true },
+    endSlotMinutes: { type: Number, required: true },
 
     totalPriceAfterDiscount: {
       type: Number,
@@ -119,7 +121,6 @@ const bookingSchema = new mongoose.Schema(
           "Total price after discount must be less than or equal to total price.",
       },
     },
-    
   },
   { timestamps: true }
 );

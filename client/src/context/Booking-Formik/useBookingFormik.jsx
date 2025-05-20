@@ -66,7 +66,22 @@ export default function useBookingFormik() {
             email: Yup.string().email("Invalid email").required("Email is required"),
             brand: Yup.string().optional(),
         }),
-        totalPrice: Yup.number().required("Total price is required"),
+
+        totalPrice: Yup.number()
+            .required("Total price is required"),
+
+        totalPriceAfterDiscount: Yup.number()
+            .required("Discounted price is required")
+            .test(
+                "is-less-than-or-equal-total",
+                "Discounted price must be less than or equal to total price",
+                function (value) {
+                    const { totalPrice } = this.parent;
+                    if (value == null || totalPrice == null) return true; 
+                    return value <= totalPrice;
+                }
+            )
+
     });
 
     const { mutate: createBooking } = CreateBooking()
