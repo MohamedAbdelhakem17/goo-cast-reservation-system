@@ -18,7 +18,7 @@ export default function ConfirmationBooking() {
         endSlot,
         duration,
         selectedPackage,
-        totalPrice: totalPriceFromLocalStorage,
+        totalPrice,
         totalPriceAfterDiscount,
         selectedAddOns,
         personalInfo,
@@ -52,9 +52,9 @@ export default function ConfirmationBooking() {
             return acc + (item.quantity > 0 ? item.price * item.quantity : 0);
         }, 0) || 0;
 
-    const totalPrice =
-        totalAddOnPrice +
-        totalPriceFromLocalStorage;
+    // const totalPrice =
+    //     totalAddOnPrice +
+    //     totalPriceFromLocalStorage;
 
     const goBack = () => {
         localStorage.setItem("bookingStep", 5);
@@ -377,7 +377,7 @@ export default function ConfirmationBooking() {
                             </div>
                             {
                                 (totalPriceAfterDiscount && totalPriceAfterDiscount !== 0) && <div className="relative p-6 md:p-8 rounded-2xl text-white">
-                                    <div className="flex flex-col md:flex-row justify-between items-center">
+                                    <div className="flex flex-col md:flex-row justify-between items-center border-t-green">
                                         <div>
                                             <h4 className="text-xl font-bold">Total Amount After Discount</h4>
                                         </div>
