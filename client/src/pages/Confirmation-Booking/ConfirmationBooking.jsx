@@ -5,6 +5,7 @@ import { useAuth } from "../../context/Auth-Context/AuthContext";
 import { useBooking } from "../../context/Booking-Context/BookingContext";
 import { useNavigate } from "react-router-dom";
 import useTimeConvert from "../../hooks/useTimeConvert";
+import ApplyDiscount from "../../components/Booking/Apply-Discount/ApplyDiscount";
 
 export default function ConfirmationBooking() {
     const { bookingData, handleSubmit } = useBooking();
@@ -344,6 +345,8 @@ export default function ConfirmationBooking() {
                                 </div>
                             </div>
                         </motion.div>
+
+                        <ApplyDiscount />
 
                         {/* Total Price */}
                         <motion.div

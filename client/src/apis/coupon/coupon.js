@@ -23,7 +23,13 @@ const DeleteCoupon = () => {
 };
 
 const ApplyCoupon = () => {
-  return useGetData(["coupons"], `${BASE_URL}/coupon/apply-coupon`);
+  return usePostData(["coupons"], `${BASE_URL}/coupon/apply-coupon`);
 };
 
-export { GetAllCoupons, CreateNewCoupon, UpdateCoupon, DeleteCoupon };
+export {
+  GetAllCoupons,
+  CreateNewCoupon,
+  UpdateCoupon,
+  DeleteCoupon,
+  ApplyCoupon,
+};

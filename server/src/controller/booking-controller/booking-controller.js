@@ -544,183 +544,152 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
 {
   // Create New Booking
   // exports.createBooking = asyncHandler(async (req, res) => {
-//     const {
-//         studio: studioId,
-//         date,
-//         startSlot,
-//         endSlot,
-//         duration,
-//         persons,
-//         package: selectedPackage,
-//         selectedAddOns: addOns,
-//         personalInfo,
-//         totalPrice: totalPriceFromClient,
-//         user_id
-//     } = req.body;
-
-//     print(req.body, "req.body")
-
-//     // Check if studio exists
-//     const studio = await StudioModel.findById(studioId.id);
-//     if (!studio) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found for booking");
-
-//     // Check if package exists
-//     const pkg = await PackageModel.findById(selectedPackage.id);
-//     if (!pkg) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Package not found for booking");
-
-//     const bookingDate = new Date(date);
-//     const startSlotMinutes = timeToMinutes(startSlot);
-//     const endSlotMinutes = timeToMinutes(endSlot);
-
-//     // Get all bookings for the studio on that day
-//     const { startOfDay, endOfDay } = getAllDay(bookingDate);
-//     const sameDayBookings = await BookingModel.find({
-//         studio: studio._id,
-//         date: { $gte: startOfDay, $lt: endOfDay },
-//     });
-
-//     // Check for conflict
-//     const hasConflict = sameDayBookings.some((book) => {
-//         const bookStart = timeToMinutes(book.startSlot);
-//         const bookEnd = timeToMinutes(book.endSlot);
-//         return startSlotMinutes < bookEnd && endSlotMinutes > bookStart;
-//     });
-
-//     if (hasConflict) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "This time is already booked");
-
-//     // Studio pricing
-//     const bookedSlots = sameDayBookings.map((b) => ({
-//         start: timeToMinutes(b.startSlot),
-//         end: timeToMinutes(b.endSlot),
-//     }));
-
-//     const studioPricingResults = await calculateSlotPrices({
-//         package:pkg,
-//         date: bookingDate,
-//         startSlotMinutes,
-//         endOfDay: timeToMinutes(endSlot),
-//         bookedSlots,
-//     });
-
-//     const lastSlot = studioPricingResults[studioPricingResults.length - 1];
-
-//     // Package pricing
-//     let packagePrice = 0;
-
-//     if (pkg.isFixed) {
-//         packagePrice = pkg.price * selectedPackage.slot.endTime;
-//     } else {
-//         const packagePriceInnDb = await calculatePackagePrices({
-//             package: pkg,
-//             hours: selectedPackage.slot.endTime
-//         });
-
-//         packagePrice = packagePriceInnDb[packagePriceInnDb.length - 1].totalPrice
-//     }
-
-//     if (packagePrice !== selectedPackage.slot.totalPrice) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the package price is incorrect");
-
-//     // Add-on pricing
-//     const addonsTotalPriceFromClient = addOns?.reduce((acc, item) => {
-//         return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
-//     }, 0) || 0
-
-//     const addOnDetails = [];
-//     let addOnsTotalPriceFromDb = 0;
-
-//     if (Array.isArray(addOns)) {
-//         for (const addOn of addOns) {
-//             const addOnItem = await AddOnModel.findById(addOn._id);
-//             if (!addOnItem) continue;
-
-//             const addOnPrice = addOnItem.price * addOn.quantity;
-//             addOnsTotalPriceFromDb += addOnPrice;
-
-//             addOnDetails.push({
-//                 item: addOnItem._id,
-//                 quantity: addOn.quantity,
-//                 price: addOnItem.price,
-//             });
-//         }
-//     }
-
-//     // Check if total price is valid
-
-//     if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the add-on price is incorrect");
-
-//     const totalPrice = Math.round(studioPrice + addOnsTotalPriceFromDb + packagePrice);
-
-//     if (totalPrice !== totalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the total price is incorrect");
-
-//     return null
-//     try {
-//         const bookingData = {
-//             studio: studio._id,
-//             date: bookingDate,
-//             startSlot,
-//             endSlot,
-//             duration,
-//             persons,
-//             package: {
-//                 id: pkg._id,
-//                 price: packagePrice,
-//                 duration: selectedPackage.slot.endTime
-//             },
-//             addOns: addOnDetails,
-//             studioPrice: studioPrice,
-//             totalAddOnsPrice: addOnsTotalPriceFromDb,
-//             personalInfo,
-//             totalPrice,
-//             status: "pending",
-//             createdBy: user_id,
-//             isGuest: user_id ? false : true
-//         };
-
-//         const tempBooking = new BookingModel(bookingData);
-
-//         const emailOptions = {
-//             to: personalInfo.email,
-//             subject: "Booking Confirmation",
-//             message: bookingConfirmationEmailBody({
-//                 ...req.body,
-//                 bookingId: tempBooking._id,
-//                 studio: {
+  //     const {
+  //         studio: studioId,
+  //         date,
+  //         startSlot,
+  //         endSlot,
+  //         duration,
+  //         persons,
+  //         package: selectedPackage,
+  //         selectedAddOns: addOns,
+  //         personalInfo,
+  //         totalPrice: totalPriceFromClient,
+  //         user_id
+  //     } = req.body;
+  //     print(req.body, "req.body")
+  //     // Check if studio exists
+  //     const studio = await StudioModel.findById(studioId.id);
+  //     if (!studio) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found for booking");
+  //     // Check if package exists
+  //     const pkg = await PackageModel.findById(selectedPackage.id);
+  //     if (!pkg) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Package not found for booking");
+  //     const bookingDate = new Date(date);
+  //     const startSlotMinutes = timeToMinutes(startSlot);
+  //     const endSlotMinutes = timeToMinutes(endSlot);
+  //     // Get all bookings for the studio on that day
+  //     const { startOfDay, endOfDay } = getAllDay(bookingDate);
+  //     const sameDayBookings = await BookingModel.find({
+  //         studio: studio._id,
+  //         date: { $gte: startOfDay, $lt: endOfDay },
+  //     });
+  //     // Check for conflict
+  //     const hasConflict = sameDayBookings.some((book) => {
+  //         const bookStart = timeToMinutes(book.startSlot);
+  //         const bookEnd = timeToMinutes(book.endSlot);
+  //         return startSlotMinutes < bookEnd && endSlotMinutes > bookStart;
+  //     });
+  //     if (hasConflict) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "This time is already booked");
+  //     // Studio pricing
+  //     const bookedSlots = sameDayBookings.map((b) => ({
+  //         start: timeToMinutes(b.startSlot),
+  //         end: timeToMinutes(b.endSlot),
+  //     }));
+  //     const studioPricingResults = await calculateSlotPrices({
+  //         package:pkg,
+  //         date: bookingDate,
+  //         startSlotMinutes,
+  //         endOfDay: timeToMinutes(endSlot),
+  //         bookedSlots,
+  //     });
+  //     const lastSlot = studioPricingResults[studioPricingResults.length - 1];
+  //     // Package pricing
+  //     let packagePrice = 0;
+  //     if (pkg.isFixed) {
+  //         packagePrice = pkg.price * selectedPackage.slot.endTime;
+  //     } else {
+  //         const packagePriceInnDb = await calculatePackagePrices({
+  //             package: pkg,
+  //             hours: selectedPackage.slot.endTime
+  //         });
+  //         packagePrice = packagePriceInnDb[packagePriceInnDb.length - 1].totalPrice
+  //     }
+  //     if (packagePrice !== selectedPackage.slot.totalPrice) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the package price is incorrect");
+  //     // Add-on pricing
+  //     const addonsTotalPriceFromClient = addOns?.reduce((acc, item) => {
+  //         return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
+  //     }, 0) || 0
+  //     const addOnDetails = [];
+  //     let addOnsTotalPriceFromDb = 0;
+  //     if (Array.isArray(addOns)) {
+  //         for (const addOn of addOns) {
+  //             const addOnItem = await AddOnModel.findById(addOn._id);
+  //             if (!addOnItem) continue;
+  //             const addOnPrice = addOnItem.price * addOn.quantity;
+  //             addOnsTotalPriceFromDb += addOnPrice;
+  //             addOnDetails.push({
+  //                 item: addOnItem._id,
+  //                 quantity: addOn.quantity,
+  //                 price: addOnItem.price,
+  //             });
+  //         }
+  //     }
+  //     // Check if total price is valid
+  //     if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the add-on price is incorrect");
+  //     const totalPrice = Math.round(studioPrice + addOnsTotalPriceFromDb + packagePrice);
+  //     if (totalPrice !== totalPriceFromClient) throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "the total price is incorrect");
+  //     return null
+  //     try {
+  //         const bookingData = {
+  //             studio: studio._id,
+  //             date: bookingDate,
+  //             startSlot,
+  //             endSlot,
+  //             duration,
+  //             persons,
+  //             package: {
+  //                 id: pkg._id,
+  //                 price: packagePrice,
+  //                 duration: selectedPackage.slot.endTime
+  //             },
+  //             addOns: addOnDetails,
+  //             studioPrice: studioPrice,
+  //             totalAddOnsPrice: addOnsTotalPriceFromDb,
+  //             personalInfo,
+  //             totalPrice,
+  //             status: "pending",
+  //             createdBy: user_id,
+  //             isGuest: user_id ? false : true
+  //         };
+  //         const tempBooking = new BookingModel(bookingData);
+  //         const emailOptions = {
+  //             to: personalInfo.email,
+  //             subject: "Booking Confirmation",
+  //             message: bookingConfirmationEmailBody({
+  //                 ...req.body,
+  //                 bookingId: tempBooking._id,
+  //                 studio: {
   //                     name: studio.name,
-//                     image: studio.thumbnail,
-//                     price: studioPrice
-//                 },
-//                 selectedAddOns: {
-//                     items: [...addOns],
-//                     totalPrice: addOnsTotalPriceFromDb
-//                 },
-//                 selectedPackage: {
-//                     name: pkg.name,
-//                     price: packagePrice,
-//                     duration: selectedPackage.slot.endTime
-//                 }
-//             }),
-//         };
-
-//         await sendEmail(emailOptions);
-
-//         const booking = await tempBooking.save();
-
-//         res.status(201).json({
-//             status: HTTP_STATUS_TEXT.SUCCESS,
-//             message: "Booking created successfully and sent confirmation email",
-//             booking
-//         });
-
-//     } catch (error) {
+  //                     image: studio.thumbnail,
+  //                     price: studioPrice
+  //                 },
+  //                 selectedAddOns: {
+  //                     items: [...addOns],
+  //                     totalPrice: addOnsTotalPriceFromDb
+  //                 },
+  //                 selectedPackage: {
+  //                     name: pkg.name,
+  //                     price: packagePrice,
+  //                     duration: selectedPackage.slot.endTime
+  //                 }
+  //             }),
+  //         };
+  //         await sendEmail(emailOptions);
+  //         const booking = await tempBooking.save();
+  //         res.status(201).json({
+  //             status: HTTP_STATUS_TEXT.SUCCESS,
+  //             message: "Booking created successfully and sent confirmation email",
+  //             booking
+  //         });
+  //     } catch (error) {
   //         console.log(error);
   //         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
   //     }
-  
   // });
 }
 
-  // Create New Booking
-  exports.createBooking = asyncHandler(async (req, res) => {
+// Create New Booking
+exports.createBooking = asyncHandler(async (req, res) => {
   const {
     studio: studioId,
     date,
