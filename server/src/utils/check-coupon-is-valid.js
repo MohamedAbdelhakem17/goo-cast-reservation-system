@@ -11,7 +11,7 @@ const checkCouponIsValid = async ({ coupon_id, user_id, email }) => {
     );
   }
 
-  const coupon = await CouponModel.findById(coupon_id);
+  const coupon = await CouponModel.findOne({ code: coupon_id });
 
   if (!coupon) {
     throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Coupon not found");

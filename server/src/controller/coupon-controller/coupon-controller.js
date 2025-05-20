@@ -82,7 +82,8 @@ exports.deleteCoupon = asyncHandler(async (req, res, next) => {
 
 // ِApply coupon
 exports.applyCoupon = asyncHandler(async (req, res, next) => {
-  const { coupon_id, user_id, email } = req.body;
+  const user_id = req.isAuthenticated() ? req.user._id : "";
+  const { coupon_id, email } = req.body;
   const result = await checkCouponIsValid({ coupon_id, user_id, email });
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
