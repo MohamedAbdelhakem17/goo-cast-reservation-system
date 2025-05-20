@@ -43,6 +43,8 @@ export default function useBookingFormik() {
                 brand: "",
             },
             totalPrice: 0,
+            totalPriceAfterDiscount: 0,
+            couponCode: ""
         };
     }, [parsedData]);
 
@@ -77,7 +79,7 @@ export default function useBookingFormik() {
                 "Discounted price must be less than or equal to total price",
                 function (value) {
                     const { totalPrice } = this.parent;
-                    if (value == null || totalPrice == null) return true; 
+                    if (value == null || totalPrice == null) return true;
                     return value <= totalPrice;
                 }
             )
