@@ -9,6 +9,7 @@ exports.getAllCategories = asyncHandler(async (req, res, next) => {
     if (categories.length === 0) {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No categories found"));
     }
+    console.log(categories , "Categores");
     res.status(200).json({
         status: HTTP_STATUS_TEXT.SUCCESS,
         data: categories,

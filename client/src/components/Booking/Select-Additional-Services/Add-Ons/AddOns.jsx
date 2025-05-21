@@ -4,11 +4,13 @@ import { GetAllAddOns } from "../../../../apis/services/services.api";
 import Loading from "../../../shared/Loading/Loading";
 import { useCallback } from "react";
 export default function AddOns() {
+
   const { data: addOns, isLoading } = GetAllAddOns();
   const { bookingData, setBookingField } = useBooking();
 
 
   const handleAddOnChange = useCallback((id, name, quantity, price) => {
+
     let updatedAddOns = [...bookingData.selectedAddOns];
     const index = updatedAddOns.findIndex((addon) => addon._id === id);
 

@@ -16,7 +16,7 @@ const Tabs = ({ tabs, activeTabId, onTabChange }) => {
       className="w-full max-w-3xl mx-auto my-4 px-4 md:px-0"
     >
       <div className="relative flex border-b border-main/50 rounded-lg items-center justify-around bg-white shadow-sm">
-        {tabs.map((tab) => {
+        {tabs?.map((tab) => {
           const isActive = activeTabId === tab.id;
           return (
             <button

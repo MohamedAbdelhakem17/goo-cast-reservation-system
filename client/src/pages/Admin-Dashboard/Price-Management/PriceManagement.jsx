@@ -126,14 +126,14 @@ const PriceManagement = () => {
                             transition={{ duration: 0.3 }}
                         >
                             {/* Tabs */}
-                            <Tabs
+                            {/* <Tabs
                                 tabs={[
                                     { id: 1, label: "Packages" },
                                     { id: 2, label: "Addons" },
                                 ]}
                                 activeTabId={activeTab}
                                 onTabChange={(id) => dispatch({ type: "SET_ACTIVE_TAB", payload: id })}
-                            />
+                            /> */}
 
                             {/* Select Package */}
                             {

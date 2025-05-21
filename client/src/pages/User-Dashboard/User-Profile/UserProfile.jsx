@@ -17,7 +17,7 @@ const UserProfile = () => {
         <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
             <div className="container max-w-8xl py-5 px-4 mx-auto">
                 {/* Header Section */}
-                <Header userName={user?.data?.name} />
+                <Header user={user?.data}  workspace={userStats?.data?.userWorkSpace} />
 
 
                 <div className="grid gap-8">

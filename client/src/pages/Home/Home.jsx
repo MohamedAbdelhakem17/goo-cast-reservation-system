@@ -3,9 +3,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Hero from '../../components/Home/Hero/Hero'
 import Studio from '../../components/Home/Studio/Studio'
 import PackagesSection from '../../components/Home/Packages-Section/PackagesSection'
+import Reviews from '../../components/Home/Reviews/Reviews'
+import BookNow from '../../components/Home/Book-Now/BookNow'
 
 const Home = () => {
   const [showMessage, setShowMessage] = useState(false)
+
 
   useEffect(() => {
     const isActivated = localStorage.getItem("emailActivated");
@@ -23,7 +26,9 @@ const Home = () => {
     <>
       <Hero />
       <PackagesSection />
+      <BookNow />
       <Studio />
+      <Reviews />
 
 
       <AnimatePresence>

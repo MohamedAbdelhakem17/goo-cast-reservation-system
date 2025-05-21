@@ -39,8 +39,8 @@ const Signout = () => {
                 dispatch({ type: "LOGOUT" })
                 navigate("/")
             },
-            onError: () => {
-                console.error("Logout failed");
+            onError: (err) => {
+                console.error("Logout failed" , err);
             },
         })
     }

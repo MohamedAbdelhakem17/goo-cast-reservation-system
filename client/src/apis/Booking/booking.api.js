@@ -20,9 +20,6 @@ const useGetAvailableStudio = () => {
             const res = await axios.get(BASE_URL + "/bookings/available-studios/"+sortedDate)
             return res.data
         },
-        onSuccess: () => {
-            console.log(sortedDate)
-        },
         cacheTime: 0,
         staleTime: 0
         
