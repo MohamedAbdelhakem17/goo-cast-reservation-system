@@ -7,7 +7,6 @@ import Signin from "../../../pages/Signin/Signin";
 import Signup from "../../../pages/Signup/Signup";
 import { useAuth } from "../../../context/Auth-Context/AuthContext";
 import Signout from "../../../apis/auth/signout.api";
-import { jwtDecode } from "jwt-decode";
 
 export default function Navbar() {
     // Constants
@@ -24,11 +23,12 @@ export default function Navbar() {
     // States
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const { isAuthenticated, token } = useAuth()
+    const { isAuthenticated, user } = useAuth()
     const [isSignupOpen, setIsSignupOpen] = useState(false)
     const [isSigninOpen, setIsSigninOpen] = useState(false)
     const { handelLogout } = Signout()
-    const isAdmin = isAuthenticated && token ? jwtDecode(token).role === "admin" : false
+    const isAdmin = isAuthenticated && user ? user.role === "admin" : false
+
 
     // Handle scroll effect for navbar
     useEffect(() => {

@@ -14,6 +14,7 @@ const Studios = lazy(() => import("../pages/Studios/Studios"));
 const StudioDetails = lazy(() => import("../pages/Studio-Details/StudioDetails"));
 const Booking = lazy(() => import("../pages/Booking/Booking"));
 const ConfirmationBooking = lazy(() => import("../pages/Confirmation-Booking/ConfirmationBooking"));
+const SuccessLogin = lazy(() => import("../pages/Success-Login/SuccessLogin"));
 const NotFound = lazy(() => import("../pages/Not-Found/NotFound"));
 
 // Authentication admin
@@ -24,6 +25,8 @@ const ServiceManagement = lazy(() => import("../pages/Admin-Dashboard/Service-Ma
 const PageAnalytics = lazy(() => import("../pages/Admin-Dashboard/Page-Analytics/PageAnalytics"));
 const BookingManagement = lazy(() => import("../pages/Admin-Dashboard/Booking-Management/BookingManagement"));
 const CategoryManagement = lazy(() => import("../pages/Admin-Dashboard/Category-Management/CategoryManagement"));
+const UserManagement = lazy(() => import("../pages/Admin-Dashboard/User-Management/UserManagement"));
+const CouponManagement = lazy(() => import("../pages/Admin-Dashboard/Coupon-Management/CouponManagement"));
 const AddStudio = lazy(() => import("../pages/Admin-Dashboard/Studio-Management/Add-Studio/AddStudio"));
 
 // Authentication user
@@ -41,6 +44,7 @@ export default function AppRouter() {
         const cleanLocalStorage = () => {
             if (
                 location.pathname !== "/booking" &&
+                location.pathname!== "/booking/confirmation" &&
                 !location.search.startsWith("?step=")
             ) {
                 localStorage.removeItem("bookingData");
@@ -77,6 +81,8 @@ export default function AppRouter() {
                         <Route path="price-management" element={<PriceManagement />} />
                         <Route path="service-management" element={<ServiceManagement />} />
                         <Route path="booking-management" element={<BookingManagement />} />
+                        <Route path="user-management" element={<UserManagement />} />
+                        <Route path="coupon-management" element={<CouponManagement />} />
                         <Route path="analytics" element={<PageAnalytics />} />
                     </Route>
 
@@ -87,6 +93,9 @@ export default function AppRouter() {
                         <Route path="profile" element={<UserProfile />} />
                         <Route path="bookings" element={<UserBookings />} />
                     </Route>
+
+                    {/* Success Login */}
+                    <Route path="/login/success" element={<SuccessLogin />} />
 
                     {/* Not Found */}
                     <Route path="*" element={<NotFound />} />

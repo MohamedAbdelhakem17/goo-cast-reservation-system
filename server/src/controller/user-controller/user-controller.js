@@ -14,6 +14,7 @@ exports.getUserData = asyncHandler(async (req, res, next) => {
     email: 1,
     name: 1,
     phone: 1,
+    active: 1,
   });
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
@@ -77,6 +78,9 @@ exports.getUserStats = asyncHandler(async (req, res, next) => {
   const { _id } = req.user;
   const { startOfDay } = getAllDay(new Date());
 
+  const user = await AuthModel.findById(_id);
+  const userWorkSpace = user.workspace;
+
   // 1. Find the last booking before today
   const lastBookingBeforeToday = await BookingModel.find({
     createdBy: _id,
@@ -131,16 +135,11 @@ exports.getUserStats = asyncHandler(async (req, res, next) => {
     }).populate("package");
   }
 
-  const print = (val, lab) => {
-    console.log("===============", lab, " ================");
-    console.log(val);
-    console.log("=========================================");
-  };
-
   // Return the data
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: {
+      userWorkSpace,
       lastBookingBeforeToday: {
         studioName: lastBookingBeforeToday[0]?.studio?.name,
         packageName: lastBookingBeforeToday[0]?.package?.name,
@@ -174,5 +173,83 @@ exports.getUserStats = asyncHandler(async (req, res, next) => {
         count: mostPackageBooked[0]?.count,
       },
     },
+  });
+});
+
+// Get ALL User For Admin
+exports.getAllUsers = asyncHandler(async (req, res, next) => {
+  const users = await AuthModel.find({ role: "user" });
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: users,
+  });
+});
+
+// Handle Add, Update, or Delete User Work Space
+exports.manageWorkSpace = asyncHandler(async (req, res, next) => {
+  const { user_id, name, link, action } = req.body;
+
+  if (!user_id || !action) {
+    return next(
+      new AppError(
+        400,
+        HTTP_STATUS_TEXT.FAIL,
+        "Please provide user_id and action"
+      )
+    );
+  }
+
+  const user = await AuthModel.findById(user_id);
+
+  if (!user) {
+    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "User not found"));
+  }
+
+  switch (action) {
+    case "add":
+    case "update":
+      if (!name || !link)
+        throw new AppError(
+          400,
+          HTTP_STATUS_TEXT.FAIL,
+          "Please provide both name and link"
+        );
+      user.workspace = { name, link };
+      await user.save();
+      res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        message: `Workspace ${action}d successfully`,
+        data: user.workspace,
+      });
+
+      break;
+
+    case "delete":
+      user.workspace = null;
+      await user.save();
+      res.status(200).json({
+        status: HTTP_STATUS_TEXT.SUCCESS,
+        message: "Workspace deleted successfully",
+        data: user,
+      });
+      break;
+    default:
+      throw new AppError(
+        400,
+        HTTP_STATUS_TEXT.FAIL,
+        "Invalid action. Must be one of: add, update, delete"
+      );
+  }
+});
+
+// Get User Work Space
+exports.getUserWorkSpace = asyncHandler(async (req, res, next) => {
+  const { _id } = req.user;
+  const user = await AuthModel.findById(_id);
+  if (!user) throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "User not found");
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: user.work_space,
   });
 });

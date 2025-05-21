@@ -116,7 +116,6 @@ export default function AddNewPackageModel({ closeModel }) {
         },
         validationSchema,
         onSubmit:  (values) => {
-            console.log(values);
              addPackage({
                 ...values,
             }, {

@@ -1,55 +1,37 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../../context/Auth-Context/AuthContext';
 import LoadingScreen from '../loading-screen/LoadingScreen';
-import Signout from '../../apis/auth/signout.api';
+import axios from '../../apis/axiosInstance';
 
-export default function ProtectedRoute({ children, allowedRoles, redirectTo = "/" }) {
-    const [userRole, setUserRole] = useState(null);
-    const { signout } = Signout()
+export default function ProtectedRoute({ children, allowedRoles = [], redirectTo = "/" }) {
+    const { state, dispatch } = useAuth();
     const [loading, setLoading] = useState(true);
-    const { dispatch } = useAuth();
 
     useEffect(() => {
-        const checkToken = () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                signout();
-                dispatch({ type: 'LOGOUT' });
-                <Navigate to="/" replace />;
-                return;
-            }
-
-            try {
-                const decoded = jwtDecode(token);
-                const now = Date.now() / 1000;
-
-                if (decoded.exp && decoded.exp < now) {
+        if (!state.isAuthenticated) {
+            axios.get('/auth/is-login')
+                .then((res) => {
+                    if (res.data?.user) {
+                        dispatch({ type: 'LOGIN', payload: res.data.user });
+                    } else {
+                        dispatch({ type: 'LOGOUT' });
+                    }
+                })
+                .catch(() => {
                     dispatch({ type: 'LOGOUT' });
-                } else {
-                    setUserRole(decoded.role);
-                }
-            } catch (err) {
-                console.error("Invalid token", err);
-                dispatch({ type: 'LOGOUT' });
-            }
-        };
+                })
+                .finally(() => setLoading(false));
+        } else {
+            setLoading(false);
+        }
+    }, [state.isAuthenticated, dispatch]);
 
-        checkToken();
-        setLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch]);
+    if (loading) return <LoadingScreen />;
 
-    if (loading) {
-        return <LoadingScreen />;
-    }
+    if (!state.isAuthenticated) return <Navigate to="/" replace />;
 
-    if (!userRole) {
-        return <Navigate to="/" replace />;
-    }
-
-    if (!allowedRoles.includes(userRole)) {
+    if (allowedRoles.length > 0 && !allowedRoles.includes(state.user?.role)) {
         return <Navigate to={redirectTo} replace />;
     }
 

@@ -1,7 +1,6 @@
 import { useParams } from 'react-router-dom'
 import Header from '../../components/Studio-Details/Header/Header'
 import Gallery from '../../components/Studio-Details/Gallery/Gallery'
-// import BookingButton from '../../components/Studio-Details/Booking-Button/BookingButton'
 import Taps from '../../components/Studio-Details/Taps/Taps'
 import { GetStudioByID } from '../../apis/studios/studios.api'
 

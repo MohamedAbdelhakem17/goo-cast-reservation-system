@@ -91,7 +91,6 @@ export default function PackagePrice({ selectedPackage }) {
         onSuccessMessage,
         extraDispatch = null
     ) => {
-        console.log(payloadOverrides);
         const payload = {
             isFixed: payloadOverrides.isFixedHourly,
             defaultPricePerSlot: payloadOverrides.defaultPricePerSlot,
@@ -117,7 +116,7 @@ export default function PackagePrice({ selectedPackage }) {
                         error?.response?.data?.message || "Something went wrong",
                         "error"
                     );
-                    console.log(error);
+                    console.error(error);
                 },
             }
         );
@@ -184,7 +183,6 @@ export default function PackagePrice({ selectedPackage }) {
     };
 
     const handleSaveEditedRule = (editedRule) => {
-        console.log(editedRule);
         updatePackagePrice(editedRule, "Rule updated successfully");
         setEditingRule(null);
     };
@@ -219,6 +217,8 @@ export default function PackagePrice({ selectedPackage }) {
                     {packageData?.name}
                 </motion.span>
             </motion.div>
+
+            
 
             {/* Price Form */}
             <motion.div

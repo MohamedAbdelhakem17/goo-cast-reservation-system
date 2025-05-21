@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import Input from "../../components/shared/Input/Input"
 import signinForm from "../../apis/auth/signin.api";
+import GoogleButton from "../../components/Google-Button/GoogleButton";
+
 const Signin = ({ closeModal, changeForm }) => {
   const inputRef = useRef(null)
   const { formik, serverError } = signinForm(closeModal)
@@ -13,7 +15,7 @@ const Signin = ({ closeModal, changeForm }) => {
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.focus()
+      // inputRef.current.focus()
     }
   }, [])
 
@@ -135,6 +137,10 @@ const Signin = ({ closeModal, changeForm }) => {
             >
               Sign In
             </motion.button>
+
+            {/* Google Button */}
+            <hr className="border-gray-300 my-4"/>
+            <GoogleButton label="Sign in with Google" />
 
             {/* Server Error */}
             {
