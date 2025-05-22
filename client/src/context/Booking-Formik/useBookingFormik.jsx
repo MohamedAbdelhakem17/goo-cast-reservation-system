@@ -105,6 +105,8 @@ export default function useBookingFormik() {
                     id: values.selectedPackage.id,
                 },
                 totalPrice: values.totalPrice,
+                coupon_code: values.couponCode,
+                totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice
             };
 
             createBooking(dataBaseObject, {

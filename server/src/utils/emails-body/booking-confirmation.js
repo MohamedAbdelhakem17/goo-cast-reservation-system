@@ -1,17 +1,17 @@
 const bookingConfirmationEmailBody = (booking) => {
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr)
-        return date.toLocaleDateString("en-GB", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        })
-    }
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-GB", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
-    const addOnsHTML = booking.selectedAddOns.items
-        .map(
-            (addOn) => `
+  const addOnsHTML = booking.selectedAddOns.items
+    .map(
+      (addOn) => `
 <div class="addon-item" style="padding: 12px 0; border-bottom: 1px solid #eee;">
     <div class="addon-info" style="display: flex; align-items: center;">
         <div class="addon-bar"
@@ -27,11 +27,11 @@ const bookingConfirmationEmailBody = (booking) => {
     </div>
 </div>
 
-`,
-        )
-        .join("")
+`
+    )
+    .join("");
 
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 
@@ -672,8 +672,7 @@ const bookingConfirmationEmailBody = (booking) => {
             <!-- Total -->
             <div class="total-section">
                 <h4 class="info-title" style="color: white; font-size: 22px;">Total Amount</h4>
-                <p class="total-price">${booking.totalPrice || booking.studio.price + booking.selectedPackage.price +
-        booking.selectedAddOns.totalPrice} EGP</p>
+                <p class="total-price">${booking.totalPriceAfterDiscount} EGP</p>
             </div>
 
             <div class="center">
@@ -688,7 +687,7 @@ const bookingConfirmationEmailBody = (booking) => {
 </body>
 
 </html>
-`
-}
+`;
+};
 
-module.exports = bookingConfirmationEmailBody
+module.exports = bookingConfirmationEmailBody;
