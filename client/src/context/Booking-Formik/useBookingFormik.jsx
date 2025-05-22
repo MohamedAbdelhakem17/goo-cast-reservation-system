@@ -42,6 +42,7 @@ export default function useBookingFormik() {
                 email: "",
                 brand: "",
             },
+            totalPackagePrice: 0,
             totalPrice: 0,
             totalPriceAfterDiscount: 0,
             couponCode: ""
@@ -72,17 +73,17 @@ export default function useBookingFormik() {
         totalPrice: Yup.number()
             .required("Total price is required"),
 
-        // totalPriceAfterDiscount: Yup.number()
-        //     .required("Discounted price is required")
-        //     .test(
-        //         "is-less-than-or-equal-total",
-        //         "Discounted price must be less than or equal to total price",
-        //         function (value) {
-        //             const { totalPrice } = this.parent;
-        //             if (value == null || totalPrice == null) return true;
-        //             return value <= totalPrice;
-        //         }
-        //     )
+        totalPriceAfterDiscount: Yup.number()
+            .required("Discounted price is required")
+            .test(
+                "is-less-than-or-equal-total",
+                "Discounted price must be less than or equal to total price",
+                function (value) {
+                    const { totalPrice } = this.parent;
+                    if (value == null || totalPrice == null) return true;
+                    return value <= totalPrice;
+                }
+            )
 
     });
 
@@ -95,13 +96,6 @@ export default function useBookingFormik() {
         validationSchema: bookingValidationSchema,
 
         onSubmit: (values) => {
-
-            const totalAddOnPrice = values.selectedAddOns?.reduce((acc, item) => {
-                return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
-            }, 0) || 0
-
-            const totalPrice = totalAddOnPrice + (values.totalPrice || 0)
-
             const dataBaseObject = {
                 ...values,
                 studio: {
@@ -110,7 +104,7 @@ export default function useBookingFormik() {
                 package: {
                     id: values.selectedPackage.id,
                 },
-                totalPrice,
+                totalPrice: values.totalPrice,
             };
 
             createBooking(dataBaseObject, {
