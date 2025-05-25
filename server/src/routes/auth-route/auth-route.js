@@ -38,7 +38,7 @@ router.get(
     failureMessage: "Failed to login with Google",
   }),
   (req, res) => {
-    res.redirect(SUCCESS_DIR);
+    res.redirect("/goocast");
   }
 );
 
