@@ -64,7 +64,6 @@ const createOpportunity = async (opportunityData) => {
     pipelineStageId: process.env.GO_HIGH_LEVEL_PIPELINE_STAGE_ID,
     contactId: opportunityData.contactId,
     monetaryValue: opportunityData.price,
-    // companyName: opportunityData.brand,
     name: opportunityData.name,
     source: "Goocast Booking Website",
     status: "open",
@@ -75,9 +74,20 @@ const createOpportunity = async (opportunityData) => {
     return response.data.opportunity.id;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("Create opportunity error:", error);
-      console.error("Status code:", error.response?.status);
+      const { status, data } = error.response || {};
+
+      console.error("Create opportunity error:", data);
+      console.error("Status code:", status);
+
+      if (
+        status === 409 ||
+        (data?.message && data.message.includes("already exists"))
+      ) {
+        console.warn("Opportunity already exists or was created, skipping.");
+        return null;
+      }
     }
+
     throw error;
   }
 };

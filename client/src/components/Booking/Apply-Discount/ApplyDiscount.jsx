@@ -23,7 +23,6 @@ export default function ApplyDiscount() {
                     const totalPrice = getBookingField("totalPrice")
                     const discount = response.data.discount
                     const totalPriceAfterDiscount = totalPrice - totalPrice * (discount / 100);
-                    console.log({ totalPriceAfterDiscount, discount })
 
                     setBookingField("totalPriceAfterDiscount", totalPriceAfterDiscount);
 
@@ -31,7 +30,7 @@ export default function ApplyDiscount() {
                 },
                 onError: (error) => {
                     const errorMessage = error.response?.data?.message || "Coupon is not valid"
-                    console.log("error", error)
+                    console.error("error", error)
                     addToast(errorMessage, "error")
                 }
             }

@@ -341,8 +341,6 @@ exports.signin = asyncHandler(async (req, res) => {
 
 // Signout function to handle user logout
 exports.signout = asyncHandler(async (req, res) => {
-  console.log("Signout", req.user);
-  console.log("Signout", req.isAuthenticated());
   req.logout((err) => {
     if (err) return res.status(500).json({ message: "Logout failed" });
     req.session.destroy();

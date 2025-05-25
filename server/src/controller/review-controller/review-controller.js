@@ -40,7 +40,6 @@ async function getPlaceReviews() {
     let isNew = false;
     if (!cached || result.user_ratings_total > (cached.userRatingsTotal || 0)) {
       isNew = true;
-      console.log("🆕 New reviews detected");
     }
 
     await ReviewModel.findOneAndUpdate(

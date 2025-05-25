@@ -11,10 +11,7 @@ const { USER_ROLE } = require('../../config/system-variables');
 
 
 router.route('/')
-    .get((req, res, next) => {
-        console.log("Get all categories");
-        next();
-    },CategoryController.getAllCategories);
+    .get(CategoryController.getAllCategories);
 
 router.use(protectRoute, allowTo(USER_ROLE.ADMIN))
 
