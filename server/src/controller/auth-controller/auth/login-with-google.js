@@ -14,7 +14,6 @@ passport.use(
     // 2 CallBake Function
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log("Google profile:", profile);
         const email = profile?.emails?.[0]?.value;
 
         if (!email) {

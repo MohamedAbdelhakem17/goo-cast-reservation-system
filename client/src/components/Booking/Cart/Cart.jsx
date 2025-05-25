@@ -1,11 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
 import { useBooking } from '../../../context/Booking-Context/BookingContext'
 import useTimeConvert from '../../../hooks/useTimeConvert'
 import ApplyDiscount from '../Apply-Discount/ApplyDiscount'
 import { useAuth } from '../../../context/Auth-Context/AuthContext'
+import { useEffect } from 'react'
 
 export default function Cart() {
-    const { bookingData, handleNextStep } = useBooking()
+    const { bookingData, handleNextStep, setBookingField } = useBooking()
     const { isAuthenticated } = useAuth()
     const formatTime = useTimeConvert()
 
@@ -18,11 +20,19 @@ export default function Cart() {
         return acc + (item.quantity > 0 ? item.price * item.quantity : 0)
     }, 0) || 0
 
-    const totalPrice = totalAddOnPrice + (bookingData.totalPrice || 0)
+    const totalPrice = bookingData?.totalPrice
+
+    useEffect(() => {
+        const newTotalPrice = bookingData.totalPackagePrice + totalAddOnPrice
+        setBookingField("totalPrice", newTotalPrice)
+
+    }, [bookingData.selectedAddOns])
 
     if (!bookingData) {
         return <div>Loading...</div>
     }
+
+
 
 
 
@@ -64,7 +74,7 @@ export default function Cart() {
                             <div className="text-right">
                                 <p className="text-sm text-gray-400">Package Price</p>
                                 <p className="text-lg font-bold text-main">
-                                    {bookingData.totalPrice} EGP
+                                    {bookingData.totalPackagePrice} EGP
                                 </p>
                             </div>
                         </div>
@@ -107,6 +117,15 @@ export default function Cart() {
                     {totalPrice} EGP
                 </p>
             </div>
+            {
+                bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0 && <div className="flex items-center justify-between mt-2 p-4 border-t border-gray-300">
+                    <h4 className="text-xl font-semibold mb-4 text-gray-800">total Price After Discount</h4>
+                    <p className="text-lg font-bold text-main">
+                        {bookingData.totalPriceAfterDiscount} EGP
+                    </p>
+                </div>
+            }
+
 
             <button onClick={handleNextStep} className="text-main flex items-baseline justify-center cursor-pointer mx-auto gap-1 text-md font-medium mt-1 bg-main/5 hover:bg-main/10 px-3 py-1.5 rounded-md transition-colors ">
                 <span className='m-0'>complete booking</span>

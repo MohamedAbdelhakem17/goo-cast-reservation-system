@@ -18,6 +18,7 @@ export default function ConfirmationBooking() {
         endSlot,
         duration,
         selectedPackage,
+        totalPackagePrice,
         totalPrice,
         totalPriceAfterDiscount,
         selectedAddOns,
@@ -175,7 +176,7 @@ export default function ConfirmationBooking() {
                                         <div className="bg-main/80 p-3 rounded-xl">
                                             <p className="text-sm text-white">Package Price</p>
                                             <p className="font-bold text-white">
-                                                {totalPrice} EGP
+                                                {totalPackagePrice} EGP
                                             </p>
                                         </div>
                                     </div>
@@ -376,8 +377,8 @@ export default function ConfirmationBooking() {
                                 </div>
                             </div>
                             {
-                                (totalPriceAfterDiscount && totalPriceAfterDiscount !== 0) && <div className="relative p-6 md:p-8 rounded-2xl text-white">
-                                    <div className="flex flex-col md:flex-row justify-between items-center border-t-green">
+                                (totalPriceAfterDiscount && totalPriceAfterDiscount !== 0) && <div className="relative p-6 md:p-8 rounded-2xl text-white border-1">
+                                    <div className="flex flex-col md:flex-row justify-between items-center "> 
                                         <div>
                                             <h4 className="text-xl font-bold">Total Amount After Discount</h4>
                                         </div>

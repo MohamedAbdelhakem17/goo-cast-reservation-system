@@ -19,6 +19,7 @@ const PackageModel = require("../../models/hourly-packages-model/hourly-packages
 const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model");
 const AddOnModel = require("../../models/add-on-model/add-on-model");
+const CouponModel = require("../../models/coupon-model/coupon-model.js");
 const saveOpportunityInGoHighLevel = require("../../utils/save-opportunity-in-go-high-level");
 
 // old code For getting available slots
@@ -176,69 +177,58 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
 });
 
 // Get Available Start Slots
-// exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
-//   const { studioId, date } = req.body;
-
-//   if (!studioId || !date) {
-//     return next(
-//       new AppError(400, HTTP_STATUS_TEXT.FAIL, "studioId and date are required")
-//     );
-//   }
-
-//   const studio = await StudioModel.findById(studioId);
-//   if (!studio) {
-//     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
-//   }
-
-//   const startOfDay = timeToMinutes(studio.startTime || "09:00");
-//   const endOfDay = timeToMinutes(studio.endTime || "18:00");
-
-//   const inputDate = getAllDay(date);
-
-//   const bookings = await BookingModel.find({
-//     studio: studioId,
-//     date: {
-//       $gte: inputDate.startOfDay,
-//       $lt: inputDate.endOfDay,
-//     },
-//   });
-
-//   const bookedSlots = bookings.map((book) => {
-//     const start = timeToMinutes(book.startSlot);
-//     const end = timeToMinutes(book.endSlot);
-//     return { start, end };
-//   });
-
-//   const availableSlots = [];
-//   const now = new Date();
-
-//   for (let time = startOfDay; time < endOfDay; time += 60) {
-//     const slotEnd = time + 60;
-
-//     // create slot date
-//     const requestedDate = new Date(date);
-//     const slotDateTime = new Date(requestedDate);
-//     slotDateTime.setHours(Math.floor(time / 60), time % 60, 0, 0);
-
-//     //skip slot if it is in the past
-//     if (slotDateTime < now) {
-//       continue;
-//     }
-
-//     const isOverlapping = bookedSlots.some(
-//       (b) => time < b.end && slotEnd > b.start
-//     );
-
-//     if (!isOverlapping) {
-//       availableSlots.push({ startTime: minutesToTime(time) });
-//     }
-//   }
-
-//   res.status(200).json({
-//     status: HTTP_STATUS_TEXT.SUCCESS,
-//     data: availableSlots,
-//   });
-// });
+{
+  // exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
+  //   const { studioId, date } = req.body;
+  //   if (!studioId || !date) {
+  //     return next(
+  //       new AppError(400, HTTP_STATUS_TEXT.FAIL, "studioId and date are required")
+  //     );
+  //   }
+  //   const studio = await StudioModel.findById(studioId);
+  //   if (!studio) {
+  //     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+  //   }
+  //   const startOfDay = timeToMinutes(studio.startTime || "09:00");
+  //   const endOfDay = timeToMinutes(studio.endTime || "18:00");
+  //   const inputDate = getAllDay(date);
+  //   const bookings = await BookingModel.find({
+  //     studio: studioId,
+  //     date: {
+  //       $gte: inputDate.startOfDay,
+  //       $lt: inputDate.endOfDay,
+  //     },
+  //   });
+  //   const bookedSlots = bookings.map((book) => {
+  //     const start = timeToMinutes(book.startSlot);
+  //     const end = timeToMinutes(book.endSlot);
+  //     return { start, end };
+  //   });
+  //   const availableSlots = [];
+  //   const now = new Date();
+  //   for (let time = startOfDay; time < endOfDay; time += 60) {
+  //     const slotEnd = time + 60;
+  //     // create slot date
+  //     const requestedDate = new Date(date);
+  //     const slotDateTime = new Date(requestedDate);
+  //     slotDateTime.setHours(Math.floor(time / 60), time % 60, 0, 0);
+  //     //skip slot if it is in the past
+  //     if (slotDateTime < now) {
+  //       continue;
+  //     }
+  //     const isOverlapping = bookedSlots.some(
+  //       (b) => time < b.end && slotEnd > b.start
+  //     );
+  //     if (!isOverlapping) {
+  //       availableSlots.push({ startTime: minutesToTime(time) });
+  //     }
+  //   }
+  //   res.status(200).json({
+  //     status: HTTP_STATUS_TEXT.SUCCESS,
+  //     data: availableSlots,
+  //   });
+  // });
+}
 
 exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   const { studioId, date } = req.body;
@@ -250,6 +240,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   }
 
   const studio = await StudioModel.findById(studioId);
+
   if (!studio) {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
   }
@@ -269,12 +260,12 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     slotDateTime.setHours(Math.floor(time / 60), time % 60, 0, 0);
     if (slotDateTime < now) continue;
 
-    const hasConflict = await BookingModel.exists({
+    const hasConflict = !!(await BookingModel.exists({
       studio: studioId,
       date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
       startSlotMinutes: { $lt: slotEnd },
       endSlotMinutes: { $gt: time },
-    });
+    }));
 
     if (!hasConflict) {
       availableSlots.push({ startTime: minutesToTime(time) });
@@ -288,59 +279,51 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
 });
 
 // Get Available End Slots
-// exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
-//   const { studioId, date, startTime, package } = req.body;
-
-//   if ((!studioId || !date || !startTime, !package)) {
-//     return next(
-//       new AppError(
-//         400,
-//         HTTP_STATUS_TEXT.FAIL,
-//         "studio, date, and start , package Time are required "
-//       )
-//     );
-//   }
-
-//   const studio = await StudioModel.findById(studioId);
-//   if (!studio) {
-//     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
-//   }
-
-//   const selectedPackage = await PackageModel.findById(package);
-//   if (!selectedPackage) {
-//     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Package not found"));
-//   }
-
-//   const inputDate = getAllDay(date);
-
-//   const bookings = await BookingModel.find({
-//     studio: studioId,
-//     date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
-//   });
-
-//   const bookedSlots = bookings.map((book) => {
-//     const start = timeToMinutes(book.startSlot);
-//     const end = timeToMinutes(book.endSlot);
-//     return { start, end };
-//   });
-
-//   const startSlotMinutes = timeToMinutes(startTime);
-//   const endOfDay = timeToMinutes(studio.endTime || "22:00");
-
-//   const availableEndSlots = await calculateSlotPrices({
-//     package: selectedPackage,
-//     date,
-//     startSlotMinutes,
-//     endOfDay,
-//     bookedSlots,
-//   });
-
-//   res.status(200).json({
-//     status: HTTP_STATUS_TEXT.SUCCESS,
-//     data: availableEndSlots,
-//   });
-// });
-
+{
+  // exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
+  //   const { studioId, date, startTime, package } = req.body;
+  //   if ((!studioId || !date || !startTime, !package)) {
+  //     return next(
+  //       new AppError(
+  //         400,
+  //         HTTP_STATUS_TEXT.FAIL,
+  //         "studio, date, and start , package Time are required "
+  //       )
+  //     );
+  //   }
+  //   const studio = await StudioModel.findById(studioId);
+  //   if (!studio) {
+  //     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+  //   }
+  //   const selectedPackage = await PackageModel.findById(package);
+  //   if (!selectedPackage) {
+  //     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Package not found"));
+  //   }
+  //   const inputDate = getAllDay(date);
+  //   const bookings = await BookingModel.find({
+  //     studio: studioId,
+  //     date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
+  //   });
+  //   const bookedSlots = bookings.map((book) => {
+  //     const start = timeToMinutes(book.startSlot);
+  //     const end = timeToMinutes(book.endSlot);
+  //     return { start, end };
+  //   });
+  //   const startSlotMinutes = timeToMinutes(startTime);
+  //   const endOfDay = timeToMinutes(studio.endTime || "22:00");
+  //   const availableEndSlots = await calculateSlotPrices({
+  //     package: selectedPackage,
+  //     date,
+  //     startSlotMinutes,
+  //     endOfDay,
+  //     bookedSlots,
+  //   });
+  //   res.status(200).json({
+  //     status: HTTP_STATUS_TEXT.SUCCESS,
+  //     data: availableEndSlots,
+  //   });
+  // });
+}
 exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
   const { studioId, date, startTime, package } = req.body;
 
@@ -786,208 +769,183 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   //         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
   //     }
   // });
+  // Create New Booking
+  // exports.createBooking = asyncHandler(async (req, res) => {
+  //   const {
+  //     studio: studioId,
+  //     date,
+  //     startSlot,
+  //     endSlot,
+  //     duration,
+  //     persons,
+  //     package: selectedPackage,
+  //     selectedAddOns: addOns,
+  //     personalInfo,
+  //     totalPrice: totalPriceFromClient,
+  //     user_id,
+  //   } = req.body;
+  //   // Check if studio exists
+  //   const studio = await StudioModel.findById(studioId.id);
+  //   if (!studio)
+  //     throw new AppError(
+  //       404,
+  //       HTTP_STATUS_TEXT.FAIL,
+  //       "Studio not found for booking"
+  //     );
+  //   // Check if package exists
+  //   const pkg = await PackageModel.findById(selectedPackage.id);
+  //   if (!pkg)
+  //     throw new AppError(
+  //       404,
+  //       HTTP_STATUS_TEXT.FAIL,
+  //       "Package not found for booking"
+  //     );
+  //   const bookingDate = new Date(date);
+  //   const startSlotMinutes = timeToMinutes(startSlot);
+  //   const endSlotMinutes = timeToMinutes(endSlot);
+  //   // Get all bookings for the studio on that day
+  //   const { startOfDay, endOfDay } = getAllDay(bookingDate);
+  //   const sameDayBookings = await BookingModel.find({
+  //     studio: studio._id,
+  //     date: { $gte: startOfDay, $lt: endOfDay },
+  //   });
+  //   // Check for time conflict
+  //   const hasConflict = sameDayBookings.some((book) => {
+  //     const bookStart = timeToMinutes(book.startSlot);
+  //     const bookEnd = timeToMinutes(book.endSlot);
+  //     return startSlotMinutes < bookEnd && endSlotMinutes > bookStart;
+  //   });
+  //   if (hasConflict) {
+  //     throw new AppError(
+  //       400,
+  //       HTTP_STATUS_TEXT.FAIL,
+  //       "This time is already booked"
+  //     );
+  //   }
+  //   // Calculate package price using slot pricing
+  //   const slotPrices = await calculateSlotPrices({
+  //     package: pkg,
+  //     date: bookingDate,
+  //     startSlotMinutes,
+  //     endOfDay: endSlotMinutes,
+  //     bookedSlots: [], // No need to pass existing bookings here
+  //   });
+  //   const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
+  //   // Add-ons pricing
+  //   const addonsTotalPriceFromClient =
+  //     addOns?.reduce((acc, item) => {
+  //       return acc + (item.quantity > 0 ? item.price * item.quantity : 0);
+  //     }, 0) || 0;
+  //   const addOnDetails = [];
+  //   let addOnsTotalPriceFromDb = 0;
+  //   if (Array.isArray(addOns)) {
+  //     for (const addOn of addOns) {
+  //       const addOnItem = await AddOnModel.findById(addOn._id);
+  //       if (!addOnItem) continue;
+  //       const addOnPrice = addOnItem.price * addOn.quantity;
+  //       addOnsTotalPriceFromDb += addOnPrice;
+  //       addOnDetails.push({
+  //         item: addOnItem._id,
+  //         quantity: addOn.quantity,
+  //         price: addOnItem.price,
+  //       });
+  //     }
+  //   }
+  //   if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient) {
+  //     throw new AppError(
+  //       400,
+  //       HTTP_STATUS_TEXT.FAIL,
+  //       "The add-on price is incorrect"
+  //     );
+  //   }
+  //   const totalPrice = Math.round(addOnsTotalPriceFromDb + packagePrice);
+  //   if (totalPrice !== totalPriceFromClient) {
+  //     throw new AppError(
+  //       400,
+  //       HTTP_STATUS_TEXT.FAIL,
+  //       "The total price is incorrect"
+  //     );
+  //   }
+  //   try {
+  //     const bookingData = {
+  //       studio: studio._id,
+  //       date: bookingDate,
+  //       startSlot,
+  //       endSlot,
+  //       duration,
+  //       persons,
+  //       package: pkg._id,
+  //       addOns: addOnDetails,
+  //       totalAddOnsPrice: addOnsTotalPriceFromDb,
+  //       totalPackagePrice: packagePrice,
+  //       personalInfo,
+  //       totalPrice,
+  //       status: "pending",
+  //       createdBy: user_id,
+  //       isGuest: user_id ? false : true,
+  //     };
+  //     // Create a temp booking object (for ID usage in email)
+  //     const tempBooking = new BookingModel(bookingData);
+  //     // Prepare email
+  //     const emailOptions = {
+  //       to: personalInfo.email,
+  //       subject: "Booking Confirmation",
+  //       message: bookingConfirmationEmailBody({
+  //         ...req.body,
+  //         bookingId: tempBooking._id,
+  //         studio: {
+  //           name: studio.name,
+  //           image: studio.thumbnail,
+  //         },
+  //         selectedAddOns: {
+  //           items: [...addOns],
+  //           totalPrice: addOnsTotalPriceFromDb,
+  //         },
+  //         selectedPackage: pkg.name,
+  //       }),
+  //     };
+  //     // 1. Try sending the email
+  //     await sendEmail(emailOptions);
+  //     // 2. Try saving opportunity
+  //     const userData = {
+  //       name: personalInfo.name,
+  //       email: personalInfo.email,
+  //       phone: personalInfo.phone,
+  //     };
+  //     const opportunityData = {
+  //       name: `${studio.name} - ${pkg.name} - ${personalInfo.fullName}`,
+  //       price: totalPrice,
+  //     };
+  //     try {
+  //       await saveOpportunityInGoHighLevel(userData, opportunityData);
+  //     } catch (err) {
+  //       throw new AppError(
+  //         500,
+  //         HTTP_STATUS_TEXT.FAIL,
+  //         "Failed to create opportunity, booking not saved"
+  //       );
+  //     }
+  //     // 3. If all went well, save the booking
+  //     const booking = await tempBooking.save();
+  //     res.status(201).json({
+  //       status: HTTP_STATUS_TEXT.SUCCESS,
+  //       message: "Booking created successfully and sent confirmation email",
+  //       booking,
+  //     });
+  //   } catch (error) {
+  //     throw new AppError(
+  //       500,
+  //       HTTP_STATUS_TEXT.FAIL,
+  //       error.message || "Failed to complete booking process"
+  //     );
+  //   }
+  // });
 }
 
 // Create New Booking
-// exports.createBooking = asyncHandler(async (req, res) => {
-//   const {
-//     studio: studioId,
-//     date,
-//     startSlot,
-//     endSlot,
-//     duration,
-//     persons,
-//     package: selectedPackage,
-//     selectedAddOns: addOns,
-//     personalInfo,
-//     totalPrice: totalPriceFromClient,
-//     user_id,
-//   } = req.body;
-
-//   // Check if studio exists
-//   const studio = await StudioModel.findById(studioId.id);
-//   if (!studio)
-//     throw new AppError(
-//       404,
-//       HTTP_STATUS_TEXT.FAIL,
-//       "Studio not found for booking"
-//     );
-
-//   // Check if package exists
-//   const pkg = await PackageModel.findById(selectedPackage.id);
-//   if (!pkg)
-//     throw new AppError(
-//       404,
-//       HTTP_STATUS_TEXT.FAIL,
-//       "Package not found for booking"
-//     );
-
-//   const bookingDate = new Date(date);
-//   const startSlotMinutes = timeToMinutes(startSlot);
-//   const endSlotMinutes = timeToMinutes(endSlot);
-
-//   // Get all bookings for the studio on that day
-//   const { startOfDay, endOfDay } = getAllDay(bookingDate);
-//   const sameDayBookings = await BookingModel.find({
-//     studio: studio._id,
-//     date: { $gte: startOfDay, $lt: endOfDay },
-//   });
-
-//   // Check for time conflict
-//   const hasConflict = sameDayBookings.some((book) => {
-//     const bookStart = timeToMinutes(book.startSlot);
-//     const bookEnd = timeToMinutes(book.endSlot);
-//     return startSlotMinutes < bookEnd && endSlotMinutes > bookStart;
-//   });
-
-//   if (hasConflict) {
-//     throw new AppError(
-//       400,
-//       HTTP_STATUS_TEXT.FAIL,
-//       "This time is already booked"
-//     );
-//   }
-
-//   // Calculate package price using slot pricing
-//   const slotPrices = await calculateSlotPrices({
-//     package: pkg,
-//     date: bookingDate,
-//     startSlotMinutes,
-//     endOfDay: endSlotMinutes,
-//     bookedSlots: [], // No need to pass existing bookings here
-//   });
-
-//   const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
-
-//   // Add-ons pricing
-//   const addonsTotalPriceFromClient =
-//     addOns?.reduce((acc, item) => {
-//       return acc + (item.quantity > 0 ? item.price * item.quantity : 0);
-//     }, 0) || 0;
-
-//   const addOnDetails = [];
-//   let addOnsTotalPriceFromDb = 0;
-
-//   if (Array.isArray(addOns)) {
-//     for (const addOn of addOns) {
-//       const addOnItem = await AddOnModel.findById(addOn._id);
-//       if (!addOnItem) continue;
-
-//       const addOnPrice = addOnItem.price * addOn.quantity;
-//       addOnsTotalPriceFromDb += addOnPrice;
-
-//       addOnDetails.push({
-//         item: addOnItem._id,
-//         quantity: addOn.quantity,
-//         price: addOnItem.price,
-//       });
-//     }
-//   }
-
-//   if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient) {
-//     throw new AppError(
-//       400,
-//       HTTP_STATUS_TEXT.FAIL,
-//       "The add-on price is incorrect"
-//     );
-//   }
-
-//   const totalPrice = Math.round(addOnsTotalPriceFromDb + packagePrice);
-
-//   if (totalPrice !== totalPriceFromClient) {
-//     throw new AppError(
-//       400,
-//       HTTP_STATUS_TEXT.FAIL,
-//       "The total price is incorrect"
-//     );
-//   }
-
-//   try {
-//     const bookingData = {
-//       studio: studio._id,
-//       date: bookingDate,
-//       startSlot,
-//       endSlot,
-//       duration,
-//       persons,
-//       package: pkg._id,
-//       addOns: addOnDetails,
-//       totalAddOnsPrice: addOnsTotalPriceFromDb,
-//       totalPackagePrice: packagePrice,
-//       personalInfo,
-//       totalPrice,
-//       status: "pending",
-//       createdBy: user_id,
-//       isGuest: user_id ? false : true,
-//     };
-
-//     // Create a temp booking object (for ID usage in email)
-//     const tempBooking = new BookingModel(bookingData);
-
-//     // Prepare email
-//     const emailOptions = {
-//       to: personalInfo.email,
-//       subject: "Booking Confirmation",
-//       message: bookingConfirmationEmailBody({
-//         ...req.body,
-//         bookingId: tempBooking._id,
-//         studio: {
-//           name: studio.name,
-//           image: studio.thumbnail,
-//         },
-//         selectedAddOns: {
-//           items: [...addOns],
-//           totalPrice: addOnsTotalPriceFromDb,
-//         },
-//         selectedPackage: pkg.name,
-//       }),
-//     };
-
-//     // 1. Try sending the email
-//     await sendEmail(emailOptions);
-
-//     // 2. Try saving opportunity
-//     const userData = {
-//       name: personalInfo.name,
-//       email: personalInfo.email,
-//       phone: personalInfo.phone,
-//     };
-
-//     const opportunityData = {
-//       name: `${studio.name} - ${pkg.name} - ${personalInfo.fullName}`,
-//       price: totalPrice,
-//     };
-
-//     try {
-//       await saveOpportunityInGoHighLevel(userData, opportunityData);
-//     } catch (err) {
-//       throw new AppError(
-//         500,
-//         HTTP_STATUS_TEXT.FAIL,
-//         "Failed to create opportunity, booking not saved"
-//       );
-//     }
-
-//     // 3. If all went well, save the booking
-//     const booking = await tempBooking.save();
-
-//     res.status(201).json({
-//       status: HTTP_STATUS_TEXT.SUCCESS,
-//       message: "Booking created successfully and sent confirmation email",
-//       booking,
-//     });
-//   } catch (error) {
-//     throw new AppError(
-//       500,
-//       HTTP_STATUS_TEXT.FAIL,
-//       error.message || "Failed to complete booking process"
-//     );
-//   }
-// });
-
-// Create New Booking
 exports.createBooking = asyncHandler(async (req, res) => {
-  const user_id = req.isAuthenticated() ? req.user._id : "";
+  const user_id = req.isAuthenticated() ? req.user._id : undefined;
+  console.log(user_id);
   const {
     studio: studioId,
     date,
@@ -999,6 +957,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     selectedAddOns: addOns,
     personalInfo,
     totalPrice: totalPriceFromClient,
+    totalPriceAfterDiscount: totalPriceAfterDiscountFromClient,
     coupon_code,
   } = req.body;
 
@@ -1103,14 +1062,22 @@ exports.createBooking = asyncHandler(async (req, res) => {
   }
 
   // Coupon check
-  const isValidCoupon = await checkCouponIsValid(
-    coupon_code,
-    user_id,
-    personalInfo.email
-  );
-  const totalPriceAfterDiscount = isValidCoupon.valid
-    ? Math.round(totalPrice - totalPrice * isValidCoupon.discount)
+  const coupon = await CouponModel.findOne({ code: coupon_code });
+  if (!coupon && coupon_code) {
+    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "coupon not Found ");
+  }
+
+  const totalPriceAfterDiscount = coupon?.discount
+    ? Math.round(totalPrice - totalPrice * (coupon.discount / 100))
     : totalPrice;
+
+  if (totalPriceAfterDiscount !== totalPriceAfterDiscountFromClient) {
+    throw new AppError(
+      400,
+      HTTP_STATUS_TEXT.FAIL,
+      "The total price after Discount is incorrect"
+    );
+  }
 
   try {
     const bookingData = {
@@ -1159,7 +1126,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
         },
         {
           name: `${studio.name} - ${pkg.name} - ${personalInfo.fullName}`,
-          price: totalPrice,
+          price: totalPriceAfterDiscount,
         }
       );
     } catch (err) {
