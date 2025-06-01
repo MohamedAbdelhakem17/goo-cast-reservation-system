@@ -15,12 +15,12 @@ export default function SelectStudio() {
     // Sample studio data
     const { data: studiosData, isLoading } = useGetAvailableStudio()
     const { mutate: getSlots, data } = GetAvailableSlots()
-    
+
     const selectStudio = (studio) => {
         setBookingField("studio", studio)
         setBookingField("startSlot", null)
         setBookingField("endSlot", null)
-        getSlots({ studioId: studio.id, date: bookingData.date })
+        getSlots({ studioId: studio.id, date: bookingData.date, categoryId: bookingData?.selectedPackage?.category })
         setSelectedStudio(studio.id)
     }
 
@@ -38,7 +38,7 @@ export default function SelectStudio() {
         if (studioId) {
             getSlots({ studioId: studioId, date: bookingData.date })
         }
-    },[])
+    }, [])
 
     if (isLoading) return <Loading />
 
