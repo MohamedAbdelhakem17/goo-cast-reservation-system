@@ -7,8 +7,8 @@ const { USER_ROLE } = require("../../config/system-variables");
 const bookingController = require("../../controller/booking-controller/booking-controller");
 
 // get Fully booked dates for a studio
-router.route("/fully-booked/:studioId").get(bookingController.getFullyBookedDates);
-router.route("/available-studios/:date").get(bookingController.getAvailableStudios)
+// router.route("/fully-booked/:studioId").get(bookingController.getFullyBookedDates);
+router.route("/available-studios/:date/:categoryId").get(bookingController.getAvailableStudios)
 router.route("/available-slots").post(bookingController.getAvailableStartSlots);
 router.route("/available-end-slots").post(bookingController.getAvailableEndSlots);
 router.route("/").post(bookingController.createBooking);
