@@ -9,7 +9,6 @@ import { useAuth } from "../../../context/Auth-Context/AuthContext";
 import Signout from "../../../apis/auth/signout.api";
 
 export default function Navbar() {
-    // Constants
     const PAGES_LINKS = [
         { name: "Home", path: "/" },
         { name: "Setups", path: "/setups" },
@@ -20,127 +19,62 @@ export default function Navbar() {
         { name: "Sign Up", action: () => setIsSignupOpen(prev => !prev) },
     ];
 
-    // States
-    const [menuOpen, setMenuOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const { isAuthenticated, user } = useAuth()
-    const [isSignupOpen, setIsSignupOpen] = useState(false)
-    const [isSigninOpen, setIsSigninOpen] = useState(false)
-    const { handelLogout } = Signout()
-    const isAdmin = isAuthenticated && user ? user.role === "admin" : false
+    const [isSignupOpen, setIsSignupOpen] = useState(false);
+    const [isSigninOpen, setIsSigninOpen] = useState(false);
+    const { isAuthenticated, user } = useAuth();
+    const { handelLogout } = Signout();
+    const isAdmin = isAuthenticated && user?.role === "admin";
 
-
-    // Handle scroll effect for navbar
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-
+        const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Add functionality to close the menu when clicking on a link or anywhere else
-    const handleMenuClose = () => {
-        setMenuOpen(false);
-    };
-
-    // Add an event listener to close the menu when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (!event.target.closest(".menu-container")) {
-                setMenuOpen(false);
+            if (!event.target.closest(".profile-menu")) {
+                setIsProfileMenuOpen(false);
             }
         };
-
         document.addEventListener("click", handleClickOutside);
-        return () => {
-            document.removeEventListener("click", handleClickOutside);
-        };
+        return () => document.removeEventListener("click", handleClickOutside);
     }, []);
 
-    // NavLink class function for active link styling
-    const navLinkClasses = ({ isActive }) => {
-        return `relative font-medium ${isActive
-            ? "text-[20px] text-main font-semibold after:content-[''] after:block after:w-full after:h-[2px] after:bg-main after:absolute after:-bottom-1 after:left-0 after:transition-all after:duration-300"
-            : "hover:text-main/90 transition-colors duration-200"
-            }`;
-    };
+    const navLinkClasses = ({ isActive }) => `
+        relative font-medium 
+        ${isActive
+            ? "text-[20px] text-main font-semibold after:content-[''] after:block after:w-full after:h-[2px] after:bg-main after:absolute after:-bottom-1 after:left-0"
+            : "hover:text-main/90 transition-colors duration-200"}
+    `;
 
-    // Define animation variants
     const navbarVariants = {
         initial: { opacity: 0, y: -20 },
-        animate: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.5,
-                ease: [0.22, 1, 0.36, 1],
-            },
-        },
+        animate: { opacity: 1, y: 0, transition: { duration: 0.5 } }
     };
 
     const mobileMenuVariants = {
-        hidden: {
-            opacity: 0,
-            height: 0,
-            transition: {
-                duration: 0.3,
-                ease: [0.33, 1, 0.68, 1],
-                when: "afterChildren",
-                staggerChildren: 0.05,
-                staggerDirection: -1,
-            },
-        },
-        visible: {
-            opacity: 1,
-            height: "auto",
-            transition: {
-                duration: 0.4,
-                ease: [0.22, 1, 0.36, 1],
-                when: "beforeChildren",
-                staggerChildren: 0.1,
-            },
-        },
+        hidden: { opacity: 0, height: 0 },
+        visible: { opacity: 1, height: "auto" }
     };
 
     const fadeItem = {
         hidden: { opacity: 0, y: 10 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.3,
-                ease: [0.22, 1, 0.36, 1],
-            },
-        },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
     };
 
     const buttonVariants = {
-        hover: {
-            scale: 1.05,
-            boxShadow: "0 4px 10px rgba(237, 30, 38, 0.3)",
-            transition: {
-                type: "spring",
-                stiffness: 400,
-                damping: 10,
-            },
-        },
-        tap: {
-            scale: 0.95,
-            boxShadow: "0 2px 5px rgba(237, 30, 38, 0.2)",
-            transition: {
-                type: "spring",
-                stiffness: 500,
-                damping: 15,
-            },
-        },
+        hover: { scale: 1.05, boxShadow: "0 4px 10px rgba(237,30,38,0.3)" },
+        tap: { scale: 0.95, boxShadow: "0 2px 5px rgba(237,30,38,0.2)" }
     };
 
     return (
         <>
             {/* Navbar */}
-            <nav className={`w-full fixed top-0 left-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-lg py-2" : "shadow-md py-4"}`} >
+            <nav className={`w-full fixed top-0 left-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-lg py-2" : "shadow-md py-4"}`}>
                 <motion.div
                     variants={navbarVariants}
                     initial="initial"
@@ -151,7 +85,7 @@ export default function Navbar() {
                     <Link to="/" className="flex items-center">
                         <motion.img
                             src={logo}
-                            alt="Goo Cast"
+                            alt="Logo"
                             className="w-36"
                             whileHover={{ scale: 1.03 }}
                             transition={{ type: "spring", stiffness: 400 }}
@@ -160,131 +94,73 @@ export default function Navbar() {
 
                     {/* Desktop Navigation */}
                     <ul className="hidden md:flex items-center space-x-8">
-                        {PAGES_LINKS.map((page, index) => (
-                            <motion.li
-                                key={index}
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                    transition: {
-                                        delay: index * 0.1 + 0.3,
-                                        duration: 0.5,
-                                        ease: [0.22, 1, 0.36, 1],
-                                    },
-                                }}
-                            >
-                                <NavLink to={page.path} className={navLinkClasses} onClick={handleMenuClose}>
-                                    {page.name}
-                                </NavLink>
+                        {PAGES_LINKS.map((page, i) => (
+                            <motion.li key={i} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0, transition: { delay: i * 0.1 + 0.3 } }}>
+                                <NavLink to={page.path} className={navLinkClasses}>{page.name}</NavLink>
                             </motion.li>
                         ))}
                     </ul>
 
-                    {/* Sign in / Sign up in Pc */}
-                    {
-                        !isAuthenticated
-                            ? <div className="hidden md:flex items-center space-x-4">
-                                {BUTTON_ACTIONS.map((button, index) => (
-                                    <motion.button
-                                        key={index}
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{
-                                            opacity: 1,
-                                            scale: 1,
-                                            transition: {
-                                                delay: index * 0.1 + 0.5,
-                                                duration: 0.5,
-                                                ease: [0.22, 1, 0.36, 1],
-                                            },
-                                        }}
-                                        whileHover="hover"
-                                        whileTap="tap"
-                                        variants={buttonVariants}
-                                        className={`${index === 0
-                                            ? "bg-white text-main/90 border border-main/50"
-                                            : "bg-main/90 text-white"
-                                            } px-5 py-2 rounded-md font-medium transition-colors duration-200 ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
-                                            }`}
-                                        onClick={button.action}
-                                    >
-                                        {button.name}
-                                    </motion.button>
-                                ))}
-                            </div>
-                            : <div className="relative menu-container">
+                    {/* Buttons or Profile */}
+                    {!isAuthenticated ? (
+                        <div className="hidden md:flex items-center space-x-4">
+                            {BUTTON_ACTIONS.map((btn, i) => (
                                 <motion.button
-                                    onClick={() => setMenuOpen(!menuOpen)}
-                                    whileTap={{ scale: 0.9 }}
-                                    className="p-1 flex items-center space-x-2"
+                                    key={i}
+                                    onClick={btn.action}
+                                    variants={buttonVariants}
+                                    whileHover="hover"
+                                    whileTap="tap"
+                                    className={`${i === 0 ? "bg-white text-main/90 border border-main/50 hover:bg-blue-50" : "bg-main/90 text-white hover:bg-main"} px-5 py-2 rounded-md font-medium`}
                                 >
-                                    <i className="fa-solid fa-user-circle text-2xl"></i>
-                                    <i className="fa-solid fa-chevron-down"></i>
+                                    {btn.name}
                                 </motion.button>
-                                {menuOpen && (
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="relative profile-menu">
+                            <motion.button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} whileTap={{ scale: 0.9 }} className="p-1 flex items-center space-x-2">
+                                <i className="fa-solid fa-user-circle text-2xl"></i>
+                                <i className="fa-solid fa-chevron-down"></i>
+                            </motion.button>
+                            <AnimatePresence>
+                                {isProfileMenuOpen && (
                                     <motion.div
-                                        className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden z-50"
+                                        className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-50"
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
                                     >
                                         <ul className="py-2">
                                             <li>
-                                                <NavLink
-                                                    to={`${isAdmin ? "/admin-dashboard/welcome" : "/user-dashboard/profile"} `}
-                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                    onClick={handleMenuClose}
-                                                >
+                                                <NavLink to={isAdmin ? "/admin-dashboard/welcome" : "/user-dashboard/profile"} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                                     Dashboard
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <button
-                                                    onClick={handelLogout}
-                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                >
+                                                <button onClick={handelLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                                     Logout
                                                 </button>
                                             </li>
                                         </ul>
                                     </motion.div>
                                 )}
-                            </div>
-                    }
-
-
-
+                            </AnimatePresence>
+                        </div>
+                    )}
 
                     {/* Mobile Toggle */}
-                    <motion.div
-                        className="md:hidden"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1, transition: { delay: 0.3 } }}
-                    >
+                    <motion.div className="md:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.3 } }}>
                         <motion.button
-                            onClick={() => setMenuOpen(!menuOpen)}
+                            onClick={() => setIsMobileMenuOpen(prev => !prev)}
                             whileTap={{ scale: 0.9 }}
                             className="p-1"
                         >
                             <AnimatePresence mode="wait">
-                                {menuOpen ? (
-                                    <motion.i
-                                        key="close"
-                                        initial={{ rotate: -90, opacity: 0 }}
-                                        animate={{ rotate: 0, opacity: 1 }}
-                                        exit={{ rotate: 90, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="fa-solid fa-xmark text-2xl"
-                                    ></motion.i>
+                                {isMobileMenuOpen ? (
+                                    <motion.i key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} className="fa-solid fa-xmark text-2xl" />
                                 ) : (
-                                    <motion.i
-                                        key="menu"
-                                        initial={{ rotate: 90, opacity: 0 }}
-                                        animate={{ rotate: 0, opacity: 1 }}
-                                        exit={{ rotate: -90, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="fa-solid fa-bars text-2xl"
-                                    ></motion.i>
+                                    <motion.i key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} className="fa-solid fa-bars text-2xl" />
                                 )}
                             </AnimatePresence>
                         </motion.button>
@@ -293,28 +169,21 @@ export default function Navbar() {
 
                 {/* Mobile Menu */}
                 <AnimatePresence>
-                    {menuOpen && (
+                    {isMobileMenuOpen && (
                         <motion.div
                             variants={mobileMenuVariants}
                             initial="hidden"
                             animate="visible"
                             exit="hidden"
-                            className="md:hidden bg-white shadow-lg px-5 pt-4 pb-6 overflow-hidden"
+                            className="md:hidden bg-white shadow-lg px-5 pt-4 pb-6"
                         >
                             <ul className="space-y-5 mb-6">
                                 {PAGES_LINKS.map((page, index) => (
-                                    <motion.li
-                                        key={index}
-                                        variants={fadeItem}
-                                        className="border-b border-gray-100 pb-2"
-                                    >
+                                    <motion.li key={index} variants={fadeItem} className="border-b border-gray-100 pb-2">
                                         <NavLink
                                             to={page.path}
                                             className={navLinkClasses}
-                                            onClick={() => {
-                                                setMenuOpen(false);
-                                                handleMenuClose();
-                                            }}
+                                            onClick={() => setIsMobileMenuOpen(false)}
                                         >
                                             {page.name}
                                         </NavLink>
@@ -322,61 +191,60 @@ export default function Navbar() {
                                 ))}
                             </ul>
 
-                            {/* Button Actions */}
-                            {
-                                !isAuthenticated && <div className="space-y-3">
-                                    {BUTTON_ACTIONS.map((button, index) => (
+                            {!isAuthenticated && (
+                                <div className="space-y-3">
+                                    {BUTTON_ACTIONS.map((button, i) => (
                                         <motion.button
-                                            key={index}
+                                            key={i}
                                             variants={fadeItem}
                                             whileHover="hover"
                                             whileTap="tap"
-                                            className={`${index === 0
-                                                ? "bg-white text-main/90 border border-main/50"
-                                                : "bg-main/90 text-white"
-                                                } px-5 py-2 rounded-md font-medium transition-colors duration-200  w-full ${index === 0 ? "hover:bg-blue-50" : "hover:bg-main"
-                                                }`}
+                                            className={`${i === 0 ? "bg-white text-main/90 border border-main/50 hover:bg-blue-50" : "bg-main/90 text-white hover:bg-main"} px-5 py-2 rounded-md font-medium w-full`}
                                             onClick={() => {
                                                 button.action();
-                                                setMenuOpen(false);
+                                                setIsMobileMenuOpen(false);
                                             }}
                                         >
                                             {button.name}
                                         </motion.button>
                                     ))}
                                 </div>
-                            }
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>
             </nav>
 
-            {/* Signup & Signin Modal */}
+            {/* Signin & Signup Modals */}
             <AnimatePresence mode="wait">
-                {
-                    (isSignupOpen || isSigninOpen) &&
+                {(isSignupOpen || isSigninOpen) && (
                     <motion.div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
-                        {isSignupOpen &&
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        {isSignupOpen && (
                             <Signup
                                 closeModal={() => setIsSignupOpen(false)}
                                 changeForm={() => {
                                     setIsSignupOpen(false);
                                     setIsSigninOpen(true);
                                 }}
-                            />}
-                        {isSigninOpen &&
+                            />
+                        )}
+                        {isSigninOpen && (
                             <Signin
                                 closeModal={() => setIsSigninOpen(false)}
                                 changeForm={() => {
                                     setIsSigninOpen(false);
                                     setIsSignupOpen(true);
                                 }}
-                            />}
+                            />
+                        )}
                     </motion.div>
-                }
+                )}
             </AnimatePresence>
-
         </>
     );
 }
