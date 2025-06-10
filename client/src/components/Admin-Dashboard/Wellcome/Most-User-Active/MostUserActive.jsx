@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 
 export default function MostUserActive({ userData }) {
-    const { personalInfo, mostBookedStudio, mostBookedPackage, mostBookedAddOn, studioBookings, addOnBookings, packageBookings, totalBookings } = userData
+    const { personalInfo, mostBookedStudio, mostBookedPackage, mostBookedAddOn, studioBookings, addOnBookings, packageBookings, totalBookings } = userData || {}
 
     // Animation variants
     const containerVariants = {
@@ -47,7 +47,7 @@ export default function MostUserActive({ userData }) {
                             transition={{ delay: 0.3, duration: 0.5 }}
                         >
                             <h3 className="text-white text-sm uppercase tracking-wider">Brand</h3>
-                            <h2 className="text-3xl font-bold mt-1">{personalInfo.brand}</h2>
+                            <h2 className="text-3xl font-bold mt-1">{personalInfo?.brand}</h2>
                             <div className="h-1 w-16 bg-white/30 rounded-full mt-2"></div>
                         </motion.div>
 
@@ -72,7 +72,7 @@ export default function MostUserActive({ userData }) {
                                 </div>
                                 <div>
                                     <p className="text-sm opacity-80">User</p>
-                                    <p className="font-medium">{personalInfo.fullName}</p>
+                                    <p className="font-medium">{personalInfo?.fullName}</p>
                                 </div>
                             </motion.div>
 
@@ -95,7 +95,7 @@ export default function MostUserActive({ userData }) {
                                 </div>
                                 <div>
                                     <p className="text-sm opacity-80">Email</p>
-                                    <p className="font-medium">{personalInfo.email}</p>
+                                    <p className="font-medium">{personalInfo?.email}</p>
                                 </div>
                             </motion.div>
 
@@ -118,7 +118,7 @@ export default function MostUserActive({ userData }) {
                                 </div>
                                 <div>
                                     <p className="text-sm opacity-80">Phone</p>
-                                    <p className="font-medium">{personalInfo.phone}</p>
+                                    <p className="font-medium">{personalInfo?.phone}</p>
                                 </div>
                             </motion.div>
                         </motion.div>
@@ -137,7 +137,7 @@ export default function MostUserActive({ userData }) {
                             Most Popular Bookings
                         </motion.h3>
 
-                        <p className="text-2xl font-semibold text-gray-800">{totalBookings}</p>
+                        <p className="text-2xl font-semibold text-gray-800">{totalBookings && totalBookings}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -166,10 +166,10 @@ export default function MostUserActive({ userData }) {
                                         />
                                     </svg>
                                 </div>
-                                <p className="text-2xl font-semibold text-gray-800">{studioBookings}</p>
+                                <p className="text-2xl font-semibold text-gray-800">{studioBookings && studioBookings}</p>
                             </div>
                             <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-1">Most Booked Studio</h4>
-                            <p className="text-lg font-semibold text-gray-800">{mostBookedStudio}</p>
+                            <p className="text-lg font-semibold text-gray-800">{mostBookedStudio && mostBookedStudio}</p>
                         </motion.div>
 
                         {/* Package Card */}
@@ -197,7 +197,7 @@ export default function MostUserActive({ userData }) {
                                         />
                                     </svg>
                                 </div>
-                                <p className="text-2xl font-semibold text-gray-800">{packageBookings}</p>
+                                <p className="text-2xl font-semibold text-gray-800">{packageBookings && packageBookings}</p>
                             </div>
                             <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-1">Most Booked Package</h4>
                             <p className="text-lg font-semibold text-gray-800">{mostBookedPackage || 'unknown'}</p>
@@ -229,7 +229,7 @@ export default function MostUserActive({ userData }) {
                                         />
                                     </svg>
                                 </div>
-                                <p className="text-2xl font-semibold text-gray-800">{addOnBookings}</p>
+                                <p className="text-2xl font-semibold text-gray-800">{addOnBookings && addOnBookings}</p>
                             </div>
                             <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-1">Most Booked Add-On</h4>
                             <p className="text-lg font-semibold text-gray-800">{mostBookedAddOn}</p>
