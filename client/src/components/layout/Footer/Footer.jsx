@@ -7,7 +7,7 @@ import useQuickBooking from "../../../hooks/useQuickBooking";
 export default function Footer() {
     const NAV_LINKS = [
         { title: "Home", path: "/" },
-        { title: "Studios", path: "/studios" },
+        { title: "Setups", path: "/setups" },
     ];
 
     const { handleQuickBooking } = useQuickBooking();
