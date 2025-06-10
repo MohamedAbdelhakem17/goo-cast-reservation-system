@@ -5,9 +5,10 @@ export default function SuccessLogin() {
     React.useEffect(() => {
         setTimeout(() => {
             if (window.opener && !window.opener.closed) {
-                window.opener.location.href = '/goocast';
+                window.opener.location.href = '/'; 
+                window.opener.location.reload();  
             }
-            window.close(); 
+            window.close();
         }, 1000);
     }, []);
 

@@ -68,7 +68,7 @@ const Welcome = () => {
                 <StatCard
                     label="Bookings"
                     value={totalBookings || 0}
-                    subValue={peakBookingDay ? `Peak: ${new Date(peakBookingDay.label).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (${peakBookingDay.count})` : null}
+                    subValue={peakBookingDay ? `Peak: ${new Date(peakBookingDay?.label).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (${peakBookingDay?.count})` : null}
                     color="emerald"
                     icon="📅"
                 />
@@ -171,8 +171,8 @@ const TopItemsCard = ({ label, value, icon }) => {
 
                 {/* Value display */}
                 <div className="flex justify-between items-center">
-                    <p className="text-2xl font-bold text-gray-800">{value.label}</p>
-                    <p className="text-2xl font-bold text-gray-800">{value.count}</p>
+                    <p className="text-2xl font-bold text-gray-800">{value?.label}</p>
+                    <p className="text-2xl font-bold text-gray-800">{value?.count}</p>
                 </div>
             </div>
         </motion.div>
