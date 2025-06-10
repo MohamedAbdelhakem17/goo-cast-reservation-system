@@ -15,8 +15,8 @@ router.post("/signin", authController.signin);
 router.post("/resend-activation-link", authController.resendActivationLink);
 router.get("/activate/:token", authController.activateEmail);
 
-const SUCCESS_DIR = process.env.BASE_URL + "#/login/success";
-const FAILURE_DIR = process.env.BASE_URL + "#/login/failure";
+const SUCCESS_DIR = process.env.BASE_URL + "/login/success";
+const FAILURE_DIR = process.env.BASE_URL + "/login/failure";
 
 router.post("/signout", protectRoute, authController.signout);
 

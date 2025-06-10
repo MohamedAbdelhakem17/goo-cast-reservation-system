@@ -32,6 +32,7 @@ export default function Cart() {
     }
 
 
+    console.log(Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0))
 
 
 
@@ -117,7 +118,7 @@ export default function Cart() {
                 </p>
             </div>
             {
-                (bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0) && <div className="flex items-center justify-between mt-2 p-4 border-t border-gray-300">
+                Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0) && <div className="flex items-center justify-between mt-2 p-4 border-t border-gray-300">
                     <h4 className="text-xl font-semibold mb-4 text-gray-800">total Price After Discount</h4>
                     <p className="text-lg font-bold text-main">
                         {bookingData.totalPriceAfterDiscount} EGP
