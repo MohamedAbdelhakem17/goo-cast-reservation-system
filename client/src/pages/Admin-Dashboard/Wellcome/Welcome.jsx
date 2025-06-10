@@ -85,7 +85,7 @@ const Welcome = () => {
                 <div>
                     <TopItemsCard
                         label="Most Booked Studios"
-                        value={mostBookedStudios[0] || {}}
+                        value={mostBookedStudios ? mostBookedStudios[0] : {}}
                         icon="🎥"
                         color="purple"
                     />
@@ -95,7 +95,7 @@ const Welcome = () => {
                 <div>
                     <TopItemsCard
                         label="Popular Packages"
-                        value={mostBookedPackages[0] || {}}
+                        value={mostBookedPackages ? mostBookedPackages[0] : {}}
                         icon="📦"
                         color="blue"
                     />
@@ -105,7 +105,7 @@ const Welcome = () => {
                 <div>
                     <TopItemsCard
                         label="Top Add-ons"
-                        value={mostBookedAddOns[0] || {}}
+                        value={mostBookedAddOns ? mostBookedAddOns[0] : {}}
                         icon="➕"
                         color="pink"
                     />
