@@ -108,7 +108,7 @@ export default function UserManagement() {
                                 </thead>
 
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {filteredUsers.map((user) => (
+                                    {filteredUsers?.map((user) => (
                                         <tr key={user._id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
@@ -173,7 +173,7 @@ export default function UserManagement() {
                                     ))}
                                 </tbody>
                             </table>
-                            {filteredUsers.length === 0 && (
+                            {filteredUsers?.length === 0 && (
                                 <div className="text-center py-6 text-gray-500">No users found</div>
                             )}
                         </div>
