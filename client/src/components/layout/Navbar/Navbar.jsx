@@ -1,29 +1,19 @@
-import { useState, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-import { logo } from "../../../assets/images";
-
-import { useAuth } from "../../../context/Auth-Context/AuthContext";
-import AuthModel from "../../Navbar/Auth-Model/AuthModel";
-import { AuthButtons } from "../../Navbar/Auth-Buttons/AuthButtons";
 import AuthModelProvider from "../../../context/Auth-Model-Context/AuthModelContext";
-import UserProfile from "../../Navbar/User-Profile/UserProfile";
+import { AuthButtons } from "../../Navbar/Auth-Buttons/AuthButtons";
+import { useAuth } from "../../../context/Auth-Context/AuthContext";
 import MobileToggle from "../../Navbar/Mobile-Toggle/MobileToggle";
+import UserProfile from "../../Navbar/User-Profile/UserProfile";
 import MobileMenu from "../../Navbar/Mobile-Menu/MobileMenu";
+import AuthModel from "../../Navbar/Auth-Model/AuthModel";
+import { logo } from "../../../assets/images";
+import { navLinkClasses, PAGES_LINKS } from "../../Navbar/Navbar.assets";
 
 export default function Navbar() {
-    const PAGES_LINKS = [
-        { name: "Home", path: "/" },
-        { name: "Setups", path: "/setups" },
-    ];
-
-    const BUTTON_ACTIONS = [];
-    console.log(BUTTON_ACTIONS, "BUTTON_ACTIONS");
-    console.log("rendered");
-
     const [scrolled, setScrolled] = useState(false);
-
     const { isAuthenticated } = useAuth();
 
     useEffect(() => {
@@ -33,23 +23,10 @@ export default function Navbar() {
     }, []);
 
 
-
-    const navLinkClasses = ({ isActive }) => `
-        relative font-medium 
-        ${isActive
-            ? "text-[20px] text-main font-semibold after:content-[''] after:block after:w-full after:h-[2px] after:bg-main after:absolute after:-bottom-1 after:left-0"
-            : "hover:text-main/90 transition-colors duration-200"
-        }
-    `;
-
     const navbarVariants = {
         initial: { opacity: 0, y: -20 },
         animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
     };
-
-
-
-
 
     return (
         <AuthModelProvider>
@@ -99,8 +76,6 @@ export default function Navbar() {
 
                     {/* Mobile Toggle */}
                     <MobileToggle />
-
-
                 </motion.div>
 
                 {/* Mobile Menu */}
