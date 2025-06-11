@@ -3,14 +3,12 @@ import { useAuthModel } from "../../../context/Auth-Model-Context/AuthModelConte
 import { useAuth } from "../../../context/Auth-Context/AuthContext";
 import { NavLink } from "react-router-dom";
 import { MobileAuthButtons } from "../Auth-Buttons/AuthButtons";
+import { navLinkClasses, PAGES_LINKS } from "../Navbar.assets";
 
 export default function MobileMenu() {
     const { isMobileMenuOpen, setIsMobileMenuOpen } = useAuthModel()
     const { isAuthenticated } = useAuth()
-    const PAGES_LINKS = [
-        { name: "Home", path: "/" },
-        { name: "Setups", path: "/setups" },
-    ];
+
 
     const mobileMenuVariants = {
         hidden: { opacity: 0, height: 0 },
@@ -22,13 +20,6 @@ export default function MobileMenu() {
         visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
     };
 
-    const navLinkClasses = ({ isActive }) => `
-        relative font-medium 
-        ${isActive
-            ? "text-[20px] text-main font-semibold after:content-[''] after:block after:w-full after:h-[2px] after:bg-main after:absolute after:-bottom-1 after:left-0"
-            : "hover:text-main/90 transition-colors duration-200"
-        }
-    `;
 
     return (
         <AnimatePresence>
