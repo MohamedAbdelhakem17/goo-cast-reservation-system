@@ -6,3 +6,6 @@
 
 # Ignore uploaded JPEGs in nested folders under server/uploads/
 server/uploads/*/*.jpeg
+
+# Ignore .env file 
+/server/.env.local

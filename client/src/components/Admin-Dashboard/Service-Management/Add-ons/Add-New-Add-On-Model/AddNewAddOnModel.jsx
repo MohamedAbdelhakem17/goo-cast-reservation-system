@@ -20,7 +20,7 @@ const validationSchema = Yup.object({
     image: Yup.mixed()
         .required('Image is required')
         .test('fileFormat', 'Unsupported image format', (value) => {
-            const allowedFormats = ['image/jpeg', 'image/png'];
+            const allowedFormats = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/gif'];
             return value && allowedFormats.includes(value.type);
         }),
     isFixed: Yup.boolean().required(),
