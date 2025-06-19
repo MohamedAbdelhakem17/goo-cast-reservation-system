@@ -4,13 +4,13 @@ import "./datePicker.css";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 
 export default function Calendar() {
-    const handelStartDate = ()=>{
+    const handelStartDate = () => {
         const date = new Date();
         const hour = date.getHours();
         hour > 18 ? date.setDate(date.getDate() + 1) : date.setDate(date.getDate());
         return date
     };
-    const { setBookingField, bookingData } = useBooking();
+    const { setBookingField, bookingData, handleNextStep } = useBooking();
 
     return (
         <div className="border-b-1 border-t-1 border-gray-300 rounded-lg md:p-4">
@@ -21,6 +21,7 @@ export default function Calendar() {
                     setBookingField("startSlot", null);
                     setBookingField("endSlot", null);
                     setBookingField("studio", null);
+                    handleNextStep()
                 }}
                 dateFormat="dd/MM/yyyy"
                 calendarClassName="w-full"
