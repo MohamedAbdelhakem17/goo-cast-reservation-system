@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
+import { GetPackagesByCategory } from "../../../../apis/services/services.api";
+import { useEffect } from "react";
+import usePriceFormat from "../../../../hooks/usePriceFormat";
 
-export default function HourlyRecording({ packages }) {
+export default function HourlyRecording() {
   const { setBookingField, handleNextStep, bookingData } = useBooking();
-
+  const { mutate: getPackages, data: packages } = GetPackagesByCategory()
   const [selectedPackage, setSelectedPackage] = useState(bookingData.selectedPackage?.id || null);
 
   const handlePackageSelect = (pkg) => {
@@ -50,6 +53,11 @@ export default function HourlyRecording({ packages }) {
     },
   };
 
+  const priceFormat = usePriceFormat()
+
+  useEffect(() => {
+    getPackages({ category: "681c913473e625151f4f075d" });
+  }, [getPackages]);
 
 
   return (
@@ -59,7 +67,7 @@ export default function HourlyRecording({ packages }) {
       initial="hidden"
       animate="visible"
     >
-      {packages?.map((pkg) => (
+      {packages?.data?.map((pkg) => (
         <motion.div
           key={pkg._id}
           variants={cardVariants}
@@ -141,6 +149,8 @@ export default function HourlyRecording({ packages }) {
                   </motion.li>
                 ))}
               </ul>
+
+              <p className="py-3 text-main text-xl font-bold">{priceFormat(pkg.price)} per hour</p>
             </div>
 
             {/* Button always at bottom */}
