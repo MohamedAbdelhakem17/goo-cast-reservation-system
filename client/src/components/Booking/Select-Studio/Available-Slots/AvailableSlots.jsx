@@ -7,7 +7,7 @@ import usePriceFormat from "../../../../hooks/usePriceFormat";
 import useTimeConvert from "../../../../hooks/useTimeConvert";
 export default function AvailableSlots({ slots }) {
     const priceFormat = usePriceFormat();
-    const { bookingData, setBookingField } = useBooking();
+    const { bookingData, setBookingField, handleNextStep } = useBooking();
     const { mutate: getSlots, data } = GetAvailableEndSlots();
     const timeFormat = useTimeConvert()
 
@@ -48,6 +48,7 @@ export default function AvailableSlots({ slots }) {
         setBookingField("endSlot", slot.endTime);
         setBookingField("totalPackagePrice", slot.totalPrice || bookingData.studio?.totalPrice);
         setBookingField("totalPrice", slot.totalPrice || bookingData.studio?.totalPrice);
+        handleNextStep()
     };
 
     useEffect(() => {
