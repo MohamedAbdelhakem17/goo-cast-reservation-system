@@ -5,14 +5,20 @@ export default function SelectDateTime() {
     return (
         <>
 
-            <p className="text-gray-700 pb-3">Select your preferred date and Persons Number for the booking.</p>
-            <div className="space-y-4 border border-gray-300 py-3 px-4 rounded-lg shadow-sm bg-white">
+            {/* Header */}
+            <div >
+                <h4 className="text-4xl font-bold py-2">Select the Date & Time</h4>
+                <p className="text-gray-600 text-md mb-5">
+                    Choose from the available time in our Studio Calendar 
+                </p>
+            </div>
+            <div className="">
 
                 {/* Duration And Person Number */}
                 <SelectDurationPersonsPar />
 
                 {/* Calendar */}
-                <Calendar  />
+                <Calendar />
 
             </div>
         </>
