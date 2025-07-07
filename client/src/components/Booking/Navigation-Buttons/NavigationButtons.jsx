@@ -16,7 +16,7 @@ export default function NavigationButtons({ handelGoToConfirmation }) {
     }
 
     return (
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between">
+        <div className="px-6 py-4  border-t border-gray-200 flex justify-between">
             <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

@@ -13,7 +13,7 @@ export default function Calendar() {
     const { setBookingField, bookingData, handleNextStep } = useBooking();
 
     return (
-        <div className="border-b-1 border-t-1 border-gray-300 rounded-lg md:p-4">
+        <div className=" md:p-4">
             <DatePicker
                 selected={bookingData.date || handelStartDate}
                 onChange={(date) => {

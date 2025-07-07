@@ -67,9 +67,9 @@ export default function Booking() {
     }),
   };
 
-  const handelGoToConfirmation = () => {
-    navigate(`/booking/confirmation`);
-  };
+  // const handelGoToConfirmation = () => {
+  //   navigate(`/booking/confirmation`);
+  // };
 
 
   return (
@@ -93,7 +93,7 @@ export default function Booking() {
 
         {/* Main Content */}
         <motion.div
-          className="my-4 bg-white rounded-xl shadow-lg overflow-hidden"
+          className="my-4 bg-white rounded-xl  overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -106,7 +106,7 @@ export default function Booking() {
               initial="enter"
               animate="center"
               exit="exit"
-              className="md:px-6 py-8"
+              className="md:px-6 py-1"
             >
               <motion.div
                 variants={containerVariants}
@@ -141,7 +141,7 @@ export default function Booking() {
         </motion.div>
 
         {/* Navigation Buttons */}
-        <NavigationButtons handelGoToConfirmation={handelGoToConfirmation} />
+        {/* <NavigationButtons handelGoToConfirmation={handelGoToConfirmation} /> */}
 
         {/* Mobile Cart Modal */}
         <AnimatePresence>
