@@ -138,6 +138,53 @@ const print = (val, lab) => {
   console.log(val);
   console.log("============================================");
 };
+
+// Get Full Booked Date
+exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
+  const { studioId } = req.params;
+
+  // Check if studio exists
+  const studio = await StudioModel.findById(studioId);
+  if (!studio)
+    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+
+  const bookings = await BookingModel.find({ studio: studioId });
+  if (bookings.length === 0) {
+    return res.status(200).json({
+      status: HTTP_STATUS_TEXT.SUCCESS,
+      data: [],
+    });
+  }
+
+  // Calculate total minutes for each day
+  const totalMinutesPerDay = {};
+
+  bookings.forEach((booking) => {
+    const day = booking.date;
+    const durationInMinutes = booking.duration * 60;
+    if (!totalMinutesPerDay[day]) {
+      totalMinutesPerDay[day] = 0;
+    }
+    totalMinutesPerDay[day] += durationInMinutes;
+  });
+
+  // Find fully booked dates
+
+  const startOfDay = timeToMinutes(studio?.startTime);
+  const endOfDay = timeToMinutes(studio?.endTime);
+  const totalMinutesInDay = endOfDay - startOfDay;
+
+  // Check if the total minutes for each day is greater than or equal to the studio's working hours
+  const fullyBookedDates = Object.keys(totalMinutesPerDay).filter(
+    (date) => totalMinutesPerDay[date] >= totalMinutesInDay
+  );
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: fullyBookedDates,
+  });
+});
+
 exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
   const { date, categoryId } = req.params;
 
@@ -203,7 +250,6 @@ exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
     if (hasValidSlot) {
       studiosAvailability.push(studio);
     }
-    
   }
 
   res.status(200).json({
@@ -408,6 +454,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   //   });
   // });
 }
+
 exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
   const { studioId, date, startTime, package } = req.body;
 
