@@ -132,7 +132,7 @@ export default function Booking() {
                     variants={itemVariants}
                     className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block bg-gray-50 shadow-md sticky top-24 max-h-auto overflow-y-auto"
                   >
-                    <Cart />
+                    {/* <Cart /> */}
                   </motion.div>
                 )}
               </motion.div>
