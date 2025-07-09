@@ -1,5 +1,6 @@
 import SelectDurationPersonsPar from './Select-Duration-Persons-Par/SelectDurationPersonsPar'
 import Calendar from './Calendar/Calendar'
+import Slots from './Slots/Slots'
 export default function SelectDateTime() {
 
     return (
@@ -9,7 +10,7 @@ export default function SelectDateTime() {
             <div >
                 <h4 className="text-4xl font-bold py-2">Select the Date & Time</h4>
                 <p className="text-gray-600 text-md mb-5">
-                    Choose from the available time in our Studio Calendar 
+                    Choose from the available time in our Studio Calendar
                 </p>
             </div>
             <div className="">
@@ -20,6 +21,8 @@ export default function SelectDateTime() {
                 {/* Calendar */}
                 <Calendar />
 
+                {/* Slots */}
+                <Slots />
             </div>
         </>
     )
