@@ -120,8 +120,8 @@ export default function Booking() {
                   className="md:p-1 rounded-lg flex-1"
                 >
                   {currentStep === 1 && <SelectPackage />}
-                  {currentStep === 2 && <SelectDateTime />}
-                  {currentStep === 3 && <SelectStudio />}
+                  {currentStep === 2 && <SelectStudio />}
+                  {currentStep === 3 && <SelectDateTime />}
                   {currentStep === 4 && <SelectAdditionalServices />}
                   {currentStep === 5 && <PersonalInformation />}
                 </motion.div>

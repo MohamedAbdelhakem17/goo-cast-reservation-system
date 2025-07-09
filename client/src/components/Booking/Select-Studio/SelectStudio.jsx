@@ -9,7 +9,7 @@ import AvailableSlots from './Available-Slots/AvailableSlots';
 
 export default function SelectStudio() {
     const [hoveredId, setHoveredId] = useState(null);
-    const { setBookingField, bookingData, handlePrevStep , handleNextStep } = useBooking()
+    const { setBookingField, bookingData, handlePrevStep, handleNextStep } = useBooking()
     const [selectedStudio, setSelectedStudio] = useState(bookingData?.studio?.id || null);
 
     // Sample studio data
@@ -77,13 +77,15 @@ export default function SelectStudio() {
                                         y: -10,
                                         transition: { type: "spring", stiffness: 300 },
                                     }}
-                                    onClick={() => selectStudio(
-                                        {
-                                            id: studio._id,
-                                            name: studio.name,
-                                            image: studio.thumbnail,
-                                        }
-                                    )}
+                                    onClick={() => {
+                                        selectStudio(
+                                            {
+                                                id: studio._id,
+                                                name: studio.name,
+                                                image: studio.thumbnail,
+                                            }
+                                        )
+                                    }}
                                 >
                                     {/* Studio Image with hover effect */}
                                     <motion.div
