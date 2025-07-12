@@ -5,8 +5,8 @@ import Duration from "./Duration/Duration";
 import { useState } from "react";
 import Loading from "../../../shared/Loading/Loading";
 
-export default function Calendar() {
-  const { setBookingField, bookingData, handleNextStep } = useBooking();
+export default function Calendar({ openToggle, getAvailableSlots }) {
+  const { setBookingField, bookingData } = useBooking();
   const [isOpen, setIsOpen] = useState(!bookingData.duration)
 
   const {
@@ -73,7 +73,8 @@ export default function Calendar() {
                     setBookingField("date", selected);
                     setBookingField("startSlot", null);
                     setBookingField("endSlot", null);
-                    handleNextStep();
+                    openToggle(true)
+                    getAvailableSlots(bookingData.studio.id , selected , bookingData.duration )
                   }
                 }}
               >

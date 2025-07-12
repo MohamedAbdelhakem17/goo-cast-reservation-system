@@ -1,28 +1,30 @@
 import SelectDurationPersonsPar from './Select-Duration-Persons-Par/SelectDurationPersonsPar'
 import Calendar from './Calendar/Calendar'
 import Slots from './Slots/Slots'
+import { useState } from 'react'
+import { GetAvailableSlots } from '../../../apis/Booking/booking.api'
 export default function SelectDateTime() {
+    const [isOpen, setIsOpen] = useState(false)
 
+    const toggleSidebar = () => {
+        setIsOpen(!isOpen)
+    }
+
+    const { mutate: getAvailableSlots, data: slots } = GetAvailableSlots()
     return (
         <>
 
-            {/* Header */}
-            <div >
-                <h4 className="text-4xl font-bold py-2">Select the Date & Time</h4>
-                <p className="text-gray-600 text-md mb-5">
-                    Choose from the available time in our Studio Calendar
-                </p>
-            </div>
+
             <div className="">
 
                 {/* Duration And Person Number */}
                 <SelectDurationPersonsPar />
 
                 {/* Calendar */}
-                <Calendar />
+                <Calendar openToggle={setIsOpen} getAvailableSlots={getAvailableSlots} />
 
                 {/* Slots */}
-                <Slots />
+                <Slots toggleSidebar={toggleSidebar} isOpen={isOpen} setIsOpen={setIsOpen} slots={slots?.data} />
             </div>
         </>
     )

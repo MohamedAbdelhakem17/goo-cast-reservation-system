@@ -7,17 +7,20 @@ export default function SelectAdditionalServices() {
 
     return (
         <>
-            <p className="text-gray-700 pb-3 text-base sm:text-lg">
-                Select your preferred Recording Services for the booking.
-            </p>
-
-            <div className="space-y-4 border border-gray-100 py-4 px-5 rounded-2xl shadow-md bg-white transition-all duration-300">
+            {/* Header */}
+            <div >
+                <h4 className="text-4xl font-bold py-2">Additional Service</h4>
+                <p className="text-gray-600 text-md mb-5">
+                    Do you have additional needs? Our professionals are here for you.
+                </p>
+            </div>
+            <div className="space-y-4 py-4 px-5  duration-300">
                 {/* Service Selector */}
 
                 {/* Animated Content */}
                 <AnimatePresence mode="wait">
                     <div >
-                        { <AddOns  />}
+                        {<AddOns />}
                     </div>
                 </AnimatePresence>
             </div>

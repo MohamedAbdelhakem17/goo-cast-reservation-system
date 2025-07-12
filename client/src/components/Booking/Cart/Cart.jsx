@@ -32,7 +32,6 @@ export default function Cart() {
     }
 
 
-    console.log(Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0))
 
 
 
@@ -53,7 +52,6 @@ export default function Cart() {
                                 <h5 className="text-lg font-medium text-gray-900">{bookingData.studio.name}</h5>
                                 <p className="text-sm text-gray-500">in : {formatDate(bookingData.date)}</p>
                                 <p className="text-sm text-gray-500">From :  {formatTime(bookingData.startSlot)}</p>
-                                <p className="text-sm text-gray-500">To :  {formatTime(bookingData.endSlot)}</p>
                             </div>
                         </div>
 
