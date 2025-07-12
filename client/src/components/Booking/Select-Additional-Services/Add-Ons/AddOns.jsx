@@ -79,7 +79,7 @@ export default function AddOns() {
   return (
     <>
       <motion.div
-        className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2  gap-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -93,7 +93,17 @@ export default function AddOns() {
               className="bg-white rounded-xl overflow-hidden shadow-sm border  flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300 border-gray-300"
             >
 
-              <div className="w-full h-50 overflow-hidden">
+              <div className="w-full h-50 overflow-hidden flex">
+                <img
+                  src={addon.image}
+                  alt={addon.name}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                />
+                <img
+                  src={addon.image}
+                  alt={addon.name}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                />
                 <img
                   src={addon.image}
                   alt={addon.name}

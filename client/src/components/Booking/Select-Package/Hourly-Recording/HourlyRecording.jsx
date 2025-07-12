@@ -27,6 +27,7 @@ export default function HourlyRecording() {
       name: pkg.name,
       category: pkg.category._id,
       slug: pkg.category.slug,
+      price:pkg.price
     });
     setBookingField("startSlot", null);
     setBookingField("endSlot", null);

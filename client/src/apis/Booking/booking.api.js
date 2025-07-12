@@ -14,7 +14,7 @@ const fetchFullyBookedDates = async ({ studioId, duration }) => {
     params: { duration },
   });
 
-  return res?.data?.data || []; 
+  return res?.data?.data || [];
 };
 
 const GetFullBookedStudios = (studioId, duration) => {
@@ -48,11 +48,11 @@ const useGetAvailableStudio = () => {
 const GetAvailableSlots = () => {
   const sortedDate = JSON.parse(localStorage.getItem("bookingData"));
   return useMutation({
-    mutationFn: async ({ studioId, date, categoryId }) => {
+    mutationFn: async ({ studioId, date, duration }) => {
       const res = await axios.post(`${BASE_URL}/bookings/available-slots`, {
         studioId: studioId || sortedDate?.studio?.id,
         date: date || sortedDate?.date,
-        categoryId: categoryId || sortedDate?.selectedPackage?.category,
+        duration: duration || sortedDate?.duration,
       });
       return res.data;
     },

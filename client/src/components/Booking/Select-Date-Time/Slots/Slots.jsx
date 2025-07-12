@@ -1,39 +1,45 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, Calendar, Clock } from "lucide-react"
+import { X } from "lucide-react"
+import { useBooking } from "../../../../context/Booking-Context/BookingContext"
+import useTimeConvert from "../../../../hooks/useTimeConvert"
+import Loading from "../../../shared/Loading/Loading"
 
-const timeSlots = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "16:30", "17:00"]
 
-export default function Slots() {
-    const [isOpen, setIsOpen] = useState(false)
+
+
+export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
     const [selectedTime, setSelectedTime] = useState(null)
+    const { handleNextStep, bookingData, setBookingField } = useBooking()
 
-    const toggleSidebar = () => {
-        setIsOpen(!isOpen)
-    }
+    function getEndTime(startTime, duration) {
+    const [hours, minutes] = startTime.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+
+    date.setHours(date.getHours() + duration);
+
+    const endHours = String(date.getHours()).padStart(2, "0");
+    const endMinutes = String(date.getMinutes()).padStart(2, "0");
+
+    setBookingField("endSlot" ,`${endHours}:${endMinutes}`) ;
+}
 
     const handleTimeSelect = (time) => {
         setSelectedTime(time)
+
+        setIsOpen(false)
+        setBookingField("startSlot", time)
+        getEndTime(time, +bookingData.duration)
+        setBookingField("totalPackagePrice", +bookingData?.duration * +bookingData?.selectedPackage?.price)
+        handleNextStep();
+
     }
+    const timeFormat = useTimeConvert()
 
     return (
         <div className="min-h-screen bg-gray-50 p-8">
-            {/* Trigger Button */}
-            <button onClick={toggleSidebar} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
-                <Calendar className="w-4 h-4" />
-                اختر موعدك
-            </button>
-
-            {/* Selected Time Display */}
-            {selectedTime && (
-                <div className="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg">
-                    <p className="text-green-800">
-                        <Clock className="w-4 h-4 inline mr-2" />
-                        الوقت المختار: {selectedTime}
-                    </p>
-                </div>
-            )}
-
             {/* Overlay */}
             <AnimatePresence>
                 {isOpen && (
@@ -42,7 +48,7 @@ export default function Slots() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                        className="fixed inset-0 bg-white/5 backdrop-blur-[3px] z-50"
                         onClick={toggleSidebar}
                     />
                 )}
@@ -66,8 +72,16 @@ export default function Slots() {
                         <div className="sticky top-0 bg-white border-b border-gray-200 p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h2 className="text-lg font-semibold text-gray-900">الخميس 24 يوليو 2025</h2>
-                                    <p className="text-sm text-gray-600 mt-1">اختر الوقت المناسب لك</p>
+                                    <h2 className="text-lg font-semibold text-gray-900">
+                                        {bookingData?.date &&
+                                            new Date(bookingData.date).toLocaleDateString("en-GB", {
+                                                weekday: "long",
+                                                day: "2-digit",
+                                                month: "long",
+                                                year: "numeric"
+                                            })}
+                                    </h2>
+                                    <p className="text-sm text-gray-600 mt-1">  Choose the time that suits you </p>
                                 </div>
                                 <button variant="ghost" size="icon" onClick={toggleSidebar} className="hover:bg-gray-100">
                                     <X className="w-5 h-5" />
@@ -76,44 +90,35 @@ export default function Slots() {
                         </div>
 
                         {/* Time Slots */}
-                        <div className="p-6 space-y-3">
-                            {timeSlots.map((time, index) => (
-                                <motion.button
-                                    key={time}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                        delay: index * 0.1,
-                                        duration: 0.3,
-                                    }}
-                                    onClick={() => handleTimeSelect(time)}
-                                    className={`w-full p-4 text-center border-2 rounded-lg transition-all duration-200 hover:shadow-md ${selectedTime === time
-                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                        : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                                        }`}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    <span className="text-lg font-medium">{time}</span>
-                                </motion.button>
-                            ))}
-                        </div>
+                        {
+                            slots?.length === 0
+                                ? <Loading />
+                                : <div className="p-6 space-y-3">
+                                    {slots?.map((item, index) => (
+                                        <motion.button
+                                            key={item.startTime}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{
+                                                delay: index * 0.1,
+                                                duration: 0.3,
+                                            }}
+                                            onClick={() => {
+                                                handleTimeSelect(item.startTime)
+                                            }}
+                                            className={`w-full p-4 text-center border-2 rounded-lg transition-all duration-200 hover:shadow-md ${selectedTime === item.startTime
+                                                ? "border-main/50 bg-main/10 text-main/70"
+                                                : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                                                }`}
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                        >
+                                            <span className="text-lg font-medium">{timeFormat(item.startTime)}</span>
+                                        </motion.button>
+                                    ))}
+                                </div>
+                        }
 
-                        {/* Footer */}
-                        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6">
-                            <button
-                                className="w-full bg-blue-600 hover:bg-blue-700"
-                                disabled={!selectedTime}
-                                onClick={() => {
-                                    if (selectedTime) {
-                                        alert(`تم اختيار الموعد: ${selectedTime}`)
-                                        setIsOpen(false)
-                                    }
-                                }}
-                            >
-                                تأكيد الموعد
-                            </button>
-                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

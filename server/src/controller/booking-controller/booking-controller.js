@@ -238,7 +238,7 @@ exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: studios,
   });
-  
+
   // const { date, categoryId } = req.params;
 
   // if (!date || !categoryId) {
@@ -313,19 +313,19 @@ exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
 
 // Get Available Start Slots
 exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
-  const { studioId, date, categoryId } = req.body;
-  if (!studioId || !date || !categoryId) {
+  const { studioId, date, duration } = req.body;
+
+  if (!studioId || !date || !duration) {
     return next(
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "studioId, date and categoryId are required"
+        "studioId, date and duration are required"
       )
     );
   }
 
   const studio = await StudioModel.findById(studioId);
-
   if (!studio) {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
   }
@@ -335,8 +335,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   const inputDate = getAllDay(date);
   const now = new Date();
 
-  const requiredDurationMinutes = await getCategoryMinHour(categoryId);
-
+  const requiredDurationMinutes = parseFloat(duration) * 60;
   const availableSlots = [];
 
   for (
@@ -1188,15 +1187,15 @@ exports.createBooking = asyncHandler(async (req, res) => {
   }
 
   // Calculate package price
-  const slotPrices = await calculateSlotPrices({
-    package: pkg,
-    date: bookingDate,
-    startSlotMinutes,
-    endOfDay: endSlotMinutes,
-    bookedSlots: [],
-  });
+  // const slotPrices = await calculateSlotPrices({
+  //   package: pkg,
+  //   date: bookingDate,
+  //   startSlotMinutes,
+  //   endOfDay: endSlotMinutes,
+  //   bookedSlots: [],
+  // });
 
-  const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
+  const packagePrice = pkg?.price * +duration;
 
   // Handle Add-ons
   const addonsTotalPriceFromClient =
