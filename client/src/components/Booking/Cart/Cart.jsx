@@ -4,6 +4,7 @@ import useTimeConvert from '../../../hooks/useTimeConvert'
 import ApplyDiscount from '../Apply-Discount/ApplyDiscount'
 import { useAuth } from '../../../context/Auth-Context/AuthContext'
 import { useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 // Utility function for date formatting
 const formatDate = (dateString) => {
@@ -75,7 +76,8 @@ function AddOnsSection({ selectedAddOns, totalAddOnPrice }) {
 }
 
 export default function Cart() {
-    const { bookingData, handleNextStep, setBookingField } = useBooking()
+    const { bookingData, handleNextStep, setBookingField, currentStep, hasError } = useBooking()
+    const navigateTo = useNavigate()
     const { isAuthenticated } = useAuth()
     const formatTime = useTimeConvert()
 
@@ -84,6 +86,12 @@ export default function Cart() {
     }, [bookingData.selectedAddOns])
 
     const totalPrice = useMemo(() => bookingData?.totalPrice, [bookingData?.totalPrice])
+
+    const handelChangeStep = () => {
+        currentStep === 5
+            ? navigateTo("/booking/confirmation")
+            : handleNextStep()
+    }
 
     useEffect(() => {
         const newTotalPrice = bookingData.totalPackagePrice + totalAddOnPrice
@@ -110,7 +118,7 @@ export default function Cart() {
                     <p className="text-lg font-bold text-main">{bookingData.totalPriceAfterDiscount} EGP</p>
                 </div>
             )}
-            <button onClick={handleNextStep} className="text-main flex items-baseline justify-center cursor-pointer mx-auto gap-1 text-md font-medium mt-1 bg-main/5 hover:bg-main/10 px-3 py-1.5 rounded-md transition-colors ">
+            <button disabled={hasError()} onClick={handelChangeStep} className="disabled:bg-gray-100 disabled:text-gray-300 text-main flex items-baseline justify-center cursor-pointer mx-auto gap-1 text-md font-medium mt-1 bg-main/5 hover:bg-main/10 px-3 py-1.5 rounded-md transition-colors ">
                 <span className='m-0'>Complete Booking</span>
                 <i className="fa-solid fa-chevron-right text-xs m-0"></i>
             </button>
