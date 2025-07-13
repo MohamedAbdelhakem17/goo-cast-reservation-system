@@ -1,45 +1,44 @@
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 import { useBooking } from "../../../../context/Booking-Context/BookingContext"
-import useTimeConvert from "../../../../hooks/useTimeConvert"
 import Loading from "../../../shared/Loading/Loading"
-
-
-
+import { calculateEndTime, calculateTotalPrice } from "../../../../hooks/useManageSlots"
+import SlotButton from "./SlotButton/SlotButton"
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
     const [selectedTime, setSelectedTime] = useState(null)
     const { handleNextStep, bookingData, setBookingField } = useBooking()
 
-    function getEndTime(startTime, duration) {
-    const [hours, minutes] = startTime.split(":").map(Number);
-    const date = new Date();
-    date.setHours(hours);
-    date.setMinutes(minutes);
+    const formattedDate = useMemo(() => {
+        if (!bookingData?.date) return ""
+        return new Date(bookingData.date).toLocaleDateString("en-GB", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        })
+    }, [bookingData?.date])
 
-    date.setHours(date.getHours() + duration);
+    const handleTimeSelect = useCallback(
+        (time) => {
+            setSelectedTime(time)
+            setIsOpen(false)
 
-    const endHours = String(date.getHours()).padStart(2, "0");
-    const endMinutes = String(date.getMinutes()).padStart(2, "0");
+            const endTime = calculateEndTime(time, +bookingData.duration)
+            const totalPrice = calculateTotalPrice(+bookingData.duration, +bookingData?.selectedPackage?.price)
 
-    setBookingField("endSlot" ,`${endHours}:${endMinutes}`) ;
-}
+            setBookingField("startSlot", time)
+            setBookingField("endSlot", endTime)
+            setBookingField("totalPackagePrice", totalPrice)
 
-    const handleTimeSelect = (time) => {
-        setSelectedTime(time)
-
-        setIsOpen(false)
-        setBookingField("startSlot", time)
-        getEndTime(time, +bookingData.duration)
-        setBookingField("totalPackagePrice", +bookingData?.duration * +bookingData?.selectedPackage?.price)
-        handleNextStep();
-
-    }
-    const timeFormat = useTimeConvert()
+            handleNextStep()
+        },
+        [bookingData.duration, bookingData?.selectedPackage?.price, setIsOpen, setBookingField, handleNextStep]
+    )
 
     return (
-        <div className="min-h-screen bg-gray-50 p-8">
+        < >
             {/* Overlay */}
             <AnimatePresence>
                 {isOpen && (
@@ -72,56 +71,39 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
                         <div className="sticky top-0 bg-white border-b border-gray-200 p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h2 className="text-lg font-semibold text-gray-900">
-                                        {bookingData?.date &&
-                                            new Date(bookingData.date).toLocaleDateString("en-GB", {
-                                                weekday: "long",
-                                                day: "2-digit",
-                                                month: "long",
-                                                year: "numeric"
-                                            })}
-                                    </h2>
-                                    <p className="text-sm text-gray-600 mt-1">  Choose the time that suits you </p>
+                                    <h2 className="text-lg font-semibold text-gray-900">{formattedDate}</h2>
+                                    <p className="text-sm text-gray-600 mt-1">Choose the time that suits you</p>
                                 </div>
-                                <button variant="ghost" size="icon" onClick={toggleSidebar} className="hover:bg-gray-100">
+                                <button onClick={toggleSidebar} className="hover:bg-gray-100 p-2 rounded-md">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
 
                         {/* Time Slots */}
-                        {
-                            slots?.length === 0
-                                ? <Loading />
-                                : <div className="p-6 space-y-3">
-                                    {slots?.map((item, index) => (
-                                        <motion.button
-                                            key={item.startTime}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{
-                                                delay: index * 0.1,
-                                                duration: 0.3,
-                                            }}
-                                            onClick={() => {
-                                                handleTimeSelect(item.startTime)
-                                            }}
-                                            className={`w-full p-4 text-center border-2 rounded-lg transition-all duration-200 hover:shadow-md ${selectedTime === item.startTime
-                                                ? "border-main/50 bg-main/10 text-main/70"
-                                                : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                                                }`}
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                        >
-                                            <span className="text-lg font-medium">{timeFormat(item.startTime)}</span>
-                                        </motion.button>
-                                    ))}
-                                </div>
-                        }
+                        {!slots ? (
+                            <Loading />
+                        ) : slots.length === 0 ? (
+                            <div className="p-6 text-center text-gray-500 text-sm">
+                                No available time slots for this day.
+                            </div>
+                        ) : (
+                            <div className="p-6 space-y-3">
+                                {slots.map((item, index) => (
+                                    <SlotButton
+                                        key={item.startTime}
+                                        time={item.startTime}
+                                        index={index}
+                                        isSelected={selectedTime === item.startTime}
+                                        onClick={handleTimeSelect}
+                                    />
+                                ))}
+                            </div>
+                        )}
 
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </>
     )
 }
