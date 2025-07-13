@@ -138,95 +138,194 @@ const print = (val, lab) => {
   console.log(val);
   console.log("============================================");
 };
-exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
-  const { date, categoryId } = req.params;
 
-  if (!date || !categoryId) {
-    return res.status(400).json({
-      status: HTTP_STATUS_TEXT.FAIL,
-      message: "Date and category Id are required",
-    });
+// Get Full Booked Date
+const getTimeSlots = (startMinutes, endMinutes, slotDuration = 60) => {
+  const slots = [];
+  for (
+    let time = startMinutes;
+    time + slotDuration <= endMinutes;
+    time += slotDuration
+  ) {
+    slots.push(time);
+  }
+  return slots;
+};
+
+const isDurationAvailable = (
+  bookedSlots,
+  totalSlots,
+  requiredDurationSlots
+) => {
+  const availableSlots = totalSlots.filter(
+    (slot) => !bookedSlots.includes(slot)
+  );
+
+  let consecutive = 0;
+  for (let i = 0; i < availableSlots.length; i++) {
+    if (i === 0 || availableSlots[i] === availableSlots[i - 1] + 60) {
+      consecutive++;
+      if (consecutive >= requiredDurationSlots) return true;
+    } else {
+      consecutive = 1;
+    }
   }
 
-  const requiredMinutes = await getCategoryMinHour(categoryId);
+  return false;
+};
 
-  const studios = await StudioModel.find();
+// Get Fully Booked Dates Based on Required Duration
+exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
+  const { studioId } = req.params;
+  const requiredDuration = parseInt(req.query.duration) || 0;
+  const requiredDurationMinutes = requiredDuration * 60;
 
-  const { startOfDay, endOfDay } = getAllDay(date);
+  const studio = await StudioModel.findById(studioId);
+  if (!studio)
+    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
 
-  const bookings = await BookingModel.find({
-    date: { $gte: startOfDay, $lt: endOfDay },
-  });
+  const bookings = await BookingModel.find({ studio: studioId });
 
-  const studiosAvailability = [];
+  const groupedByDate = {};
 
-  for (const studio of studios) {
-    const studioBookings = bookings
-      .filter((b) => b.studio.equals(studio._id))
-      .map((b) => ({
-        start: timeToMinutes(b.startSlot),
-        end: timeToMinutes(b.endSlot),
-      }))
-      .sort((a, b) => a.start - b.start);
-
-    const studioStart = timeToMinutes(studio.startTime);
-    const studioEnd = timeToMinutes(studio.endTime);
-
-    // studio not have any booking
-    if (studioBookings.length === 0) {
-      const now = new Date();
-      const nowMinutes = now.getHours() * 60 + now.getMinutes();
-
-      const isToday = (() => {
-        const today = new Date();
-        const selected = new Date(date);
-        return today.toDateString() === selected.toDateString();
-      })();
-
-      const remainingMinutes =
-        studioEnd - (isToday ? Math.max(nowMinutes, studioStart) : studioStart);
-
-      if (remainingMinutes >= requiredMinutes) {
-        studiosAvailability.push(studio);
-      }
-
-      continue;
+  for (const booking of bookings) {
+    const day = booking.date.toISOString().split("T")[0];
+    if (!groupedByDate[day]) groupedByDate[day] = [];
+    const start = booking.startSlot;
+    const end = booking.endSlot;
+    for (let i = start; i < end; i += 60) {
+      groupedByDate[day].push(i);
     }
+  }
 
-    // if Book has booking
-    const freeSlots = getFreeSlots(studioStart, studioEnd, studioBookings);
+  const startOfDay = timeToMinutes(studio.startTime);
+  const endOfDay = timeToMinutes(studio.endTime);
+  const totalSlots = getTimeSlots(startOfDay, endOfDay);
 
-    const hasValidSlot = freeSlots.some((slot) => {
-      return slot.end - slot.start >= requiredMinutes;
-    });
+  const fullyBookedDates = [];
 
-    if (hasValidSlot) {
-      studiosAvailability.push(studio);
+  const allDates = Object.keys(groupedByDate);
+  const uniqueDates = [...new Set([...allDates])];
+
+  for (const day of uniqueDates) {
+    const bookedSlots = groupedByDate[day];
+    const isAvailable = isDurationAvailable(
+      bookedSlots,
+      totalSlots,
+      requiredDurationMinutes / 60
+    );
+    if (!isAvailable) {
+      fullyBookedDates.push(day);
     }
-    
   }
 
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
-    data: studiosAvailability,
+    data: fullyBookedDates,
   });
+});
+
+exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
+  const studios = await StudioModel.find();
+
+  if (studios.length === 0) {
+    res.status(404).json({
+      status: HTTP_STATUS_TEXT.FAIL,
+      message: "No studios found",
+    });
+  }
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: studios,
+  });
+
+  // const { date, categoryId } = req.params;
+
+  // if (!date || !categoryId) {
+  //   return res.status(400).json({
+  //     status: HTTP_STATUS_TEXT.FAIL,
+  //     message: "Date and category Id are required",
+  //   });
+  // }
+
+  // const requiredMinutes = await getCategoryMinHour(categoryId);
+
+  // const studios = await StudioModel.find();
+
+  // const { startOfDay, endOfDay } = getAllDay(date);
+
+  // const bookings = await BookingModel.find({
+  //   date: { $gte: startOfDay, $lt: endOfDay },
+  // });
+
+  // const studiosAvailability = [];
+
+  // for (const studio of studios) {
+  //   const studioBookings = bookings
+  //     .filter((b) => b.studio.equals(studio._id))
+  //     .map((b) => ({
+  //       start: timeToMinutes(b.startSlot),
+  //       end: timeToMinutes(b.endSlot),
+  //     }))
+  //     .sort((a, b) => a.start - b.start);
+
+  //   const studioStart = timeToMinutes(studio.startTime);
+  //   const studioEnd = timeToMinutes(studio.endTime);
+
+  //   // studio not have any booking
+  //   if (studioBookings.length === 0) {
+  //     const now = new Date();
+  //     const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+  //     const isToday = (() => {
+  //       const today = new Date();
+  //       const selected = new Date(date);
+  //       return today.toDateString() === selected.toDateString();
+  //     })();
+
+  //     const remainingMinutes =
+  //       studioEnd - (isToday ? Math.max(nowMinutes, studioStart) : studioStart);
+
+  //     if (remainingMinutes >= requiredMinutes) {
+  //       studiosAvailability.push(studio);
+  //     }
+
+  //     continue;
+  //   }
+
+  //   // if Book has booking
+  //   const freeSlots = getFreeSlots(studioStart, studioEnd, studioBookings);
+
+  //   const hasValidSlot = freeSlots.some((slot) => {
+  //     return slot.end - slot.start >= requiredMinutes;
+  //   });
+
+  //   if (hasValidSlot) {
+  //     studiosAvailability.push(studio);
+  //   }
+  // }
+
+  // res.status(200).json({
+  //   status: HTTP_STATUS_TEXT.SUCCESS,
+  //   data: studiosAvailability,
+  // });
 });
 
 // Get Available Start Slots
 exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
-  const { studioId, date, categoryId } = req.body;
-  if (!studioId || !date || !categoryId) {
+  const { studioId, date, duration } = req.body;
+
+  if (!studioId || !date || !duration) {
     return next(
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "studioId, date and categoryId are required"
+        "studioId, date and duration are required"
       )
     );
   }
 
   const studio = await StudioModel.findById(studioId);
-
   if (!studio) {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
   }
@@ -236,8 +335,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   const inputDate = getAllDay(date);
   const now = new Date();
 
-  const requiredDurationMinutes = await getCategoryMinHour(categoryId);
-
+  const requiredDurationMinutes = parseFloat(duration) * 60;
   const availableSlots = [];
 
   for (
@@ -408,6 +506,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   //   });
   // });
 }
+
 exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
   const { studioId, date, startTime, package } = req.body;
 
@@ -1088,15 +1187,15 @@ exports.createBooking = asyncHandler(async (req, res) => {
   }
 
   // Calculate package price
-  const slotPrices = await calculateSlotPrices({
-    package: pkg,
-    date: bookingDate,
-    startSlotMinutes,
-    endOfDay: endSlotMinutes,
-    bookedSlots: [],
-  });
+  // const slotPrices = await calculateSlotPrices({
+  //   package: pkg,
+  //   date: bookingDate,
+  //   startSlotMinutes,
+  //   endOfDay: endSlotMinutes,
+  //   bookedSlots: [],
+  // });
 
-  const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
+  const packagePrice = pkg?.price * +duration;
 
   // Handle Add-ons
   const addonsTotalPriceFromClient =

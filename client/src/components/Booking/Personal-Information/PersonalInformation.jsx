@@ -23,7 +23,7 @@ export default function PersonalInformation() {
     };
 
     return (
-        <form className="space-y-2">
+        <form className="space-y-2 mt-5">
             <motion.div {...motionProps}>
                 <Input
                     type="text"

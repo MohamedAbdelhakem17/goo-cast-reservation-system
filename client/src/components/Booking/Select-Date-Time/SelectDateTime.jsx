@@ -1,19 +1,30 @@
 import SelectDurationPersonsPar from './Select-Duration-Persons-Par/SelectDurationPersonsPar'
 import Calendar from './Calendar/Calendar'
+import Slots from './Slots/Slots'
+import { useState } from 'react'
+import { GetAvailableSlots } from '../../../apis/Booking/booking.api'
 export default function SelectDateTime() {
+    const [isOpen, setIsOpen] = useState(false)
 
+    const toggleSidebar = () => {
+        setIsOpen(!isOpen)
+    }
+
+    const { mutate: getAvailableSlots, data: slots } = GetAvailableSlots()
     return (
         <>
 
-            <p className="text-gray-700 pb-3">Select your preferred date and Persons Number for the booking.</p>
-            <div className="space-y-4 border border-gray-300 py-3 px-4 rounded-lg shadow-sm bg-white">
+
+            <div className="">
 
                 {/* Duration And Person Number */}
                 <SelectDurationPersonsPar />
 
                 {/* Calendar */}
-                <Calendar  />
+                <Calendar openToggle={setIsOpen} getAvailableSlots={getAvailableSlots} />
 
+                {/* Slots */}
+                <Slots toggleSidebar={toggleSidebar} isOpen={isOpen} setIsOpen={setIsOpen} slots={slots?.data} />
             </div>
         </>
     )

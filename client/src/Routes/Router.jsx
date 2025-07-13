@@ -64,7 +64,7 @@ export default function AppRouter() {
                     <Route element={<MainLayout />}>
                         <Route path="/" element={<Home />} />
                         <Route path="/setups" element={<Studios />} />
-                        <Route path="/studio/:id" element={<StudioDetails />} />
+                        <Route path="/setups/:id" element={<StudioDetails />} />
                         <Route path="/booking" element={<BookingProvider> <Booking /> </BookingProvider>} />
                         <Route path="/booking/confirmation" element={<BookingProvider> <ConfirmationBooking /> </BookingProvider>} />
                     </Route>
