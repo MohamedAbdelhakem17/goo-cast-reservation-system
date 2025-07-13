@@ -7,11 +7,24 @@ import { useGetData, usePostData, useUpdateData } from "../../hooks/useApi";
 const sortedStudioId = JSON.parse(localStorage.getItem("bookingData"))?.studio
   ?.id;
 
-const GetFullBookedStudios = (studioId) =>
-  useGetData(
-    ["fullBookedStudios"],
-    `/bookings/fully-booked/${`${studioId || sortedStudioId}`}`
-  );
+const fetchFullyBookedDates = async ({ studioId, duration }) => {
+  if (!studioId || !duration) return []; // ✅ fallback آمن
+
+  const res = await axios.get(`${BASE_URL}/booking/fully-booked/${studioId}`, {
+    params: { duration },
+  });
+
+  return res?.data?.data || [];
+};
+
+const GetFullBookedStudios = (studioId, duration) => {
+  return useQuery({
+    queryKey: ["fullyBookedDates", studioId, duration],
+    queryFn: () => fetchFullyBookedDates({ studioId, duration }),
+    enabled: !!studioId && !!duration,
+    staleTime: 5 * 60 * 1000,
+  });
+};
 
 // const GetAvailableStudio = (date)=>useGetData([`availableStudios-${sortedDate}`] ,   `/bookings/available-studios/${`${date || sortedDate}`}`)
 const useGetAvailableStudio = () => {
@@ -35,11 +48,11 @@ const useGetAvailableStudio = () => {
 const GetAvailableSlots = () => {
   const sortedDate = JSON.parse(localStorage.getItem("bookingData"));
   return useMutation({
-    mutationFn: async ({ studioId, date, categoryId }) => {
+    mutationFn: async ({ studioId, date, duration }) => {
       const res = await axios.post(`${BASE_URL}/bookings/available-slots`, {
         studioId: studioId || sortedDate?.studio?.id,
         date: date || sortedDate?.date,
-        categoryId: categoryId || sortedDate?.selectedPackage?.category,
+        duration: duration || sortedDate?.duration,
       });
       return res.data;
     },

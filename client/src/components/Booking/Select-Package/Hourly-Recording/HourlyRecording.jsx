@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetPackagesByCategory } from "../../../../apis/services/services.api";
-import { useEffect } from "react";
-import usePriceFormat from "../../../../hooks/usePriceFormat";
 
 export default function HourlyRecording() {
   const { setBookingField, handleNextStep, bookingData } = useBooking();
-  const { mutate: getPackages, data: packages } = GetPackagesByCategory()
+  const { mutate: getPackages, data: packages } = GetPackagesByCategory();
+
   const [selectedPackage, setSelectedPackage] = useState(bookingData.selectedPackage?.id || null);
+  const [preSelectedPackageId, setPreSelectedPackageId] = useState(null);
+
+  useEffect(() => {
+    getPackages({ category: "681c913473e625151f4f075d" });
+  }, [getPackages]);
+
+  useEffect(() => {
+    if (packages?.data?.length) {
+      setPreSelectedPackageId(packages.data[0]._id);
+    }
+  }, [packages]);
 
   const handlePackageSelect = (pkg) => {
     setSelectedPackage(pkg._id);
@@ -17,21 +27,19 @@ export default function HourlyRecording() {
       name: pkg.name,
       category: pkg.category._id,
       slug: pkg.category.slug,
+      price:pkg.price
     });
     setBookingField("startSlot", null);
     setBookingField("endSlot", null);
     setBookingField("studio", null);
-    handleNextStep()
+    handleNextStep();
   };
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
+      transition: { staggerChildren: 0.1, delayChildren: 0.1 },
     },
   };
 
@@ -53,123 +61,88 @@ export default function HourlyRecording() {
     },
   };
 
-  const priceFormat = usePriceFormat()
-
-  useEffect(() => {
-    getPackages({ category: "681c913473e625151f4f075d" });
-  }, [getPackages]);
-
-
   return (
-    <motion.div
-      className="grid md:grid-cols-2 gap-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {packages?.data?.map((pkg) => (
-        <motion.div
-          key={pkg._id}
-          variants={cardVariants}
-          whileHover={{ y: -5 }}
-          className={` flex flex-col rounded-xl
-    overflow-hidden border-1 transition-colors duration-300 cursor-pointer ${selectedPackage === pkg._id
-              ? "border-main shadow-sm shadow-main/20"
-              : "border-gray-200 hover:border-main/30 shadow-md"
-            } `}
-          onClick={() => handlePackageSelect(pkg)}
-        >
-          {/* Header */}
-          <div
-            className={` p-5 flex items-center gap-4 ${selectedPackage === pkg._id
-              ? "bg-gradient-to-r from-main/10 to-main/30"
-              : "bg-gray-50"
-              } `}
-          >
-            {/* Icon */}
-            <div
-              className={` p-3 rounded-full w-10 h-10 flex items-center justify-center ${selectedPackage === pkg._id
-                ? "bg-gradient-to-r from-main/10 to-main text-white"
-                : "bg-gray-200 text-gray-700"
-                } `}
+    <>
+      {/* Header */}
+      <div >
+        <h4 className="text-4xl font-bold py-2">Select the Service</h4>
+        <p className="text-gray-600 text-md mb-5">
+          We offer 2 different services depending on what type of content you would like to record
+        </p>
+      </div>
+      
+      {/* Packages */}
+      <motion.div
+        className="flex flex-wrap gap-8 mt-10 justify-center lg:justify-evenly px-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {packages?.data?.map((pkg) => {
+          const isActive =
+            selectedPackage === pkg._id || (!selectedPackage && preSelectedPackageId === pkg._id);
+
+          return (
+            <motion.div
+              key={pkg._id}
+              variants={cardVariants}
+              whileHover={{ y: -5 }}
+              onClick={() => handlePackageSelect(pkg)}
+              className="cursor-pointer w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)]"
             >
-              <i className="fa-solid fa-cubes"></i>
-            </div>
-
-            {/* Text */}
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-800">{pkg.name}</h3>
-              <p className="text-gray-800 text-sm">{pkg.description}</p>
-            </div>
-
-            <div className="text-right">
-              <p className="text-sm text-gray-800">Fixed price</p>
-            </div>
-          </div>
-
-          {/* Content with grow */}
-          <div className="p-5 bg-white flex-1 flex flex-col">
-            <div className="mb-4">
-              <h4 className="font-medium text-gray-700 mb-2 flex items-center">
-                <span className="bg-indigo-100 text-indigo-700 rounded-full mr-2 w-7 h-7 flex items-center justify-center">
-                  <i className="fa-solid fa-check"></i>
-                </span>
-                Package includes:
-              </h4>
-              <ul className="space-y-2 pl-8">
-                {pkg.details.map((detail, index) => (
-                  <motion.li
-                    key={index}
-                    variants={benefitVariants}
-                    className="text-gray-600 text-sm flex items-start"
-                  >
-                    <span className="text-purple-500 mr-2">•</span>
-                    {detail}
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mb-4">
-              <h4 className="font-medium text-gray-700 mb-2 flex items-center">
-                <span className="bg-teal-100 text-teal-700 mr-2 rounded-full w-7 h-7 flex items-center justify-center">
-                  <i className="fa-solid fa-bolt"></i>
-                </span>
-                Post Session benefits:
-              </h4>
-              <ul className="space-y-2 pl-8">
-                {pkg.post_session_benefits.map((benefit, index) => (
-                  <motion.li
-                    key={index}
-                    variants={benefitVariants}
-                    className="text-gray-600 text-sm flex items-start"
-                  >
-                    <span className="text-teal-500 mr-2">•</span>
-                    {benefit}
-                  </motion.li>
-                ))}
-              </ul>
-
-              <p className="py-3 text-main text-xl font-bold">{priceFormat(pkg.price)} per hour</p>
-            </div>
-
-            {/* Button always at bottom */}
-            <div className="mt-auto">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className={` w-full py-3 px-4 rounded-lg
-          flex items-center justify-center gap-2 font-medium cursor-pointer ${selectedPackage === pkg._id
-                    ? "bg-gradient-to-r from-main to-main/70 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  } `}
+              <div
+                className={`flex flex-col rounded-xl h-full p-4 border-1 overflow-hidden transition-colors duration-300 ${isActive
+                    ? "border-main border-2 shadow-sm shadow-main/20"
+                    : "border-gray-200 hover:border-main border-2 shadow-md hover:[&_button]:bg-main hover:[&_button]:text-white"
+                  }`}
               >
-                {selectedPackage === pkg._id ? "Selected" : "Select Package"}
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
-      ))}
-    </motion.div>
+                {/* Card Header */}
+                <div className="flex flex-col items-center gap-4">
+                  <img
+                    src={pkg.image}
+                    alt={pkg.name}
+                    className="object-contain h-[200px] w-full rounded-md"
+                  />
+                  <h5 className="text-center font-bold text-2xl">{pkg.session_type}</h5>
+                </div>
+
+                {/* Description */}
+                <div className="flex-1 mt-2">
+                  <p className="text-gray-800 text-md font-bold py-2">{pkg.description}</p>
+
+                  <ul className="space-y-2 mb-4">
+                    {[...pkg.details, ...pkg.post_session_benefits].map((text, index) => (
+                      <motion.li
+                        key={index}
+                        variants={benefitVariants}
+                        className="text-gray-600 text-sm flex items-start"
+                      >
+                        <span className="text-black mr-2">•</span>
+                        {text}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Action Button */}
+                <div className="mt-auto">
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`w-fit py-3 px-4 rounded-lg mx-auto text-2xl font-bold flex items-center justify-center gap-2 ${isActive
+                        ? "bg-main text-white"
+                        : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
+                      }`}
+                  >
+                    {selectedPackage === pkg._id ? "Selected" : "Select & Continue"}
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+
+    </>
   );
 }
