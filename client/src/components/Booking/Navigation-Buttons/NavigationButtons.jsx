@@ -2,51 +2,50 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 
-export default function NavigationButtons({ handelGoToConfirmation }) {
-    // Get the booking context
-    const { TOTAL_STEPS, currentStep, handleNextStep, handlePrevStep, hasError } = useBooking()
+function NavButton({ children, ...props }) {
+    return (
+        <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            {...props}
+        >
+            {children}
+        </motion.button>
+    );
+}
 
-    const handelPaymentButton = () => {
+export default function NavigationButtons({ handleGoToConfirmation }) {
+    const { TOTAL_STEPS, currentStep, handleNextStep, handlePrevStep, hasError } = useBooking();
+
+    const handlePaymentButton = () => {
         if (currentStep === TOTAL_STEPS) {
-            handelGoToConfirmation()
-
+            handleGoToConfirmation();
         } else {
-            handleNextStep()
+            handleNextStep();
         }
-    }
+    };
 
     return (
-        <div className="px-6 py-4  border-t border-gray-200 flex justify-between">
-            <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+        <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
+            <NavButton
                 className={`px-4 py-2 rounded-md ${currentStep === 1
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }
-                    `}
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
                 disabled={currentStep === 1}
                 onClick={handlePrevStep}
             >
                 Previous
-            </motion.button>
-
-            <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+            </NavButton>
+            <NavButton
                 className={`px-4 py-2 rounded-md cursor-pointer ${currentStep === TOTAL_STEPS
                     ? "bg-green-500 text-white hover:bg-green-600"
-                    : "bg-main/90 text-white hover:bg-main"
-                    } 
-                     disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed
-                    `}
+                    : "bg-main/90 text-white hover:bg-main"} disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
                 disabled={hasError()}
-                onClick={handelPaymentButton}
+                onClick={handlePaymentButton}
                 type={currentStep === TOTAL_STEPS ? "submit" : "button"}
             >
                 {currentStep === TOTAL_STEPS ? "Complete Booking" : "Next Step"}
-            </motion.button>
+            </NavButton>
         </div>
     );
 }
- 
