@@ -119,7 +119,7 @@ export default function Studios() {
                   >
                     <div className="p-4 text-white">
                       <Link
-                        to={`/studio/${studio.slug}`}
+                        to={`/setups/${studio.slug}`}
                         className="text-xl font-semibold flex items-center gap-2"
                       >
                         <span>View Details</span>

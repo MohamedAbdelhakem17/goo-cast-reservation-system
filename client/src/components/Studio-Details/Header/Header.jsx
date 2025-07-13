@@ -27,7 +27,7 @@ export default function Header({ title,  location }) {
 
             {/* Back Button */}
             <motion.div variants={item}>
-                <Link to="/studios"
+                <Link to="/setups"
                     className="font-medium text-gray-600 hover:text-main transition-colors duration-300 group mb-4"
                 >
                     <motion.div
@@ -36,7 +36,7 @@ export default function Header({ title,  location }) {
                         className="flex  items-center gap-2 mb-4"
                     >
                         <i className="fa-solid fa-caret-left"></i>
-                        <span className="text-sm font-bold ">go back to studios</span>
+                        <span className="text-sm font-bold ">go back to Setups</span>
                     </motion.div>
                 </Link>
             </motion.div>
