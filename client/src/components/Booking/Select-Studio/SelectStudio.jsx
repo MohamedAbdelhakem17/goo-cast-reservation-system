@@ -5,7 +5,6 @@ import Loading from '../../shared/Loading/Loading';
 import { useGetAvailableStudio } from '../../../apis/Booking/booking.api';
 
 export default function SelectStudio() {
-    const [hoveredId, setHoveredId] = useState(null);
     const { setBookingField, bookingData, handlePrevStep, handleNextStep } = useBooking();
     const [selectedStudio, setSelectedStudio] = useState(bookingData?.studio?.id || null);
 
@@ -28,6 +27,14 @@ export default function SelectStudio() {
         },
     };
 
+    const benefitVariants = {
+        hidden: { opacity: 0, x: -10 },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: { type: "spring", stiffness: 100 },
+        },
+    };
     if (isLoading) return <Loading />;
 
     return (
@@ -46,19 +53,16 @@ export default function SelectStudio() {
                 </div>
             ) : (
                 <>
-                    <div>
-                        <h4 className="text-4xl font-bold py-2">Select the Studio</h4>
-                        <p className="text-gray-600 text-md mb-5">
-                            Browse through our range of studios and pick the one that fits your needs best.
-                        </p>
+                    <div className="text-center mb-8">
+                        <h2 className="text-2xl mb-2">Choose Your Studio</h2>
+                        <p className="text-gray-600">Select the studio that best fits your needs</p>
                     </div>
 
-                    <div className="flex flex-wrap justify-evenly gap-6">
+
+                    <div className="flex flex-wrap justify-evenly gap-3 ">
                         {studiosData.data.map((studio) => (
                             <motion.div
                                 key={studio.id}
-                                onHoverStart={() => setHoveredId(studio.id)}
-                                onHoverEnd={() => setHoveredId(null)}
                                 onClick={() =>
                                     selectStudio({
                                         id: studio._id,
@@ -66,7 +70,7 @@ export default function SelectStudio() {
                                         image: studio.thumbnail,
                                     })
                                 }
-                                className={`bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer w-[350px] border-2 border-gray-300 ${selectedStudio === studio._id && "border-main/50 scale-[.98]"
+                                className={`bg-white rounded-2xl overflow-hidden shadow-md  transition-shadow duration-300 cursor-pointer w-[45%]  border-2 border-gray-300 hover:border-main ${selectedStudio === studio._id && "border-main/50 scale-[.98]"
                                     }`}
                                 variants={itemVariants}
                                 whileHover={{
@@ -76,40 +80,65 @@ export default function SelectStudio() {
                             >
                                 {/* Image */}
                                 <motion.div
-                                    className="relative h-64 overflow-hidden"
-                                    whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-                                >
+                                    className="relative h-64 overflow-hidden p-5"
+                                > {
+                                        selectedStudio === studio._id &&
+                                        <div className='h-8 w-8 bg-main text-white rounded-full flex items-center justify-center top-8 right-8 absolute'>
+                                            <i className="fa-solid fa-check"></i>
+                                        </div>
+                                    }
+
                                     <img
                                         src={studio.thumbnail || "/placeholder.svg"}
                                         alt={studio.name}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover rounded-lg"
                                     />
                                 </motion.div>
 
                                 {/* Info */}
                                 <div className="p-5">
-                                    <h3 className="text-2xl font-bold text-gray-800 border-b pb-3 border-gray-200">
+                                    <h3 className="text-xl font-bold text-gray-800">
                                         {studio.name}
                                     </h3>
 
-                                    <ul className="text-gray-600 space-y-2 list-disc px-4 mt-3">
-                                        <li className="text-base">{studio.recording_seats} Recording Seats</li>
-                                        <li className="text-base">{studio.address}</li>
+                                    <ul className="text-gray-600  mt-3">
+                                        <li className="text-gray-600 text-sm flex items-start "><span className={`mr-2 ${selectedStudio === studio._id ? "text-main" : "text-black"}`}>•</span>  {studio.recording_seats} Recording Seats</li>
+                                        <li className="text-gray-600 text-sm flex items-start "><span className={`mr-2 ${selectedStudio === studio._id ? "text-main" : "text-black"}`}>•</span>  {studio.address}</li>
                                     </ul>
 
-                                    {selectedStudio === studio._id && (
-                                        <p className="text-white font-bold bg-main rounded-full py-1 px-4 w-fit mt-3">
-                                            Selected
-                                        </p>
-                                    )}
+                                    <ul className="space-y-2 mb-4 ">
+                                        {studio.facilities.map((text, index) => (
+                                            <motion.li
+                                                key={index}
+                                                variants={benefitVariants}
+                                                className="text-gray-600 text-sm flex items-start "
+                                            >
+                                                <span className={`mr-2 ${selectedStudio === studio._id ? "text-main" : "text-black"}`}>•</span>{text}
+                                            </motion.li>
+                                        ))}
+                                    </ul>
 
-                                    {/* Bottom border animation */}
-                                    <motion.div
-                                        className="h-1 bg-main rounded-full mt-4"
-                                        initial={{ width: "0%" }}
-                                        animate={{ width: hoveredId === studio.id ? "100%" : "0%" }}
-                                        transition={{ duration: 0.4 }}
-                                    />
+                                    {/* Action Button */}
+                                    <div className="mt-auto">
+                                        <motion.button
+                                            whileHover={{ scale: 1.03 }}
+                                            whileTap={{ scale: 0.97 }}
+                                            onClick={() =>
+                                                selectStudio({
+                                                    id: studio._id,
+                                                    name: studio.name,
+                                                    image: studio.thumbnail,
+                                                })
+                                            }
+                                            className={`w-full py-2 px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center  ${selectedStudio === studio._id
+                                                ? "bg-main text-white"
+                                                : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
+                                                }`}
+                                        >
+                                            {selectedStudio === studio._id ? "Selected" : "Select"}
+                                        </motion.button>
+                                    </div>
+
                                 </div>
                             </motion.div>
                         ))}

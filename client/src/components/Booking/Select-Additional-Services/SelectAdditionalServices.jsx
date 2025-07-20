@@ -8,18 +8,17 @@ export default function SelectAdditionalServices() {
     return (
         <>
             {/* Header */}
-            <div >
-                <h4 className="text-4xl font-bold py-2">Additional Service</h4>
-                <p className="text-gray-600 text-md mb-5">
-                    Do you have additional needs? Our professionals are here for you.
-                </p>
-            </div>
             <div className="space-y-4 py-4 px-5  duration-300">
                 {/* Service Selector */}
 
                 {/* Animated Content */}
                 <AnimatePresence mode="wait">
                     <div >
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl mb-2">Additional Services</h2>
+                            <p className="text-gray-600">Enhance your session with our professional add-ons</p>
+                        </div>
+
                         {<AddOns />}
                     </div>
                 </AnimatePresence>
