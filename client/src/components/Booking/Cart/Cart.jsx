@@ -16,7 +16,6 @@ function StudioSection({ studio, date, startSlot, formatTime }) {
     if (!studio) return null;
     return (
         <>
-            <h4 className="text-xl font-semibold mb-4 text-gray-800">Selected Studio</h4>
             <div className="bg-white p-4 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-6">
                     <img src={studio.image} alt={studio.name} className="w-20 h-20 rounded-lg object-cover border border-gray-200" />
@@ -35,16 +34,15 @@ function PackageSection({ selectedPackage, duration, totalPackagePrice }) {
     if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null;
     return (
         <>
-            <h4 className="text-xl font-semibold my-4 text-gray-800">Selected Package</h4>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 mb-6">
+            <div className="bg-white p-4 rounded-xl border border-gray-200 my-6">
                 <div className="flex justify-between items-start">
                     <div>
-                        <h5 className="text-lg font-medium text-gray-900">{selectedPackage.name}</h5>
+                        <h5 className="text-md font-medium text-gray-900">{selectedPackage.name}</h5>
                         <p className="text-sm text-gray-500">duration: {duration} hour</p>
                     </div>
                     <div className="text-right">
                         <p className="text-sm text-gray-400">Package Price</p>
-                        <p className="text-lg font-bold text-main">{totalPackagePrice} EGP</p>
+                        <p className="text-md font-bold text-main">{totalPackagePrice} EGP</p>
                     </div>
                 </div>
             </div>
@@ -56,7 +54,6 @@ function AddOnsSection({ selectedAddOns, totalAddOnPrice }) {
     if (!selectedAddOns || selectedAddOns.length === 0) return null;
     return (
         <>
-            <h4 className="text-xl font-semibold mb-4 text-gray-800">Selected Add-Ons</h4>
             <div className="bg-white p-4 rounded-xl border border-gray-200">
                 <ul className="divide-y divide-gray-100">
                     {selectedAddOns.map((addon) => (

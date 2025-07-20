@@ -70,14 +70,16 @@ export default function Booking() {
     5: <PersonalInformation />,
   };
 
+  const showCart = currentStep === 4 || currentStep === 5;
+
   return (
-    <div className="py-12 lg:px-8 lg:w-7xl w-full mx-auto">
-      {/* Step Indicator */}
-      <div className=" z-40 bg-white shadow-sm">
+    <div className="py-12 lg:px-8 lg:w-7xl w-full mx-auto ">
+      {/* ✅ Step Indicator ثابت */}
+      <div className="z-40 bg-white shadow-sm">
         <StepIndicator />
       </div>
 
-      {/* Mobile Cart Button */}
+      {/* ✅ زر Cart في الموبايل */}
       {currentStep === 4 && (
         <div className="lg:hidden text-right px-4 my-1">
           <button
@@ -89,7 +91,7 @@ export default function Booking() {
         </div>
       )}
 
-      {/* Main Content */}
+      {/* ✅ المحتوى الرئيسي */}
       <motion.div
         className="my-4 bg-white rounded-xl overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
@@ -113,6 +115,7 @@ export default function Booking() {
               exit="exit"
               className="space-y-6 lg:space-y-0 lg:flex lg:gap-6 items-start mt-6"
             >
+              {/* ✅ مكون الخطوة الحالية */}
               <motion.div
                 variants={itemVariants}
                 className="md:p-1 rounded-lg flex-1"
@@ -120,11 +123,11 @@ export default function Booking() {
                 {stepComponents[currentStep]}
               </motion.div>
 
-              {/* Cart Sidebar on Large Screens */}
-              {(currentStep === 4 || currentStep === 5) && (
+              {/* ✅ Cart الجانبي في الشاشات الكبيرة */}
+              {showCart && (
                 <motion.div
                   variants={itemVariants}
-                  className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block bg-gray-50 shadow-md sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto"
+                  className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block bg-gray-50 shadow-md"
                 >
                   <Cart />
                 </motion.div>
@@ -134,14 +137,11 @@ export default function Booking() {
         </AnimatePresence>
       </motion.div>
 
-      {/* Navigation Buttons */}
-      {/* <NavigationButtons /> */}
-
-      {/* Mobile Cart Modal */}
+      {/* ✅ Cart الموبايل */}
       <AnimatePresence>
         {showMobileCart && (
           <>
-            {/* Background Overlay */}
+            {/* خلفية معتمة */}
             <motion.div
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
               onClick={() => setShowMobileCart(false)}
@@ -150,7 +150,7 @@ export default function Booking() {
               exit={{ opacity: 0 }}
             />
 
-            {/* Cart Modal */}
+            {/* مودال Cart */}
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
