@@ -1,3 +1,4 @@
+import React from "react";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 import { Check } from "lucide-react";
 
