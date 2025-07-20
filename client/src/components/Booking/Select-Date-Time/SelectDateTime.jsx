@@ -18,7 +18,7 @@ export default function SelectDateTime() {
             <div className="">
 
                 {/* Duration And Person Number */}
-                <SelectDurationPersonsPar />
+                {/* <SelectDurationPersonsPar /> */}
 
                 {/* Calendar */}
                 <Calendar openToggle={setIsOpen} getAvailableSlots={getAvailableSlots} />

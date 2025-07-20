@@ -47,7 +47,7 @@ export default function SelectStudio() {
             ) : (
                 <>
                     <div>
-                        <h4 className="text-4xl font-bold py-2">Select the Studio</h4>
+                        <h4 className="text-2xl lg:text-4xl font-bold py-2">Select the Studio</h4>
                         <p className="text-gray-600 text-md mb-5">
                             Browse through our range of studios and pick the one that fits your needs best.
                         </p>

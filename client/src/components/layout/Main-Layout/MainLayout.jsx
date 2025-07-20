@@ -17,7 +17,7 @@ const MainLayout = () => {
                 <Navbar />
 
                 {/* Main Content */}
-                <main className="flex-1 container mx-auto px-4 py-8 mt-10">
+                <main className="flex-1 container mx-auto px-4 py-8 mt-10 ">
                     <Outlet />
                 </main>
 
