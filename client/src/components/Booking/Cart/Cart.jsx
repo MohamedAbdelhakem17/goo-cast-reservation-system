@@ -16,8 +16,7 @@ function StudioSection({ studio, date, startSlot, formatTime }) {
     if (!studio) return null;
     return (
         <>
-            <h4 className="text-xl font-semibold mb-4 text-gray-800">Selected Studio</h4>
-            <div className="bg-white p-4 rounded-xl border border-gray-200">
+            <div className=" p-4 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-6">
                     <img src={studio.image} alt={studio.name} className="w-20 h-20 rounded-lg object-cover border border-gray-200" />
                     <div>
@@ -35,11 +34,10 @@ function PackageSection({ selectedPackage, duration, totalPackagePrice }) {
     if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null;
     return (
         <>
-            <h4 className="text-xl font-semibold my-4 text-gray-800">Selected Package</h4>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 mb-6">
+            <div className=" p-4 rounded-xl border border-gray-200 mb-6">
                 <div className="flex justify-between items-start">
                     <div>
-                        <h5 className="text-lg font-medium text-gray-900">{selectedPackage.name}</h5>
+                        <h5 className="text-md font-medium text-gray-900">{selectedPackage.name}</h5>
                         <p className="text-sm text-gray-500">duration: {duration} hour</p>
                     </div>
                     <div className="text-right">
@@ -56,8 +54,7 @@ function AddOnsSection({ selectedAddOns, totalAddOnPrice }) {
     if (!selectedAddOns || selectedAddOns.length === 0) return null;
     return (
         <>
-            <h4 className="text-xl font-semibold mb-4 text-gray-800">Selected Add-Ons</h4>
-            <div className="bg-white p-4 rounded-xl border border-gray-200">
+            <div className=" p-4 rounded-xl border border-gray-200">
                 <ul className="divide-y divide-gray-100">
                     {selectedAddOns.map((addon) => (
                         <li key={addon._id} className="py-2 flex justify-between items-center">
@@ -119,7 +116,7 @@ export default function Cart() {
                 </div>
             )}
             <button disabled={hasError()} onClick={handelChangeStep} className="disabled:bg-gray-100 disabled:text-gray-300 text-main flex items-baseline justify-center cursor-pointer mx-auto gap-1 text-md font-medium mt-1 bg-main/5 hover:bg-main/10 px-3 py-1.5 rounded-md transition-colors ">
-                <span className='m-0'>Complete Booking</span>
+                <span className='m-0'>Proceed to payment</span>
                 <i className="fa-solid fa-chevron-right text-xs m-0"></i>
             </button>
         </div>
