@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import StepIndicator from "../../components/Booking/Step-Indicator/StepIndicator";
+// import StepIndicator from "../../components/Booking/Step-Indicator/StepIndicator";
+import Stepper from "../../components/Booking/Step-Indicator/StepIndicator";
 import NavigationButtons from "../../components/Booking/Navigation-Buttons/NavigationButtons";
 import SelectStudio from "../../components/Booking/Select-Studio/SelectStudio";
 import SelectDateTime from "../../components/Booking/Select-Date-Time/SelectDateTime";
@@ -59,6 +60,7 @@ const slideVariants = {
 };
 
 export default function Booking() {
+
   const { currentStep } = useBooking();
   const [showMobileCart, setShowMobileCart] = useState(false);
 
@@ -73,9 +75,9 @@ export default function Booking() {
   return (
     <div className="py-12 lg:px-8 lg:w-7xl w-full mx-auto">
       {/* Step Indicator */}
-      <div className=" z-40 bg-white shadow-sm">
-        <StepIndicator />
-      </div>
+
+        {/* <StepIndicator /> */}
+         <Stepper/>
 
       {/* Mobile Cart Button */}
       {currentStep === 4 && (
@@ -124,7 +126,7 @@ export default function Booking() {
               {(currentStep === 4 || currentStep === 5) && (
                 <motion.div
                   variants={itemVariants}
-                  className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block bg-gray-50 shadow-md sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto"
+                  className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block bg-gray-200 shadow-sm sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto"
                 >
                   <Cart />
                 </motion.div>

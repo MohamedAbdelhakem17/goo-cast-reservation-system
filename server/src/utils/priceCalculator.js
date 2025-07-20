@@ -51,10 +51,11 @@ const calculateSlotPrices = async ({
   const minStartTime = await getCategoryMinHour(package.category._id);
 
   for (
-    let time = startSlotMinutes + minStartTime;
-    time <= endOfDay;
-    time += 60
-  ) {
+  let time = startSlotMinutes + minStartTime;
+  time <= endOfDay + 60;
+  time += 60
+)
+ {
     slotCount++;
 
     const isOverlapping = bookedSlots.some(
