@@ -61,7 +61,7 @@ const slideVariants = {
 
 export default function Booking() {
 
-  const { currentStep , handlePrevStep } = useBooking();
+  const { currentStep } = useBooking();
   const [showMobileCart, setShowMobileCart] = useState(false);
 
   const stepComponents = {
@@ -76,10 +76,9 @@ export default function Booking() {
     <div className="py-12 lg:px-8 lg:w-7xl w-full mx-auto">
       {/* Step Indicator */}
 
-      <button onClick={handlePrevStep}>Back</button>
 
-        {/* <StepIndicator /> */}
-         <Stepper/>
+      {/* <StepIndicator /> */}
+      <Stepper />
 
       {/* Mobile Cart Button
       {currentStep === 4 && (
