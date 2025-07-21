@@ -81,7 +81,7 @@ export default function Booking() {
         {/* <StepIndicator /> */}
          <Stepper/>
 
-      {/* Mobile Cart Button */}
+      {/* Mobile Cart Button
       {currentStep === 4 && (
         <div className="lg:hidden text-right px-4 my-1">
           <button
@@ -91,7 +91,7 @@ export default function Booking() {
             <i className="fa-solid fa-cart-shopping text-xl"></i>
           </button>
         </div>
-      )}
+      )} */}
 
       {/* Main Content */}
       <motion.div
@@ -115,24 +115,14 @@ export default function Booking() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="space-y-6 lg:space-y-0 lg:flex lg:gap-6 items-start mt-6"
+              className="space-y-6 lg:space-y-0 lg:gap-6 items-start mt-6"
             >
               <motion.div
                 variants={itemVariants}
-                className="md:p-1 rounded-lg flex-1"
+                className="md:p-1 rounded-lg "
               >
                 {stepComponents[currentStep]}
               </motion.div>
-
-              {/* Cart Sidebar on Large Screens */}
-              {(currentStep === 4 || currentStep === 5) && (
-                <motion.div
-                  variants={itemVariants}
-                  className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block max-h-[calc(100vh-6rem)] overflow-y-auto border-gray-100 border-2"
-                >
-                  <Cart />
-                </motion.div>
-              )}
             </motion.div>
           </motion.div>
         </AnimatePresence>

@@ -37,7 +37,8 @@ export default function useBookingFormik() {
             selectedPackage: {},
             selectedAddOns: [],
             personalInfo: {
-                fullName: "",
+                firstName: "",
+                lastName: "",
                 phone: "",
                 email: "",
                 brand: "",
@@ -89,7 +90,7 @@ export default function useBookingFormik() {
 
     const { mutate: createBooking } = CreateBooking()
 
-    
+
     const navigate = useNavigate()
     const { addToast } = useToast()
     // Formik handleSubmit function
@@ -108,7 +109,11 @@ export default function useBookingFormik() {
                 },
                 totalPrice: values.totalPrice,
                 coupon_code: values.couponCode,
-                totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice
+                totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
+                personalInfo: {
+                    ...values.personalInfo,
+                    fullName: `${values.personalInfo.firstName}  ${values.personalInfo.lastName}`
+                }
             };
 
             createBooking(dataBaseObject, {
