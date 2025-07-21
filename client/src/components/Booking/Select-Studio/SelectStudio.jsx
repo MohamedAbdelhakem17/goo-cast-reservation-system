@@ -83,7 +83,7 @@ export default function SelectStudio() {
                             <motion.div
                                 key={studio.id}
 
-                                className={`bg-white rounded-2xl overflow-hidden shadow-md transition-shadow duration-300 cursor-pointer w-[45%] border-2 border-gray-300 hover:border-main ${selectedStudio === studio._id ? "border-main/50 scale-[.98]" : ""
+                                className={`bg-white rounded-2xl overflow-hidden shadow-md transition-shadow duration-300 cursor-pointer w-full md:w-[45%] border-2 border-gray-300 hover:border-main ${selectedStudio === studio._id ? "border-main/50 scale-[.98]" : ""
                                     }`}
                                 variants={itemVariants}
                                 whileHover={{
