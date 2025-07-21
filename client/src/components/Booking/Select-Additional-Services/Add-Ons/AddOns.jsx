@@ -163,7 +163,7 @@ export default function AddOns() {
                       </div>
 
                       <button
-                        className="text-sm  rounded border px-2 py-1"
+                        className="text-sm  rounded border border-gray-300 px-2 py-1"
                         onClick={() => handleRemove(addon._id)}
                       >
                         Remove
