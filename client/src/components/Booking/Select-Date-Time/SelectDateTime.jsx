@@ -3,6 +3,7 @@ import Calendar from './Calendar/Calendar'
 import Slots from './Slots/Slots'
 import { useState } from 'react'
 import { GetAvailableSlots } from '../../../apis/Booking/booking.api'
+import NavigationButtons from '../Navigation-Buttons/NavigationButtons'
 export default function SelectDateTime() {
     const [isOpen, setIsOpen] = useState(false)
 
@@ -25,6 +26,8 @@ export default function SelectDateTime() {
 
                 {/* Slots */}
                 <Slots toggleSidebar={toggleSidebar} isOpen={isOpen} setIsOpen={setIsOpen} slots={slots?.data} />
+
+                <NavigationButtons />
             </div>
         </>
     )
