@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBooking } from '../../../context/Booking-Context/BookingContext';
 import Loading from '../../shared/Loading/Loading';
 import { useGetAvailableStudio } from '../../../apis/Booking/booking.api';
+import NavigationButtons from '../Navigation-Buttons/NavigationButtons';
 
 export default function SelectStudio() {
     const { setBookingField, bookingData, handlePrevStep, handleNextStep } = useBooking();
@@ -161,6 +162,8 @@ export default function SelectStudio() {
                             </motion.div>
                         ))}
                     </div>
+
+                    <NavigationButtons />
                 </>
             )}
 
