@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import StepIndicator from "../../components/Booking/Step-Indicator/StepIndicator";
+// import StepIndicator from "../../components/Booking/Step-Indicator/StepIndicator";
+import Stepper from "../../components/Booking/Step-Indicator/StepIndicator";
 import NavigationButtons from "../../components/Booking/Navigation-Buttons/NavigationButtons";
 import SelectStudio from "../../components/Booking/Select-Studio/SelectStudio";
 import SelectDateTime from "../../components/Booking/Select-Date-Time/SelectDateTime";
@@ -59,7 +60,8 @@ const slideVariants = {
 };
 
 export default function Booking() {
-  const { currentStep } = useBooking();
+
+  const { currentStep , handlePrevStep } = useBooking();
   const [showMobileCart, setShowMobileCart] = useState(false);
 
   const stepComponents = {
@@ -73,11 +75,13 @@ export default function Booking() {
   return (
     <div className="py-12 lg:px-8 lg:w-7xl w-full mx-auto">
       {/* Step Indicator */}
-      <div className=" z-40 bg-white shadow-sm">
-        <StepIndicator />
-      </div>
 
-      {/* Mobile Cart Button */}
+      <button onClick={handlePrevStep}>Back</button>
+
+        {/* <StepIndicator /> */}
+         <Stepper/>
+
+      {/* Mobile Cart Button
       {currentStep === 4 && (
         <div className="lg:hidden text-right px-4 my-1">
           <button
@@ -87,7 +91,7 @@ export default function Booking() {
             <i className="fa-solid fa-cart-shopping text-xl"></i>
           </button>
         </div>
-      )}
+      )} */}
 
       {/* Main Content */}
       <motion.div
@@ -111,24 +115,14 @@ export default function Booking() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="space-y-6 lg:space-y-0 lg:flex lg:gap-6 items-start mt-6"
+              className="space-y-6 lg:space-y-0 lg:gap-6 items-start mt-6"
             >
               <motion.div
                 variants={itemVariants}
-                className="md:p-1 rounded-lg flex-1"
+                className="md:p-1 rounded-lg "
               >
                 {stepComponents[currentStep]}
               </motion.div>
-
-              {/* Cart Sidebar on Large Screens */}
-              {(currentStep === 4 || currentStep === 5) && (
-                <motion.div
-                  variants={itemVariants}
-                  className="md:px-2 md:py-6 rounded-lg w-full lg:w-1/3 hidden lg:block bg-gray-50 shadow-md sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto"
-                >
-                  <Cart />
-                </motion.div>
-              )}
             </motion.div>
           </motion.div>
         </AnimatePresence>

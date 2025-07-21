@@ -156,7 +156,7 @@ export default function Studio() {
                                 whileHover={{ opacity: 1 }}
                             >
                                 <div className="py-4 px-8 text-white">
-                                    <Link to={`/studio/${studio.slug}`} className="font-bold">
+                                    <Link to={`/setups/${studio.slug}`} className="font-bold">
                                         View Details
                                     </Link>
                                 </div>

@@ -1187,15 +1187,16 @@ exports.createBooking = asyncHandler(async (req, res) => {
   }
 
   // Calculate package price
-  // const slotPrices = await calculateSlotPrices({
-  //   package: pkg,
-  //   date: bookingDate,
-  //   startSlotMinutes,
-  //   endOfDay: endSlotMinutes,
-  //   bookedSlots: [],
-  // });
+  const slotPrices = await calculateSlotPrices({
+    package: pkg,
+    date: bookingDate,
+    startSlotMinutes,
+    endOfDay: endSlotMinutes,
+    bookedSlots: [],
+  });
 
-  const packagePrice = pkg?.price * +duration;
+  const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
+
 
   // Handle Add-ons
   const addonsTotalPriceFromClient =
