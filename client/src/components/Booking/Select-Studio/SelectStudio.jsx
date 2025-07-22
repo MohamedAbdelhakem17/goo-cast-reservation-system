@@ -123,7 +123,7 @@ export default function SelectStudio() {
                                         <AnimatePresence>
                                             {hoveredImage === studio._id && (
                                                 <motion.div
-                                                    className="absolute inset-0 bg-black/40 flex items-center justify-center"
+                                                    className="absolute inset-0 bg-black/40 flex items-center justify-center z-[69]"
                                                     initial={{ opacity: 0 }}
                                                     animate={{ opacity: 1 }}
                                                     exit={{ opacity: 0 }}
