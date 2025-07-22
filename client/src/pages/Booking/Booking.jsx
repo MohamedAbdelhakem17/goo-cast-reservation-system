@@ -72,9 +72,9 @@ export default function Booking() {
   };
 
   return (
-    <>
+    <div className="py-5">
       <Stepper />
-      <div className="lg:px-8 lg:w-7xl w-full mx-auto">
+      <div className="lg:px-8 lg:w-7xl w-full mx-auto ">
         {/* Step Indicator */}
 
         {/* Main Content */}
@@ -150,7 +150,7 @@ export default function Booking() {
           )}
         </AnimatePresence>
       </div>
-    </>
+    </div>
 
   );
 }
