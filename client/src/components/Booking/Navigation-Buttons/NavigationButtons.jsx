@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 
@@ -26,7 +25,8 @@ export default function NavigationButtons({ handleGoToConfirmation }) {
     };
 
     return (
-        <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
+        <div className="px-6 py-4  flex justify-between">
+
             <NavButton
                 className={`px-4 py-2 rounded-md ${currentStep === 1
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed"
@@ -44,7 +44,7 @@ export default function NavigationButtons({ handleGoToConfirmation }) {
                 onClick={handlePaymentButton}
                 type={currentStep === TOTAL_STEPS ? "submit" : "button"}
             >
-                {currentStep === TOTAL_STEPS ? "Complete Booking" : "Next Step"}
+                Next
             </NavButton>
         </div>
     );

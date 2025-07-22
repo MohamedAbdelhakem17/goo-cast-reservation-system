@@ -60,7 +60,7 @@ export default function HourlyRecording() {
       {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-2xl mb-2">Choose Your Service</h2>
-        <p className="text-gray-600">Select the type of recording session you need</p>
+        <p className="text-gray-900">Select the type of recording session you need</p>
       </div>
 
       {/* Packages */}

@@ -108,7 +108,7 @@ export default function AddOns() {
                 <img
                   src={addon.image}
                   alt={addon.name}
-                  className="w-full h-full object-cover transition-transform duration-300 rounded-md"
+                  className="w-full  h-full object-cover  transition-transform duration-300 rounded-md"
                 />
               </div>
 
