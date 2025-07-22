@@ -88,20 +88,6 @@ export default function PersonalInformation() {
                         <motion.div {...motionProps}>
                             <BookingInput
                                 type="text"
-                                id="brandName"
-                                label="Special Requests or Comments"
-                                value={brand}
-                                placeholder="Any special requirements, equipment needs, or additional information..."
-                                errors={getBookingError("personalInfo.brand")}
-                                onChange={(e) => setBookingField("personalInfo.brand", e.target.value)}
-                                onBlur={formik.handleBlur}
-                                touched={formik.touched.brandName}
-                            />
-                        </motion.div>
-
-                        <motion.div {...motionProps}>
-                            <BookingInput
-                                type="text"
                                 id="phoneNumber"
                                 value={phone}
                                 label="Phone Number"
@@ -110,6 +96,21 @@ export default function PersonalInformation() {
                                 onBlur={formik.handleBlur}
                                 touched={formik.touched.phoneNumber}
                                 onChange={(e) => setBookingField("personalInfo.phone", e.target.value)}
+                            />
+                        </motion.div>
+
+
+                        <motion.div {...motionProps}>
+                            <BookingInput
+                                type="text"
+                                id="brandName"
+                                label="Special Requests or Comments"
+                                value={brand}
+                                placeholder="Any special requirements, equipment needs, or additional information..."
+                                errors={getBookingError("personalInfo.brand")}
+                                onChange={(e) => setBookingField("personalInfo.brand", e.target.value)}
+                                onBlur={formik.handleBlur}
+                                touched={formik.touched.brandName}
                             />
                         </motion.div>
                     </form>
@@ -121,7 +122,7 @@ export default function PersonalInformation() {
                         <div className="mt-2 bg-gray-100 p-4 rounded text-sm text-gray-600">
                             Payment will be processed securely through our payment partner. You will be redirected to complete your payment after confirming your booking.
                             <br />
-                            <span className="text-xs text-gray-500 block mt-2">We accept all major credit cards, PayPal, and bank transfers.</span>
+                            <span className="text-xs text-gray-500 block mt-2">We offer multiple secure payment options to suit your needs. You may choose to pay using Credit or Debit Cards, PayPal, Bank Transfer, or Cash .</span>
                         </div>
                     </div>
 
