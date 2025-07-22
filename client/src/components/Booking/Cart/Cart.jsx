@@ -18,15 +18,15 @@ function StudioSection({ studio, date, startSlot, formatTime, duration }) {
     if (!studio) return null
     return (
         <div className="space-y-1 border-b-1 border-gray-300 pb-3">
-            <p className="text-sm text-gray-500">
+            <p className="text-md text-gray-500">
                 <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
                 {formatDate(date)}
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-md text-gray-500">
                 <i className="fa-solid fa-clock mr-2 text-[12px]"></i>
                 {formatTime(startSlot)} ({duration}h){" "}
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-md text-gray-500">
                 <i className="fa-solid fa-location-dot mr-2 text-[12px]"></i>
                 {studio.name}
             </p>
@@ -38,10 +38,10 @@ function PackageSection({ selectedPackage, duration, totalPackagePrice, priceFor
     if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null
     return (
         <div className="flex items-center justify-between pb-1 pt-2">
-            <p className="text-sm text-gray-500">
+            <p className="text-md text-gray-500">
                 {selectedPackage.name} ({duration}h)
             </p>
-            <p className="text-sm text-gray-500">{priceFormat(totalPackagePrice)}</p>
+            <p className="text-md text-gray-500">{priceFormat(totalPackagePrice)}</p>
         </div>
     )
 }
@@ -52,8 +52,8 @@ function AddOnsSection({ selectedAddOns }) {
         <ul className="border-b-1 border-gray-300 pb-2">
             {selectedAddOns.map((addon) => (
                 <li className="flex items-center justify-between py-1" key={addon._id}>
-                    <p className="text-sm text-gray-500">{addon.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-md text-gray-500">{addon.name}</p>
+                    <p className="text-md text-gray-500">
                         {" "}
                         x{addon.quantity} / {addon.price} EGP
                     </p>
@@ -96,7 +96,7 @@ export default function Cart() {
 
     return (
         <div className="border rounded-lg border-gray-200 py-4 px-5 sticky top-0">
-            <h2 className="p-2 text-bold text-lg">Reservation Summary</h2>
+            <h2 className="py-2 my-2 text-bold text-lg">Reservation Summary</h2>
             <StudioSection
                 studio={bookingData.studio}
                 date={bookingData.date}
@@ -112,8 +112,8 @@ export default function Cart() {
             />
             <AddOnsSection selectedAddOns={bookingData.selectedAddOns} totalAddOnPrice={totalAddOnPrice} />
             <div className="flex items-center justify-between py-1 pt-2">
-                <p className="text-sm font-bold">Total</p>
-                <p className="text-sm text-gray-500">{priceFormat(totalPrice)}</p>
+                <p className="text-md font-bold">Total</p>
+                <p className="text-md text-gray-500">{priceFormat(totalPrice)}</p>
             </div>
             {<ApplyDiscount />}
             {Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0) && (
