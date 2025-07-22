@@ -6,10 +6,10 @@ import Cart from "../Cart/Cart";
 
 export default function PersonalInformation() {
     const inputRef = useRef(null);
-    const { getBookingError, formik, bookingData, setBookingField } =
+    const { getBookingError, formik, bookingData, setBookingField, hasError } =
         useBooking();
 
-    const { firstName , lastName, phone, email, brand } = bookingData.personalInfo;
+    const { firstName, lastName, phone, email, brand } = bookingData.personalInfo;
 
     useEffect(() => {
         if (inputRef.current) {
@@ -23,12 +23,13 @@ export default function PersonalInformation() {
         transition: { delay: 0.5, duration: 0.4 },
     };
 
+    console.log(hasError())
     return (
         <div className="space-y-4 py-6 px-4 sm:px-6 lg:px-8 duration-300 mx-auto">
             {/* Header */}
             <div className="text-center mb-6 sm:mb-10">
                 <h2 className="text-2xl sm:text-3xl font-semibold mb-2">Payment Information</h2>
-                <p className="text-gray-600 text-sm sm:text-base">
+                <p className="text-gray-900 text-sm sm:text-base">
                     Complete your booking with your contact details
                 </p>
             </div>

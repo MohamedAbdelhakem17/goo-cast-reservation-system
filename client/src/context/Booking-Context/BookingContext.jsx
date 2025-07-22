@@ -17,7 +17,7 @@ export default function BookingProvider({ children }) {
         2: ["studio"],
         3: ["date", "startSlot", "duration"],
         4: ["selectedAddOns"],
-        5: ["personalInfo.fullName", "personalInfo.phone", "personalInfo.email"],
+        5: ["personalInfo.firstName", "personalInfo.lastName",  "personalInfo.phone", "personalInfo.email"],
     };
 
     // Hooks
@@ -141,8 +141,10 @@ export default function BookingProvider({ children }) {
     const hasError = () => {
         const fields = STEP_FIELDS[currentStep] || [];
         return fields.some((field) => {
+
             const value = getBookingField(field);
             const error = getBookingError(field);
+            console.log(value , error)
             return !value || error;
         });
     };
