@@ -63,7 +63,8 @@ export default function useBookingFormik() {
         startSlot: Yup.string().required("Time  slot is required"),
         selectedAddOns: Yup.array().nullable().notRequired(),
         personalInfo: Yup.object({
-            fullName: Yup.string().required("Full name is required"),
+            firstName: Yup.string().required("First name is required"),
+            lastName: Yup.string().required("Last name is required"),
             phone: Yup.string()
                 .matches(/^01(0|1|2|5)[0-9]{8}$/, "Phone number is not valid")
                 .required("Phone is required"),

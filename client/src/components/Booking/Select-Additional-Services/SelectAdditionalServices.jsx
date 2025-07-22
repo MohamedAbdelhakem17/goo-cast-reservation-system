@@ -14,7 +14,7 @@ export default function SelectAdditionalServices() {
             {/* Header */}
             <div className="text-center mb-8">
                 <h2 className="text-2xl mb-2">Additional Services</h2>
-                <p className="text-gray-600">Enhance your session with our professional add-ons</p>
+                <p className="text-gray-900">Enhance your session with our professional add-ons</p>
             </div>
 
             {/* Responsive Content */}
