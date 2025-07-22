@@ -26,7 +26,6 @@ export default function HourlyRecording() {
     setBookingField("startSlot", null);
     setBookingField("endSlot", null);
     setBookingField("studio", null);
-    handleNextStep();
   };
 
   const containerVariants = {
@@ -85,7 +84,7 @@ export default function HourlyRecording() {
               <div
                 className={`flex flex-col rounded-xl h-full p-4 border-1 overflow-hidden transition-colors duration-300 ${isActive
                   ? "border-main border-2 shadow-sm shadow-main/20"
-                  : "border-gray-200 hover:border-main border-2 shadow-md hover:[&_button]:bg-main hover:[&_button]:text-white"
+                  : "border-gray-200  border-2 shadow-md  "
                   }`}
               >
                 {/* Card Header */}
@@ -128,6 +127,10 @@ export default function HourlyRecording() {
                       ? "bg-main text-white"
                       : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
                       }`}
+                      onClick={()=>{
+                        handlePackageSelect(pkg)
+                        handleNextStep() 
+                      }}
                   >
                     {selectedPackage === pkg._id ? "Selected" : "Select & Continue"}
                   </motion.button>

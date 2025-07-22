@@ -11,9 +11,9 @@ export default function Stepper() {
   }));
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8">
+    <div className="px-4  lg:px-8 lg:sticky top-0 bg-white z-[51] w-[100vw] mt-5">
       {/* Desktop/Tablet View */}
-      <div className="hidden sm:flex items-center justify-between max-w-5xl mx-auto">
+      <div className="hidden sm:flex items-center justify-between max-w-5xl mx-auto scale-[.9]">
         {steps.map((step, index) => (
           <React.Fragment key={step.id}>
             <div className="flex flex-col items-center">
