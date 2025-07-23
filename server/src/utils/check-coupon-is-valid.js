@@ -51,13 +51,13 @@ const checkCouponIsValid = async ({ coupon_id, user_id, email }) => {
   }
 
   // ✅ Save usage based on provided field
-  if (user_id) {
-    coupon.user_id_used.push(user_id);
-  }
+  // if (user_id) {
+  //   coupon.user_id_used.push(user_id);
+  // }
 
-  if (emailLower) {
-    coupon.user_email_used.push(emailLower);
-  }
+  // if (emailLower) {
+  //   coupon.user_email_used.push(emailLower);
+  // }
 
   await coupon.save();
 
