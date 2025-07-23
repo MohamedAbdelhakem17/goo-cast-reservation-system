@@ -46,7 +46,8 @@ export default function useBookingFormik() {
             totalPackagePrice: 0,
             totalPrice: 0,
             totalPriceAfterDiscount: 0,
-            couponCode: ""
+            couponCode: "",
+            discount: ""
         };
     }, [parsedData]);
 
