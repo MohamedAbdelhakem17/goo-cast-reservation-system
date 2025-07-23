@@ -57,9 +57,9 @@ export default function ApplyDiscount() {
         <div className="my-2 rounded-xl w-full py-2">
             <h2 className="text-sm text-gray-800 font-bold"><i className="fa-solid fa-tag mr-3"></i>Promo Code</h2>
             <CouponInput coupon={coupon} setCoupon={setCoupon} onApply={handleApplyCoupon} disabled={!coupon} />
-            <div className="text-xs text-gray-500 mt-2">
+            {/* <div className="text-xs text-gray-500 mt-2">
                 Try: FIRST20, STUDIO10, SUMMER25, or WELCOME15
-            </div>
+            </div> */}
         </div>
     )
 }
