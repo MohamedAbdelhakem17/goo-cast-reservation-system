@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import BookingInput from "../../shared/Booking-Input/BookingInput";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 import Cart from "../Cart/Cart";
+import PaymentOptions from "./Payment-Way/PaymentWay";
 
 export default function PersonalInformation() {
     const inputRef = useRef(null);
@@ -123,6 +124,7 @@ export default function PersonalInformation() {
                             Payment will be processed securely through our payment partner. You will be redirected to complete your payment after confirming your booking.
                             <br />
                             <span className="text-xs text-gray-500 block mt-2">We offer multiple secure payment options to suit your needs. You may choose to pay using Credit or Debit Cards, PayPal, Bank Transfer, or Cash .</span>
+                            <PaymentOptions />
                         </div>
                     </div>
 
