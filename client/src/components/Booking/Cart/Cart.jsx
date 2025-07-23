@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-boolean-cast */
 
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useBooking } from "../../../context/Booking-Context/BookingContext"
@@ -49,7 +50,7 @@ function PackageSection({ selectedPackage, duration, totalPackagePrice, priceFor
 function AddOnsSection({ selectedAddOns }) {
     if (!selectedAddOns || selectedAddOns.length === 0) return null
     return (
-        <ul className="border-b-1 border-gray-300 pb-2">
+        <ul className="pb-2">
             {selectedAddOns.map((addon) => (
                 <li className="flex items-center justify-between py-1" key={addon._id}>
                     <p className="text-md text-gray-500">{addon.name}</p>
@@ -85,11 +86,14 @@ export default function Cart() {
         currentStep === 5 ? navigateTo("/booking/confirmation") : handleNextStep()
     }
 
+    console.log((bookingData.totalPriceAfterDiscount))
+
     useEffect(() => {
         const newTotalPrice = bookingData.totalPackagePrice + totalAddOnPrice
         setBookingField("totalPrice", newTotalPrice)
     }, [bookingData.selectedAddOns])
 
+    const vat = 0
     if (!bookingData) {
         return <div>Loading...</div>
     }
@@ -111,17 +115,32 @@ export default function Cart() {
                 totalPackagePrice={bookingData.totalPackagePrice}
             />
             <AddOnsSection selectedAddOns={bookingData.selectedAddOns} totalAddOnPrice={totalAddOnPrice} />
+
+            {/* Sub Total */}
+            <div className="border-t border-b border-gray-200 py-2 space-y-2 my-2">
+                <div className="flex justify-between text-md">
+                    <span>Subtotal</span>
+                    <span>{priceFormat(totalPrice)}</span>
+                </div>
+                <div className="flex justify-between text-md text-gray-600">
+                    <span>VAT (0%)</span>
+                    <span>{priceFormat(vat)}</span>
+                </div>
+                {Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0) && (
+                    <div className="flex justify-between text-sm text-green-600">
+                        <span>Promo Discount ({bookingData.couponCode})</span>
+                        <span> - {priceFormat(bookingData.totalPrice * (bookingData.discount / 100))}</span>
+                    </div>
+                )}
+            </div>
             <div className="flex items-center justify-between py-1 pt-2">
                 <p className="text-md font-bold">Total</p>
-                <p className="text-md text-gray-500">{priceFormat(totalPrice)}</p>
+                <p className="text-md text-gray-500">{Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0) ? priceFormat(bookingData.totalPriceAfterDiscount) : priceFormat(totalPrice)}</p>
             </div>
+
             {<ApplyDiscount />}
-            {Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0) && (
-                <div className="flex items-center justify-between mt-2 p-4 border-t border-gray-300">
-                    <h4 className="text-xl font-semibold mb-4 text-gray-800">Total Price After Discount</h4>
-                    <p className="text-lg font-bold text-main">{bookingData.totalPriceAfterDiscount} EGP</p>
-                </div>
-            )}
+
+
             <div className="mt-4">
                 <button
                     disabled={hasError()}
