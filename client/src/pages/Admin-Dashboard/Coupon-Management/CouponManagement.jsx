@@ -74,7 +74,7 @@ export default function CouponManagement() {
         setEditingCoupon(coupon)
         setForm({
             name: coupon.name,
-            code: coupon.code,
+            code: coupon.code?.toUpperCase(),
             discount: coupon.discount,
             expires_at: coupon.expires_at?.slice(0, 10),
             max_uses: coupon.max_uses,
@@ -214,7 +214,7 @@ export default function CouponManagement() {
                             <input
                                 id="code"
                                 name="code"
-                                value={form.code}
+                                value={form.code?.toUpperCase()}
                                 onChange={handleChange}
                                 placeholder="SUMMER20"
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 uppercase"
