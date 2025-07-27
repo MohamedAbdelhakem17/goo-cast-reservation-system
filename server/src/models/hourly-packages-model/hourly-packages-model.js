@@ -37,7 +37,8 @@ const HourlyPackageSchema = new mongoose.Schema(
       required: [true, "Please provide details"],
       set: (arr) => arr.map((s) => s.trim()),
     },
-    // icon: String,
+    
+    icon: String,
 
     price: {
       type: Number,

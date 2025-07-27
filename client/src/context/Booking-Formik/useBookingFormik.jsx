@@ -37,7 +37,8 @@ export default function useBookingFormik() {
             selectedPackage: {},
             selectedAddOns: [],
             personalInfo: {
-                fullName: "",
+                firstName: "",
+                lastName: "",
                 phone: "",
                 email: "",
                 brand: "",
@@ -45,7 +46,8 @@ export default function useBookingFormik() {
             totalPackagePrice: 0,
             totalPrice: 0,
             totalPriceAfterDiscount: 0,
-            couponCode: ""
+            couponCode: "",
+            discount: ""
         };
     }, [parsedData]);
 
@@ -62,7 +64,8 @@ export default function useBookingFormik() {
         startSlot: Yup.string().required("Time  slot is required"),
         selectedAddOns: Yup.array().nullable().notRequired(),
         personalInfo: Yup.object({
-            fullName: Yup.string().required("Full name is required"),
+            firstName: Yup.string().required("First name is required"),
+            lastName: Yup.string().required("Last name is required"),
             phone: Yup.string()
                 .matches(/^01(0|1|2|5)[0-9]{8}$/, "Phone number is not valid")
                 .required("Phone is required"),
@@ -89,7 +92,7 @@ export default function useBookingFormik() {
 
     const { mutate: createBooking } = CreateBooking()
 
-    
+
     const navigate = useNavigate()
     const { addToast } = useToast()
     // Formik handleSubmit function
@@ -108,7 +111,11 @@ export default function useBookingFormik() {
                 },
                 totalPrice: values.totalPrice,
                 coupon_code: values.couponCode,
-                totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice
+                totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
+                personalInfo: {
+                    ...values.personalInfo,
+                    fullName: `${values.personalInfo.firstName}  ${values.personalInfo.lastName}`
+                }
             };
 
             createBooking(dataBaseObject, {

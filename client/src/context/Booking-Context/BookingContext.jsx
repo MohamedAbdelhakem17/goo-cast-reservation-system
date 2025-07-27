@@ -10,14 +10,14 @@ export const useBooking = () => useContext(BookingContext);
 
 export default function BookingProvider({ children }) {
     // Constants
-    const STEP_LABELS = ["Select Service", "Select Setup", "Select Date", "Select Additional Services", "Personal Information"];
+    const STEP_LABELS = ["Select Service", "Select Studio", "Date & Time", " Additional Services", "Payment  Info"];
     const TOTAL_STEPS = STEP_LABELS.length;
     const STEP_FIELDS = {
         1: ["selectedPackage"],
         2: ["studio"],
         3: ["date", "startSlot", "duration"],
         4: ["selectedAddOns"],
-        5: ["personalInfo.fullName", "personalInfo.phone", "personalInfo.email"],
+        5: ["personalInfo.firstName", "personalInfo.lastName",  "personalInfo.phone", "personalInfo.email"],
     };
 
     // Hooks
@@ -141,8 +141,10 @@ export default function BookingProvider({ children }) {
     const hasError = () => {
         const fields = STEP_FIELDS[currentStep] || [];
         return fields.some((field) => {
+
             const value = getBookingField(field);
             const error = getBookingError(field);
+            console.log(value , error)
             return !value || error;
         });
     };

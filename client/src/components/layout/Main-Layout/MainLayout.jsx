@@ -1,9 +1,11 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import Footer from '../Footer/Footer';
 import PageTracker from '../../PageTracker/PageTracker';
 
 const MainLayout = () => {
+    const location = useLocation();
+
     return (
         <>
             {/* Page Tracker */}
@@ -17,12 +19,15 @@ const MainLayout = () => {
                 <Navbar />
 
                 {/* Main Content */}
-                <main className="flex-1 container mx-auto px-4 py-8 mt-10 ">
+                <main className="flex-1  py-8 mt-10 ">
                     <Outlet />
                 </main>
 
                 {/* Footer */}
-                <Footer />
+                {
+                    location.pathname !== "/booking" && <Footer />
+                }
+
             </div>
         </>
     );
