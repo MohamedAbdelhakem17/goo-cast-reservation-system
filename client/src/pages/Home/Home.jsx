@@ -23,7 +23,7 @@ const Home = () => {
 
 
   return (
-    <>
+    <div className='container mx-auto'>
       <Hero />
       <PackagesSection />
       <BookNow />
@@ -66,7 +66,7 @@ const Home = () => {
         )}
       </AnimatePresence>
 
-    </>
+    </div >
   )
 }
 

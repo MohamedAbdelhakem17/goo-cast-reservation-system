@@ -74,7 +74,7 @@ export default function Booking() {
   const showCart = currentStep === 4 || currentStep === 5;
 
   return (
-    <div className="py-5">
+    <div className="py-5 bg-gray-100 min-h-screen">
       <Stepper />
       <div className="lg:px-8 lg:w-7xl w-full mx-auto ">
         {/* Step Indicator */}
