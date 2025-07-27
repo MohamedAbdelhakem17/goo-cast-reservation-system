@@ -41,7 +41,6 @@ export default function CategoryManagement() {
   }
 
   const handelDeleteCategory = (id) => {
-    console.log(id)
     deleteCategory({ id }, {
       onSuccess: ({ message }) => {
         addToast(message || "Category deleted successfully", "success"); setDeleteCategory(null)

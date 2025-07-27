@@ -144,7 +144,6 @@ export default function BookingProvider({ children }) {
 
             const value = getBookingField(field);
             const error = getBookingError(field);
-            console.log(value , error)
             return !value || error;
         });
     };

@@ -71,17 +71,9 @@ export default function SelectStudio() {
                 </div>
             ) : (
                 <>
-<<<<<<< HEAD
-                    <div>
-                        <h4 className="text-2xl lg:text-4xl font-bold py-2">Select the Studio</h4>
-                        <p className="text-gray-600 text-md mb-5">
-                            Browse through our range of studios and pick the one that fits your needs best.
-                        </p>
-=======
                     <div className="text-center mb-8">
                         <h2 className="text-2xl mb-2">Choose Your Studio</h2>
                         <p className="text-gray-900">Select the studio that best fits your needs</p>
->>>>>>> 5f5d904117467ec44dcc2f9a227fbfa132df9501
                     </div>
                     <div className="flex flex-wrap justify-evenly gap-3">
                         {studiosData.data.map((studio) => (

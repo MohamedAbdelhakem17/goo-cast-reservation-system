@@ -18,21 +18,6 @@ const formatDate = (dateString) => {
 function StudioSection({ studio, date, startSlot, formatTime, duration }) {
     if (!studio) return null
     return (
-<<<<<<< HEAD
-        <>
-            <div className="bg-white p-4 rounded-xl border border-gray-200">
-                <div className="flex items-center gap-6">
-                    <img src={studio.image} alt={studio.name} className="w-20 h-20 rounded-lg object-cover border border-gray-200" />
-                    <div>
-                        <h5 className="text-lg font-medium text-gray-900">{studio.name}</h5>
-                        <p className="text-sm text-gray-500">in : {formatDate(date)}</p>
-                        <p className="text-sm text-gray-500">From :  {formatTime(startSlot)}</p>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
-=======
         <div className="space-y-1 border-b-1 border-gray-300 pb-3">
             <p className="text-md text-gray-500">
                 <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
@@ -48,29 +33,11 @@ function StudioSection({ studio, date, startSlot, formatTime, duration }) {
             </p>
         </div>
     )
->>>>>>> 5f5d904117467ec44dcc2f9a227fbfa132df9501
 }
 
 function PackageSection({ selectedPackage, duration, totalPackagePrice, priceFormat }) {
     if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null
     return (
-<<<<<<< HEAD
-        <>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 my-6">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h5 className="text-md font-medium text-gray-900">{selectedPackage.name}</h5>
-                        <p className="text-sm text-gray-500">duration: {duration} hour</p>
-                    </div>
-                    <div className="text-right">
-                        <p className="text-sm text-gray-400">Package Price</p>
-                        <p className="text-md font-bold text-main">{totalPackagePrice} EGP</p>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
-=======
         <div className="flex items-center justify-between pb-1 pt-2">
             <p className="text-md text-gray-500">
                 {selectedPackage.name} ({duration}h)
@@ -78,31 +45,11 @@ function PackageSection({ selectedPackage, duration, totalPackagePrice, priceFor
             <p className="text-md text-gray-500">{priceFormat(totalPackagePrice)}</p>
         </div>
     )
->>>>>>> 5f5d904117467ec44dcc2f9a227fbfa132df9501
 }
 
 function AddOnsSection({ selectedAddOns }) {
     if (!selectedAddOns || selectedAddOns.length === 0) return null
     return (
-<<<<<<< HEAD
-        <>
-            <div className="bg-white p-4 rounded-xl border border-gray-200">
-                <ul className="divide-y divide-gray-100">
-                    {selectedAddOns.map((addon) => (
-                        <li key={addon._id} className="py-2 flex justify-between items-center">
-                            <span className="text-gray-700">{addon.name}</span>
-                            <span className="text-gray-500 text-sm">x{addon.quantity} / {addon.price} EGP</span>
-                        </li>
-                    ))}
-                </ul>
-                <div className="pt-3 flex items-center justify-between">
-                    <p className="text-sm text-gray-400">Total Price</p>
-                    <p className="text-lg font-bold text-main">{totalAddOnPrice.toLocaleString()} EGP</p>
-                </div>
-            </div>
-        </>
-    );
-=======
         <ul className="pb-2">
             {selectedAddOns.map((addon) => (
                 <li className="flex items-center justify-between py-1" key={addon._id}>
@@ -115,7 +62,6 @@ function AddOnsSection({ selectedAddOns }) {
             ))}
         </ul>
     )
->>>>>>> 5f5d904117467ec44dcc2f9a227fbfa132df9501
 }
 
 export default function Cart() {
@@ -139,8 +85,6 @@ export default function Cart() {
     const handelChangeStep = () => {
         currentStep === 5 ? navigateTo("/booking/confirmation") : handleNextStep()
     }
-
-    console.log((bookingData.totalPriceAfterDiscount))
 
     useEffect(() => {
         const newTotalPrice = bookingData.totalPackagePrice + totalAddOnPrice

@@ -10,6 +10,7 @@ const CategoryRouter = require("./category-route/category-route");
 const UserRouter = require("./user-route/user-route");
 const CouponRouter = require("./coupon-route/coupon-route");
 const ReviewController = require("../controller/review-controller/review-controller");
+const FaqRouter = require("./faq-route/faq-route");
 
 const amountRoutes = (app) => {
   app.use("/api/v1/auth", AuthRouter);
@@ -23,7 +24,7 @@ const amountRoutes = (app) => {
   app.use("/api/v1/categories", CategoryRouter);
   app.use("/api/v1/user", UserRouter);
   app.use("/api/v1/coupon", CouponRouter);
-
+  app.use("/api/v1/faq", FaqRouter);
   // google reviews
   app.use("/api/v1/reviews", ReviewController.getPlaceReviews);
 
