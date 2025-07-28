@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { validate } = require("../hourly-packages-model/hourly-packages-model");
+const { PAYMENT_METHOD } = require("../../config/system-variables");
 
 const bookingSchema = new mongoose.Schema(
   {
@@ -111,6 +112,20 @@ const bookingSchema = new mongoose.Schema(
     startSlotMinutes: { type: Number, required: true },
     endSlotMinutes: { type: Number, required: true },
 
+    paymentMethod: {
+      type: String,
+      enum: [PAYMENT_METHOD.CARD, PAYMENT_METHOD.CASH],
+      default: PAYMENT_METHOD.CARD,
+    },
+    isPaid: {
+      type: Boolean,
+      default: false,
+    },
+    paymentAt: {
+      type: Date,
+      default: null,
+    },
+
     totalPriceAfterDiscount: {
       type: Number,
       validate: {
@@ -133,7 +148,7 @@ bookingSchema.pre(/^find/, function (next) {
     },
     {
       path: "package",
-      select: "name ",
+      select: "name",
     },
     {
       path: "addOns.item",
@@ -144,6 +159,29 @@ bookingSchema.pre(/^find/, function (next) {
       select: "fullName email",
     },
   ]);
+  next();
+});
+
+bookingSchema.post("save", async function (doc, next) {
+  await doc.populate([
+    {
+      path: "studio",
+      select: "name thumbnail address",
+    },
+    {
+      path: "package",
+      select: "name",
+    },
+    {
+      path: "addOns.item",
+      select: "name price",
+    },
+    {
+      path: "createdBy",
+      select: "fullName email",
+    },
+  ]);
+
   next();
 });
 

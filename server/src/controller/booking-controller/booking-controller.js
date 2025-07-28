@@ -6,7 +6,10 @@ const {
   minutesToTime,
   getAllDay,
 } = require("../../utils/time-mange");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
+const {
+  HTTP_STATUS_TEXT,
+  PAYMENT_METHOD,
+} = require("../../config/system-variables");
 const AppError = require("../../utils/app-error");
 
 const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
@@ -1142,6 +1145,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     totalPrice: totalPriceFromClient,
     totalPriceAfterDiscount: totalPriceAfterDiscountFromClient,
     coupon_code,
+    paymentMethod,
   } = req.body;
 
   // Get actual Studio & Package
@@ -1196,7 +1200,6 @@ exports.createBooking = asyncHandler(async (req, res) => {
   });
 
   const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
-
 
   // Handle Add-ons
   const addonsTotalPriceFromClient =
@@ -1263,6 +1266,10 @@ exports.createBooking = asyncHandler(async (req, res) => {
     );
   }
 
+  if (paymentMethod && !Object.values(PAYMENT_METHOD).includes(paymentMethod)) {
+    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid payment method");
+  }
+
   try {
     const bookingData = {
       studio: studio._id,
@@ -1283,6 +1290,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       status: "pending",
       createdBy: user_id,
       isGuest: !user_id,
+      paymentMethod: paymentMethod || PAYMENT_METHOD.CARD,
     };
 
     const tempBooking = new BookingModel(bookingData);

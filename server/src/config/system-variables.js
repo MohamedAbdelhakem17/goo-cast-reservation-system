@@ -11,7 +11,13 @@ const USER_ROLE = Object.freeze({
     SUPER_ADMIN: 'super_admin'
 })
 
+const PAYMENT_METHOD = Object.freeze({
+    CASH: 'CASH',
+    CARD: 'CARD'
+})
+
 module.exports = {
     HTTP_STATUS_TEXT,
-    USER_ROLE
+    USER_ROLE,
+    PAYMENT_METHOD
 };

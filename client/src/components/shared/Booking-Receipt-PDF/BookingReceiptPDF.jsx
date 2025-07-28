@@ -102,8 +102,8 @@ const BookingReceiptPDF = ({ booking }) => {
                         <Text>Price</Text>
                     </View>
                     <View style={[styles.row, styles.tableRow]}>
-                        <Text>{booking.package.id.name}</Text>
-                        <Text>{priceFormat(booking.packagePrice)} </Text>
+                        <Text>{booking?.package?.name}</Text>
+                        <Text>{priceFormat(booking?.totalPackagePrice)} </Text>
                     </View>
                 </View>
             )}
@@ -133,7 +133,7 @@ const BookingReceiptPDF = ({ booking }) => {
                 {booking.package && (
                     <View style={styles.row}>
                         <Text>Package Price:</Text>
-                        <Text>{priceFormat(booking.packagePrice)} </Text>
+                        <Text>{priceFormat(booking?.totalPackagePrice)} </Text>
                     </View>
                 )}
                 {booking.totalAddOnsPrice > 0 && (

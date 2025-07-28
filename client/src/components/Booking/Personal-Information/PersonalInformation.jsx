@@ -7,7 +7,7 @@ import PaymentOptions from "./Payment-Way/PaymentWay";
 
 export default function PersonalInformation() {
     const inputRef = useRef(null);
-    const { getBookingError, formik, bookingData, setBookingField } =
+    const { getBookingError, formik, bookingData, setBookingField, hasError, handlePrevStep, handleSubmit } =
         useBooking();
 
     const { firstName, lastName, phone, email, brand } = bookingData.personalInfo;
@@ -51,6 +51,7 @@ export default function PersonalInformation() {
                                 onChange={(e) => setBookingField("personalInfo.firstName", e.target.value)}
                                 touched={formik.touched.firstName}
                                 value={firstName}
+                                inputRef={inputRef}
                             />
 
                             <BookingInput
@@ -73,7 +74,6 @@ export default function PersonalInformation() {
                                 type="text"
                                 id="email"
                                 label="Email"
-                                inputRef={inputRef}
                                 placeholder="Enter your Email"
                                 errors={getBookingError("personalInfo.email")}
                                 onBlur={formik.handleBlur}
@@ -118,6 +118,21 @@ export default function PersonalInformation() {
                             Payment Method
                         </h3>
                         <PaymentOptions />
+                        <div className="mt-3 flex items-center gap-4 px-5 ">
+                            <button
+                                disabled={hasError()}
+                                onClick={handleSubmit}
+                                className="disabled:bg-gray-100 disabled:text-gray-300 w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center bg-main text-white my-2"
+                            >
+                                <span className="m-0">Complete Booking</span>
+                            </button>
+                            <button
+                                onClick={handlePrevStep}
+                                className="w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center border border-gray-300"
+                            >
+                                <span className="m-0">Back</span>
+                            </button>
+                        </div>
                     </div>
 
                 </div>
@@ -125,6 +140,7 @@ export default function PersonalInformation() {
                 <div className="w-full lg:w-1/3">
                     <Cart />
                 </div>
+
             </div>
         </div>
     );
