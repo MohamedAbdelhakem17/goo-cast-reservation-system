@@ -1,134 +1,52 @@
 const mongoose = require("mongoose");
-const hurlyPackageModel = require("./models/hourly-packages-model/hourly-packages-model");
+const FaqModel = require("./models/faq-model/faq-model");
 
 mongoose
-    .connect("mongodb+srv://abdelhakem:gUWwV4BpMRv8z9f2@dottopia.gjvd3.mongodb.net/goocast?retryWrites=true&w=majority&appName=dottopia")
-    .then(() => {
-        console.log("Connected to MongoDB");
-        seedCategories();
-    })
-    .catch((err) => console.error("Connection error:", err));
+  .connect(
+    "mongodb+srv://abdelhakem:gUWwV4BpMRv8z9f2@dottopia.gjvd3.mongodb.net/goocast?retryWrites=true&w=majority&appName=dottopia"
+  )
+  .then(() => {
+    console.log("Connected to MongoDB");
+    seedFaqs();
+  })
+  .catch((err) => console.error("Connection error:", err));
 
-const hourlyPackages = [
-    {
-        name: "Goo Social",
-        target_audience: ["Content creators", "Solo video creators"],
-        description: "For content creators who want to shoot solo videos with editing.",
-        category: "681c913473e625151f4f075e",
-        details: [
-            "Up to 2 hours recording",
-            "Fully equipped podcast set of your choice",
-            "1x cinema camera Sony FX30 and 1x RODE wireless mic",
-            "Professional audio mixer",
-            "Teleprompter"
-        ],
-        post_session_benefits: ["6 standard reels"],
-        price: 10000,
-        isFixed: true
-    },
-    {
-        name: "Goo Social+",
-        target_audience: ["Content creators", "Solo video creators"],
-        description: "For content creators who want to shoot solo videos with editing.",
-        category: "681c913473e625151f4f075e",
-        details: [
-            "Up to 4 hours recording",
-            "Fully equipped podcast set of your choice",
-            "1x cinema camera Sony FX30 and 1x RODE wireless mic",
-            "Professional audio mixer",
-            "Teleprompter"
-        ],
-        post_session_benefits: ["12 standard reels"],
-        price: 18000,
-        isFixed: true
-    },
-    {
-        name: "Goo Podcast",
-        target_audience: ["Content creators", "Podcast creators"],
-        description: "For content creators who want to shoot podcast videos with good quality of editing.",
-        category: "681c913473e625151f4f075e",
-        details: [
-            "Up to 2 hours recording",
-            "Fully equipped podcast set of your choice",
-            "Studio operator to record everything for you",
-            "2x cinema cameras and 2x Shure mics",
-            "Professional audio mixer",
-            "Live cutting of your video with synced audio"
-        ],
-        post_session_benefits: [
-            "1 edited episode with logo/music integration and trimming",
-            "6 standard reels"
-        ],
-        price: 12000,
-        isFixed: true
-    },
-    {
-        name: "Goo Podcast+",
-        target_audience: ["Content creators", "Podcast creators"],
-        description: "For content creators who want to shoot podcast videos with good quality of editing.",
-        category: "681c913473e625151f4f075e",
-        details: [
-            "Up to 2 hours recording",
-            "Fully equipped podcast set of your choice",
-            "Studio operator to record everything for you",
-            "2x cinema cameras and 2x Shure mics",
-            "Professional audio mixer",
-            "Live cutting of your video with synced audio"
-        ],
-        post_session_benefits: [
-            "1 edited episode with logo/music integration and trimming",
-            "12 standard reels"
-        ],
-        price: 18000,
-        isFixed: true
-    },
-    {
-        name: "Goo Social ",
-        target_audience: ["Content creators", "Solo video creators"],
-        description: "For content creators who want to shoot solo videos.",
-        category: "681c913473e625151f4f075d",
-        details: [
-            "Fully equipped set of your choice",
-            "Professional audio mixer",
-            "1x cinema camera Sony FX30 and 1x RODE wireless mic"
-        ],
-        post_session_benefits: ["Raw audio and video files transferred to your own hard drive"],
-        price: 8000,
-        isFixed: false,
-    },
-    {
-        name: "Goo Podcast ",
-        target_audience: ["Content creators", "Solo video creators"],
-        description: "For content creators who want to shoot Podcast videos. , with good quality",
-        category: "681c913473e625151f4f075d",
-        details: [
-            "Fully equipped Podcast Set of your choice",
-            "Studio operator to record everything for you",
-            "Professional audio mixer",
-            "2x cinema camera Sony FX30 and 2x Shure mics"
-        ],
-        post_session_benefits: ["Raw audio and video files transferred to your own hard drive", "Live mixed episode ready to be published in Horizontal forma"], 
-        price: 8000,
-        isFixed: false,
-    }
+const faqItems = [
+  {
+    question: "Can I modify my booking after confirmation?",
+    answer:
+      "Yes, you can modify your booking up to 24 hours before your scheduled session. Changes may be subject to availability and additional fees.",
+  },
+  {
+    question: "What's included in the base studio rental?",
+    answer:
+      "Base rental includes studio access, basic lighting, audio equipment, and up to 2 hours of recording time. Additional services can be added as needed.",
+  },
+  {
+    question: "Do you provide editing services?",
+    answer:
+      "Basic editing is included with all packages. Advanced editing, color correction, and post-production services are available as add-ons.",
+  },
+  {
+    question: "What happens if I need to cancel?",
+    answer:
+      "Cancellations made 48 hours or more in advance receive a full refund. Cancellations within 24-48 hours are subject to a 50% fee.",
+  },
+  {
+    question: "Can I bring my own equipment?",
+    answer:
+      "Absolutely! You're welcome to bring your own cameras, microphones, or other equipment. Our technical team can help integrate your gear with our setup.",
+  },
 ];
 
-
-async function seedCategories() {
-    try {
-
-        await hurlyPackageModel.deleteMany();
-
-        const created = await hurlyPackageModel.insertMany(hourlyPackages);
-        console.log("Seeded categories:", created);
-
-        process.exit();
-    } catch (err) {
-        console.error("Error seeding categories:", err);
-        process.exit(1);
-    }
+async function seedFaqs() {
+  try {
+    await FaqModel.deleteMany(); // حذف الموجود أولاً
+    const createdFaqs = await FaqModel.insertMany(faqItems);
+    console.log("Seeded FAQs:", createdFaqs);
+    process.exit();
+  } catch (err) {
+    console.error("Error seeding FAQs:", err);
+    process.exit(1);
+  }
 }
-
-// ();
-
-// seedStudios();

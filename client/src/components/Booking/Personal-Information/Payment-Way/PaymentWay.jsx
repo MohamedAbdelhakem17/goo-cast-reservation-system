@@ -1,87 +1,78 @@
-import { useState } from "react"
-import { DollarSign } from "lucide-react"
+import { useState } from "react";
+import { WalletMinimal } from "lucide-react";
+import { useBooking } from "../../../../context/Booking-Context/BookingContext";
+
+const paymentMethods = [
+    {
+        id: "CARD",
+        label: "Credit/Debit Card",
+        description: "Pay securely online with Visa, Mastercard, or American Express",
+        icon: <WalletMinimal />,
+    },
+    {
+        id: "CASH",
+        label: "Pay at Studio (Cash)",
+        description: "Pay with cash when you arrive at the studio",
+        icon: <i className="fa-solid fa-money-bill-1"></i>,
+    },
+];
 
 export default function PaymentOptions() {
-    const [selected, setSelected] = useState("cash")
+    const [selected, setSelected] = useState("CARD");
+    const { setBookingField } = useBooking();
 
     return (
-        <div className="max-w-2xl mx-auto p-6">
-          
-                <div className="space-y-4">
-                    {/* Cash Option */}
-                    <div
-                        className={`cursor-pointer border rounded-lg p-4 flex items-center space-x-3 ${selected === "cash"
-                                ? "bg-blue-50 border-blue-500"
-                                : "bg-white border-gray-300"
-                            }`}
-                        onClick={() => setSelected("cash")}
-                    >
-                        <input
-                            type="radio"
-                            id="cash"
-                            name="payment"
-                            value="cash"
-                            checked={selected === "cash"}
-                            onChange={() => setSelected("cash")}
-                            className="accent-blue-600"
-                        />
-                        <div className="flex items-center space-x-2">
-                            <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                                <DollarSign className="w-4 h-4 text-white" />
-                            </div>
-                            <label htmlFor="cash" className="text-lg font-medium text-gray-900">
-                                Cash
-                            </label>
+        <div className="max-w-full mx-auto p-6 space-y-4 ">
+            {paymentMethods.map(({ id, label, description, icon }) => (
+                <div
+                    key={id}
+                    className={`cursor-pointer border rounded-lg p-4 bg-white flex items-center gap-3  "border-gray-300"`}
+                    onClick={() => {
+                        setSelected(id);
+                        setBookingField("paymentMethod", id);
+                    }}
+                >
+                    <input
+                        type="radio"
+                        id={id}
+                        name="payment"
+                        value={id}
+                        checked={selected === id}
+                        onChange={() => setSelected(id)}
+                        className="mt-1 accent-red-600"
+                    />
+                    <label htmlFor={id} className="ms-4 flex-1 cursor-pointer">
+                        <div className="flex items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+                            {icon}
+                            {label}
                         </div>
-                    </div>
+                        <p className="text-sm text-gray-500">{description}</p>
+                    </label>
+                </div>
+            ))}
 
-                    {/* Credit Card Option */}
-                    <div
-                        className={`cursor-pointer border rounded-lg p-4 flex flex-col space-y-3 ${selected === "credit"
-                                ? "bg-blue-50 border-blue-500"
-                                : "bg-white border-gray-300"
-                            }`}
-                        onClick={() => setSelected("credit")}
-                    >
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                                <input
-                                    type="radio"
-                                    id="credit"
-                                    name="payment"
-                                    value="credit"
-                                    checked={selected === "credit"}
-                                    onChange={() => setSelected("credit")}
-                                    className="accent-blue-600"
-                                />
-                                <label
-                                    htmlFor="credit"
-                                    className="text-lg font-medium text-gray-900"
-                                >
-                                    Credit card
-                                </label>
-                            </div>
+            {selected === "CARD" && <div className="mt-2 bg-gray-100 p-4 rounded text-sm text-gray-600">
+                Payment will be processed securely through our payment partner. You will be redirected to complete your payment after confirming your booking.
+                <br />
+                <span className="text-xs text-gray-500 block mt-2">We accept all major credit cards, PayPal, and bank transfers.</span>
+            </div>}
 
-                            <div className="flex items-center space-x-2">
-                                {/* Visa */}
-                                <div className="w-10 h-6 bg-blue-600 rounded flex items-center justify-center">
-                                    <span className="text-white text-xs font-bold">VISA</span>
-                                </div>
-                                {/* Mastercard */}
-                                <div className="w-10 h-6 flex items-center justify-center">
-                                    <div className="flex">
-                                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                                        <div className="w-3 h-3 bg-yellow-500 rounded-full -ml-1"></div>
-                                    </div>
-                                </div>
-                                {/* Amex */}
-                                <div className="w-10 h-6 bg-blue-500 rounded flex items-center justify-center">
-                                    <span className="text-white text-xs font-bold">AMEX</span>
-                                </div>
-                            </div>
+            {
+                selected === "CASH" && <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg ">
+                    <div className="flex items-start">
+                        <div className="text-amber-600 mr-2">ℹ️</div>
+                        <div className="text-sm text-amber-700">
+                            <p className="mb-2"><strong>Cash Payment Information:</strong></p>
+                            <ul className="text-xs space-y-1 list-disc list-inside">
+                                <li>Please bring exact change if possible</li>
+                                <li>Payment is due at the start of your session</li>
+                                <li>We'll provide a receipt for your records</li>
+                                <li>Cancellations must be made 24 hours in advance</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-    )
+            }
+        </div>
+    );
 }

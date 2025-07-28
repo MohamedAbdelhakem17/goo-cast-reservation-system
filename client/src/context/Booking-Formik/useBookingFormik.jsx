@@ -47,7 +47,8 @@ export default function useBookingFormik() {
             totalPrice: 0,
             totalPriceAfterDiscount: 0,
             couponCode: "",
-            discount: ""
+            discount: "",
+            paymentMethod: "CARD", // Default payment method
         };
     }, [parsedData]);
 
@@ -86,8 +87,12 @@ export default function useBookingFormik() {
                     if (value == null || totalPrice == null) return true;
                     return value <= totalPrice;
                 }
-            )
-
+            ),
+        couponCode: Yup.string().optional(),
+        discount: Yup.string().optional(),
+        paymentMethod: Yup.string()
+            .oneOf(["CARD", "CASH"], "Invalid payment method")
+            .required("Payment method is required"),
     });
 
     const { mutate: createBooking } = CreateBooking()
@@ -120,10 +125,13 @@ export default function useBookingFormik() {
 
             createBooking(dataBaseObject, {
                 onSuccess: (res) => {
+                    localStorage.setItem("bookingConfirmation", JSON.stringify({
+                        bookingResponse: res.booking
+                    }));
                     addToast(res.message || "Booking submitted successfully", "success", 3000);
                     setTimeout(() => {
-                        navigate("/")
-                    }, 3200)
+                        navigate("/booking/confirmation");
+                    }, 3200);
                 },
                 onError: (error) => {
                     addToast(error.response?.data?.message || "Something went wrong", "error");

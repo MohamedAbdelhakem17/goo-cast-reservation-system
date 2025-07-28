@@ -22,7 +22,7 @@ export default function SelectDateTime() {
                     <p className="text-gray-900">Choose your preferred date and session duration</p>
                 </div>
                 {/* Duration And Person Number */}
-                <SelectDurationPersonsPar />
+                {/* <SelectDurationPersonsPar /> */}
 
                 {/* Calendar */}
                 <Calendar openToggle={setIsOpen} getAvailableSlots={getAvailableSlots} />

@@ -17,7 +17,7 @@ export default function BookingProvider({ children }) {
         2: ["studio"],
         3: ["date", "startSlot", "duration"],
         4: ["selectedAddOns"],
-        5: ["personalInfo.firstName", "personalInfo.lastName",  "personalInfo.phone", "personalInfo.email"],
+        5: ["personalInfo.firstName", "personalInfo.lastName",  "personalInfo.phone", "personalInfo.email" , "paymentMethod"],
     };
 
     // Hooks
@@ -144,7 +144,6 @@ export default function BookingProvider({ children }) {
 
             const value = getBookingField(field);
             const error = getBookingError(field);
-            console.log(value , error)
             return !value || error;
         });
     };

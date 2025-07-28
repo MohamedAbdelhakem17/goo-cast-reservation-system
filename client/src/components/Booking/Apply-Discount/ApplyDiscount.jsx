@@ -36,7 +36,6 @@ export default function ApplyDiscount() {
     const discount = getBookingField("discount")
     const totalPrice = getBookingField("totalPrice")
 
-    console.log(discount)
     const handleApplyCoupon = () => {
         applyCoupon(
             {
