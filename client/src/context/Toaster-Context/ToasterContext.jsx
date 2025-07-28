@@ -61,7 +61,7 @@ export const ToastProvider = ({ children }) => {
         <ToastContext.Provider value={{ addToast, removeToast }}>
             {children}
             <div
-                className="fixed top-4 right-4 z-50 space-y-2"
+                className="fixed top-4 right-4 z-[3330] space-y-2"
                 aria-live="polite"
                 aria-atomic="true"
             >

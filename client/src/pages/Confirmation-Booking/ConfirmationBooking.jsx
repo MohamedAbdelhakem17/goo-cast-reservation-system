@@ -11,6 +11,10 @@ import {
     Mail,
     CreditCard,
 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import usePriceFormat from "../../hooks/usePriceFormat"
+import { PDFDownloadLink } from "@react-pdf/renderer"
+import BookingReceiptPDF from "../../components/shared/Booking-Receipt-PDF/BookingReceiptPDF"
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -43,13 +47,18 @@ function DetailRow({ icon: Icon, label, value }) {
 }
 
 const PriceRow = ({ label, value, bold = false }) => (
-    <div className="flex justify-between">
+    <div className="flex justify-between py-2 items-center">
         <span className={`text-gray-600 ${bold ? "text-lg font-semibold text-gray-900" : ""}`}>{label}</span>
         <span className={`font-medium ${bold ? "text-lg font-bold text-gray-900" : ""}`}>{value}</span>
     </div>
 )
 
 export default function BookingConfirmation() {
+    const navigate = useNavigate();
+    const bookingData = JSON.parse(localStorage.getItem("bookingConfirmation"))?.bookingResponse;
+
+    const priceFormat = usePriceFormat();
+
     return (
         <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
             <motion.div
@@ -84,7 +93,7 @@ export default function BookingConfirmation() {
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-2xl font-semibold text-gray-900">Booking Reference</h2>
-                                <span className="text-md font-bold bg-gray-300 rounded-md px-3 py-2">GC757354</span>
+                                <span className="text-md font-bold bg-gray-300 rounded-md px-3 py-2">{bookingData?._id}</span>
                             </div>
                             <p className="text-sm text-gray-600">
                                 Please keep this reference number for your records. You'll need it for any changes or inquiries.
@@ -102,12 +111,12 @@ export default function BookingConfirmation() {
                                 <div className="flex justify-between">
                                     <div>
                                         <span className="text-sm text-gray-500 block">Service</span>
-                                        <span className="font-medium text-gray-900">Podcast</span>
+                                        <span className="font-medium text-gray-900">{bookingData?.package?.name}</span>
                                     </div>
-                                    <DetailRow icon={MapPin} label="Studio" value="beta Studio" />
+                                    <DetailRow icon={MapPin} label="Studio" value={bookingData?.studio?.name} />
                                 </div>
-                                <DetailRow icon={Calendar} label="Date" value="Thursday, July 31, 2025" />
-                                <DetailRow icon={Clock} label="Time & Duration" value="5:00 PM (3h)" />
+                                <DetailRow icon={Calendar} label="Date" value={bookingData?.date} />
+                                <DetailRow icon={Clock} label="Time & Duration" value={`${bookingData?.startSlot} (${bookingData?.duration}h)`} />
                             </div>
                         </motion.div>
 
@@ -119,10 +128,10 @@ export default function BookingConfirmation() {
                         >
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <DetailRow icon={User} label="Name" value="Mohamed Abdelhakem" />
-                                <DetailRow icon={Phone} label="Phone" value="0123456789" />
-                                <DetailRow icon={Mail} label="Email" value="mohamed.abdelhakem200@gmail.com" />
-                                <DetailRow icon={CreditCard} label="Payment Method" value="Credit/Debit Card" />
+                                <DetailRow icon={User} label="Name" value={bookingData?.personalInfo?.fullName} />
+                                <DetailRow icon={Phone} label="Phone" value={bookingData?.personalInfo?.phone} />
+                                <DetailRow icon={Mail} label="Email" value={bookingData?.personalInfo?.email} />
+                                <DetailRow icon={CreditCard} label="Payment Method" value={bookingData?.paymentMethod} />
                             </div>
 
                         </motion.div>
@@ -163,14 +172,14 @@ export default function BookingConfirmation() {
                             whileHover={{ y: -2, transition: { duration: 0.2 } }}
                         >
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">Price Summary</h2>
-                            <div className="space-y-3 ">
-                                <PriceRow label="Podcast (3h)" value="$199" />
+                            <div className="space-y-3 divide-y divide-gray-200">
+                                <PriceRow label={bookingData?.package?.name} value={priceFormat(bookingData?.totalPackagePrice)} />
                                 <div>
-                                    <PriceRow label="Subtotal" value="$199" />
-                                    <PriceRow label="VAT (20%)" value="$39.80" />
+                                    <PriceRow label="Subtotal" value={priceFormat(bookingData?.totalPrice)} />
+                                    <PriceRow label="VAT (0)" value={priceFormat(0)} />
                                 </div>
                                 <div className="pt-3">
-                                    <PriceRow label="Total" value="$238.80" bold />
+                                    <PriceRow label="Total" value={priceFormat(bookingData?.totalPrice)} bold />
                                 </div>
                             </div>
                         </motion.div>
@@ -182,16 +191,26 @@ export default function BookingConfirmation() {
                             whileHover={{ y: -2, transition: { duration: 0.2 } }}
                         >
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-                            <div className="space-y-3">
-                                <motion.button className="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
-                                    <Download className="w-4 h-4" />
-                                    <span>Download Receipt</span>
-                                </motion.button>
-                                <motion.button className="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
-                                    <Share2 className="w-4 h-4" />
-                                    <span>Share Booking</span>
-                                </motion.button>
-                                <motion.button className="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium">
+                            <div>
+
+                                <PDFDownloadLink
+                                    document={<BookingReceiptPDF booking={bookingData} />}
+                                    fileName="booking-receipt.pdf"
+                                >
+                                    {({ loading }) => (
+                                        <motion.button className="w-full flex items-center justify-center space-x-2 my-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                                            <Download className="w-4 h-4" />
+                                            <span>{loading ? "Loading..." : "Download Receipt"}</span>
+                                        </motion.button>
+                                    )}
+                                </PDFDownloadLink>
+
+                                <motion.button className="w-full px-4 py-2 my-2  bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium" onClick={() => {
+                                    localStorage.removeItem("bookingData");
+                                    localStorage.removeItem("bookingStep");
+                                    localStorage.removeItem("bookingConfirmation");
+                                    navigate("/booking");
+                                }}>
                                     Book Another Session
                                 </motion.button>
                             </div>
@@ -205,9 +224,9 @@ export default function BookingConfirmation() {
                         >
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">Need Help?</h2>
                             <div className="space-y-3 text-sm">
-                                <DetailRow icon={Phone} label="Studio Phone" value="(555) 123-4567" />
+                                <DetailRow icon={Phone} label="Studio Phone" value="01010955331" />
                                 <DetailRow icon={Mail} label="Email Support" value="support@goocaststudio.com" />
-                                <DetailRow icon={MapPin} label="Studio Address" value="123 Creator Lane, Media District, NY 10001" />
+                                <DetailRow icon={MapPin} label="Studio Address" value="8 Abd El-Rahman Fahmy , Qasr El Nile, Garden City" />
                             </div>
                         </motion.div>
                     </div>
@@ -217,3 +236,43 @@ export default function BookingConfirmation() {
         </div>
     )
 }
+
+
+// {
+//   "studio": "68487d7e5a067463a3298a64",
+//   "date": "2025-07-29T09:00:00.000Z",
+//   "startSlot": "12:00",
+//   "endSlot": "17:00",
+//   "duration": 5,
+//   "persons": 1,
+//   "package": "681c9c7499ea41aecd27ad77",
+//   "addOns": [
+//     {
+//       "item": "67fe85767663f45575657beb",
+//       "quantity": 1,
+//       "price": 1000,
+//       "_id": "6886b961aa15dbbf3aa165f6"
+//     }
+//   ],
+//   "personalInfo": {
+//     "fullName": "Mohamed   Abdelhakem",
+//     "phone": "01151680381",
+//     "email": "mohamed.abdelhakem200@gmail.com",
+//     "brand": ""
+//   },
+//   "status": "pending",
+//   "totalPrice": 41000,
+//   "totalAddOnsPrice": 1000,
+//   "totalPackagePrice": 40000,
+//   "isGuest": true,
+//   "startSlotMinutes": 720,
+//   "endSlotMinutes": 1020,
+//   "paymentMethod": "CARD",
+//   "isPaid": false,
+//   "paymentAt": null,
+//   "totalPriceAfterDiscount": 41000,
+//   "_id": "6886b961aa15dbbf3aa165f5",
+//   "createdAt": "2025-07-27T23:42:29.103Z",
+//   "updatedAt": "2025-07-27T23:42:29.103Z",
+//   "__v": 0
+// }
