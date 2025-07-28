@@ -71,7 +71,7 @@ export default function HourlyRecording() {
       >
         {packages?.data?.map((pkg) => {
           const isActive =
-            selectedPackage === pkg._id ;
+            selectedPackage === pkg._id;
 
           return (
             <motion.div
@@ -127,10 +127,10 @@ export default function HourlyRecording() {
                       ? "bg-main text-white"
                       : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
                       }`}
-                      onClick={()=>{
-                        handlePackageSelect(pkg)
-                        handleNextStep() 
-                      }}
+                    onClick={() => {
+                      handlePackageSelect(pkg)
+                      handleNextStep()
+                    }}
                   >
                     {selectedPackage === pkg._id ? "Selected" : "Select & Continue"}
                   </motion.button>

@@ -33,7 +33,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
           <button className="h-8 w-8 disabled:opacity-40" onClick={() => navigateMonth("prev")} disabled={isPrevDisabled}>
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <h1 className="text-xl font-medium min-w-[140px] text-center">
+          <h1 className="text-xl font-medium lg:min-w-[140px] text-center">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h1>
           <button className="h-8 w-8" onClick={() => navigateMonth("next")}>
@@ -59,7 +59,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
             {calendarDays.map((day, index) => (
               <div
                 key={index}
-                className={`relative h-20 border-r border-b border-gray-200 last:border-r-0
+                className={`relative lg:h-20 border-r border-b border-gray-200 last:border-r-0  h-15
                 ${day.isEmpty ? "bg-gray-50"
                     : day.blocked ? "bg-white cursor-not-allowed"
                       : "bg-white hover:bg-blue-50 cursor-pointer transition-colors"}

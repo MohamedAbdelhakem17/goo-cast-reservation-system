@@ -1,6 +1,7 @@
 import Sticky from 'react-sticky-el';
 import AddOns from './Add-Ons/AddOns';
 import Cart from '../Cart/Cart';
+import Faq from './Faq/Faq';
 
 export default function SelectAdditionalServices() {
     return (
@@ -16,6 +17,7 @@ export default function SelectAdditionalServices() {
                 {/* AddOns takes full width on mobile, 2/3 on large screens */}
                 <div className="w-full lg:w-2/3">
                     <AddOns />
+                    <Faq />
                 </div>
 
                 {/* Cart Sticky */}
@@ -24,7 +26,7 @@ export default function SelectAdditionalServices() {
                         topOffset={-100}
                         stickyStyle={{ top: '95px', zIndex: 40, transition: 'top 0.3s ease-in-out' }}
                         boundaryElement="#cart-wrapper"
-                        // hideOnBoundaryHit={false}
+                    // hideOnBoundaryHit={false}
                     >
                         <Cart />
                     </Sticky>
