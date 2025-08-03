@@ -20,14 +20,14 @@ export default function SelectAdditionalServices() {
 
                 {/* Cart Sticky */}
                 <div className="w-full lg:w-1/3 " >
-                    <Sticky
+                    {/* <Sticky
                         topOffset={-100}
                         stickyStyle={{ top: '95px', zIndex: 40, transition: 'top 0.3s ease-in-out' }}
                         boundaryElement="#cart-wrapper"
                     // hideOnBoundaryHit={false}
-                    >
+                    > */}
                         <Cart />
-                    </Sticky>
+                    {/* </Sticky> */}
                 </div>
             </div>
         </div >
