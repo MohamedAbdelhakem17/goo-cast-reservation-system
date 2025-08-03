@@ -23,7 +23,7 @@ const Home = () => {
 
 
   return (
-    <div className='container mx-auto'>
+    <main className='container mx-auto py-5 my-5'>
       <Hero />
       <PackagesSection />
       <BookNow />
@@ -66,7 +66,7 @@ const Home = () => {
         )}
       </AnimatePresence>
 
-    </div >
+    </main >
   )
 }
 
