@@ -70,7 +70,6 @@ export default function Booking() {
     5: <PersonalInformation />,
   };
 
-  const showCart = currentStep === 4 || currentStep === 5;
 
   return (
     <div className="py-5  min-h-screen">
