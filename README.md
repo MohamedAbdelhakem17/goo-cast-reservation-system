@@ -73,7 +73,7 @@ server/      # Node.js backend
 - `npm run lint` — Lint code
 
 ## License
-MIT
+Dottopia Marketing Agency
 
 ---
 
