@@ -25,7 +25,7 @@ export default function Duration({ isOpen, setIsOpen }) {
     }
 
     return (
-        <div className="relative z-50">
+        <div className="relative z-[52]">
             {/* Main Display */}
             <div
                 className="flex items-center justify-between gap-4 border-2 border-gray-100 rounded-md px-3 py-2 cursor-pointer hover:border-gray-200 transition-colors w-full sm:w-auto"
