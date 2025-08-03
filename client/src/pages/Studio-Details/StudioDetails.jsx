@@ -12,8 +12,8 @@ export default function StudioDetails() {
 
     if (isLoading) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>
 
-    return <>
-        <Header title={data.data.name}  location={data.data.address} />
+    return <main className='container mx-auto py-5 my-5'>
+        <Header title={data.data.name} location={data.data.address} />
         <Gallery images={[data.data.thumbnail, ...data.data.imagesGallery]} />
         <Taps
             description={data?.data?.description}
@@ -27,7 +27,7 @@ export default function StudioDetails() {
             image: data.data.thumbnail,
             price: data.data.basePricePerSlot
         }} /> */}
-    </>
+    </main>
 }
 
 

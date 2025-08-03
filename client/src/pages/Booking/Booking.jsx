@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import Stepper from "../../components/Booking/Step-Indicator/StepIndicator";
-import NavigationButtons from "../../components/Booking/Navigation-Buttons/NavigationButtons";
 import SelectStudio from "../../components/Booking/Select-Studio/SelectStudio";
 import SelectDateTime from "../../components/Booking/Select-Date-Time/SelectDateTime";
 import SelectAdditionalServices from "../../components/Booking/Select-Additional-Services/SelectAdditionalServices";
@@ -71,10 +70,9 @@ export default function Booking() {
     5: <PersonalInformation />,
   };
 
-  const showCart = currentStep === 4 || currentStep === 5;
 
   return (
-    <div className="py-5 bg-gray-100 min-h-screen">
+    <div className="py-5  min-h-screen">
       <Stepper />
       <div className="lg:px-8 lg:w-7xl w-full mx-auto ">
         {/* Step Indicator */}

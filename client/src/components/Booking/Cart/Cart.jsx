@@ -1,167 +1,117 @@
-/* eslint-disable no-extra-boolean-cast */
-
-/* eslint-disable react-hooks/exhaustive-deps */
+import { useState } from "react"
 import { useBooking } from "../../../context/Booking-Context/BookingContext"
-import useTimeConvert from "../../../hooks/useTimeConvert"
-import ApplyDiscount from "../Apply-Discount/ApplyDiscount"
-import { useAuth } from "../../../context/Auth-Context/AuthContext"
-import { useEffect, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
+import CartContent from "./Cart-content/CartContent"
 import usePriceFormat from "../../../hooks/usePriceFormat"
-
-// Utility function for date formatting
-const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "short", day: "numeric" }
-    return dateString ? new Date(dateString).toLocaleDateString(undefined, options) : ""
-}
-
-function StudioSection({ studio, date, startSlot, formatTime, duration }) {
-    if (!studio) return null
-    return (
-        <div className="space-y-1 border-b-1 border-gray-300 pb-3">
-            <p className="text-md text-gray-500">
-                <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
-                {formatDate(date)}
-            </p>
-            <p className="text-md text-gray-500">
-                <i className="fa-solid fa-clock mr-2 text-[12px]"></i>
-                {formatTime(startSlot)} ({duration}h){" "}
-            </p>
-            <p className="text-md text-gray-500">
-                <i className="fa-solid fa-location-dot mr-2 text-[12px]"></i>
-                {studio.name}
-            </p>
-        </div>
-    )
-}
-
-function PackageSection({ selectedPackage, duration, totalPackagePrice, priceFormat }) {
-    if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null
-    return (
-        <div className="flex items-center justify-between pb-1 pt-2">
-            <p className="text-md text-gray-500">
-                {selectedPackage.name} ({duration}h)
-            </p>
-            <p className="text-md text-gray-500">{priceFormat(totalPackagePrice)}</p>
-        </div>
-    )
-}
-
-function AddOnsSection({ selectedAddOns }) {
-    if (!selectedAddOns || selectedAddOns.length === 0) return null
-    return (
-        <ul className="pb-2">
-            {selectedAddOns.map((addon) => (
-                <li className="flex items-center justify-between py-1" key={addon._id}>
-                    <p className="text-md text-gray-500">{addon.name}</p>
-                    <p className="text-md text-gray-500">
-                        {" "}
-                        x{addon.quantity} / {addon.price} EGP
-                    </p>
-                </li>
-            ))}
-        </ul>
-    )
-}
+import Sticky from 'react-sticky-el';
+import { ArrowLeft, ArrowRight, ShoppingCart, X } from "lucide-react"
 
 export default function Cart() {
-    const { bookingData, handleNextStep, handlePrevStep, setBookingField, currentStep, hasError } = useBooking()
-    const navigateTo = useNavigate()
-    const { isAuthenticated } = useAuth()
-    const formatTime = useTimeConvert()
+    const { bookingData, currentStep, handleNextStep, handlePrevStep, hasError } = useBooking()
     const priceFormat = usePriceFormat()
+    const [isCartOpen, setIsCartOpen] = useState(false)
 
-    const totalAddOnPrice = useMemo(() => {
-        return (
-            bookingData.selectedAddOns?.reduce(
-                (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
-                0,
-            ) || 0
-        )
-    }, [bookingData.selectedAddOns])
+    const closeCart = () => setIsCartOpen(false)
+    const openCart = () => setIsCartOpen(true)
 
-    const totalPrice = useMemo(() => bookingData?.totalPrice, [bookingData?.totalPrice])
-
-
-    useEffect(() => {
-        const newTotalPrice = bookingData.totalPackagePrice + totalAddOnPrice
-        setBookingField("totalPrice", newTotalPrice)
-    }, [bookingData.selectedAddOns])
-
-    const vat = 0
     if (!bookingData) {
         return <div>Loading...</div>
     }
 
     return (
-        <div className="border rounded-lg border-gray-200 py-4 px-5 sticky top-0">
-            <h2 className="py-2 my-2 text-bold text-lg">Reservation Summary</h2>
-            <StudioSection
-                studio={bookingData.studio}
-                date={bookingData.date}
-                startSlot={bookingData.startSlot}
-                duration={bookingData.duration}
-                formatTime={formatTime}
-            />
-            <PackageSection
-                selectedPackage={bookingData.selectedPackage}
-                duration={bookingData.duration}
-                priceFormat={priceFormat}
-                totalPackagePrice={bookingData.totalPackagePrice}
-            />
-            <AddOnsSection selectedAddOns={bookingData.selectedAddOns} totalAddOnPrice={totalAddOnPrice} />
+        <>
+            {/* Desktop Cart - Hidden on mobile */}
+            <div className="hidden lg:block ">
+                <Sticky
+                        topOffset={-100}
+                        stickyStyle={{ top: '95px', zIndex: 40, transition: 'top 0.3s ease-in-out' }}
+                        boundaryElement="#cart-wrapper"
+                    // hideOnBoundaryHit={false}
+                    >
+                <CartContent />
+                </Sticky>
+            </div>
 
-            {/* Sub Total */}
-            <div className="border-t border-b border-gray-200 py-2 space-y-2 my-2">
-                <div className="flex justify-between text-md">
-                    <span>Subtotal</span>
-                    <span>{priceFormat(totalPrice)}</span>
-                </div>
-                <div className="flex justify-between text-md text-gray-600">
-                    <span>VAT (0%)</span>
-                    <span>{priceFormat(vat)}</span>
-                </div>
-                {Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0) && (
-                    <div className="flex justify-between text-sm text-green-600">
-                        <span>Promo Discount ({bookingData.couponCode})</span>
-                        <span> - {priceFormat(bookingData.totalPrice * (bookingData.discount / 100))}</span>
-                    </div>
+            {/* Mobile Full Screen Cart Modal */}
+            <div className="lg:hidden">
+                {/* Overlay */}
+                {isCartOpen && (
+                    <div
+                        className="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300"
+                        onClick={closeCart}
+                    />
                 )}
-            </div>
-            <div className="flex items-center justify-between py-1 pt-2">
-                <p className="text-md font-bold">Total</p>
-                <p className="text-md text-gray-500">{Boolean(bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0) ? priceFormat(bookingData.totalPriceAfterDiscount) : priceFormat(totalPrice)}</p>
-            </div>
 
-            {<ApplyDiscount />}
-
-
-            {
-                currentStep === 4 && <div className="mt-4">
-                    <button
-                        disabled={hasError()}
-                        onClick={handleNextStep}
-                        className="disabled:bg-gray-100 disabled:text-gray-300 w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center bg-main text-white my-2"
-                    >
-                        <span className="m-0">Proceed to payment</span>
-                    </button>
-                    <button
-                        onClick={handlePrevStep}
-                        className="w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center border border-gray-300"
-                    >
-                        <span className="m-0">Back</span>
-                    </button>
+                {/* Slide Panel */}
+                <div
+                    className={`fixed top-0 right-0 h-full w-full bg-white z-50 transform transition-transform duration-300 ease-in-out ${isCartOpen ? "translate-x-0" : "translate-x-full"
+                        }`}
+                >
+                    <div className="flex justify-end p-4">
+                        <button onClick={closeCart} aria-label="Close cart">
+                            <X className="w-6 h-6 text-gray-600" />
+                        </button>
+                    </div>
+                    <CartContent />
                 </div>
-            }
+            </div>
 
-            {
-                currentStep === 5 && <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-xs text-green-700">
-                        🔒 Your booking is secured with SSL encryption and protected by our privacy policy.
-                    </p>
+            {/* Mobile Bottom Navigation - Fixed */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+                <div className="flex items-center justify-between max-w-md mx-auto">
+                    {/* Cart Summary Button */}
+                    <button
+                        onClick={openCart}
+                        className="flex items-center space-x-3 hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors"
+                    >
+                        <div className="relative">
+                            <ShoppingCart className="w-6 h-6 text-gray-700" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium">
+                                {bookingData.totalPriceAfterDiscount && bookingData.totalPriceAfterDiscount !== 0
+                                    ? priceFormat(bookingData.totalPriceAfterDiscount)
+                                    : priceFormat(bookingData.totalPrice)}
+                            </p>
+                            <p className="text-xs text-gray-500">Total</p>
+                        </div>
+                    </button>
+
+                    {/* Navigation Buttons */}
+                    <div className="flex items-center space-x-2">
+                        {currentStep > 1 && (
+                            <button
+                                onClick={handlePrevStep}
+                                className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 hover:bg-gray-50 transition-colors"
+                            >
+                                <ArrowLeft className="w-5 h-5 text-gray-600" />
+                            </button>
+                        )}
+
+                        {currentStep === 4 && (
+                            <button
+                                disabled={hasError()}
+                                onClick={handleNextStep}
+                                className="disabled:bg-gray-100 disabled:text-gray-300 flex items-center space-x-2 px-6 py-2 rounded-full bg-main/60 text-white font-medium hover:bg-main/90 transition-colors"
+                            >
+                                <span>Next</span>
+                                <ArrowRight className="w-4 h-4" />
+                            </button>
+                        )}
+
+                        {currentStep === 5 && (
+                            <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1 px-3 py-2 bg-green-50 rounded-full">
+                                    <span className="text-green-600 text-sm">🔒</span>
+                                    <span className="text-green-700 text-xs font-medium">Secured</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            }
+            </div>
 
-        </div>
+            {/* Padding for fixed bottom nav on mobile */}
+            <div className="lg:hidden pb-24" />
+        </>
     )
 }

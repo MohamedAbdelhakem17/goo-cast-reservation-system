@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetPackagesByCategory } from "../../../../apis/services/services.api";
+import BookingHeader from "../../../shared/Booking-Header/BookingHeader";
 
 export default function HourlyRecording() {
   const { setBookingField, handleNextStep, bookingData } = useBooking();
@@ -57,10 +58,7 @@ export default function HourlyRecording() {
   return (
     <>
       {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-2xl mb-2">Choose Your Service</h2>
-        <p className="text-gray-900">Select the type of recording session you need</p>
-      </div>
+      <BookingHeader title="Choose Your Service" desc="Select the type of recording session you need" />
 
       {/* Packages */}
       <motion.div
@@ -79,7 +77,7 @@ export default function HourlyRecording() {
               variants={cardVariants}
               whileHover={{ y: -5 }}
               onClick={() => handlePackageSelect(pkg)}
-              className="cursor-pointer w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)]"
+              className="cursor-pointer  w-full md:w-[45%]"
             >
               <div
                 className={`flex flex-col rounded-xl h-full p-4 border-1 overflow-hidden transition-colors duration-300 ${isActive
