@@ -20,7 +20,7 @@ export default function SelectStudio() {
     const selectStudio = (studio) => {
         setBookingField("studio", studio)
         setBookingField("startSlot", null)
-        setBookingField("duration", null)
+        setBookingField("duration", 2)
         setBookingField("endSlot", null)
         setSelectedStudio(studio.id)
     }
