@@ -1239,7 +1239,11 @@ exports.createBooking = asyncHandler(async (req, res) => {
     );
   }
 
-  const totalPrice = Math.round(packagePrice + addOnsTotalPriceFromDb);
+  const totalPrice = Math.round(
+    packagePrice +
+      addOnsTotalPriceFromDb +
+      (packagePrice + addOnsTotalPriceFromDb) * 0.14
+  ); // Assuming 14% tax
   if (totalPrice !== totalPriceFromClient) {
     throw new AppError(
       400,

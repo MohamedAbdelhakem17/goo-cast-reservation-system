@@ -118,7 +118,7 @@ export default function PersonalInformation() {
                             <button
                                 disabled={hasError()}
                                 onClick={handleSubmit}
-                                className="disabled:bg-gray-100 disabled:text-gray-300 w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center bg-main text-white my-2"
+                                className="disabled:bg-gray-100 disabled:text-gray-300 w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center md:flex-row flex-col justify-center bg-main text-white my-2"
                             >
                                 <span className="m-0">Complete Booking</span>
                             </button>

@@ -91,7 +91,7 @@ export default function Cart() {
                             <button
                                 disabled={hasError()}
                                 onClick={handleNextStep}
-                                className="disabled:bg-gray-100 disabled:text-gray-300 flex items-center space-x-2 px-6 py-2 rounded-full bg-main/60 text-white font-medium hover:bg-main/90 transition-colors"
+                                className="disabled:bg-gray-100 disabled:text-gray-300 flex items-center space-x-2 px-6 py-2 rounded-full bg-main text-white font-medium hover:bg-main/90 transition-colors"
                             >
                                 <span>Next</span>
                                 <ArrowRight className="w-4 h-4" />
