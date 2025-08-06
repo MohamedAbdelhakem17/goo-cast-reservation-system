@@ -92,14 +92,14 @@ const createOpportunity = async (opportunityData) => {
 };
 
 const createAppointment = async (contactId, appointmentData) => {
-  const url = "https://services.leadconnectorhq.com/calendars/events/appointments";
+  const url = process.env.GO_HIGH_LEVEL_URL + "/calendars/events/appointments";
 
   const body = {
     calendarId: process.env.GO_HIGH_LEVEL_CALENDAR_ID,
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     contactId,
     startTime: appointmentData.startTime,
-    endTime: appointmentData.endTime, 
+    endTime: appointmentData.endTime,
     title: appointmentData.title || "Booking Appointment",
     notes: appointmentData.notes || "",
   };
@@ -115,7 +115,6 @@ const createAppointment = async (contactId, appointmentData) => {
     throw error;
   }
 };
-
 
 const saveOpportunityInGoHighLevel = async (
   userData,
