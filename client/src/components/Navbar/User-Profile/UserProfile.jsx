@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import Signout from '../../../apis/auth/signout.api';
 import { useAuth } from '../../../context/Auth-Context/AuthContext';
+import { motion , AnimatePresence } from "framer-motion";
+import { NavLink } from 'react-router-dom';
 
 export default function UserProfile() {
     const { handelLogout } = Signout();
-        const { isAuthenticated  , user} = useAuth();
-    
+    const { isAuthenticated, user } = useAuth();
+
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const isAdmin = isAuthenticated && user?.role === "admin";
 
