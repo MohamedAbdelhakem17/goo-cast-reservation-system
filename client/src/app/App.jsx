@@ -40,7 +40,7 @@ export default function App() {
           </ToastProvider>
         </Router>
       </AuthProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }

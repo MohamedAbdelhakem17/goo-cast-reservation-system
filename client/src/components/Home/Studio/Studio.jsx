@@ -119,77 +119,77 @@ export default function Studio() {
             </div>
 
 
-            {/* Studios Grid */}
+            {/* Studios  */}
+        <motion.div
+    className="flex flex-wrap justify-center items-stretch gap-6"
+    variants={containerVariants}
+    initial="hidden"
+    animate="visible"
+>
+    {studiosData?.data?.map((studio) => (
+        <motion.div
+            key={studio.id}
+            className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 w-full sm:w-[90%] md:w-[45%] lg:w-[30%] xl:w-[28%] max-w-[400px] flex flex-col"
+            variants={itemVariants}
+            whileHover={{
+                y: -10,
+                transition: { type: "spring", stiffness: 300 },
+            }}
+        >
+            {/* Studio Image with hover effect */}
             <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 "
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
+                className="relative h-64 overflow-hidden"
+                whileHover={{
+                    scale: 1.05,
+                    transition: { duration: 0.3 },
+                }}
             >
-                {studiosData?.data?.map((studio) => (
-                    <motion.div
-                        key={studio.id}
-                        className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 mx-auto"
-                        variants={itemVariants}
-                        whileHover={{
-                            y: -10,
-                            transition: { type: "spring", stiffness: 300 },
-                        }}
-                    >
-                        {/* Studio Image with hover effect */}
-                        <motion.div
-                            className="relative h-64 overflow-hidden"
-                            whileHover={{
-                                scale: 1.05,
-                                transition: { duration: 0.3 },
-                            }}
-                        >
-                            <img
-                                src={studio.thumbnail || "/placeholder.svg"}
-                                alt={studio.name}
-                                className="w-full h-full object-cover"
-                            />
+                <img
+                    src={studio.thumbnail || "/placeholder.svg"}
+                    alt={studio.name}
+                    className="w-full h-full object-cover"
+                />
 
-                            <motion.div
-                                className="absolute inset-0 bg-gradient-to-t from-main/30 to-transparent flex items-end"
-                                initial={{ opacity: 0 }}
-                                whileHover={{ opacity: 1 }}
-                            >
-                                <div className="py-4 px-8 text-white">
-                                    <Link to={`/setups/${studio.slug}`} className="font-bold">
-                                        View Details
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        </motion.div>
-
-                        {/* Studio Name and Location */}
-                        <div className="p-4">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-xl font-bold text-gray-800">
-                                    {studio.name}
-                                </h3>
-                                {/* <StarRating rating={studio.ratingAverage} /> */}
-                            </div>
-
-                            <p className="text-gray-600 flex items-center gap-2">
-                                <i className="fa-solid fa-location-dot text-main"></i>
-                                <span className="text-lg">{studio.address}</span>
-                            </p>
-
-                            {/* <p className="text-main font-bold">{priceFormat(studio.pricePerHour || studio.basePricePerSlot)}  per hour</p> */}
-
-                            <motion.div
-                                className="mt-3 h-1 bg-main rounded-full"
-                                initial={{ width: 0 }}
-                                whileInView={{ width: "100%" }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                viewport={{ once: true }}
-                            />
-                        </div>
-                    </motion.div>
-                ))}
+                <motion.div
+                    className="absolute inset-0 bg-gradient-to-t from-main/30 to-transparent flex items-end"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                >
+                    <div className="py-4 px-8 text-white">
+                        <Link to={`/setups/${studio.slug}`} className="font-bold">
+                            View Details
+                        </Link>
+                    </div>
+                </motion.div>
             </motion.div>
+
+            {/* Studio Name and Location */}
+            <div className="p-4 flex flex-col justify-between flex-grow">
+                <div>
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-xl font-bold text-gray-800">
+                            {studio.name}
+                        </h3>
+                    </div>
+
+                    <p className="text-gray-600 flex items-center gap-2 mt-2">
+                        <i className="fa-solid fa-location-dot text-main"></i>
+                        <span className="text-lg">{studio.address}</span>
+                    </p>
+                </div>
+
+                <motion.div
+                    className="mt-3 h-1 bg-main rounded-full"
+                    initial={{ width: 0 }}
+                    whileInView={{ width: "100%" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    viewport={{ once: true }}
+                />
+            </div>
+        </motion.div>
+    ))}
+</motion.div>
+
         </section>
     );
 }

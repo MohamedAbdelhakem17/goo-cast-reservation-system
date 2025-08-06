@@ -1,85 +1,80 @@
 ---
 
-# 🎬 Studio Booking App  
+# Goo Cast Studio Reservation System
 
-A full-stack application for booking studios, built with **React (Frontend)** and **Node.js + Express (Backend)**.  
+A modern web application for booking and managing studio reservations, built with React, Vite, Node.js, and Express.
 
-## 🚀 Prerequisites  
+## Features
+- Studio selection and gallery preview
+- Date/time and package selection
+- Add-on services and coupon support
+- User authentication and dashboard
+- Admin dashboard with analytics
+- Responsive, mobile-friendly UI
+- Animated transitions using Framer Motion
 
-Make sure you have **Node.js** installed before proceeding. If not, download and install it from:  
-🔗 [Node.js Official Site](https://nodejs.org/en/download/)  
+## Tech Stack
+- **Frontend:** React, Vite, Framer Motion, Axios, Tailwind CSS
+- **Backend:** Node.js, Express, MongoDB
 
-To verify installation, run:  
+## Getting Started
 
-```sh
-node -v
-npm -v
+### Prerequisites
+- Node.js (v18+ recommended)
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository:**
+   ```sh
+   git clone <repo-url>
+   cd "Goo Cast Studio Reservation System"
+   ```
+
+2. **Install dependencies:**
+   - For the client:
+     ```sh
+     cd client
+     npm install
+     ```
+   - For the server:
+     ```sh
+     cd ../server
+     npm install
+     ```
+
+3. **Environment Variables:**
+   - Copy `.env.example` to `.env` in both `client` and `server` folders and fill in the required values.
+
+4. **Run the development servers:**
+   - In two terminals:
+     ```sh
+     # Terminal 1 (client)
+     cd client
+     npm run dev
+     # Terminal 2 (server)
+     cd server
+     npm run dev
+     ```
+
+5. **Open the app:**
+   - Visit [http://localhost:5173](http://localhost:5173) for the client.
+   - The server runs on [http://localhost:5000](http://localhost:5000) by default.
+
+## Project Structure
 ```
+client/      # React frontend
+server/      # Node.js backend
+```
+
+## Scripts
+- `npm run dev` — Start development server
+- `npm run build` — Build for production
+- `npm run lint` — Lint code
+
+## License
+Dottopia Marketing Agency
 
 ---
 
-## 📥 Installation & Setup  
-
-### 1️⃣ Clone the Repository  
-
-```sh
-git clone https://github.com/MohamedAbdelhakem17/goo-cast-reservation-system.git
-cd goo-cast-reservation-system
-```
-
-### 2️⃣ Install Dependencies  
-
-#### 📌 Frontend (React)  
-
-```sh
-cd client
-npm install
-```
-👉 If dependencies are missing, try `npm install` again.  
-
-#### 📌 Backend (Node.js + Express)  
-
-```sh
-cd ../server
-npm install
-```
-👉 If dependencies are missing, try `npm install` again.  
-
----
-
-## 🏃 Running the Application  
-
-### 🎭 Start the Backend Server  
-
-```sh
-cd server
-npm run dev
-```
-
-📌 **Server is running on:** `http://localhost:5000` (or as per your `.env` configuration).  
-
-### 🎬 Start the Frontend  
-
-Open a new terminal and run:  
-
-```sh
-cd client
-npm run dev
-```
-
-📌 **App will be available at:** `http://localhost:3000`.  
-
----
-
-## 📝 Notes  
-
-✅ Both backend & frontend should be running simultaneously.  
-✅ The app auto-reloads on changes.  
-✅ Check terminal logs if any issues arise.  
-
----
-
-🎉 **You're all set! Happy coding!** 🚀  
-
----
-
+For more details, see the code and comments in each folder.

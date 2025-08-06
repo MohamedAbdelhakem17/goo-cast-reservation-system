@@ -4,6 +4,7 @@ import BookingInput from "../../shared/Booking-Input/BookingInput";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 import Cart from "../Cart/Cart";
 import PaymentOptions from "./Payment-Way/PaymentWay";
+import BookingHeader from "../../shared/Booking-Header/BookingHeader";
 
 export default function PersonalInformation() {
     const inputRef = useRef(null);
@@ -27,12 +28,7 @@ export default function PersonalInformation() {
     return (
         <div className="space-y-4 py-6 px-4 sm:px-6 lg:px-8 duration-300 mx-auto">
             {/* Header */}
-            <div className="text-center mb-6 sm:mb-10">
-                <h2 className="text-2xl sm:text-3xl font-semibold mb-2">Payment Information</h2>
-                <p className="text-gray-900 text-sm sm:text-base">
-                    Complete your booking with your contact details
-                </p>
-            </div>
+            <BookingHeader title="Payment Information" desc="Complete your booking with your contact details" />
 
             {/* Responsive Content */}
             <div className="flex flex-col lg:flex-row items-start gap-6 w-full" >
@@ -122,7 +118,7 @@ export default function PersonalInformation() {
                             <button
                                 disabled={hasError()}
                                 onClick={handleSubmit}
-                                className="disabled:bg-gray-100 disabled:text-gray-300 w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center bg-main text-white my-2"
+                                className="disabled:bg-gray-100 disabled:text-gray-300 w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center md:flex-row flex-col justify-center bg-main text-white my-2"
                             >
                                 <span className="m-0">Complete Booking</span>
                             </button>

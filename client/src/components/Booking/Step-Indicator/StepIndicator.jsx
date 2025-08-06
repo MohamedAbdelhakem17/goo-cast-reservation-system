@@ -11,7 +11,7 @@ export default function Stepper() {
   }));
 
   return (
-    <div className="px-4  lg:px-8 lg:sticky top-0 bg-gray-100 z-[51] w-[100vw] my-5">
+    <div className="px-4  lg:px-8 lg:sticky top-0 bg-white z-[51] w-[100vw] my-5">
       {/* Desktop/Tablet View */}
       <div className="hidden sm:flex items-center justify-between max-w-5xl mx-auto scale-[.9]">
         {steps.map((step, index) => (
@@ -51,36 +51,52 @@ export default function Stepper() {
       </div>
 
       {/* Mobile View */}
-      <div className="sm:hidden">
-        {/* Steps List (Alternative mobile view - uncomment if preferred) */}
-        <div className="space-y-3">
-          {steps.map((step) => (
-            <div key={step.id} className="flex items-center space-x-3">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 flex-shrink-0 ${step.id < currentStep
-                  ? "bg-[#FF3B30] border-[#FF3B30] text-white"
-                  : step.id === currentStep
-                    ? "border-[#FF3B30] text-[#FF3B30] bg-white"
-                    : "border-gray-300 text-gray-400 bg-white"
-                  }`}
-              >
-                {step.id < currentStep ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  <span className="text-xs font-medium">{step.id}</span>
-                )}
-              </div>
-              <div
-                className={`text-sm ${step.id === currentStep
-                  ? "text-[#FF3B30] font-medium"
-                  : step.id < currentStep
-                    ? "text-gray-800"
-                    : "text-gray-500"
-                  }`}
-              >
-                {step.title}
-              </div>
+      <div className="sm:hidden py-3">
+        {/* Progress Bar */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-medium text-gray-600">
+              Step {currentStep} of {steps.length}
+            </span>
+
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-1.5">
+            <div
+              className="bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] h-1.5 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${(currentStep / steps.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Current Step Display */}
+        <div className="bg-gradient-to-r from-[#FF3B30]/5 to-[#FF6B60]/5 rounded-xl p-4 border border-[#FF3B30]/20">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] flex items-center justify-center shadow-lg">
+              {currentStep < steps.length ? (
+                <span className="text-xs font-bold text-white">{currentStep}</span>
+              ) : (
+                <Check className="w-4 h-4 text-white" />
+              )}
             </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-900">{steps[currentStep - 1]?.title}</div>
+              <div className="text-xs text-gray-500">Current step</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mini Steps Overview */}
+        <div className="flex justify-center mt-4 space-x-2">
+          {steps.map((step) => (
+            <div
+              key={step.id}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${step.id < currentStep
+                ? "bg-[#FF3B30] scale-110"
+                : step.id === currentStep
+                  ? "bg-[#FF3B30] scale-125 shadow-lg"
+                  : "bg-gray-300 scale-100"
+                }`}
+            />
           ))}
         </div>
       </div>

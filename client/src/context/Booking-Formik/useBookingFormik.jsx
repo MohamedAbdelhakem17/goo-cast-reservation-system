@@ -32,7 +32,7 @@ export default function useBookingFormik() {
             date: handelStartDate(),
             startSlot: null,
             endSlot: null,
-            duration: 0,
+            duration: 2,
             persons: 1,
             selectedPackage: {},
             selectedAddOns: [],
