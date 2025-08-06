@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { WalletMinimal } from "lucide-react";
+import {CreditCard, Banknote } from 'lucide-react';
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 
 const paymentMethods = [
@@ -7,13 +7,13 @@ const paymentMethods = [
         id: "CARD",
         label: "Credit/Debit Card",
         description: "Pay securely online with Visa, Mastercard, or American Express",
-        icon: <WalletMinimal />,
+        icon: <CreditCard />,
     },
     {
         id: "CASH",
         label: "Pay at Studio (Cash)",
         description: "Pay with cash when you arrive at the studio",
-        icon: <i className="fa-solid fa-money-bill-1"></i>,
+        icon: <Banknote />,
     },
 ];
 
@@ -22,11 +22,11 @@ export default function PaymentOptions() {
     const { setBookingField } = useBooking();
 
     return (
-        <div className="max-w-full mx-auto p-6 space-y-4 ">
+        <div className="max-w-full mx-auto py-6 space-y-4 ">
             {paymentMethods.map(({ id, label, description, icon }) => (
                 <div
                     key={id}
-                    className={`cursor-pointer border rounded-lg p-4 bg-white flex items-center gap-3  "border-gray-300"`}
+                    className={`cursor-pointer border rounded-lg p-4 bg-white flex items-center gap-3  border-gray-300`}
                     onClick={() => {
                         setSelected(id);
                         setBookingField("paymentMethod", id);

@@ -2,15 +2,13 @@ import Sticky from 'react-sticky-el';
 import AddOns from './Add-Ons/AddOns';
 import Cart from '../Cart/Cart';
 import Faq from './Faq/Faq';
+import BookingHeader from '../../shared/Booking-Header/BookingHeader';
 
 export default function SelectAdditionalServices() {
     return (
         <div className="space-y-4 px-5 duration-300" >
             {/* Header */}
-            <div className="text-center mb-8">
-                <h2 className="text-2xl mb-2">Additional Services</h2>
-                <p className="text-gray-900">Enhance your session with our professional add-ons</p>
-            </div>
+            <BookingHeader title="Additional Services" desc="Enhance your session with our professional add-ons" />
 
             {/* Responsive Content */}
             <div className="flex flex-col lg:flex-row gap-6 mb-[10px]" id='cart-wrapper'>
@@ -22,14 +20,14 @@ export default function SelectAdditionalServices() {
 
                 {/* Cart Sticky */}
                 <div className="w-full lg:w-1/3 " >
-                    <Sticky
+                    {/* <Sticky
                         topOffset={-100}
                         stickyStyle={{ top: '95px', zIndex: 40, transition: 'top 0.3s ease-in-out' }}
                         boundaryElement="#cart-wrapper"
                     // hideOnBoundaryHit={false}
-                    >
+                    > */}
                         <Cart />
-                    </Sticky>
+                    {/* </Sticky> */}
                 </div>
             </div>
         </div >

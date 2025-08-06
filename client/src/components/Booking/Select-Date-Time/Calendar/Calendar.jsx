@@ -69,12 +69,13 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
                   if (!day.blocked && !day.isEmpty) {
                     const selected = new Date(currentDate.getFullYear(), currentDate.getMonth(), day.date);
                     selected.setHours(12, 0, 0, 0);
+                    console.log(bookingData.studio.id, selected, bookingData.duration || 2)
                     setSelectedDate(selected);
                     setBookingField("date", selected);
                     setBookingField("startSlot", null);
                     setBookingField("endSlot", null);
                     openToggle(true)
-                    getAvailableSlots(bookingData.studio.id , selected , bookingData.duration )
+                    getAvailableSlots(bookingData.studio.id, selected, bookingData.duration || 2)
                   }
                 }}
               >
