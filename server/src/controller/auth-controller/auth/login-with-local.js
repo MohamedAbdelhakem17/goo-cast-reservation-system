@@ -12,6 +12,7 @@ passport.use(
       passwordField: "password",
     },
     async (email, password, done) => {
+      console.log(email)
       try {
         // 1. Validate input
         if (!email || !password) {
@@ -39,6 +40,7 @@ passport.use(
         }
 
         // 3. Check if password is correct
+        console.log(user)
         const isPasswordValid = await user.comparePassword(password);
         if (!isPasswordValid) {
           return done(
