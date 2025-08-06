@@ -1,21 +1,36 @@
-// services/booking/createBookingLogic.js
+const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
+const BookingModel = require("../../models/booking-model/booking-model");
+const StudioModel = require("../../models/studio-model/studio-model");
+const AddOnModel = require("../../models/add-on-model/add-on-model");
+const CouponModel = require("../../models/coupon-model/coupon-model.js");
+const AppError = require("../../utils/app-error");
+const {
+  HTTP_STATUS_TEXT,
+  PAYMENT_METHOD,
+} = require("../../config/system-variables");
 
-const createBookingLogic = async ({
-  studioId,
-  date,
-  startSlot,
-  endSlot,
-  duration,
-  persons,
-  selectedPackage,
-  selectedAddOns,
-  personalInfo,
-  totalPriceFromClient,
-  totalPriceAfterDiscountFromClient,
-  coupon_code,
-  paymentMethod,
-  user_id,
-}) => {
+const { calculateSlotPrices } = require("../../utils/priceCalculator");
+const { getAllDay, timeToMinutes } = require("../../utils/time-mange");
+
+const createBookingLogic = async (body, user_id) => {
+  const {
+    studio: studioId,
+    date,
+    startSlot,
+    endSlot,
+    duration,
+    persons,
+    package: selectedPackage,
+    selectedAddOns ,
+    personalInfo,
+    totalPrice: totalPriceFromClient,
+    totalPriceAfterDiscount: totalPriceAfterDiscountFromClient,
+    coupon_code,
+    paymentMethod,
+  } = body;
+
+  console.log(studioId);
+
   const bookingDate = new Date(date);
   const startSlotMinutes = timeToMinutes(startSlot);
   const endSlotMinutes = timeToMinutes(endSlot);
@@ -39,14 +54,12 @@ const createBookingLogic = async ({
     );
 
   const { startOfDay, endOfDay } = getAllDay(bookingDate);
-
   const conflictBooking = await BookingModel.exists({
     studio: studio._id,
     date: { $gte: startOfDay, $lt: endOfDay },
     startSlotMinutes: { $lt: endSlotMinutes },
     endSlotMinutes: { $gt: startSlotMinutes },
   });
-
   if (conflictBooking)
     throw new AppError(
       400,
@@ -61,30 +74,28 @@ const createBookingLogic = async ({
     endOfDay: endSlotMinutes,
     bookedSlots: [],
   });
-
   const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
 
   const addonsTotalPriceFromClient =
-    selectedAddOns?.reduce((acc, item) => {
-      return acc + (item.quantity > 0 ? item.price * item.quantity : 0);
-    }, 0) || 0;
+    selectedAddOns?.reduce(
+      (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
+      0
+    ) || 0;
 
-  let addOnsTotalPriceFromDb = 0;
+  let totalAddOnsPriceFromDb = 0;
   const addOnDetails = [];
 
   if (Array.isArray(selectedAddOns)) {
     const addOnDocs = await Promise.all(
       selectedAddOns.map((a) => AddOnModel.findById(a._id))
     );
-
     for (let i = 0; i < selectedAddOns.length; i++) {
       const dbAddOn = addOnDocs[i];
       const clientAddOn = selectedAddOns[i];
       if (!dbAddOn) continue;
 
       const addOnPrice = dbAddOn.price * clientAddOn.quantity;
-      addOnsTotalPriceFromDb += addOnPrice;
-
+      totalAddOnsPriceFromDb += addOnPrice;
       addOnDetails.push({
         item: dbAddOn._id,
         quantity: clientAddOn.quantity,
@@ -93,7 +104,7 @@ const createBookingLogic = async ({
     }
   }
 
-  if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient)
+  if (totalAddOnsPriceFromDb !== addonsTotalPriceFromClient)
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
@@ -102,10 +113,9 @@ const createBookingLogic = async ({
 
   const totalPrice = Math.round(
     packagePrice +
-      addOnsTotalPriceFromDb +
-      (packagePrice + addOnsTotalPriceFromDb) * 0.14
+      totalAddOnsPriceFromDb +
+      (packagePrice + totalAddOnsPriceFromDb) * 0.14
   );
-
   if (totalPrice !== totalPriceFromClient)
     throw new AppError(
       400,
@@ -131,7 +141,6 @@ const createBookingLogic = async ({
   if (paymentMethod && !Object.values(PAYMENT_METHOD).includes(paymentMethod))
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid payment method");
 
-  // ⬇️ Save booking
   const bookingData = {
     studio: studio._id,
     date: bookingDate,
@@ -143,7 +152,7 @@ const createBookingLogic = async ({
     persons,
     package: pkg._id,
     addOns: addOnDetails,
-    totalAddOnsPrice: addOnsTotalPriceFromDb,
+    totalAddOnsPrice: totalAddOnsPriceFromDb,
     totalPackagePrice: packagePrice,
     personalInfo,
     totalPrice,
@@ -154,15 +163,19 @@ const createBookingLogic = async ({
     paymentMethod: paymentMethod || PAYMENT_METHOD.CARD,
   };
 
-  const booking = await BookingModel.create(bookingData);
+  const tempBooking = new BookingModel(bookingData);
 
   return {
-    booking,
+    tempBooking,
     studio,
     pkg,
     addOns: selectedAddOns,
-    totalAddOnsPriceFromDb: addOnsTotalPriceFromDb,
+    totalAddOnsPriceFromDb,
     bookingDate,
+    personalInfo,
+    startSlot,
+    endSlot,
+    totalPriceAfterDiscount,
   };
 };
 
