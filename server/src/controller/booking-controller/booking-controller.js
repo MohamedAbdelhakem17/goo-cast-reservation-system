@@ -5,6 +5,7 @@ const {
   timeToMinutes,
   minutesToTime,
   getAllDay,
+  combineDateAndTime,
 } = require("../../utils/time-mange");
 const {
   HTTP_STATUS_TEXT,
@@ -1309,6 +1310,13 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
     await sendEmail(emailOptions);
 
+    const appointmentData = {
+      startTime: combineDateAndTime(bookingDate, startSlot),
+      endTime: combineDateAndTime(bookingDate, endSlot),
+      title: `${studio.name} - Booking`,
+      notes: personalInfo.fullName || personalInfo.name,
+    };
+
     try {
       await saveOpportunityInGoHighLevel(
         {
@@ -1319,7 +1327,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
         {
           name: `${studio.name} - ${pkg.name} - ${personalInfo.fullName}`,
           price: totalPriceAfterDiscount,
-        }
+        },
+        appointmentData
       );
     } catch (err) {
       throw new AppError(

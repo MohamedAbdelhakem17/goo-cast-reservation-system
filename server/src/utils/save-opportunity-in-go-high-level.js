@@ -55,7 +55,6 @@ const getContactID = async (userData) => {
   }
 };
 
-
 const createOpportunity = async (opportunityData) => {
   const url = "https://services.leadconnectorhq.com/opportunities/";
   const body = {
@@ -92,10 +91,48 @@ const createOpportunity = async (opportunityData) => {
   }
 };
 
-const saveOpportunityInGoHighLevel = async (userData, opportunityData) => {
+const createAppointment = async (contactId, appointmentData) => {
+  const url = "https://services.leadconnectorhq.com/calendars/events/appointments";
+
+  const body = {
+    calendarId: process.env.GO_HIGH_LEVEL_CALENDAR_ID,
+    locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
+    contactId,
+    startTime: appointmentData.startTime,
+    endTime: appointmentData.endTime, 
+    title: appointmentData.title || "Booking Appointment",
+    notes: appointmentData.notes || "",
+  };
+
+  try {
+    const response = await axios.post(url, body, { headers });
+    console.log("✅ Appointment created:", response.data?.data?.id);
+    return response.data?.data?.id;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Create appointment error:", error.response?.data);
+    }
+    throw error;
+  }
+};
+
+
+const saveOpportunityInGoHighLevel = async (
+  userData,
+  opportunityData,
+  appointmentData
+) => {
+  // Get or create the contact ID
   const contactId = await getContactID(userData);
   opportunityData.contactId = contactId;
+
+  // Create or update the opportunity
   await createOpportunity(opportunityData);
+
+  // If appointment data is provided, create the appointment
+  if (appointmentData?.startTime) {
+    await createAppointment(contactId, appointmentData);
+  }
 };
 
 module.exports = saveOpportunityInGoHighLevel;
