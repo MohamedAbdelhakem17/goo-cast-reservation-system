@@ -108,7 +108,7 @@ const Signin = ({ closeModal, changeForm }) => {
             </motion.div>
 
             {/* Forgot Password Link */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.4 }}
@@ -117,7 +117,7 @@ const Signin = ({ closeModal, changeForm }) => {
               <a href="#" className="text-[#ed1e26] hover:text-[#ff5b60] font-medium">
                 Forgot password?
               </a>
-            </motion.div>
+            </motion.div> */}
 
             {/* Submit Button */}
             <motion.button
