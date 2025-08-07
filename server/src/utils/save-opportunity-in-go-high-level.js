@@ -11,7 +11,7 @@ const createContact = async (contactData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/contacts";
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
-    name: contactData.name,
+    full_name: contactData.name,
     email: contactData.email,
     phone: contactData.phone,
   };

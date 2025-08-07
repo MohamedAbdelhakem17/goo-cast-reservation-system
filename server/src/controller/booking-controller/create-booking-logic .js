@@ -29,7 +29,6 @@ const createBookingLogic = async (body, user_id) => {
     paymentMethod,
   } = body;
 
-  console.log(studioId);
 
   const bookingDate = new Date(date);
   const startSlotMinutes = timeToMinutes(startSlot);
@@ -160,7 +159,7 @@ const createBookingLogic = async (body, user_id) => {
     status: "pending",
     createdBy: user_id,
     isGuest: !user_id,
-    paymentMethod: paymentMethod || PAYMENT_METHOD.CARD,
+    paymentMethod: paymentMethod || PAYMENT_METHOD.CASH,
   };
 
   const tempBooking = new BookingModel(bookingData);
