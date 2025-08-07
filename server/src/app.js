@@ -28,14 +28,14 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     credentials: true,
   })
 );
 
 app.use(
   expressSession({
-    secret: process.env.JWT_SECRET || "your-secret",
+    secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
