@@ -7,6 +7,7 @@ import AdminDashboardLayout from "../components/layout/Admin-Dashboard/AdminDash
 import MainLayout from "../components/layout/Main-Layout/MainLayout";
 import UserDashboardLayout from "../components/layout/User-Dashboard/UserDashboard";
 import ErrorBoundary from "../components/Error-Boundary/ErrorBoundary";
+import { useAuth } from "../context/Auth-Context/AuthContext";
 
 // Pages Public
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -35,6 +36,7 @@ const UserBookings = lazy(() => import("../pages/User-Dashboard/User-Bookings/Us
 
 export default function AppRouter() {
     const location = useLocation();
+    const { loading } = useAuth()
 
     useEffect(() => {
         window.scrollTo(0, 0, { behavior: "smooth" });
@@ -44,7 +46,7 @@ export default function AppRouter() {
         const cleanLocalStorage = () => {
             if (
                 location.pathname !== "/booking" &&
-                location.pathname!== "/booking/confirmation" &&
+                location.pathname !== "/booking/confirmation" &&
                 !location.search.startsWith("?step=")
             ) {
                 localStorage.removeItem("bookingData");
@@ -55,6 +57,7 @@ export default function AppRouter() {
         cleanLocalStorage();
     }, [location]);
 
+    if (loading) return <LoadingScreen />; // Show loading screen while auth state is being determined
 
     return (
         <Suspense fallback={<LoadingScreen />}>
