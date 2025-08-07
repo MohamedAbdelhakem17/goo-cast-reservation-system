@@ -31,7 +31,7 @@ export default function AuthProvider({ children }) {
     const [state, dispatch] = useReducer(authReducer, initialState);
 
     useEffect(() => {
-        axios.get('/auth/is-login')
+        axios.get('/auth/is-login', { withCredentials: true })
             .then((res) => {
                 if (res.data?.user) {
                     dispatch({ type: 'LOGIN', payload: res.data.user });
