@@ -1,15 +1,76 @@
 import React from 'react';
-import { GetAllPackages } from '../../../apis/services/services.api';
+import {  GetPackagesByCategory } from '../../../apis/services/services.api';
+import { useEffect } from 'react';
+import { Check, Video, Mic, Clock, Users } from 'lucide-react'
+import { motion } from 'framer-motion'
+
 
 export default function PackagesSection() {
-  const { data: packages, isLoading } = GetAllPackages();
+  const { mutate: getPackages, data: packages } = GetPackagesByCategory();
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-24">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-rose-500 border-opacity-50"></div>
-      </div>
-    );
+
+  useEffect(() => {
+    getPackages({ category: "681c913473e625151f4f075d" });
+  }, [getPackages]);
+
+
+  const getIcon = (iconType) => {
+    switch (iconType) {
+      case 'video':
+        return <Video className="w-6 h-6" />
+      case 'microphone':
+        return <Mic className="w-6 h-6" />
+      default:
+        return <Video className="w-6 h-6" />
+    }
+  }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  }
+
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      y: 50,
+      scale: 0.9
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  }
+
+  const imageVariants = {
+    hover: {
+      scale: 1.05,
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut"
+      }
+    }
+  }
+
+  const iconVariants = {
+    hover: {
+      rotate: 360,
+      scale: 1.1,
+      transition: {
+        duration: 0.5,
+        ease: "easeInOut"
+      }
+    }
   }
 
   return (
@@ -31,37 +92,148 @@ export default function PackagesSection() {
       {packages?.data?.length === 0 ? (
         <p className="text-center text-gray-500">No packages available at the moment.</p>
       ) : (
-        <div className="flex flex-wrap justify-center gap-8">
-          {packages?.data?.map((packageItem) => (
-            <div
-              key={packageItem._id}
-              className="flex-shrink-0 w-full sm:w-[48%] md:w-[30%] xl:w-[22%] bg-white shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl py-6 px-2 flex flex-col items-center justify-around border border-gray-100 hover:border-rose-400 text-center min-h-[420px]"
-            >
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-rose-400 to-rose-200 shadow-lg mb-4 border-4 border-white -mt-8">
-                <i className="fas fa-camera text-white text-2xl drop-shadow"></i>
-              </div>
-              <h3 className="text-xl font-bold text-main mb-1">{packageItem.name}</h3>
-              <p className="text-gray-500 text-sm mb-2 min-h-[48px]">{packageItem.description}</p>
-              <div className="flex flex-wrap gap-2 mb-2 justify-center">
-                {packageItem.target_audience.map((user, idx) => (
-                  <span
-                    key={idx}
-                    className="bg-rose-100 text-rose-600 text-xs font-semibold px-3 py-1 rounded-full shadow-sm border border-rose-200"
+        <div className="container mx-auto px-4 py-8">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {packages?.data?.map((packageItem, index) => (
+              <motion.div
+                key={packageItem._id}
+                variants={cardVariants}
+                whileHover={{
+                  y: -10,
+                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                }}
+                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group"
+              >
+                {/* Header with Image */}
+                <div className="relative h-64 overflow-hidden">
+                  <motion.div
+                    variants={imageVariants}
+                    whileHover="hover"
+                    className="w-full h-full"
                   >
-                    {user}
-                  </span>
-                ))}
-              </div>
-              {/* <p className="text-main font-extrabold text-xl mb-3">
-        {packageItem.price} <span className="text-sm font-medium">EGP</span>
-      </p>
-      <button
-        className="w-full bg-gradient-to-r from-rose-400 to-rose-500 text-white font-semibold py-2 rounded-lg shadow-md hover:from-rose-500 hover:to-rose-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-rose-300 mt-2"
-      >
-        Book Now
-      </button> */}
-            </div>
-          ))}
+                    <img
+                      src={packageItem.image || "/placeholder.svg"}
+                      alt={packageItem.name}
+                      
+                      className="object-contain w-full h-full"
+                    />
+                  </motion.div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                  <motion.div
+                    className="absolute top-4 left-4"
+                    variants={iconVariants}
+                    whileHover="hover"
+                  >
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+                      <div className="text-white">
+                        {getIcon(packageItem.icon)}
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    className="absolute bottom-4 left-4 right-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                  >
+                    <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white border border-white/30">
+                      <Clock className="w-3 h-3 mr-1" />
+                      {packageItem.session_type}
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  {/* Header */}
+                  <motion.div
+                    className="mb-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                  >
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                      {packageItem.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-3">
+                      {packageItem.description}
+                    </p>
+
+                    {/* Target Audience */}
+                    <div className="flex flex-wrap gap-2">
+                      {packageItem.target_audience.map((audience, idx) => (
+                        <motion.span
+                          key={idx}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.5 + idx * 0.1 }}
+                          whileHover={{ scale: 1.05 }}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200"
+                        >
+                          <Users className="w-3 h-3 mr-1" />
+                          {audience}
+                        </motion.span>
+                      ))}
+                    </div>
+                  </motion.div>
+
+                  {/* Package Details */}
+                  <motion.div
+                    className="mb-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 + index * 0.1 }}
+                  >
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">{"What's Included:"}</h4>
+                    <ul className="space-y-2">
+                      {packageItem.details.map((detail, idx) => (
+                        <motion.li
+                          key={idx}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.7 + idx * 0.1 }}
+                          className="flex items-start gap-2 text-sm text-gray-600"
+                        >
+                          <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>{detail}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+
+                  {/* Post Session Benefits */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 + index * 0.1 }}
+                  >
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">After Your Session:</h4>
+                    <ul className="space-y-2">
+                      {packageItem.post_session_benefits.map((benefit, idx) => (
+                        <motion.li
+                          key={idx}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.9 + idx * 0.1 }}
+                          className="flex items-start gap-2 text-sm text-gray-600"
+                        >
+                          <Check className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                          <span>{benefit}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
 
       )}

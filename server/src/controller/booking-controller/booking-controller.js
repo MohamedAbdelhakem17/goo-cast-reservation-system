@@ -1207,16 +1207,19 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
 // Create Booking With GHL
 exports.ghlCreateBooking = asyncHandler(async (req, res) => {
+  console.log(req.body)
+  
   const { tempBooking } = await createBookingLogic(req.body);
-
+  
   const booking = await tempBooking.save();
+
 
   res.status(201).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     message: "Booking created successfully",
     data: booking,
   });
-  
+
 });
 
 // Get User Booking History
