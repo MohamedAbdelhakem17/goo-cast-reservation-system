@@ -5,8 +5,7 @@ export default function SuccessLogin() {
     React.useEffect(() => {
         setTimeout(() => {
             if (window.opener && !window.opener.closed) {
-                window.opener.location.href = '/'; 
-                window.opener.location.reload();  
+                window.opener.location.href = '/';
             }
             window.close();
         }, 1000);

@@ -1,6 +1,7 @@
 import BASE_URL from "../../apis/BASE_URL";
 
 export default function GoogleButton({ label }) {
+
     const handleGoogleLogin = () => {
         const googleLoginUrl = `${BASE_URL}/auth/google`;
         const newWindoW = window.open(googleLoginUrl, "_blank", "width=500,height=500", "noopener");
@@ -12,6 +13,7 @@ export default function GoogleButton({ label }) {
             }, 500);
         };
     }
+
 
     return (
         <button

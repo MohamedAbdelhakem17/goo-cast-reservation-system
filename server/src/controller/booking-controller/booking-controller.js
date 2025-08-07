@@ -5,11 +5,9 @@ const {
   timeToMinutes,
   minutesToTime,
   getAllDay,
+  combineDateAndTime,
 } = require("../../utils/time-mange");
-const {
-  HTTP_STATUS_TEXT,
-  PAYMENT_METHOD,
-} = require("../../config/system-variables");
+const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
 const AppError = require("../../utils/app-error");
 
 const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
@@ -21,11 +19,11 @@ const sendEmail = require("../../utils/send-email");
 const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
 const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model");
-const AddOnModel = require("../../models/add-on-model/add-on-model");
-const CouponModel = require("../../models/coupon-model/coupon-model.js");
+
 const saveOpportunityInGoHighLevel = require("../../utils/save-opportunity-in-go-high-level");
 const { getCategoryMinHour } = require("../../utils/get-category-hour.js");
 const { getFreeSlots } = require("../../utils/get-free-slots.js");
+const createBookingLogic = require("./create-booking-logic .js");
 
 // old code For getting available slots
 {
@@ -1131,173 +1129,19 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
 // Create New Booking
 exports.createBooking = asyncHandler(async (req, res) => {
   const user_id = req.isAuthenticated() ? req.user._id : undefined;
-  console.log(user_id);
-  const {
-    studio: studioId,
-    date,
-    startSlot,
-    endSlot,
-    duration,
-    persons,
-    package: selectedPackage,
-    selectedAddOns: addOns,
-    personalInfo,
-    totalPrice: totalPriceFromClient,
-    totalPriceAfterDiscount: totalPriceAfterDiscountFromClient,
-    coupon_code,
-    paymentMethod,
-  } = req.body;
-
-  // Get actual Studio & Package
-  const studio = await StudioModel.findById(studioId?.id || studioId);
-  if (!studio)
-    throw new AppError(
-      404,
-      HTTP_STATUS_TEXT.FAIL,
-      "Studio not found for booking"
-    );
-
-  const pkg = await PackageModel.findById(
-    selectedPackage?.id || selectedPackage
-  );
-  if (!pkg)
-    throw new AppError(
-      404,
-      HTTP_STATUS_TEXT.FAIL,
-      "Package not found for booking"
-    );
-
-  const bookingDate = new Date(date);
-  const startSlotMinutes = timeToMinutes(startSlot);
-  const endSlotMinutes = timeToMinutes(endSlot);
-
-  // Get start & end of day
-  const { startOfDay, endOfDay } = getAllDay(bookingDate);
-
-  // ✅ Check conflict directly from DB
-  const conflictBooking = await BookingModel.exists({
-    studio: studio._id,
-    date: { $gte: startOfDay, $lt: endOfDay },
-    startSlotMinutes: { $lt: endSlotMinutes },
-    endSlotMinutes: { $gt: startSlotMinutes },
-  });
-
-  if (conflictBooking) {
-    throw new AppError(
-      400,
-      HTTP_STATUS_TEXT.FAIL,
-      "This time is already booked"
-    );
-  }
-
-  // Calculate package price
-  const slotPrices = await calculateSlotPrices({
-    package: pkg,
-    date: bookingDate,
-    startSlotMinutes,
-    endOfDay: endSlotMinutes,
-    bookedSlots: [],
-  });
-
-  const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
-
-  // Handle Add-ons
-  const addonsTotalPriceFromClient =
-    addOns?.reduce((acc, item) => {
-      return acc + (item.quantity > 0 ? item.price * item.quantity : 0);
-    }, 0) || 0;
-
-  let addOnsTotalPriceFromDb = 0;
-  const addOnDetails = [];
-
-  if (Array.isArray(addOns)) {
-    const addOnDocs = await Promise.all(
-      addOns.map((a) => AddOnModel.findById(a._id))
-    );
-
-    for (let i = 0; i < addOns.length; i++) {
-      const dbAddOn = addOnDocs[i];
-      const clientAddOn = addOns[i];
-      if (!dbAddOn) continue;
-
-      const addOnPrice = dbAddOn.price * clientAddOn.quantity;
-      addOnsTotalPriceFromDb += addOnPrice;
-
-      addOnDetails.push({
-        item: dbAddOn._id,
-        quantity: clientAddOn.quantity,
-        price: dbAddOn.price,
-      });
-    }
-  }
-
-  if (addOnsTotalPriceFromDb !== addonsTotalPriceFromClient) {
-    throw new AppError(
-      400,
-      HTTP_STATUS_TEXT.FAIL,
-      "The add-on price is incorrect"
-    );
-  }
-
-  const totalPrice = Math.round(
-    packagePrice +
-      addOnsTotalPriceFromDb +
-      (packagePrice + addOnsTotalPriceFromDb) * 0.14
-  ); // Assuming 14% tax
-  if (totalPrice !== totalPriceFromClient) {
-    throw new AppError(
-      400,
-      HTTP_STATUS_TEXT.FAIL,
-      "The total price is incorrect"
-    );
-  }
-
-  // Coupon check
-  const coupon = await CouponModel.findOne({ code: coupon_code });
-  if (!coupon && coupon_code) {
-    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "coupon not Found ");
-  }
-
-  const totalPriceAfterDiscount = coupon?.discount
-    ? Math.round(totalPrice - totalPrice * (coupon.discount / 100))
-    : totalPrice;
-
-  if (totalPriceAfterDiscount !== totalPriceAfterDiscountFromClient) {
-    throw new AppError(
-      400,
-      HTTP_STATUS_TEXT.FAIL,
-      "The total price after Discount is incorrect"
-    );
-  }
-
-  if (paymentMethod && !Object.values(PAYMENT_METHOD).includes(paymentMethod)) {
-    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid payment method");
-  }
-
   try {
-    const bookingData = {
-      studio: studio._id,
-      date: bookingDate,
+    const {
+      tempBooking,
+      studio,
+      pkg,
+      addOns,
+      bookingDate,
+      personalInfo,
+      addOnsTotalPriceFromDb,
       startSlot,
       endSlot,
-      startSlotMinutes,
-      endSlotMinutes,
-      duration,
-      persons,
-      package: pkg._id,
-      addOns: addOnDetails,
-      totalAddOnsPrice: addOnsTotalPriceFromDb,
-      totalPackagePrice: packagePrice,
-      personalInfo,
-      totalPrice,
       totalPriceAfterDiscount,
-      status: "pending",
-      createdBy: user_id,
-      isGuest: !user_id,
-      paymentMethod: paymentMethod || PAYMENT_METHOD.CARD,
-    };
-
-    const tempBooking = new BookingModel(bookingData);
+    } = await createBookingLogic(req.body, user_id);
 
     const emailOptions = {
       to: personalInfo.email,
@@ -1306,12 +1150,22 @@ exports.createBooking = asyncHandler(async (req, res) => {
         ...req.body,
         bookingId: tempBooking._id,
         studio: { name: studio.name, image: studio.thumbnail },
-        selectedAddOns: { items: addOns, totalPrice: addOnsTotalPriceFromDb },
+        selectedAddOns: {
+          items: addOns,
+          totalPrice: addOnsTotalPriceFromDb,
+        },
         selectedPackage: pkg.name,
       }),
     };
 
-    await sendEmail(emailOptions);
+    console.log(startSlot , endSlot)
+    console.log(bookingDate)
+    const appointmentData = {
+      startTime: combineDateAndTime(bookingDate, startSlot),
+      endTime: combineDateAndTime(bookingDate, endSlot),
+      title: `${studio.name} - Booking`,
+      notes: personalInfo.fullName || personalInfo.name,
+    };
 
     try {
       await saveOpportunityInGoHighLevel(
@@ -1323,8 +1177,10 @@ exports.createBooking = asyncHandler(async (req, res) => {
         {
           name: `${studio.name} - ${pkg.name} - ${personalInfo.fullName}`,
           price: totalPriceAfterDiscount,
-        }
+        },
+        appointmentData
       );
+      await sendEmail(emailOptions);
     } catch (err) {
       throw new AppError(
         500,
