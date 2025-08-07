@@ -1158,8 +1158,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
       }),
     };
 
-    console.log(startSlot , endSlot)
-    console.log(bookingDate)
+    console.log(startSlot, endSlot);
+    console.log(bookingDate);
     const appointmentData = {
       startTime: combineDateAndTime(bookingDate, startSlot),
       endTime: combineDateAndTime(bookingDate, endSlot),
@@ -1203,6 +1203,20 @@ exports.createBooking = asyncHandler(async (req, res) => {
       error.message || "Failed to complete booking process"
     );
   }
+});
+
+// Create Booking With GHL
+exports.ghlCreateBooking = asyncHandler(async (req, res) => {
+  const { tempBooking } = await createBookingLogic(req.body);
+
+  const booking = await tempBooking.save();
+
+  res.status(201).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    message: "Booking created successfully",
+    data: booking,
+  });
+  
 });
 
 // Get User Booking History
