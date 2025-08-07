@@ -31,6 +31,8 @@ async function getPlaceReviews() {
     const response = await axios.get(url);
     const result = response.data.result;
 
+    console.log(response.result)
+
     const filteredReviews = (result.reviews || []).filter(
       (review) => review.text && review.text.trim() !== ""
     );
@@ -66,3 +68,5 @@ exports.getPlaceReviews = asyncHandler(async (req, res, next) => {
     new: isNew,
   });
 });
+
+getPlaceReviews()

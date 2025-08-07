@@ -7,7 +7,7 @@ import Loading from "../../../shared/Loading/Loading";
 
 export default function Calendar({ openToggle, getAvailableSlots }) {
   const { setBookingField, bookingData } = useBooking();
-  const [isOpen, setIsOpen] = useState(!bookingData.duration)
+  const [isOpen, setIsOpen] = useState(!bookingData.duration || bookingData.duration === 2)
 
   const {
     calendarDays,
@@ -69,7 +69,6 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
                   if (!day.blocked && !day.isEmpty) {
                     const selected = new Date(currentDate.getFullYear(), currentDate.getMonth(), day.date);
                     selected.setHours(12, 0, 0, 0);
-                    console.log(bookingData.studio.id, selected, bookingData.duration || 2)
                     setSelectedDate(selected);
                     setBookingField("date", selected);
                     setBookingField("startSlot", null);
