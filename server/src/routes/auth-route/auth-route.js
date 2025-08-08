@@ -34,11 +34,28 @@ router.get(
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: FAILURE_DIR,
-    successRedirect: SUCCESS_DIR,
-    failureMessage: "Failed to login with Google",
+    session: false,
   }),
   (req, res) => {
-    res.redirect("/goocast");
+    const userData = {
+      _id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role,
+    };
+
+    const html = `
+      <html>
+        <body>
+          <script>
+            window.opener.postMessage(${JSON.stringify(userData)}, "*");
+            window.location.href = "/success-login";
+          </script>
+        </body>
+      </html>
+    `;
+
+    res.send(html);
   }
 );
 
