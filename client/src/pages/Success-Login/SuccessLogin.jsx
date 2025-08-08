@@ -3,24 +3,12 @@ import { CheckCircle } from 'lucide-react';
 
 export default function SuccessLogin() {
     React.useEffect(() => {
-        const handleMessage = (event) => {
-            const user = event.data;
-            if (user && user._id) {
-                localStorage.setItem("user", JSON.stringify(user));
-
-                if (window.opener && !window.opener.closed) {
-                    window.opener.location.href = "/";
-                }
-
-                window.close();
+        setTimeout(() => {
+            if (window.opener && !window.opener.closed) {
+                window.opener.location.href = '/';
             }
-        };
-
-        window.addEventListener("message", handleMessage);
-
-        return () => {
-            window.removeEventListener("message", handleMessage);
-        };
+            window.close();
+        }, 1000);
     }, []);
 
     return (
