@@ -32,7 +32,7 @@ export default function PersonalInformation() {
 
             {/* Responsive Content */}
             <div className="flex flex-col lg:flex-row items-start gap-6 w-full" >
-                <div className="border-1 border-gray-100 shadow-sm px-2 py-5 rounded-md lg:w-2/3">
+                <div className="border-1 border-gray-100 shadow-sm px-2 py-5 rounded-md lg:w-2/3 w-full">
                     {/* Form section */}
                     <form className="w-full space-y-2 px-5 ">
                         <motion.div {...motionProps} className="flex flex-col lg:flex-row gap-4 w-full m-0 b-0">
