@@ -21,7 +21,7 @@ const createBookingLogic = async (body, user_id) => {
     duration,
     persons,
     package: selectedPackage,
-    selectedAddOns ,
+    selectedAddOns,
     personalInfo,
     totalPrice: totalPriceFromClient,
     totalPriceAfterDiscount: totalPriceAfterDiscountFromClient,
@@ -112,8 +112,8 @@ const createBookingLogic = async (body, user_id) => {
 
   const totalPrice = Math.round(
     packagePrice +
-      totalAddOnsPriceFromDb +
-      (packagePrice + totalAddOnsPriceFromDb) * 0.14
+    totalAddOnsPriceFromDb +
+    (packagePrice + totalAddOnsPriceFromDb) * 0.14
   );
   if (totalPrice !== totalPriceFromClient)
     throw new AppError(
@@ -175,6 +175,8 @@ const createBookingLogic = async (body, user_id) => {
     startSlot,
     endSlot,
     totalPriceAfterDiscount,
+    startSlotMinutes,
+    endSlotMinutes,
   };
 };
 

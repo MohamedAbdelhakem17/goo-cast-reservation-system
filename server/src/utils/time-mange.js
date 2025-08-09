@@ -42,11 +42,16 @@ function getAllDay(inputDate) {
 }
 
 const combineDateAndTime = (date, timeStr) => {
+  const dateObj = new Date(date);
+  const year = dateObj.getUTCFullYear();
+  const month = dateObj.getUTCMonth();
+  const day = dateObj.getUTCDate();
+  
   const [hours, minutes] = timeStr.split(":").map(Number);
-  const combined = new Date(date);
-  combined.setHours(hours);
-  combined.setMinutes(minutes);
-  return combined.toISOString(); 
+  
+  const combined = new Date(Date.UTC(year, month, day, hours, minutes, 0, 0));
+  
+  return combined.toISOString();
 };
 
 module.exports = {
