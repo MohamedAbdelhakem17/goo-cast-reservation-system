@@ -139,8 +139,8 @@ const Signin = ({ closeModal, changeForm }) => {
             </motion.button>
 
             {/* Google Button */}
-            <hr className="border-gray-300 my-4"/>
-            <GoogleButton label="Sign in with Google" />
+            {/* <hr className="border-gray-300 my-4"/>
+            <GoogleButton label="Sign in with Google" /> */}
 
             {/* Server Error */}
             {
