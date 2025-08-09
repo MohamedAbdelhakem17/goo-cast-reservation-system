@@ -6,7 +6,34 @@ const headers = {
   version: process.env.GO_HIGH_LEVEL_VERSION,
 };
 
-// Function to create a new contact in Go High Level
+/**
+ * Search for a contact in Go High Level by a specific field (email or phone).
+ */
+const searchContact = async (field, value) => {
+  if (!value) return null;
+
+  const url = process.env.GO_HIGH_LEVEL_URL + "/contacts/search/";
+  const body = {
+    locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
+    pageLimit: 1,
+    filters: [
+      { field, operator: "eq", value }
+    ],
+  };
+
+  try {
+    const response = await axios.post(url, body, { headers });
+    return response?.data?.contacts?.[0]?.id || null;
+  } catch (error) {
+    console.error(`Error searching contact by ${field}:`, error.response?.data);
+    return null;
+  }
+};
+
+/**
+ * Create a new contact in Go High Level.
+ * If phone number or email already exists, return the existing contact ID.
+ */
 const createContact = async (contactData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/contacts";
   const body = {
@@ -21,40 +48,48 @@ const createContact = async (contactData) => {
     return response.data.contact.id;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("Create contact error:", error.response?.data);
-      console.error("Status code:", error.response?.status);
+      const { status, data } = error.response || {};
+
+      console.error("Create contact error:", data);
+      console.error("Status code:", status);
+
+      // If duplicate contact error, return existing ID instead of throwing
+      if (
+        status === 409 ||
+        (data?.message && data.message.includes("already exists"))
+      ) {
+        console.warn("Contact already exists, retrieving existing contact ID...");
+        // Try finding the contact by email, then by phone
+        let contactId = await searchContact("email", contactData.email);
+        if (!contactId && contactData.phone) {
+          contactId = await searchContact("phone", contactData.phone);
+        }
+        return contactId;
+      }
     }
     throw error;
   }
 };
 
-// Function to get the contact ID from Go High Level
-// If the contact does not exist, create a new one
+/**
+ * Get or create the contact ID in Go High Level.
+ */
 const getContactID = async (userData) => {
-  const url = process.env.GO_HIGH_LEVEL_URL + "/contacts/search/";
-  const body = {
-    locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
-    pageLimit: 1,
-    filters: [
-      {
-        field: "email",
-        operator: "eq",
-        value: userData.email,
-      },
-    ],
-  };
+  // Try finding the contact by email first
+  let contactId = await searchContact("email", userData.email);
 
-  try {
-    const response = await axios.post(url, body, { headers });
-    const contactId = response?.data?.contacts[0]?.id;
-    const isContactIdExists = Boolean(contactId);
-    return isContactIdExists ? contactId : await createContact(userData);
-  } catch (error) {
-    console.error("Error fetching contact ID:", error.response?.data);
-    throw error;
+  // If not found by email, search by phone
+  if (!contactId && userData.phone) {
+    contactId = await searchContact("phone", userData.phone);
   }
+
+  // If no contact found, create a new one
+  return contactId ? contactId : await createContact(userData);
 };
 
+/**
+ * Create an opportunity in Go High Level.
+ */
 const createOpportunity = async (opportunityData) => {
   const url = "https://services.leadconnectorhq.com/opportunities/";
   const body = {
@@ -78,19 +113,22 @@ const createOpportunity = async (opportunityData) => {
       console.error("Create opportunity error:", data);
       console.error("Status code:", status);
 
+      // If opportunity already exists, skip creating a new one
       if (
         status === 409 ||
         (data?.message && data.message.includes("already exists"))
       ) {
-        console.warn("Opportunity already exists or was created, skipping.");
+        console.warn("Opportunity already exists or was already created, skipping.");
         return null;
       }
     }
-
     throw error;
   }
 };
 
+/**
+ * Create an appointment in Go High Level.
+ */
 const createAppointment = async (contactId, appointmentData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/calendars/events/appointments";
 
@@ -116,6 +154,9 @@ const createAppointment = async (contactId, appointmentData) => {
   }
 };
 
+/**
+ * Main function to save opportunity and appointment in Go High Level.
+ */
 const saveOpportunityInGoHighLevel = async (
   userData,
   opportunityData,
