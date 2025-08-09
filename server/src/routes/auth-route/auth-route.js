@@ -18,7 +18,7 @@ router.get("/activate/:token", authController.activateEmail);
 const SUCCESS_DIR = process.env.BASE_URL + "/login/success";
 const FAILURE_DIR = process.env.BASE_URL + "/login/failure";
 
-router.post("/signout", protectRoute, authController.signout);
+router.post("/signout", authController.signout);
 
 router.put("/reset-password", authController.resetPassword);
 
