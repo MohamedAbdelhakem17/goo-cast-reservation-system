@@ -3,12 +3,12 @@ import {CreditCard, Banknote } from 'lucide-react';
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 
 const paymentMethods = [
-    {
-        id: "CARD",
-        label: "Credit/Debit Card",
-        description: "Pay securely online with Visa, Mastercard, or American Express",
-        icon: <CreditCard />,
-    },
+    // {
+    //     id: "CARD",
+    //     label: "Credit/Debit Card",
+    //     description: "Pay securely online with Visa, Mastercard, or American Express",
+    //     icon: <CreditCard />,
+    // },
     {
         id: "CASH",
         label: "Pay at Studio (Cash)",
@@ -18,7 +18,7 @@ const paymentMethods = [
 ];
 
 export default function PaymentOptions() {
-    const [selected, setSelected] = useState("CARD");
+    const [selected, setSelected] = useState("CASH");
     const { setBookingField } = useBooking();
 
     return (

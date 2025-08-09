@@ -144,7 +144,7 @@ const createAppointment = async (contactId, appointmentData) => {
 
   try {
     const response = await axios.post(url, body, { headers });
-    console.log("✅ Appointment created:", response.data?.data?.id);
+    console.log("✅ Appointment created:");
     return response.data?.data?.id;
   } catch (error) {
     if (axios.isAxiosError(error)) {

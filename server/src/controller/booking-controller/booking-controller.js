@@ -1158,8 +1158,6 @@ exports.createBooking = asyncHandler(async (req, res) => {
       }),
     };
 
-    console.log(startSlot, endSlot);
-    console.log(bookingDate);
     const appointmentData = {
       startTime: combineDateAndTime(bookingDate, startSlot),
       endTime: combineDateAndTime(bookingDate, endSlot),
