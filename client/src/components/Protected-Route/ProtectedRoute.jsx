@@ -2,30 +2,22 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/Auth-Context/AuthContext';
 import LoadingScreen from '../loading-screen/LoadingScreen';
-import axios from '../../apis/axiosInstance';
 
 export default function ProtectedRoute({ children, allowedRoles = [], redirectTo = "/" }) {
     const { state, dispatch } = useAuth();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!state.isAuthenticated) {
-            axios.get('/auth/is-login')
-                .then((res) => {
-                    if (res.data?.user) {
-                        dispatch({ type: 'LOGIN', payload: res.data.user });
-                    } else {
-                        dispatch({ type: 'LOGOUT' });
-                    }
-                })
-                .catch(() => {
-                    dispatch({ type: 'LOGOUT' });
-                })
-                .finally(() => setLoading(false));
+        const storedUser = localStorage.getItem("user");
+
+        if (storedUser) {
+            dispatch({ type: 'LOGIN', payload: JSON.parse(storedUser) });
         } else {
-            setLoading(false);
+            dispatch({ type: 'LOGOUT' });
         }
-    }, [state.isAuthenticated, dispatch]);
+
+        setLoading(false);
+    }, [dispatch]);
 
     if (loading) return <LoadingScreen />;
 
