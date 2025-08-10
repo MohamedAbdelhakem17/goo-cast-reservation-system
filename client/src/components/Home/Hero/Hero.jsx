@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import useQuickBooking from "../../../hooks/useQuickBooking";
+import GTMEventTracking from "../../../GTM/GTMEventTracking";
 
 export default function Hero() {
-  
   // Animation variants for text elements
   const textVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -40,12 +40,19 @@ export default function Hero() {
     },
   };
 
-  const { handleQuickBooking } = useQuickBooking()
+  const { handleQuickBooking } = useQuickBooking();
+  const sendEvent = GTMEventTracking();
+  console.log(sendEvent);
 
   return (
     <section className="relative py-16 overflow-hidden">
       {/* Animated gradient background */}
-      <motion.div className="absolute inset-0 -z-10" initial="hidden" animate="visible" variants={gradientVariants}>
+      <motion.div
+        className="absolute inset-0 -z-10"
+        initial="hidden"
+        animate="visible"
+        variants={gradientVariants}
+      >
         <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-blue-50 opacity-70 rounded-md"></div>
 
         {/* color in top right corner */}
@@ -76,14 +83,18 @@ export default function Hero() {
             delay: 1,
           }}
         ></motion.div>
-
       </motion.div>
 
       {/* Main content */}
       <div className="max-w-6xl mx-auto text-center px-6 md:px-12 relative z-10">
         {/* Animated Welcome Text with letter animation */}
-        <motion.div className="overflow-hidden mb-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} >
-          {Array.from("Wellcome").map((letter, index) => (
+        <motion.div
+          className="overflow-hidden mb-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {Array.from("Welcome").map((letter, index) => (
             <motion.span
               key={index}
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-main font-sub inline-block"
@@ -193,7 +204,14 @@ export default function Hero() {
                 "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
             }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => handleQuickBooking(1)}
+            onClick={() => {
+              handleQuickBooking(1);
+              sendEvent("quick_booking_button_click", {
+                event_category: "button",
+                event_action: "click",
+                event_label: "Book Now",
+              });
+            }}
           >
             <motion.span
               className="absolute inset-0 w-0 bg-white/20"
