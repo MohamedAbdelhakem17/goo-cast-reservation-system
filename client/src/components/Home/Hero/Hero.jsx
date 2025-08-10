@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import useQuickBooking from "../../../hooks/useQuickBooking";
 import GTMEventTracking from "../../../GTM/GTMEventTracking";
+import { trackEvent } from "../../../GTM/gtm";
 
 export default function Hero() {
   // Animation variants for text elements
@@ -205,7 +206,7 @@ export default function Hero() {
             whileTap={{ scale: 0.97 }}
             onClick={() => {
               handleQuickBooking(1);
-              sendEvent("quick_booking_button_click", {
+              trackEvent("quick_booking_button_click", {
                 event_category: "button",
                 event_action: "click",
                 event_label: "Book Now",

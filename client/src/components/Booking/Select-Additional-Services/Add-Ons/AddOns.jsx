@@ -5,6 +5,7 @@ import Loading from "../../../shared/Loading/Loading";
 import { useCallback } from "react";
 import usePriceFormat from "../../../../hooks/usePriceFormat";
 import GTMEventTracking from "../../../../GTM/GTMEventTracking";
+import { trackEvent } from "../../../../GTM/gtm";
 
 export default function AddOns() {
   const { data: addOns, isLoading } = GetAllAddOns();
@@ -37,9 +38,9 @@ export default function AddOns() {
       }
 
       setBookingField("selectedAddOns", updatedAddOns);
-      sendEvent("select_addon", { addon_name: name });
+      trackEvent("select_addon", { addon_name: name });
     },
-    [bookingData.selectedAddOns, setBookingField, sendEvent]
+    [bookingData.selectedAddOns, setBookingField]
   );
 
   const getQuantity = (id) => {
