@@ -5,15 +5,15 @@ import { useLocation } from "react-router-dom";
 export default function TrackPageView() {
   const location = useLocation();
 
-  useEffect(() => {
-    const tagManagerArgs = {
-      dataLayer: {
-        event: "pageview",
-        page: location.pathname,
-      },
-    };
-    TagManager.dataLayer(tagManagerArgs);
-  }, [location]);
+useEffect(() => {
+  TagManager.dataLayer({
+    dataLayer: {
+      event: "page_view",
+      page_path: location.pathname,
+    },
+  });
+}, [location.pathname]);
+
 
   return null;
 }
