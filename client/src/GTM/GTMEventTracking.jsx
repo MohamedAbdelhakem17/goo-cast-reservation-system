@@ -9,7 +9,8 @@ export default function GTMEventTracking() {
         ...data,
       },
     };
-    TagManager.dataLayer(tagManagerArgs);
+    // TagManager.dataLayer(tagManagerArgs);
+    return tagManagerArgs;
   }, []);
 
   return sendEvent;
