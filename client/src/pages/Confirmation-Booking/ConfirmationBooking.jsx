@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom"
 import usePriceFormat from "../../hooks/usePriceFormat"
 import { PDFDownloadLink } from "@react-pdf/renderer"
 import BookingReceiptPDF from "../../components/shared/Booking-Receipt-PDF/BookingReceiptPDF"
+import useDateFormat from "../../hooks/useDateFormat"
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -58,6 +59,7 @@ export default function BookingConfirmation() {
     const bookingData = JSON.parse(localStorage.getItem("bookingConfirmation"))?.bookingResponse;
 
     const priceFormat = usePriceFormat();
+    const dateFormat = useDateFormat()
 
     return (
         <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
@@ -115,7 +117,7 @@ export default function BookingConfirmation() {
                                     </div>
                                     <DetailRow icon={MapPin} label="Studio" value={bookingData?.studio?.name} />
                                 </div>
-                                <DetailRow icon={Calendar} label="Date" value={bookingData?.date} />
+                                <DetailRow icon={Calendar} label="Date" value={dateFormat(bookingData?.date)} />
                                 <DetailRow icon={Clock} label="Time & Duration" value={`${bookingData?.startSlot} (${bookingData?.duration}h)`} />
                             </div>
                         </motion.div>
