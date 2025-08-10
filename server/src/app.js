@@ -31,7 +31,7 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 }
 
 // Security headers
-app.use(helmet());
+// app.use(helmet());
 
 // Body parser
 app.use(express.json());
