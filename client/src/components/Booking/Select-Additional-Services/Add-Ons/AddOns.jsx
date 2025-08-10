@@ -109,7 +109,7 @@ export default function AddOns() {
                 isSelected ? "border-main" : "border-gray-300"
               }`}
             >
-              <div className="w-full h-40 overflow-hidden p-4 relative">
+              <div className="w-full h-80 overflow-hidden p-4 relative">
                 <div className="p-1 w-fit bg-black/70 text-white rounded-lg text-sm flex items-center justify-center top-6 right-4 absolute">
                   {priceFormat(addon.price)}
                 </div>

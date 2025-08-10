@@ -58,6 +58,8 @@ export default function BookingConfirmation() {
     const navigate = useNavigate();
     const bookingData = JSON.parse(localStorage.getItem("bookingConfirmation"))?.bookingResponse;
 
+    
+
     const priceFormat = usePriceFormat();
     const dateFormat = useDateFormat()
 

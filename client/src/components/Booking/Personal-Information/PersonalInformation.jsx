@@ -147,7 +147,9 @@ export default function PersonalInformation() {
                   !formik.isSubmitting
                     ? () => {
                         handleSubmit();
-                        trackEvent("create_booking");
+                        trackEvent("create_booking", {
+                          totalPrice: bookingData.totalPrice,
+                        });
                       }
                     : undefined
                 }
