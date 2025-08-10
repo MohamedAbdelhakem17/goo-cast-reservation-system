@@ -19,7 +19,6 @@ export default function PersonalInformation() {
     hasError,
     handlePrevStep,
     handleSubmit,
-    isSubmitting,
   } = useBooking();
 
   const { firstName, lastName, phone, email, brand } = bookingData.personalInfo;
@@ -142,9 +141,9 @@ export default function PersonalInformation() {
             <div className="mt-3 flex items-center gap-4 px-5 ">
               <button
                 type="button"
-                disabled={hasError() || isSubmitting}
+                disabled={hasError() || formik.isSubmitting}
                 onClick={
-                  !isSubmitting
+                  !formik.isSubmitting
                     ? () => {
                         handleSubmit();
                         sendEvent("create_booking");
@@ -152,13 +151,13 @@ export default function PersonalInformation() {
                     : undefined
                 }
                 className={`w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center md:flex-row flex-col justify-center my-2 transition-all duration-200 
-                                        ${
-                                          hasError() || isSubmitting
-                                            ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-                                            : "bg-main text-white hover:opacity-90"
-                                        }`}
+    ${
+      hasError() || formik.isSubmitting
+        ? "bg-gray-100 text-gray-300 cursor-not-allowed"
+        : "bg-main text-white hover:opacity-90"
+    }`}
               >
-                {isSubmitting ? (
+                {formik.isSubmitting ? (
                   <div className="flex items-center gap-2">
                     <Loader />
                     <span>Processing...</span>
