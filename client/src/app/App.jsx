@@ -37,7 +37,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Router>
-          <TrackPageView />
+          {/* <TrackPageView /> */}
           <ToastProvider>
             <AppRouter />
           </ToastProvider>
