@@ -42,7 +42,6 @@ export default function Hero() {
 
   const { handleQuickBooking } = useQuickBooking();
   const sendEvent = GTMEventTracking();
-  console.log(sendEvent);
 
   return (
     <section className="relative py-16 overflow-hidden">

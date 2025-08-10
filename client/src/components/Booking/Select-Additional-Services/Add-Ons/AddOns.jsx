@@ -4,37 +4,43 @@ import { GetAllAddOns } from "../../../../apis/services/services.api";
 import Loading from "../../../shared/Loading/Loading";
 import { useCallback } from "react";
 import usePriceFormat from "../../../../hooks/usePriceFormat";
+import GTMEventTracking from "../../../../GTM/GTMEventTracking";
 
 export default function AddOns() {
   const { data: addOns, isLoading } = GetAllAddOns();
+  const sendEvent = GTMEventTracking();
   const { bookingData, setBookingField } = useBooking();
 
   const priceFormat = usePriceFormat();
 
-  const handleAddOnChange = useCallback((id, name, quantity, price) => {
-    let updatedAddOns = [...bookingData.selectedAddOns];
-    const index = updatedAddOns.findIndex((addon) => addon._id === id);
+  const handleAddOnChange = useCallback(
+    (id, name, quantity, price) => {
+      let updatedAddOns = [...bookingData.selectedAddOns];
+      const index = updatedAddOns.findIndex((addon) => addon._id === id);
 
-    if (quantity === 0 && index !== -1) {
-      updatedAddOns.splice(index, 1);
-    } else if (index !== -1) {
-      updatedAddOns[index] = {
-        ...updatedAddOns[index],
-        quantity,
-        totalPrice: price * quantity,
-      };
-    } else {
-      updatedAddOns.push({
-        _id: id,
-        name,
-        quantity,
-        price,
-        totalPrice: price * quantity,
-      });
-    }
+      if (quantity === 0 && index !== -1) {
+        updatedAddOns.splice(index, 1);
+      } else if (index !== -1) {
+        updatedAddOns[index] = {
+          ...updatedAddOns[index],
+          quantity,
+          totalPrice: price * quantity,
+        };
+      } else {
+        updatedAddOns.push({
+          _id: id,
+          name,
+          quantity,
+          price,
+          totalPrice: price * quantity,
+        });
+      }
 
-    setBookingField("selectedAddOns", updatedAddOns);
-  }, [bookingData.selectedAddOns, setBookingField]);
+      setBookingField("selectedAddOns", updatedAddOns);
+      sendEvent("select_addon", { addon_name: name });
+    },
+    [bookingData.selectedAddOns, setBookingField, sendEvent]
+  );
 
   const getQuantity = (id) => {
     const found = bookingData.selectedAddOns.find((item) => item._id === id);
@@ -98,8 +104,9 @@ export default function AddOns() {
             <motion.div
               key={addon._id}
               variants={cardVariants}
-              className={`bg-white rounded-xl overflow-hidden shadow-sm border flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300 ${isSelected ? 'border-main' : 'border-gray-300'
-                }`}
+              className={`bg-white rounded-xl overflow-hidden shadow-sm border flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300 ${
+                isSelected ? "border-main" : "border-gray-300"
+              }`}
             >
               <div className="w-full h-40 overflow-hidden p-4 relative">
                 <div className="p-1 w-fit bg-black/70 text-white rounded-lg text-sm flex items-center justify-center top-6 right-4 absolute">
@@ -180,9 +187,8 @@ export default function AddOns() {
   );
 }
 
-
-
-{/* <div className="pt-4 mt-4  flex items-center justify-between">
+{
+  /* <div className="pt-4 mt-4  flex items-center justify-between">
                   <span className="text-base font-bold text-gray-800">
                     {addon.price.toLocaleString()} EGP
                   </span>
@@ -213,4 +219,5 @@ export default function AddOns() {
                       <i className="fa-solid fa-plus text-sm"></i>
                     </motion.button>
                   </div>
-                </div> */}
+                </div> */
+}
