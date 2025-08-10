@@ -6,7 +6,7 @@ import TagManager from "react-gtm-module";
 import AppRouter from "../Routes/Router";
 import AuthProvider from "../context/Auth-Context/AuthContext";
 import { ToastProvider } from "../context/Toaster-Context/ToasterContext";
-import PageTracker from "../components/PageTracker/PageTracker";
+import TrackPageView from "../GTM/TrackPageView ";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +44,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Router>
-          <PageTracker />
+          <TrackPageView />
           <ToastProvider>
             <AppRouter />
           </ToastProvider>
