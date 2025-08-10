@@ -15,7 +15,7 @@ const authReducer = (state, action) => {
       localStorage.setItem("user", JSON.stringify(action.payload)); 
       return {
         isAuthenticated: true,
-        user: action.payload,ذ
+        user: action.payload,
         loading: false,
       };
     case "LOGOUT":
