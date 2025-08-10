@@ -196,9 +196,9 @@ export default function Signup({ closeModal, changeForm }) {
               )
 
             }
-
+{/* 
             <hr className="border-gray-300 my-4"/>
-            <GoogleButton label="Sign up with Google" />
+            <GoogleButton label="Sign up with Google" /> */}
 
           </form>
 

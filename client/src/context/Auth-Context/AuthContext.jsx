@@ -1,31 +1,28 @@
-import { createContext, useContext, useEffect, useReducer } from 'react';
-import axios from "../../apis/axiosInstance";
+import { createContext, useContext, useEffect, useReducer } from "react";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
+
 const initialState = {
   isAuthenticated: false,
   user: null,
-  loading: true, // ✅ مضافة
+  loading: true,
 };
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
+      localStorage.setItem("user", JSON.stringify(action.payload)); 
       return {
         isAuthenticated: true,
         user: action.payload,ذ
         loading: false,
       };
     case "LOGOUT":
+      localStorage.removeItem("user"); 
       return {
         isAuthenticated: false,
         user: null,
-        loading: false,
-      };
-    case "STOP_LOADING":
-      return {
-        ...state,
         loading: false,
       };
     default:
@@ -37,18 +34,12 @@ export default function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    axios
-      .get("/auth/is-login")
-      .then((res) => {
-        if (res.data?.user) {
-          dispatch({ type: "LOGIN", payload: res.data.user });
-        } else {
-          dispatch({ type: "LOGOUT" });
-        }
-      })
-      .catch(() => {
-        dispatch({ type: "LOGOUT" });
-      });
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      dispatch({ type: "LOGIN", payload: JSON.parse(storedUser) });
+    } else {
+      dispatch({ type: "LOGOUT" });
+    }
   }, []);
 
   return (
@@ -58,7 +49,7 @@ export default function AuthProvider({ children }) {
         dispatch,
         isAuthenticated: state.isAuthenticated,
         user: state.user,
-        loading: state.loading, 
+        loading: state.loading,
       }}
     >
       {children}
