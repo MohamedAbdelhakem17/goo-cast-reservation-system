@@ -4,6 +4,7 @@ import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetPackagesByCategory } from "../../../../apis/services/services.api";
 import BookingHeader from "../../../shared/Booking-Header/BookingHeader";
 import GTMEventTracking from "../../../../GTM/GTMEventTracking";
+import { trackEvent } from "../../../../GTM/gtm";
 
 export default function HourlyRecording() {
   const sendEvent = GTMEventTracking();
@@ -27,7 +28,7 @@ export default function HourlyRecording() {
       slug: pkg.category.slug,
       price: pkg.price,
     });
-    sendEvent("select_package", { package_name: pkg.name });
+    trackEvent("select_package", { package_name: pkg.name });
     setBookingField("startSlot", null);
     setBookingField("endSlot", null);
     setBookingField("studio", null);

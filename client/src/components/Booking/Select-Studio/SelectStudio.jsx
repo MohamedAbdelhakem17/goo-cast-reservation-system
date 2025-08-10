@@ -6,6 +6,7 @@ import { useGetAvailableStudio } from "../../../apis/Booking/booking.api";
 import NavigationButtons from "../Navigation-Buttons/NavigationButtons";
 import BookingHeader from "../../shared/Booking-Header/BookingHeader";
 import GTMEventTracking from "../../../GTM/GTMEventTracking";
+import { trackEvent } from "../../../GTM/gtm";
 
 export default function SelectStudio() {
   const { setBookingField, bookingData, handleNextStep } = useBooking();
@@ -90,7 +91,7 @@ export default function SelectStudio() {
                   name: studio.name,
                   image: studio.thumbnail,
                 });
-                sendEvent("select_studio", { studio_name: studio.name });
+                trackEvent("select_studio", { studio_name: studio.name });
               }}
             >
               {/* Image with Click Indicator */}
