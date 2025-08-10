@@ -15,16 +15,16 @@ export default function CartContent() {
     function StudioSection({ studio, date, startSlot, formatTime, duration }) {
         if (!studio) return null
         return (
-            <div className="space-y-1 border-b-1 border-gray-300 pb-3">
-                <p className="text-md text-gray-500">
+            <div className="pb-3 space-y-1 border-gray-300 border-b-1">
+                <p className="text-gray-500 text-md">
                     <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
                     {formatDate(date)}
                 </p>
-                <p className="text-md text-gray-500">
+                <p className="text-gray-500 text-md">
                     <i className="fa-solid fa-clock mr-2 text-[12px]"></i>
                     {formatTime(startSlot)} ({duration}h)
                 </p>
-                <p className="text-md text-gray-500">
+                <p className="text-gray-500 text-md">
                     <i className="fa-solid fa-location-dot mr-2 text-[12px]"></i>
                     {studio.name}
                 </p>
@@ -35,11 +35,11 @@ export default function CartContent() {
     function PackageSection({ selectedPackage, duration, totalPackagePrice, priceFormat }) {
         if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null
         return (
-            <div className="flex items-center justify-between pb-1 pt-2">
-                <p className="text-md text-gray-500">
+            <div className="flex items-center justify-between pt-2 pb-1">
+                <p className="text-gray-500 text-md">
                     {selectedPackage.name} ({duration}h)
                 </p>
-                <p className="text-md text-gray-500">{priceFormat(totalPackagePrice)}</p>
+                <p className="text-gray-500 text-md">{priceFormat(totalPackagePrice)}</p>
             </div>
         )
     }
@@ -50,8 +50,8 @@ export default function CartContent() {
             <ul className="pb-2">
                 {selectedAddOns.map((addon) => (
                     <li className="flex items-center justify-between py-1" key={addon._id}>
-                        <p className="text-md text-gray-500">{addon.name}</p>
-                        <p className="text-md text-gray-500">
+                        <p className="text-gray-500 text-md">{addon.name}</p>
+                        <p className="text-gray-500 text-md">
                             x{addon.quantity} / {addon.price} EGP
                         </p>
                     </li>
@@ -65,7 +65,6 @@ export default function CartContent() {
     const formatTime = useTimeConvert()
     const priceFormat = usePriceFormat()
 
-    // الحسابات الرئيسية
     const totalAddOnPrice = useMemo(() => {
         return bookingData.selectedAddOns?.reduce(
             (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
@@ -99,8 +98,8 @@ export default function CartContent() {
     }, [totalBeforeDiscount, totalAfterDiscount])
 
     return (
-        <div className="border rounded-lg border-gray-200 py-4 px-5 sticky top-0">
-            <h2 className="py-2 my-2 text-bold text-lg">Reservation Summary</h2>
+        <div className="sticky top-0 px-5 py-4 border border-gray-200 rounded-lg">
+            <h2 className="py-2 my-2 text-lg text-bold">Reservation Summary</h2>
 
             <StudioSection
                 studio={bookingData.studio}
@@ -120,12 +119,12 @@ export default function CartContent() {
             <AddOnsSection selectedAddOns={bookingData.selectedAddOns} />
 
             {/* الفاتورة */}
-            <div className="border-t border-b border-gray-200 py-2 space-y-2 my-2">
+            <div className="py-2 my-2 space-y-2 border-t border-b border-gray-200">
                 <div className="flex justify-between text-md">
                     <span>Subtotal</span>
                     <span>{priceFormat(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-md text-gray-600">
+                <div className="flex justify-between text-gray-600 text-md">
                     <span>VAT ({VAT_PERCENTAGE}%)</span>
                     <span>{priceFormat(vatAmount)}</span>
                 </div>
@@ -138,8 +137,8 @@ export default function CartContent() {
             </div>
 
             <div className="flex items-center justify-between py-1 pt-2">
-                <p className="text-md font-bold">Total</p>
-                <p className="text-md text-gray-500">{priceFormat(totalAfterDiscount)}</p>
+                <p className="font-bold text-md">Total</p>
+                <p className="text-gray-500 text-md">{priceFormat(totalAfterDiscount)}</p>
             </div>
 
             <ApplyDiscount />
@@ -163,7 +162,7 @@ export default function CartContent() {
             )}
 
             {currentStep === 5 && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <div className="p-3 border border-green-200 rounded-lg bg-green-50">
                     <p className="text-xs text-green-700">
                         🔒 Your booking is secured with SSL encryption and protected by our privacy policy.
                     </p>
