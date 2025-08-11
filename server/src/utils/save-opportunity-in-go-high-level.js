@@ -16,9 +16,7 @@ const searchContact = async (field, value) => {
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     pageLimit: 1,
-    filters: [
-      { field, operator: "eq", value }
-    ],
+    filters: [{ field, operator: "eq", value }],
   };
 
   try {
@@ -36,8 +34,11 @@ const searchContact = async (field, value) => {
  */
 const createContact = async (contactData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/contacts";
+  const [firstName, lastName] = contactData.name.split(" ");
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
+    first_name: firstName,
+    last_name: lastName,
     full_name: contactData.name,
     email: contactData.email,
     phone: contactData.phone,
@@ -58,7 +59,9 @@ const createContact = async (contactData) => {
         status === 409 ||
         (data?.message && data.message.includes("already exists"))
       ) {
-        console.warn("Contact already exists, retrieving existing contact ID...");
+        console.warn(
+          "Contact already exists, retrieving existing contact ID..."
+        );
         // Try finding the contact by email, then by phone
         let contactId = await searchContact("email", contactData.email);
         if (!contactId && contactData.phone) {
@@ -92,6 +95,7 @@ const getContactID = async (userData) => {
  */
 const createOpportunity = async (opportunityData) => {
   const url = "https://services.leadconnectorhq.com/opportunities/";
+
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     pipelineId: process.env.GO_HIGH_LEVEL_PIPELINE_ID,
@@ -101,6 +105,20 @@ const createOpportunity = async (opportunityData) => {
     name: opportunityData.name,
     source: "Goocast Booking Website",
     status: "open",
+    customFields: [
+      {
+        id: "dT2pk8lhCsliZZvGTMKy",
+        fieldValue: "Pending",
+      },
+      {
+        id: "FJ8o6VX0okwMKvNcm2XZ",
+        fieldValue: opportunityData.session_type,
+      },
+      {
+        id: "gkl2UWx88U1kiLEU5aay",
+        fieldValue: "Confirmed",
+      },
+    ],
   };
 
   try {
@@ -118,7 +136,9 @@ const createOpportunity = async (opportunityData) => {
         status === 409 ||
         (data?.message && data.message.includes("already exists"))
       ) {
-        console.warn("Opportunity already exists or was already created, skipping.");
+        console.warn(
+          "Opportunity already exists or was already created, skipping."
+        );
         return null;
       }
     }
