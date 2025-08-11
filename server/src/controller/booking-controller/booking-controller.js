@@ -1143,6 +1143,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       startSlot,
       endSlot,
       totalPriceAfterDiscount,
+      duration,
     } = await createBookingLogic(req.body, user_id);
 
     const emailOptions = {
@@ -1160,6 +1161,20 @@ exports.createBooking = asyncHandler(async (req, res) => {
       }),
     };
 
+    const userData = {
+      name: personalInfo.name,
+      email: personalInfo.email,
+      phone: personalInfo.phone,
+    };
+
+    const opportunityData = {
+      name: `${personalInfo.fullName} - ${pkg.name} , ${pkg.session_type} - ${new Date(bookingDate).toISOString().split("T")[0]}`,
+      price: totalPriceAfterDiscount,
+      sessionType: pkg.session_type,
+      duration: duration,
+      studioName: studio.name,
+    };
+    
     const appointmentData = {
       startTime: combineDateAndTime(bookingDate, startSlot),
       endTime: combineDateAndTime(bookingDate, endSlot),
@@ -1169,17 +1184,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
     try {
       await saveOpportunityInGoHighLevel(
-        {
-          // user Data
-          name: personalInfo.name,
-          email: personalInfo.email,
-          phone: personalInfo.phone,
-        },
-        {
-          name: `${studio.name} - ${pkg.name} - ${personalInfo.fullName}`,
-          price: totalPriceAfterDiscount,
-          session_type: pkg.session_type,
-        },
+        userData,
+        opportunityData,
         appointmentData
       );
       await sendEmail(emailOptions);

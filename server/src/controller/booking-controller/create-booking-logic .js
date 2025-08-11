@@ -177,6 +177,7 @@ const createBookingLogic = async (body, user_id) => {
     totalPriceAfterDiscount,
     startSlotMinutes,
     endSlotMinutes,
+    duration
   };
 };
 
