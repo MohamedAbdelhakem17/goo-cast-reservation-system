@@ -8,7 +8,7 @@ require("dotenv").config({
 // ====== Imports ======
 const express = require("express");
 const passport = require("passport");
-const session = require("express-session");
+const session = require("express-session")
 const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
