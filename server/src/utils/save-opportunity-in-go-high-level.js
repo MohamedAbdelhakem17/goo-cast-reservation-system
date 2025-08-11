@@ -94,7 +94,7 @@ const getContactID = async (userData) => {
  * Create an opportunity in Go High Level.
  */
 const createOpportunity = async (opportunityData) => {
-  const url = "https://services.leadconnectorhq.com/opportunities/";
+  const url = process.env.GO_HIGH_LEVEL_URL + "/opportunities/";
 
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
@@ -108,15 +108,28 @@ const createOpportunity = async (opportunityData) => {
     customFields: [
       {
         id: "dT2pk8lhCsliZZvGTMKy",
-        fieldValue: "Pending",
+        key: "payment_status",
+        field_value: "Pending",
       },
       {
         id: "FJ8o6VX0okwMKvNcm2XZ",
-        fieldValue: opportunityData.session_type,
+        key: "session_type",
+        field_value: opportunityData.sessionType,
+      },
+      {
+        id: "IJt4YVb1prb3MACAUE8M",
+        key: "session_deuration",
+        field_value: opportunityData.duration,
+      },
+      {
+        id: "vbUnGycab4X5kR4bB5OS",
+        key: "opportunity.studio_name",
+        field_value: opportunityData.studioName,
       },
       {
         id: "gkl2UWx88U1kiLEU5aay",
-        fieldValue: "Confirmed",
+        key: "appointments_status",
+        field_value: "Confirmed",
       },
     ],
   };
