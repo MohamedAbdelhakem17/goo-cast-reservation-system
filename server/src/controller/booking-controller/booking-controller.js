@@ -331,8 +331,10 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
   }
 
-  const startOfDayMinutes = timeToMinutes(studio.startTime || "09:00");
-  const endOfDayMinutes = timeToMinutes(studio.endTime || "18:00");
+  const startOfDayMinutes = timeToMinutes(studio.startTime || "12:00");
+  const endOfDayMinutes = timeToMinutes(studio.endTime || "20:00");
+  console.log("Start of Day:", studio.startTime);
+  console.log("End of Day:", studio.endTime);
   const inputDate = getAllDay(date);
   const now = new Date();
 
@@ -1168,6 +1170,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     try {
       await saveOpportunityInGoHighLevel(
         {
+          // user Data
           name: personalInfo.name,
           email: personalInfo.email,
           phone: personalInfo.phone,
@@ -1175,6 +1178,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
         {
           name: `${studio.name} - ${pkg.name} - ${personalInfo.fullName}`,
           price: totalPriceAfterDiscount,
+          session_type: pkg.session_type,
         },
         appointmentData
       );
@@ -1205,19 +1209,15 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
 // Create Booking With GHL
 exports.ghlCreateBooking = asyncHandler(async (req, res) => {
-  console.log(req.body)
-  
   const { tempBooking } = await createBookingLogic(req.body);
-  
-  const booking = await tempBooking.save();
 
+  const booking = await tempBooking.save();
 
   res.status(201).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     message: "Booking created successfully",
     data: booking,
   });
-
 });
 
 // Get User Booking History
