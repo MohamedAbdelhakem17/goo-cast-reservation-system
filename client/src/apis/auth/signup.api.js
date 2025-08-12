@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import BASE_URL from "../BASE_URL";
+import {API_BASE_URL} from "@/constants/config";
 
 const SignupForm = ({ closeModel }) => {
     // Server-side error state
@@ -47,7 +47,7 @@ const SignupForm = ({ closeModel }) => {
     // useMutation for signup request
     const { mutate: signup, isLoading, isError, isSuccess, error } = useMutation({
         mutationFn: async (data) => {
-            const response = await axios.post(BASE_URL + "/auth/signup", data);
+            const response = await axios.post(API_BASE_URL + "/auth/signup", data);
             return response.data;
         },
         onError: (err) => {

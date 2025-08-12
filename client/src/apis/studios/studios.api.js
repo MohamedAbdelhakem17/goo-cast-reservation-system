@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import BASE_URL from "../BASE_URL";
+import {API_BASE_URL} from "@/constants/config";
 
 
 
@@ -9,7 +9,7 @@ const useGetAllStudios = () => {
         queryKey: ["studios"],
         queryFn: async () => {
             try {
-                const { data } = await axios.get(`${BASE_URL}/studio`);
+                const { data } = await axios.get(`${API_BASE_URL}/studio`);
                 return data;
             } catch (error) {
                 console.error("Error fetching studios:", error);
@@ -26,7 +26,7 @@ const GetStudioByID = (studioId) => {
         queryKey: ["studios", studioId],
         queryFn: async () => {
             try {
-                const { data } = await axios.get(`${BASE_URL}/studio/${studioId}`);
+                const { data } = await axios.get(`${API_BASE_URL}/studio/${studioId}`);
                 return data;
             } catch (error) {
                 console.error("Error fetching studios:", error);
@@ -44,7 +44,7 @@ const DeleteStudio = () => {
     return useMutation({
         mutationFn: async (studioId) => {
             try {
-                const { data } = await axios.delete(`${BASE_URL}/studio/${studioId}`, {
+                const { data } = await axios.delete(`${API_BASE_URL}/studio/${studioId}`, {
                     headers: {
                         "Content-Type": "application/json",
                         authorization: "Bearer " + localStorage.getItem("token"),
@@ -110,7 +110,7 @@ const UpdateStudio = () => {
                     formData.append("equipment[]", item);
                 });
 
-                const response = await axios.put(`${BASE_URL}/studio/${id}`, formData, {
+                const response = await axios.put(`${API_BASE_URL}/studio/${id}`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                         authorization: "Bearer " + localStorage.getItem("token"),

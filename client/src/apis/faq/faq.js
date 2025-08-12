@@ -6,22 +6,22 @@ import {
   useUpdateData,
   useDeleteData,
 } from "../../hooks/useApi";
-import BASE_URL from "../BASE_URL";
+import {API_BASE_URL} from "@/constants/config";
 
 const GetAllFaqs = () => {
-  return useGetData(["faqs"], `${BASE_URL}/faq`);
+  return useGetData(["faqs"], `${API_BASE_URL}/faq`);
 };
 
 const CreateNewFaqs = () => {
-  return usePostData(["faqs"], `${BASE_URL}/faq`);
+  return usePostData(["faqs"], `${API_BASE_URL}/faq`);
 };
 
 const UpdateFaqs = () => {
-  return useUpdateData(["faqs"], `${BASE_URL}/faq/`);
+  return useUpdateData(["faqs"], `${API_BASE_URL}/faq/`);
 };
 
 const DeleteFaqs = () => {
-  return useDeleteData(["faqs"], `${BASE_URL}/faq/`);
+  return useDeleteData(["faqs"], `${API_BASE_URL}/faq/`);
 };
 
 export { GetAllFaqs, CreateNewFaqs, UpdateFaqs, DeleteFaqs };

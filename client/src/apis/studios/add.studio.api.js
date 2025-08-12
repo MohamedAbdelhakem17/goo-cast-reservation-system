@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import BASE_URL from '../BASE_URL';
+import {API_BASE_URL} from '@/constants/config';
 import { useToast } from '../../context/Toaster-Context/ToasterContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -127,7 +127,7 @@ const AddStudio = () => {
                 formData.append(key, value);
             });
 
-            const { data } = await axios.post(`${BASE_URL}/studio`, formData, {
+            const { data } = await axios.post(`${API_BASE_URL}/studio`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     authorization: "Bearer " + localStorage.getItem("token"),
