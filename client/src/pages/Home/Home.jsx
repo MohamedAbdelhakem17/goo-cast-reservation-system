@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import Hero from '../../components/Home/Hero/Hero'
-import Studio from '../../components/Home/Studio/Studio'
-import PackagesSection from '../../components/Home/Packages-Section/PackagesSection'
-import Reviews from '../../components/Home/Reviews/Reviews'
-import BookNow from '../../components/Home/Book-Now/BookNow'
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Hero from "@/components/Home/Hero/Hero";
+import Studio from "@/components/Home/Studio/Studio";
+import PackagesSection from "@/components/Home/Packages-Section/PackagesSection";
+import Reviews from "@/components/Home/Reviews/Reviews";
+import BookNow from "@/components/Home/Book-Now/BookNow";
 
 const Home = () => {
-  const [showMessage, setShowMessage] = useState(false)
-
+  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     const isActivated = localStorage.getItem("emailActivated");
@@ -21,15 +20,13 @@ const Home = () => {
     }
   }, []);
 
-
   return (
-    <main className='container mx-auto py-5 my-5'>
+    <main className="container mx-auto py-5 my-5">
       <Hero />
       <PackagesSection />
       <BookNow />
       <Studio />
       <Reviews />
-
 
       <AnimatePresence>
         {showMessage && (
@@ -65,9 +62,8 @@ const Home = () => {
           </div>
         )}
       </AnimatePresence>
+    </main>
+  );
+};
 
-    </main >
-  )
-}
-
-export default Home
+export default Home;
