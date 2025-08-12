@@ -5,11 +5,13 @@ import { GetPackagesByCategory } from "../../../../apis/services/services.api";
 import BookingHeader from "../../../shared/Booking-Header/BookingHeader";
 import GTMEventTracking from "../../../../GTM/GTMEventTracking";
 import { trackEvent } from "../../../../GTM/gtm";
+import usePriceFormat from "./../../../../hooks/usePriceFormat";
 
 export default function HourlyRecording() {
   const sendEvent = GTMEventTracking();
   const { setBookingField, handleNextStep, bookingData } = useBooking();
   const { mutate: getPackages, data: packages } = GetPackagesByCategory();
+  const priceFormat = usePriceFormat();
 
   const [selectedPackage, setSelectedPackage] = useState(
     bookingData.selectedPackage?.id || null
@@ -70,7 +72,7 @@ export default function HourlyRecording() {
 
       {/* Packages */}
       <motion.div
-        className="flex flex-wrap gap-8 mt-10 justify-center lg:justify-evenly px-8"
+        className="flex flex-wrap justify-center gap-8 px-8 mt-10 lg:justify-evenly"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -110,20 +112,20 @@ export default function HourlyRecording() {
                   >
                     <i className={`fa-solid fa-${pkg.icon}`}></i>
                   </div>
-                  <h5 className="text-center font-bold text-2xl">
+                  <h5 className="text-2xl font-bold text-center">
                     {pkg.session_type}
                   </h5>
                 </div>
 
                 {/* Description */}
                 <div className="flex-1 mt-2">
-                  <ul className="space-y-2 mb-4 list-disc-main">
+                  <ul className="mb-4 space-y-2 list-disc-main">
                     {[...pkg.details, ...pkg.post_session_benefits].map(
                       (text, index) => (
                         <motion.li
                           key={index}
                           variants={benefitVariants}
-                          className="text-gray-600 text-sm flex items-start "
+                          className="flex items-start text-sm text-gray-600 "
                         >
                           <span
                             className={`mr-2 ${
@@ -137,6 +139,13 @@ export default function HourlyRecording() {
                       )
                     )}
                   </ul>
+                </div>
+
+                {/* Price  */}
+                <div className="p-2 mx-auto my-2 text-center border-t border-b rounded-md w-46 border-main ">
+                  <span className="font-bold">
+                    {priceFormat(pkg.price)} Per Hour
+                  </span>
                 </div>
 
                 {/* Action Button */}
