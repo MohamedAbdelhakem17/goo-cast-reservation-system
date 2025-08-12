@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import BASE_URL from "../BASE_URL";
+import {API_BASE_URL} from "@/constants/config";
 import { useLocation } from "react-router-dom";
 import { useGetData, usePostData, useUpdateData } from "../../hooks/useApi";
 
@@ -10,7 +10,7 @@ const sortedStudioId = JSON.parse(localStorage.getItem("bookingData"))?.studio
 const fetchFullyBookedDates = async ({ studioId, duration }) => {
   if (!studioId || !duration) return []; // ✅ fallback آمن
 
-  const res = await axios.get(`${BASE_URL}/booking/fully-booked/${studioId}`, {
+  const res = await axios.get(`${API_BASE_URL}/booking/fully-booked/${studioId}`, {
     params: { duration },
   });
 
@@ -36,7 +36,7 @@ const useGetAvailableStudio = () => {
     queryKey: ["availableStudios", sortedDate],
     queryFn: async () => {
       const res = await axios.get(
-        `${BASE_URL}/bookings/available-studios/${sortedDate}/${category_id}`
+        `${API_BASE_URL}/bookings/available-studios/${sortedDate}/${category_id}`
       );
       return res.data;
     },
@@ -49,7 +49,7 @@ const GetAvailableSlots = () => {
   const sortedDate = JSON.parse(localStorage.getItem("bookingData"));
   return useMutation({
     mutationFn: async ({ studioId, date, duration }) => {
-      const res = await axios.post(`${BASE_URL}/bookings/available-slots`, {
+      const res = await axios.post(`${API_BASE_URL}/bookings/available-slots`, {
         studioId: studioId || sortedDate?.studio?.id,
         date: date || sortedDate?.date,
         duration: duration || sortedDate?.duration,
@@ -63,7 +63,7 @@ const GetAvailableEndSlots = () => {
   const { state } = useLocation();
   return useMutation({
     mutationFn: async ({ studioId, date, startTime, package_id }) => {
-      const res = await axios.post(`${BASE_URL}/bookings/available-end-slots`, {
+      const res = await axios.post(`${API_BASE_URL}/bookings/available-end-slots`, {
         studioId: studioId || state.studio.id,
         date,
         startTime,
@@ -75,15 +75,15 @@ const GetAvailableEndSlots = () => {
 };
 
 const GetBookings = (filters) =>
-  useGetData("bookings", `${BASE_URL}/bookings`, filters);
+  useGetData("bookings", `${API_BASE_URL}/bookings`, filters);
 
 const ChangeBookingStatus = () =>
-  useUpdateData("bookings", `${BASE_URL}/bookings`);
+  useUpdateData("bookings", `${API_BASE_URL}/bookings`);
 
-const CreateBooking = () => usePostData("bookings", `${BASE_URL}/bookings`);
+const CreateBooking = () => usePostData("bookings", `${API_BASE_URL}/bookings`);
 
 const GetUserBookings = () =>
-  useGetData("userBookings", `${BASE_URL}/bookings/user-bookings`);
+  useGetData("userBookings", `${API_BASE_URL}/bookings/user-bookings`);
 
 export {
   GetFullBookedStudios,

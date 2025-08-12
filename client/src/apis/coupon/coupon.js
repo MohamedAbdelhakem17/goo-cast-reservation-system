@@ -4,26 +4,26 @@ import {
   useUpdateData,
   useDeleteData,
 } from "../../hooks/useApi";
-import BASE_URL from "../BASE_URL";
+import {API_BASE_URL} from "@/constants/config";
 
 const GetAllCoupons = () => {
-  return useGetData(["coupons"], `${BASE_URL}/coupon`);
+  return useGetData(["coupons"], `${API_BASE_URL}/coupon`);
 };
 
 const CreateNewCoupon = () => {
-  return usePostData(["coupons"], `${BASE_URL}/coupon`);
+  return usePostData(["coupons"], `${API_BASE_URL}/coupon`);
 };
 
 const UpdateCoupon = () => {
-  return useUpdateData(["coupons"], `${BASE_URL}/coupon/`);
+  return useUpdateData(["coupons"], `${API_BASE_URL}/coupon/`);
 };
 
 const DeleteCoupon = () => {
-  return useDeleteData(["coupons"], `${BASE_URL}/coupon/`);
+  return useDeleteData(["coupons"], `${API_BASE_URL}/coupon/`);
 };
 
 const ApplyCoupon = () => {
-  return usePostData(["coupons"], `${BASE_URL}/coupon/apply-coupon`);
+  return usePostData(["coupons"], `${API_BASE_URL}/coupon/apply-coupon`);
 };
 
 export {

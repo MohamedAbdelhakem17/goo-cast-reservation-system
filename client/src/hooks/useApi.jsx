@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "../apis/axiosInstance";
+import axiosInstance from "@/utils/axios-instance";
 
 export const useGetData = (key, url, filters = {}) => {
     const { status, studioId, date, page = 1, limit = 10 } = filters;
@@ -48,8 +48,8 @@ export const useUpdateData = (key, url) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ id, payload }) => {
-            const base_url = id ? `${url}/${id}` : url;
-            const { data } = await axiosInstance.put(base_url, payload);
+            const API_BASE_URL = id ? `${url}/${id}` : url;
+            const { data } = await axiosInstance.put(API_BASE_URL, payload);
             return data;
         },
         onSuccess: () => {
@@ -63,8 +63,8 @@ export const useDeleteData = (key, url) => {
 
     return useMutation({
         mutationFn: async ({ id, payload }) => {
-            const base_url = id ? `${url}/${id}` : url;
-            const { data } = await axiosInstance.delete(base_url, {
+            const API_BASE_URL = id ? `${url}/${id}` : url;
+            const { data } = await axiosInstance.delete(API_BASE_URL, {
                 data: payload, 
             });
             return data;
