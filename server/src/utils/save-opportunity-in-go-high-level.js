@@ -35,7 +35,7 @@ const searchContact = async (field, value) => {
  */
 const createContact = async (contactData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/contacts";
-  const [firstName, lastName] = contactData.name.split(" ");
+  const [firstName, lastName] = contactData?.name?.split(" ") || [];
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     first_name: firstName,
@@ -206,13 +206,15 @@ const saveOpportunityInGoHighLevel = async (
 
     // If appointment data is provided, create the appointment first
     if (appointmentData?.startTime) {
-      await createAppointment(contactId, appointmentData);
+      const response = await createAppointment(contactId, appointmentData);
+       console.log("Appointment created:", response);
     }
 
     // Create opportunity only if appointment creation succeeded
     await createOpportunity(opportunityData);
   } catch (error) {
     console.error("Error while saving opportunity:", error);
+
   }
 };
 

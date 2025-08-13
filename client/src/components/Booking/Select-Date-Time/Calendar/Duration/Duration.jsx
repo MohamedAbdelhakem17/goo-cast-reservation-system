@@ -17,7 +17,7 @@ export default function Duration({ isOpen, setIsOpen }) {
         { value: "8", label: "8 hours" },
     ]
 
-    const [selectedDuration, setSelectedDuration] = useState(bookingData.duration || "2")
+    const [selectedDuration, setSelectedDuration] = useState(bookingData.duration || "1")
 
     const handleDurationSelect = (duration) => {
         setSelectedDuration(duration)
