@@ -2,10 +2,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import AppRouter from "../Routes/Router";
-import AuthProvider from "../context/Auth-Context/AuthContext";
-import { ToastProvider } from "../context/Toaster-Context/ToasterContext";
-import TrackPageView from "../GTM/TrackPageView ";
+import AppRouter from "./Routes/Router";
+import AuthProvider from "./context/Auth-Context/AuthContext";
+import { ToastProvider } from "./context/Toaster-Context/ToasterContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
