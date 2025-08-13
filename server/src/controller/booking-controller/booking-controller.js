@@ -344,7 +344,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   for (
     let time = startOfDayMinutes;
     time <= endOfDayMinutes - requiredDurationMinutes;
-    time += 60
+    time += 30
   ) {
     const slotStart = time;
     const slotEnd = time + requiredDurationMinutes;
@@ -1174,7 +1174,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration: duration,
       studioName: studio.name,
     };
-    
+
     const appointmentData = {
       startTime: combineDateAndTime(bookingDate, startSlot),
       endTime: combineDateAndTime(bookingDate, endSlot),
@@ -1182,6 +1182,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
       notes: personalInfo.fullName || personalInfo.name,
     };
 
+
+    // return console.log(appointmentData, "appointmentData");
     try {
       await saveOpportunityInGoHighLevel(
         userData,
