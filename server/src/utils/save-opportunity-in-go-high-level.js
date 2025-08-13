@@ -10,6 +10,7 @@ const headers = {
 /**
  * Search for a contact in Go High Level by a specific field (email or phone).
  */
+
 const searchContact = async (field, value) => {
   if (!value) return null;
 
@@ -38,9 +39,9 @@ const createContact = async (contactData) => {
   const [firstName, lastName] = contactData?.name?.split(" ") || [];
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
-    first_name: firstName,
-    last_name: lastName,
-    full_name: contactData.name,
+    firstName: firstName,
+    lastName: lastName,
+    name: contactData.name,
     email: contactData.email,
     phone: contactData.phone,
   };
@@ -180,13 +181,13 @@ const createAppointment = async (contactId, appointmentData) => {
 
   try {
     const response = await axios.post(url, body, { headers });
-    console.log("✅ Appointment created:", response.data?.data);
-    return;
+    console.log("✅ Appointment created:", response.data);
+    return true;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("Create appointment error:", error.response?.data);
+      return false;
     }
-    throw error;
   }
 };
 
@@ -199,22 +200,22 @@ const saveOpportunityInGoHighLevel = async (
   opportunityData,
   appointmentData
 ) => {
-  try {
-    // Get or create the contact ID
-    const contactId = await getContactID(userData);
-    opportunityData.contactId = contactId;
+  // Get or create the contact ID
+  const contactId = await getContactID(userData);
+  opportunityData.contactId = contactId;
 
-    // If appointment data is provided, create the appointment first
-    if (appointmentData?.startTime) {
-      const response = await createAppointment(contactId, appointmentData);
-       console.log("Appointment created:", response);
-    }
-
+  // If appointment data is provided, create the appointment first
+  if (appointmentData?.startTime) {
+    const appointmentCreated = await createAppointment(
+      contactId,
+      appointmentData
+    );
     // Create opportunity only if appointment creation succeeded
-    await createOpportunity(opportunityData);
-  } catch (error) {
-    console.error("Error while saving opportunity:", error);
-
+    if (appointmentCreated) {
+      await createOpportunity(opportunityData);
+    } else {
+      throw new Error("Failed to create appointment in Go High Level");
+    }
   }
 };
 

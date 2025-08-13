@@ -1198,7 +1198,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     };
 
     const userData = {
-      name: personalInfo.name,
+      name: personalInfo.fullName,
       email: personalInfo.email,
       phone: personalInfo.phone,
     };
