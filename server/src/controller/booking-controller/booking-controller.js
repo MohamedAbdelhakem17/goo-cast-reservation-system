@@ -141,7 +141,7 @@ const print = (val, lab) => {
 };
 
 // Get Full Booked Date
-const getTimeSlots = (startMinutes, endMinutes, slotDuration = 60) => {
+const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
   const slots = [];
   for (
     let time = startMinutes;
@@ -335,8 +335,13 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   const endOfDayMinutes = timeToMinutes(studio.endTime || "20:00");
   console.log("Start of Day:", studio.startTime);
   console.log("End of Day:", studio.endTime);
+
   const inputDate = getAllDay(date);
   const now = new Date();
+
+  // تحديد أول وقت مسموح بناءً على الوقت الحالي (مثلاً بعد نص ساعة)
+  const nextAvailableTime = new Date(now);
+  nextAvailableTime.setMinutes(Math.ceil(nextAvailableTime.getMinutes() / 30) * 30);
 
   const requiredDurationMinutes = parseFloat(duration) * 60;
   const availableSlots = [];
@@ -351,7 +356,9 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
 
     const slotDateTime = new Date(date);
     slotDateTime.setHours(Math.floor(slotStart / 60), slotStart % 60, 0, 0);
-    if (slotDateTime < now) continue;
+
+    // الشرط الجديد: لازم يكون الوقت بعد nextAvailableTime
+    if (slotDateTime < nextAvailableTime) continue;
 
     const hasConflict = await BookingModel.exists({
       studio: studioId,
@@ -370,6 +377,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     data: availableSlots,
   });
 });
+
 
 {
   // exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
