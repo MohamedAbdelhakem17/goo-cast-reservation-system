@@ -6,12 +6,10 @@ import Cart from "../Cart/Cart";
 import PaymentOptions from "./Payment-Way/PaymentWay";
 import BookingHeader from "../../shared/Booking-Header/BookingHeader";
 import { Loader } from "lucide-react";
-import GTMEventTracking from "../../../GTM/GTMEventTracking";
 import { trackEvent } from "../../../GTM/gtm";
 
 export default function PersonalInformation() {
   const inputRef = useRef(null);
-  const sendEvent = GTMEventTracking();
   const {
     getBookingError,
     formik,

@@ -4,12 +4,11 @@ import { GetAllAddOns } from "../../../../apis/services/services.api";
 import Loading from "../../../shared/Loading/Loading";
 import { useCallback } from "react";
 import usePriceFormat from "../../../../hooks/usePriceFormat";
-import GTMEventTracking from "../../../../GTM/GTMEventTracking";
 import { trackEvent } from "../../../../GTM/gtm";
+
 
 export default function AddOns() {
   const { data: addOns, isLoading } = GetAllAddOns();
-  const sendEvent = GTMEventTracking();
   const { bookingData, setBookingField } = useBooking();
 
   const priceFormat = usePriceFormat();
@@ -105,12 +104,11 @@ export default function AddOns() {
             <motion.div
               key={addon._id}
               variants={cardVariants}
-              className={`bg-white rounded-xl overflow-hidden shadow-sm border flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300 ${
-                isSelected ? "border-main" : "border-gray-300"
-              }`}
+              className={`bg-white rounded-xl overflow-hidden shadow-sm border flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300 ${isSelected ? "border-main" : "border-gray-300"
+                }`}
             >
               <div className="w-full h-80 overflow-hidden p-4 relative">
-              
+
                 <img
                   src={addon.image}
                   alt={addon.name}
