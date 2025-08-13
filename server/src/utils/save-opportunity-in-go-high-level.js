@@ -1,4 +1,5 @@
 const axios = require("axios");
+const studioModel = require("../models/studio-model/studio-model");
 
 const headers = {
   "Content-Type": "application/json",
@@ -164,9 +165,11 @@ const createOpportunity = async (opportunityData) => {
  */
 const createAppointment = async (contactId, appointmentData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/calendars/events/appointments";
+  const studio = await studioModel.findById(appointmentData.studioId);
+  const calendarId = studio?.calendarId;
 
   const body = {
-    calendarId: process.env.GO_HIGH_LEVEL_CALENDAR_ID,
+    calendarId: calendarId || process.env.GO_HIGH_LEVEL_CALENDAR_ID,
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     contactId,
     startTime: appointmentData.startTime,
@@ -177,8 +180,8 @@ const createAppointment = async (contactId, appointmentData) => {
 
   try {
     const response = await axios.post(url, body, { headers });
-    console.log("✅ Appointment created:");
-    return response.data?.data?.id;
+    console.log("✅ Appointment created:", response.data?.data);
+    return;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("Create appointment error:", error.response?.data);
