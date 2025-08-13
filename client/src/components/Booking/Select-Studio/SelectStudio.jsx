@@ -22,7 +22,7 @@ export default function SelectStudio() {
   const selectStudio = (studio) => {
     setBookingField("studio", studio);
     setBookingField("startSlot", null);
-    setBookingField("duration", 2);
+    setBookingField("duration",1);
     setBookingField("endSlot", null);
     setSelectedStudio(studio.id);
   };
@@ -69,7 +69,7 @@ export default function SelectStudio() {
           desc="Select the studio that best fits your needs"
         />
 
-        <div className="flex flex-wrap justify-evenly gap-3">
+        <div className="flex flex-wrap gap-3 justify-evenly">
           {studiosData.data.map((studio) => (
             <motion.div
               key={studio.id}
@@ -94,21 +94,21 @@ export default function SelectStudio() {
             >
               {/* Image with Click Indicator */}
               <motion.div
-                className="relative h-64 overflow-hidden p-5 group"
+                className="relative h-64 p-5 overflow-hidden group"
                 onMouseEnter={() => setHoveredImage(studio._id)}
                 onMouseLeave={() => setHoveredImage(null)}
               >
                 {selectedStudio === studio._id && (
-                  <div className="h-8 w-8 bg-main text-white rounded-full flex items-center justify-center top-8 right-8 absolute z-10">
+                  <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-white rounded-full bg-main top-8 right-8">
                     <i className="fa-solid fa-check"></i>
                   </div>
                 )}
 
-                <div className="relative w-full h-full rounded-lg overflow-hidden">
+                <div className="relative w-full h-full overflow-hidden rounded-lg">
                   <img
                     src={studio.thumbnail || "/placeholder.svg"}
                     alt={studio.name}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 cursor-zoom-in"
+                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 cursor-zoom-in"
                     onClick={(e) => {
                       e.stopPropagation();
                       const images = [
@@ -124,14 +124,14 @@ export default function SelectStudio() {
                   <AnimatePresence>
                     {hoveredImage === studio._id && (
                       <motion.div
-                        className="absolute inset-0 bg-black/40 flex items-center justify-center"
+                        className="absolute inset-0 flex items-center justify-center bg-black/40"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                       >
                         <motion.div
-                          className="bg-white/90 backdrop-blur-sm rounded-full p-3 flex items-center gap-2 text-gray-800"
+                          className="flex items-center gap-2 p-3 text-gray-800 rounded-full bg-white/90 backdrop-blur-sm"
                           initial={{ scale: 0.8, y: 10 }}
                           animate={{ scale: 1, y: 0 }}
                           exit={{ scale: 0.8, y: 10 }}
@@ -191,8 +191,8 @@ export default function SelectStudio() {
                 <h3 className="text-xl font-bold text-gray-800">
                   {studio.name}
                 </h3>
-                <ul className="text-gray-600 mt-3">
-                  <li className="text-sm flex items-start">
+                <ul className="mt-3 text-gray-600">
+                  <li className="flex items-start text-sm">
                     <span
                       className={`mr-2 ${
                         selectedStudio === studio._id
@@ -204,7 +204,7 @@ export default function SelectStudio() {
                     </span>
                     {studio.recording_seats} Recording Seats
                   </li>
-                  <li className="text-sm flex items-start">
+                  <li className="flex items-start text-sm">
                     <span
                       className={`mr-2 ${
                         selectedStudio === studio._id
@@ -217,12 +217,12 @@ export default function SelectStudio() {
                     {studio.address}
                   </li>
                 </ul>
-                <ul className="space-y-2 mb-4">
+                <ul className="mb-4 space-y-2">
                   {studio.facilities.map((text, i) => (
                     <motion.li
                       key={i}
                       variants={benefitVariants}
-                      className="text-sm flex items-start"
+                      className="flex items-start text-sm"
                     >
                       <span
                         className={`mr-2 ${
@@ -293,14 +293,14 @@ export default function SelectStudio() {
             {/* Prev Button */}
             <button
               onClick={prevImage}
-              className="absolute left-10 text-white text-2xl cursor-pointer h-10 w-10 flex justify-center items-center rounded-full bg-black/50 hover:bg-black/70"
+              className="absolute flex items-center justify-center w-10 h-10 text-2xl text-white rounded-full cursor-pointer left-10 bg-black/50 hover:bg-black/70"
             >
               &lt;
             </button>
             {/* Next Button */}
             <button
               onClick={nextImage}
-              className="absolute right-10 text-white text-2xl cursor-pointer h-10 w-10 flex justify-center items-center rounded-full bg-black/50 hover:bg-black/70"
+              className="absolute flex items-center justify-center w-10 h-10 text-2xl text-white rounded-full cursor-pointer right-10 bg-black/50 hover:bg-black/70"
             >
               &gt;
             </button>
@@ -308,13 +308,13 @@ export default function SelectStudio() {
             {/* Close button */}
             <button
               onClick={() => setPreviewIndex(null)}
-              className="absolute top-5 right-5 text-white text-xl cursor-pointer h-10 w-10 flex justify-center items-center rounded-full bg-black/50 hover:bg-black/70"
+              className="absolute flex items-center justify-center w-10 h-10 text-xl text-white rounded-full cursor-pointer top-5 right-5 bg-black/50 hover:bg-black/70"
             >
               ×
             </button>
 
             {/* Image counter */}
-            <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+            <div className="absolute px-3 py-1 text-sm text-white transform -translate-x-1/2 rounded-full bottom-5 left-1/2 bg-black/50">
               {previewIndex + 1} / {previewImages.length}
             </div>
           </motion.div>
