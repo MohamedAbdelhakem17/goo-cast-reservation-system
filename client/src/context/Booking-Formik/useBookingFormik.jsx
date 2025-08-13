@@ -24,7 +24,7 @@ export default function useBookingFormik() {
 
       return date.toISO();
     };
-    
+
     return {
       studio: {
         id: null,
@@ -35,7 +35,7 @@ export default function useBookingFormik() {
       date: handelStartDate(),
       startSlot: null,
       endSlot: null,
-      duration: 2,
+      duration: 1,
       persons: 1,
       selectedPackage: {},
       selectedAddOns: [],
