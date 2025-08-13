@@ -7,13 +7,14 @@ export default function Duration({ isOpen, setIsOpen }) {
     const { setBookingField, bookingData } = useBooking()
 
     const durationOptions = [
+        { value: "2", label: "1 hour" },
         { value: "2", label: "2 hours" },
         { value: "3", label: "3 hours" },
         { value: "4", label: "4 hours" },
         { value: "5", label: "5 hours" },
         { value: "6", label: "6 hours" },
         { value: "7", label: "7 hours" },
-        { value: "8", label: "All day" },
+        { value: "8", label: "8 hours" },
     ]
 
     const [selectedDuration, setSelectedDuration] = useState(bookingData.duration || "2")
@@ -28,16 +29,16 @@ export default function Duration({ isOpen, setIsOpen }) {
         <div className="relative z-[52]">
             {/* Main Display */}
             <div
-                className="flex items-center justify-between gap-4 border-2 border-gray-100 rounded-md px-3 py-2 cursor-pointer hover:border-gray-200 transition-colors w-full sm:w-auto"
+                className="flex items-center justify-between w-full gap-4 px-3 py-2 transition-colors border-2 border-gray-100 rounded-md cursor-pointer hover:border-gray-200 sm:w-auto"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm text-gray-700 border-r-2 pr-2 border-gray-200 hidden sm:inline-block">
+                    <Clock className="w-4 h-4 text-gray-600" />
+                    <span className="hidden pr-2 text-sm text-gray-700 border-r-2 border-gray-200 sm:inline-block">
                         Duration of filming
                     </span>
                 </div>
-                <span className="text-red-500 font-medium text-sm sm:text-base">
+                <span className="text-sm font-medium text-red-500 sm:text-base">
                     {selectedDuration} {selectedDuration === "1" ? "hour" : "hours"}
                 </span>
             </div>
@@ -51,7 +52,7 @@ export default function Duration({ isOpen, setIsOpen }) {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+                            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
                             onClick={() => setIsOpen(false)}
                         />
 
@@ -67,10 +68,10 @@ export default function Duration({ isOpen, setIsOpen }) {
                             <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <Clock className="h-4 w-4 text-gray-600" />
+                                        <Clock className="w-4 h-4 text-gray-600" />
                                         <span className="text-sm text-gray-700">Duration of filming</span>
                                     </div>
-                                    <span className="text-red-500 font-medium text-sm">
+                                    <span className="text-sm font-medium text-red-500">
                                         {selectedDuration} {selectedDuration === "1" ? "hour" : "hours"}
                                     </span>
                                 </div>
