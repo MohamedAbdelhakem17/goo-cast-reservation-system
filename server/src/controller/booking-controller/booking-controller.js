@@ -344,7 +344,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
 
   // Calculate minimum start time
   let minStartTimeMinutes = startOfDayMinutes;
-  
+
   if (isToday) {
     // For today, start from next available 30-minute slot
     const currentMinutes = today.getHours() * 60 + today.getMinutes();
@@ -354,12 +354,12 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
 
   // Get date range for database query
   const inputDate = getAllDay(date);
-  
+
   // Get all bookings for the requested date
   const bookings = await BookingModel.find({
     studio: studioId,
-    date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay }
-  }).select('startSlot endSlot startSlotMinutes endSlotMinutes');
+    date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
+  }).select("startSlot endSlot startSlotMinutes endSlotMinutes");
 
   const availableSlots = [];
 
@@ -373,21 +373,21 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     const slotEnd = time + requiredDurationMinutes;
 
     // Check for conflicts with existing bookings
-    const hasConflict = bookings.some(booking => {
+    const hasConflict = bookings.some((booking) => {
       // Handle both field naming conventions
       const bookingStart = booking.startSlotMinutes || booking.startSlot;
       const bookingEnd = booking.endSlotMinutes || booking.endSlot;
-      
+
       // Check if slots overlap
-      return (bookingStart < slotEnd && bookingEnd > slotStart);
+      return bookingStart < slotEnd && bookingEnd > slotStart;
     });
 
     if (!hasConflict) {
-      availableSlots.push({ 
+      availableSlots.push({
         startTime: minutesToTime(slotStart),
         startTimeMinutes: slotStart,
         endTime: minutesToTime(slotEnd),
-        endTimeMinutes: slotEnd
+        endTimeMinutes: slotEnd,
       });
     }
   }
@@ -400,10 +400,10 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
       duration: duration,
       studioWorkingHours: {
         start: studio.startTime,
-        end: studio.endTime
+        end: studio.endTime,
       },
-      totalAvailableSlots: availableSlots.length
-    }
+      totalAvailableSlots: availableSlots.length,
+    },
   });
 });
 
@@ -1216,8 +1216,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
       endTime: combineDateAndTime(bookingDate, endSlot),
       title: `${studio.name} - Booking`,
       notes: personalInfo.fullName || personalInfo.name,
+      studioId: studio._id,
     };
-
 
     // return console.log(appointmentData, "appointmentData");
     try {
