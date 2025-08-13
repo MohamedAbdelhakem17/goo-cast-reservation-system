@@ -1,4 +1,5 @@
 const axios = require("axios");
+const studioModel = require("../models/studio-model/studio-model");
 
 const headers = {
   "Content-Type": "application/json",
@@ -9,6 +10,7 @@ const headers = {
 /**
  * Search for a contact in Go High Level by a specific field (email or phone).
  */
+
 const searchContact = async (field, value) => {
   if (!value) return null;
 
@@ -16,9 +18,7 @@ const searchContact = async (field, value) => {
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     pageLimit: 1,
-    filters: [
-      { field, operator: "eq", value }
-    ],
+    filters: [{ field, operator: "eq", value }],
   };
 
   try {
@@ -36,9 +36,12 @@ const searchContact = async (field, value) => {
  */
 const createContact = async (contactData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/contacts";
+  const [firstName, lastName] = contactData?.name?.split(" ") || [];
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
-    full_name: contactData.name,
+    firstName: firstName,
+    lastName: lastName,
+    name: contactData.name,
     email: contactData.email,
     phone: contactData.phone,
   };
@@ -58,7 +61,9 @@ const createContact = async (contactData) => {
         status === 409 ||
         (data?.message && data.message.includes("already exists"))
       ) {
-        console.warn("Contact already exists, retrieving existing contact ID...");
+        console.warn(
+          "Contact already exists, retrieving existing contact ID..."
+        );
         // Try finding the contact by email, then by phone
         let contactId = await searchContact("email", contactData.email);
         if (!contactId && contactData.phone) {
@@ -91,7 +96,8 @@ const getContactID = async (userData) => {
  * Create an opportunity in Go High Level.
  */
 const createOpportunity = async (opportunityData) => {
-  const url = "https://services.leadconnectorhq.com/opportunities/";
+  const url = process.env.GO_HIGH_LEVEL_URL + "/opportunities/";
+
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     pipelineId: process.env.GO_HIGH_LEVEL_PIPELINE_ID,
@@ -101,6 +107,33 @@ const createOpportunity = async (opportunityData) => {
     name: opportunityData.name,
     source: "Goocast Booking Website",
     status: "open",
+    customFields: [
+      {
+        id: "dT2pk8lhCsliZZvGTMKy",
+        key: "payment_status",
+        field_value: "Pending",
+      },
+      {
+        id: "FJ8o6VX0okwMKvNcm2XZ",
+        key: "session_type",
+        field_value: opportunityData.sessionType,
+      },
+      {
+        id: "IJt4YVb1prb3MACAUE8M",
+        key: "session_deuration",
+        field_value: opportunityData.duration,
+      },
+      {
+        id: "vbUnGycab4X5kR4bB5OS",
+        key: "opportunity.studio_name",
+        field_value: opportunityData.studioName,
+      },
+      {
+        id: "gkl2UWx88U1kiLEU5aay",
+        key: "appointments_status",
+        field_value: "Confirmed",
+      },
+    ],
   };
 
   try {
@@ -118,7 +151,9 @@ const createOpportunity = async (opportunityData) => {
         status === 409 ||
         (data?.message && data.message.includes("already exists"))
       ) {
-        console.warn("Opportunity already exists or was already created, skipping.");
+        console.warn(
+          "Opportunity already exists or was already created, skipping."
+        );
         return null;
       }
     }
@@ -131,9 +166,11 @@ const createOpportunity = async (opportunityData) => {
  */
 const createAppointment = async (contactId, appointmentData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/calendars/events/appointments";
+  const studio = await studioModel.findById(appointmentData.studioId);
+  const calendarId = studio?.calendarId;
 
   const body = {
-    calendarId: process.env.GO_HIGH_LEVEL_CALENDAR_ID,
+    calendarId: calendarId || process.env.GO_HIGH_LEVEL_CALENDAR_ID,
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     contactId,
     startTime: appointmentData.startTime,
@@ -144,19 +181,20 @@ const createAppointment = async (contactId, appointmentData) => {
 
   try {
     const response = await axios.post(url, body, { headers });
-    console.log("✅ Appointment created:");
-    return response.data?.data?.id;
+    console.log("✅ Appointment created:", response.data);
+    return true;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("Create appointment error:", error.response?.data);
+      return false;
     }
-    throw error;
   }
 };
 
 /**
  * Main function to save opportunity and appointment in Go High Level.
  */
+
 const saveOpportunityInGoHighLevel = async (
   userData,
   opportunityData,
@@ -166,12 +204,18 @@ const saveOpportunityInGoHighLevel = async (
   const contactId = await getContactID(userData);
   opportunityData.contactId = contactId;
 
-  // Create or update the opportunity
-  await createOpportunity(opportunityData);
-
-  // If appointment data is provided, create the appointment
+  // If appointment data is provided, create the appointment first
   if (appointmentData?.startTime) {
-    await createAppointment(contactId, appointmentData);
+    const appointmentCreated = await createAppointment(
+      contactId,
+      appointmentData
+    );
+    // Create opportunity only if appointment creation succeeded
+    if (appointmentCreated) {
+      await createOpportunity(opportunityData);
+    } else {
+      throw new Error("Failed to create appointment in Go High Level");
+    }
   }
 };
 

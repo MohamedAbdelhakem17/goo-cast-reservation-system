@@ -8,7 +8,7 @@ require("dotenv").config({
 // ====== Imports ======
 const express = require("express");
 const passport = require("passport");
-const session = require("express-session");
+const session = require("express-session")
 const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -19,7 +19,6 @@ const amountRoutes = require("./routes/index");
 const AppError = require("./utils/app-error");
 const { HTTP_STATUS_TEXT } = require("./config/system-variables");
 
-// ====== App Initialization ======
 const app = express();
 
 // ====== Database Connection ======
@@ -31,7 +30,7 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 }
 
 // Security headers
-// app.use(helmet());
+app.use(helmet());
 
 // Body parser
 app.use(express.json());

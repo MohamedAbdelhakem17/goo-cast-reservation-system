@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import useQuickBooking from "../../../hooks/useQuickBooking";
-import GTMEventTracking from "../../../GTM/GTMEventTracking";
 import { trackEvent } from "../../../GTM/gtm";
 
 export default function Hero() {
@@ -42,7 +41,6 @@ export default function Hero() {
   };
 
   const { handleQuickBooking } = useQuickBooking();
-  const sendEvent = GTMEventTracking();
 
   return (
     <section className="relative py-16 overflow-hidden">

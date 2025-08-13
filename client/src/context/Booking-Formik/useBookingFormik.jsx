@@ -4,6 +4,7 @@ import { useToast } from "../../context/Toaster-Context/ToasterContext";
 import { CreateBooking } from "../../apis/Booking/booking.api";
 import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { DateTime } from 'luxon';
 export default function useBookingFormik() {
   const parsedData = useMemo(() => {
     const localStorageData = localStorage.getItem("bookingData");
@@ -15,12 +16,13 @@ export default function useBookingFormik() {
     if (parsedData) return parsedData;
 
     const handelStartDate = () => {
-      const date = new Date();
-      const hour = date.getHours();
-      hour > 18
-        ? date.setDate(date.getDate() + 1)
-        : date.setDate(date.getDate());
-      return date;
+      let date = DateTime.now().setZone("Africa/Cairo");
+
+      if (date.hour > 18) {
+        date = date.plus({ days: 1 });
+      }
+
+      return date.toISO();
     };
 
     return {
@@ -33,7 +35,7 @@ export default function useBookingFormik() {
       date: handelStartDate(),
       startSlot: null,
       endSlot: null,
-      duration: 2,
+      duration: 1,
       persons: 1,
       selectedPackage: {},
       selectedAddOns: [],

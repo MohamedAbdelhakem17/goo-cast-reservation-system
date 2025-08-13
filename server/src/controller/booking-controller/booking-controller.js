@@ -141,7 +141,7 @@ const print = (val, lab) => {
 };
 
 // Get Full Booked Date
-const getTimeSlots = (startMinutes, endMinutes, slotDuration = 60) => {
+const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
   const slots = [];
   for (
     let time = startMinutes;
@@ -313,9 +313,11 @@ exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
 });
 
 // Get Available Start Slots
+// Get Available Start Slots
 exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   const { studioId, date, duration } = req.body;
 
+  // Validation
   if (!studioId || !date || !duration) {
     return next(
       new AppError(
@@ -331,41 +333,77 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
   }
 
-  const startOfDayMinutes = timeToMinutes(studio.startTime || "09:00");
-  const endOfDayMinutes = timeToMinutes(studio.endTime || "18:00");
-  const inputDate = getAllDay(date);
-  const now = new Date();
-
+  const startOfDayMinutes = timeToMinutes(studio.startTime || "12:00");
+  const endOfDayMinutes = timeToMinutes(studio.endTime || "20:00");
   const requiredDurationMinutes = parseFloat(duration) * 60;
+
+  // Parse input date
+  const requestedDate = new Date(date);
+  const today = new Date();
+  const isToday = requestedDate.toDateString() === today.toDateString();
+
+  // Calculate minimum start time
+  let minStartTimeMinutes = startOfDayMinutes;
+
+  if (isToday) {
+    // For today, start from next available 30-minute slot
+    const currentMinutes = today.getHours() * 60 + today.getMinutes();
+    const nextSlotMinutes = Math.ceil(currentMinutes / 30) * 30;
+    minStartTimeMinutes = Math.max(startOfDayMinutes, nextSlotMinutes);
+  }
+
+  // Get date range for database query
+  const inputDate = getAllDay(date);
+
+  // Get all bookings for the requested date
+  const bookings = await BookingModel.find({
+    studio: studioId,
+    date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
+  }).select("startSlot endSlot startSlotMinutes endSlotMinutes");
+
   const availableSlots = [];
 
+  // Check each possible start time
   for (
-    let time = startOfDayMinutes;
+    let time = minStartTimeMinutes;
     time <= endOfDayMinutes - requiredDurationMinutes;
-    time += 60
+    time += 30
   ) {
     const slotStart = time;
     const slotEnd = time + requiredDurationMinutes;
 
-    const slotDateTime = new Date(date);
-    slotDateTime.setHours(Math.floor(slotStart / 60), slotStart % 60, 0, 0);
-    if (slotDateTime < now) continue;
+    // Check for conflicts with existing bookings
+    const hasConflict = bookings.some((booking) => {
+      // Handle both field naming conventions
+      const bookingStart = booking.startSlotMinutes || booking.startSlot;
+      const bookingEnd = booking.endSlotMinutes || booking.endSlot;
 
-    const hasConflict = await BookingModel.exists({
-      studio: studioId,
-      date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
-      startSlotMinutes: { $lt: slotEnd },
-      endSlotMinutes: { $gt: slotStart },
+      // Check if slots overlap
+      return bookingStart < slotEnd && bookingEnd > slotStart;
     });
 
     if (!hasConflict) {
-      availableSlots.push({ startTime: minutesToTime(slotStart) });
+      availableSlots.push({
+        startTime: minutesToTime(slotStart),
+        startTimeMinutes: slotStart,
+        endTime: minutesToTime(slotEnd),
+        endTimeMinutes: slotEnd,
+      });
     }
   }
 
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: availableSlots,
+    meta: {
+      requestedDate: date,
+      duration: duration,
+      studioWorkingHours: {
+        start: studio.startTime,
+        end: studio.endTime,
+      },
+      totalAvailableSlots: availableSlots.length,
+    },
   });
 });
 
@@ -1141,6 +1179,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       startSlot,
       endSlot,
       totalPriceAfterDiscount,
+      duration,
     } = await createBookingLogic(req.body, user_id);
 
     const emailOptions = {
@@ -1158,24 +1197,33 @@ exports.createBooking = asyncHandler(async (req, res) => {
       }),
     };
 
+    const userData = {
+      name: personalInfo.fullName,
+      email: personalInfo.email,
+      phone: personalInfo.phone,
+    };
+
+    const opportunityData = {
+      name: `${personalInfo.fullName} - ${pkg.name} , ${pkg.session_type} - ${new Date(bookingDate).toISOString().split("T")[0]}`,
+      price: totalPriceAfterDiscount,
+      sessionType: pkg.session_type,
+      duration: duration,
+      studioName: studio.name,
+    };
+
     const appointmentData = {
       startTime: combineDateAndTime(bookingDate, startSlot),
       endTime: combineDateAndTime(bookingDate, endSlot),
       title: `${studio.name} - Booking`,
       notes: personalInfo.fullName || personalInfo.name,
+      studioId: studio._id,
     };
 
+    // return console.log(appointmentData, "appointmentData");
     try {
       await saveOpportunityInGoHighLevel(
-        {
-          name: personalInfo.name,
-          email: personalInfo.email,
-          phone: personalInfo.phone,
-        },
-        {
-          name: `${studio.name} - ${pkg.name} - ${personalInfo.fullName}`,
-          price: totalPriceAfterDiscount,
-        },
+        userData,
+        opportunityData,
         appointmentData
       );
       await sendEmail(emailOptions);
@@ -1205,19 +1253,15 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
 // Create Booking With GHL
 exports.ghlCreateBooking = asyncHandler(async (req, res) => {
-  console.log(req.body)
-  
   const { tempBooking } = await createBookingLogic(req.body);
-  
-  const booking = await tempBooking.save();
 
+  const booking = await tempBooking.save();
 
   res.status(201).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     message: "Booking created successfully",
     data: booking,
   });
-
 });
 
 // Get User Booking History
