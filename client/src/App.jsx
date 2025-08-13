@@ -5,7 +5,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 import AppRouter from "./Routes/Router";
 import AuthProvider from "./context/Auth-Context/AuthContext";
 import { ToastProvider } from "./context/Toaster-Context/ToasterContext";
-import TrackPageView from "./GTM/TrackPageView ";
 
 const queryClient = new QueryClient({
   defaultOptions: {

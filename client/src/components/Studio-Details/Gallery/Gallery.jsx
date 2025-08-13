@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { studio, studio2 } from "../../../assets/images";
 
 export default function Gallery({ images }) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
