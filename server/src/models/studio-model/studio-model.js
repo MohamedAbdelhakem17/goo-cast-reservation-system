@@ -130,6 +130,10 @@ const studioSchema = new mongoose.Schema(
       min: [1, "Recording Seats must be at least 1"],
       required: true,
     },
+
+    calendarId: {
+      type: String,
+    },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
