@@ -190,21 +190,26 @@ const createAppointment = async (contactId, appointmentData) => {
 /**
  * Main function to save opportunity and appointment in Go High Level.
  */
+
 const saveOpportunityInGoHighLevel = async (
   userData,
   opportunityData,
   appointmentData
 ) => {
-  // Get or create the contact ID
-  const contactId = await getContactID(userData);
-  opportunityData.contactId = contactId;
+  try {
+    // Get or create the contact ID
+    const contactId = await getContactID(userData);
+    opportunityData.contactId = contactId;
 
-  // Create or update the opportunity
-  await createOpportunity(opportunityData);
+    // If appointment data is provided, create the appointment first
+    if (appointmentData?.startTime) {
+      await createAppointment(contactId, appointmentData);
+    }
 
-  // If appointment data is provided, create the appointment
-  if (appointmentData?.startTime) {
-    await createAppointment(contactId, appointmentData);
+    // Create opportunity only if appointment creation succeeded
+    await createOpportunity(opportunityData);
+  } catch (error) {
+    console.error("Error while saving opportunity:", error);
   }
 };
 
