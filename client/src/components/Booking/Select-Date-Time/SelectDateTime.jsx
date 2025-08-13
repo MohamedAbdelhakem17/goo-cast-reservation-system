@@ -1,4 +1,3 @@
-import SelectDurationPersonsPar from './Select-Duration-Persons-Par/SelectDurationPersonsPar'
 import Calendar from './Calendar/Calendar'
 import Slots from './Slots/Slots'
 import { useState } from 'react'

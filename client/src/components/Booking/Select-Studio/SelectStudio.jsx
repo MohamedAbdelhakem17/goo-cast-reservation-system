@@ -5,12 +5,10 @@ import Loading from "../../shared/Loading/Loading";
 import { useGetAvailableStudio } from "../../../apis/Booking/booking.api";
 import NavigationButtons from "../Navigation-Buttons/NavigationButtons";
 import BookingHeader from "../../shared/Booking-Header/BookingHeader";
-import GTMEventTracking from "../../../GTM/GTMEventTracking";
 import { trackEvent } from "../../../GTM/gtm";
 
 export default function SelectStudio() {
   const { setBookingField, bookingData, handleNextStep } = useBooking();
-  const sendEvent = GTMEventTracking();
   const [selectedStudio, setSelectedStudio] = useState(
     bookingData?.studio?.id || null
   );

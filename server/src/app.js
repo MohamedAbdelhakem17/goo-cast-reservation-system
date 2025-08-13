@@ -19,7 +19,6 @@ const amountRoutes = require("./routes/index");
 const AppError = require("./utils/app-error");
 const { HTTP_STATUS_TEXT } = require("./config/system-variables");
 
-// ====== App Initialization ======
 const app = express();
 
 // ====== Database Connection ======

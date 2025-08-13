@@ -8,7 +8,7 @@ const sortedStudioId = JSON.parse(localStorage.getItem("bookingData"))?.studio
   ?.id;
 
 const fetchFullyBookedDates = async ({ studioId, duration }) => {
-  if (!studioId || !duration) return []; // ✅ fallback آمن
+  if (!studioId || !duration) return []; 
 
   const res = await axios.get(`${BASE_URL}/booking/fully-booked/${studioId}`, {
     params: { duration },
@@ -49,10 +49,11 @@ const GetAvailableSlots = () => {
   const sortedDate = JSON.parse(localStorage.getItem("bookingData"));
   return useMutation({
     mutationFn: async ({ studioId, date, duration }) => {
+      console.log({ studioId, date, duration });
       const res = await axios.post(`${BASE_URL}/bookings/available-slots`, {
-        studioId: studioId || sortedDate?.studio?.id,
-        date: date || sortedDate?.date,
-        duration: duration || sortedDate?.duration,
+        studioId: studioId,
+        date: date,
+        duration: duration || 2,
       });
       return res.data;
     },
