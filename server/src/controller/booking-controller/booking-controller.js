@@ -1190,7 +1190,6 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration,
     } = await createBookingLogic(req.body, user_id);
 
-    return console.log(req.body, "req.body in createBooking");
 
 
     const emailOptions = {
