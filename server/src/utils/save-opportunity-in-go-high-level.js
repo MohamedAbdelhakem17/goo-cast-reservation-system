@@ -7,7 +7,6 @@ const headers = {
   version: process.env.GO_HIGH_LEVEL_VERSION,
 };
 
-
 /**
  * Search for a contact in Go High Level by a specific field (email or phone).
  */
@@ -122,12 +121,16 @@ const createOpportunity = async (opportunityData) => {
         field_value: opportunityData.duration,
       },
       {
-        key: "opportunity.studio_name",
+        key: "studio_name",
         field_value: opportunityData.studioName,
       },
       {
         key: "appointments_status",
         field_value: "Confirmed",
+      },
+      {
+        key: "booking_id",
+        field_value: opportunityData.bookingId.toString(),
       },
     ],
   };
