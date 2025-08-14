@@ -1253,14 +1253,44 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
 // Create Booking With GHL
 exports.ghlCreateBooking = asyncHandler(async (req, res) => {
-  const { tempBooking } = await createBookingLogic(req.body);
+  // const {
+  //   customData: { startSlot, endSlot, date, studio_name, session_type },
+  //   full_name,
+  //   email,
+  //   phone,
+  //   lead_value,
+  // } = req.body;
 
-  const booking = await tempBooking.save();
+  // // Find the studio ID
+  // const studio = await StudioModel.findOne({ name: studio_name });
+
+  // // Find Package ID
+  // const pkg = await PackageModel.findOne({ session_type: session_type });
+
+  // // Create Personal Information
+  // const personalInfo = {
+  //   fullName: full_name,
+  //   email,
+  //   phone,
+  // };
+
+  // const bookingData = {
+  //   studio,
+  //   package: pkg,
+  //   personalInfo,
+  //   totalPrice: lead_value,
+  // };
+
+  console.log(req.body, "req.body in ghlCreateBooking");
+  // const { tempBooking } = await createBookingLogic(bookingData);
+
+  // const booking = await tempBooking.save();
 
   res.status(201).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     message: "Booking created successfully",
-    data: booking,
+    id: 954348598340034598034,
+    // data: booking,
   });
 });
 

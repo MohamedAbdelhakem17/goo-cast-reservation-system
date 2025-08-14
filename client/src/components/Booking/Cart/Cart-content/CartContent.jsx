@@ -52,7 +52,7 @@ export default function CartContent() {
                     <li className="flex items-center justify-between py-1" key={addon._id}>
                         <p className="text-gray-500 text-md">{addon.name}</p>
                         <p className="text-gray-500 text-md">
-                            x{addon.quantity} / {addon.price} EGP
+                            {priceFormat(addon.price)} /  x{addon.quantity}
                         </p>
                     </li>
                 ))}

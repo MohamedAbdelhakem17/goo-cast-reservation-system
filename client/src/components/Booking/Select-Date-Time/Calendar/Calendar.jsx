@@ -8,7 +8,7 @@ import Loading from "../../../shared/Loading/Loading";
 
 export default function Calendar({ openToggle, getAvailableSlots }) {
   const { setBookingField, bookingData } = useBooking();
-  const [isOpen, setIsOpen] = useState(!bookingData.duration || bookingData.duration === 2);
+  const [isOpen, setIsOpen] = useState(!bookingData.duration || bookingData.duration === 1);
 
   const {
     calendarDays,
@@ -24,27 +24,27 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     isLoading
   } = useCalendar(bookingData?.studio?.id, bookingData.date, bookingData.duration);
 
-  console.log(calendarDays);
+  console.log();
   return (
-    <div className="w-full mx-auto p-6 bg-white">
+    <div className="w-full p-6 mx-auto bg-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <button
-            className="h-8 w-8 disabled:opacity-40"
+            className="w-8 h-8 disabled:opacity-40"
             onClick={() => navigateMonth("prev")}
             disabled={isPrevDisabled}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
           <h1 className="text-xl font-medium lg:min-w-[140px] text-center">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h1>
           <button
-            className="h-8 w-8"
+            className="w-8 h-8"
             onClick={() => navigateMonth("next")}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
@@ -55,12 +55,12 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="overflow-hidden border border-gray-200 rounded-lg">
           <div className="grid grid-cols-7 bg-gray-50">
             {daysOfWeek.map((day) => (
               <div
                 key={day}
-                className="p-4 text-center text-sm font-medium text-gray-700 border-r border-gray-200 last:border-r-0"
+                className="p-4 text-sm font-medium text-center text-gray-700 border-r border-gray-200 last:border-r-0"
               >
                 {day}
               </div>
@@ -138,7 +138,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
 
                 {/* Dot */}
                 {(selectedDate ? isSelected(day.date) : day.isToday) && (
-                  <div className="absolute bottom-2 right-2 w-2 h-2 bg-main rounded-full"></div>
+                  <div className="absolute w-2 h-2 rounded-full bottom-2 right-2 bg-main"></div>
                 )}
               </div>
             ))}
