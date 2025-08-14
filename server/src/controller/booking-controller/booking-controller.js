@@ -825,7 +825,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   const opportunityID = booking.opportunityID;
 
   if (status === "approved") {
-    changeOpportunityStatus(opportunityID, "approved");
+    changeOpportunityStatus(opportunityID, "won");
     // Send email to user
     const mailOptions = {
       to: booking.personalInfo.email,
@@ -836,7 +836,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   }
 
   if (status === "rejected") {
-    changeOpportunityStatus(opportunityID, "rejected");
+    changeOpportunityStatus(opportunityID, "lost");
     // Send email to user
     const mailOptions = {
       to: booking.personalInfo.email,
@@ -1189,6 +1189,9 @@ exports.createBooking = asyncHandler(async (req, res) => {
       totalPriceAfterDiscount,
       duration,
     } = await createBookingLogic(req.body, user_id);
+
+    return console.log(req.body, "req.body in createBooking");
+
 
     const emailOptions = {
       to: personalInfo.email,
