@@ -22,6 +22,7 @@ export default function Duration({ isOpen, setIsOpen }) {
     const handleDurationSelect = (duration) => {
         setSelectedDuration(duration)
         setBookingField("duration", duration)
+        setBookingField("totalPackagePrice", +duration * bookingData.selectedPackage.price)
         setIsOpen(false)
     }
 
