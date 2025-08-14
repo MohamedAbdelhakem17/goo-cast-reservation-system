@@ -74,6 +74,7 @@ const createBookingLogic = async (body, user_id) => {
     bookedSlots: [],
   });
   const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
+  console.log(packagePrice, "packagePrice");  
 
   const addonsTotalPriceFromClient =
     selectedAddOns?.reduce(
@@ -110,13 +111,19 @@ const createBookingLogic = async (body, user_id) => {
       "The add-on price is incorrect"
     );
 
-  const totalPrice = Math.round(
-    packagePrice +
-    totalAddOnsPriceFromDb +
-    (packagePrice + totalAddOnsPriceFromDb) * 0.14
-  );
-  if (totalPrice !== totalPriceFromClient)
-    throw new AppError(
+    
+    const totalPrice = Math.round(
+      packagePrice +
+      totalAddOnsPriceFromDb +
+      (packagePrice + totalAddOnsPriceFromDb) * 0.14
+    );
+
+    console.log(body)
+    console.log(totalPrice, "totalPrice");
+    console.log(packagePrice, "packagePrice");
+    console.log(totalAddOnsPriceFromDb, "totalAddOnsPriceFromDb");
+    if (totalPrice !== totalPriceFromClient)
+      throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
       "The total price is incorrect"
