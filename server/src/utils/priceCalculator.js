@@ -26,9 +26,6 @@ const calculateSlotPrices = async ({
     dayOfWeek,
   });
 
-  console.log(exception, "exception");
-  console.log(rule, "rule");
-
   // Set default values
   let defaultPricePerSlot = package.price;
   let isFixedHourly = package.isFixed;
