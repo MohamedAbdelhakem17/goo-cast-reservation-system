@@ -795,8 +795,10 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
 
 // Change booking status
 exports.changeBookingStatus = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id || req.body.id;
+
   const { status } = req.body;
+
   if (!status) {
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Status is required");
   }
@@ -1209,6 +1211,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       sessionType: pkg.session_type,
       duration: duration,
       studioName: studio.name,
+      bookingId: tempBooking._id,
     };
 
     const appointmentData = {
