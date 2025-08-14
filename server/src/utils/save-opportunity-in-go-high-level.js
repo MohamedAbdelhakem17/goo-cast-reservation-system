@@ -138,8 +138,7 @@ const createOpportunity = async (opportunityData) => {
   try {
     const response = await axios.post(url, body, { headers });
     const opportunityID = response.data.opportunity.id;
-    return opportunityID
-    ;
+    return opportunityID;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const { status, data } = error.response || {};
@@ -201,7 +200,8 @@ const saveOpportunityInGoHighLevel = async (
   opportunityData,
   appointmentData
 ) => {
-    // Get or create the contact ID
+  let opportunityID;
+  // Get or create the contact ID
   const contactId = await getContactID(userData);
   opportunityData.contactId = contactId;
 
@@ -213,13 +213,12 @@ const saveOpportunityInGoHighLevel = async (
     );
     // Create opportunity only if appointment creation succeeded
     if (appointmentCreated) {
-      const opportunityID = await createOpportunity(opportunityData);
-      return opportunityID;
+      opportunityID = await createOpportunity(opportunityData);
     } else {
       throw new Error("Failed to create appointment in Go High Level");
     }
+    return opportunityID;
   }
 };
-
 
 module.exports = saveOpportunityInGoHighLevel;
