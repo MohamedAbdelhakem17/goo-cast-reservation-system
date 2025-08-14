@@ -1190,8 +1190,6 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration,
     } = await createBookingLogic(req.body, user_id);
 
-
-
     const emailOptions = {
       to: personalInfo.email,
       subject: "Booking Confirmation",
@@ -1233,7 +1231,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     let opportunityID;
     // return console.log(appointmentData, "appointmentData");
     try {
-      await saveOpportunityInGoHighLevel(
+      opportunityID = await saveOpportunityInGoHighLevel(
         userData,
         opportunityData,
         appointmentData
