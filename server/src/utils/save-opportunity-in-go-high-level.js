@@ -7,6 +7,7 @@ const headers = {
   version: process.env.GO_HIGH_LEVEL_VERSION,
 };
 
+
 /**
  * Search for a contact in Go High Level by a specific field (email or phone).
  */
@@ -109,27 +110,22 @@ const createOpportunity = async (opportunityData) => {
     status: "open",
     customFields: [
       {
-        id: "dT2pk8lhCsliZZvGTMKy",
         key: "payment_status",
         field_value: "Pending",
       },
       {
-        id: "FJ8o6VX0okwMKvNcm2XZ",
         key: "session_type",
         field_value: opportunityData.sessionType,
       },
       {
-        id: "IJt4YVb1prb3MACAUE8M",
         key: "session_deuration",
         field_value: opportunityData.duration,
       },
       {
-        id: "vbUnGycab4X5kR4bB5OS",
         key: "opportunity.studio_name",
         field_value: opportunityData.studioName,
       },
       {
-        id: "gkl2UWx88U1kiLEU5aay",
         key: "appointments_status",
         field_value: "Confirmed",
       },
