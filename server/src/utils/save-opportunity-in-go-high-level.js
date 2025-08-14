@@ -7,7 +7,6 @@ const headers = {
   version: process.env.GO_HIGH_LEVEL_VERSION,
 };
 
-
 /**
  * Search for a contact in Go High Level by a specific field (email or phone).
  */
@@ -122,19 +121,25 @@ const createOpportunity = async (opportunityData) => {
         field_value: opportunityData.duration,
       },
       {
-        key: "opportunity.studio_name",
+        key: "studio_name",
         field_value: opportunityData.studioName,
       },
       {
         key: "appointments_status",
         field_value: "Confirmed",
       },
+      {
+        key: "booking_id",
+        field_value: opportunityData.bookingId.toString(),
+      },
     ],
   };
 
   try {
     const response = await axios.post(url, body, { headers });
-    return response.data.opportunity.id;
+    const opportunityID = response.data.opportunity.id;
+    return opportunityID
+    ;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const { status, data } = error.response || {};
@@ -196,7 +201,7 @@ const saveOpportunityInGoHighLevel = async (
   opportunityData,
   appointmentData
 ) => {
-  // Get or create the contact ID
+    // Get or create the contact ID
   const contactId = await getContactID(userData);
   opportunityData.contactId = contactId;
 
@@ -208,11 +213,13 @@ const saveOpportunityInGoHighLevel = async (
     );
     // Create opportunity only if appointment creation succeeded
     if (appointmentCreated) {
-      await createOpportunity(opportunityData);
+      const opportunityID = await createOpportunity(opportunityData);
+      return opportunityID;
     } else {
       throw new Error("Failed to create appointment in Go High Level");
     }
   }
 };
+
 
 module.exports = saveOpportunityInGoHighLevel;

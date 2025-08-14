@@ -21,6 +21,8 @@ const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model");
 
 const saveOpportunityInGoHighLevel = require("../../utils/save-opportunity-in-go-high-level");
+const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
+
 const { getCategoryMinHour } = require("../../utils/get-category-hour.js");
 const { getFreeSlots } = require("../../utils/get-free-slots.js");
 const createBookingLogic = require("./create-booking-logic .js");
@@ -795,8 +797,10 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
 
 // Change booking status
 exports.changeBookingStatus = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id || req.body.id;
+
   const { status } = req.body;
+
   if (!status) {
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Status is required");
   }
@@ -818,7 +822,10 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
     throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
   }
 
+  const opportunityID = booking.opportunityID;
+
   if (status === "approved") {
+    changeOpportunityStatus(opportunityID, "won");
     // Send email to user
     const mailOptions = {
       to: booking.personalInfo.email,
@@ -829,6 +836,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   }
 
   if (status === "rejected") {
+    changeOpportunityStatus(opportunityID, "lost");
     // Send email to user
     const mailOptions = {
       to: booking.personalInfo.email,
@@ -1182,6 +1190,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration,
     } = await createBookingLogic(req.body, user_id);
 
+
+
     const emailOptions = {
       to: personalInfo.email,
       subject: "Booking Confirmation",
@@ -1209,6 +1219,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       sessionType: pkg.session_type,
       duration: duration,
       studioName: studio.name,
+      bookingId: tempBooking._id,
     };
 
     const appointmentData = {
@@ -1219,6 +1230,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       studioId: studio._id,
     };
 
+    let opportunityID;
     // return console.log(appointmentData, "appointmentData");
     try {
       await saveOpportunityInGoHighLevel(
@@ -1235,6 +1247,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       );
     }
 
+    tempBooking.opportunityID = opportunityID;
     const booking = await tempBooking.save();
 
     res.status(201).json({
