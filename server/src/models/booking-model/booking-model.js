@@ -126,6 +126,11 @@ const bookingSchema = new mongoose.Schema(
       default: null,
     },
 
+    opportunityID: {
+      type: String,
+      required: true,
+    },
+
     totalPriceAfterDiscount: {
       type: Number,
       validate: {
