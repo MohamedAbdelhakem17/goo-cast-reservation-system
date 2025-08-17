@@ -74,12 +74,12 @@ export default function Booking() {
 
 
   return (
-    <div className="min-h-screen ">
-      <div className="sticky top-0 z-[30000]">
+    <div className="min-h-screen">
+      <div className="sticky top-0 z-[300]">
         <Header />
       </div>
       <Stepper />
-      <div className="lg:px-8 lg:w-7xl w-full mx-auto ">
+      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Step Indicator */}
 
         {/* Main Content */}
@@ -97,19 +97,16 @@ export default function Booking() {
               initial="enter"
               animate="center"
               exit="exit"
-              className="md:px-6 py-1"
+              className="px-4 sm:px-6 md:px-8 py-4"
             >
               <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="space-y-6 lg:space-y-0 lg:gap-6 items-start mt-6"
+                className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-1 lg:gap-6 items-start mt-6"
               >
-                <motion.div
-                  variants={itemVariants}
-                  className="md:p-1 rounded-lg"
-                >
+                <motion.div variants={itemVariants} className="p-4 sm:p-6 rounded-lg">
                   {stepComponents[currentStep]}
                 </motion.div>
               </motion.div>
@@ -118,8 +115,6 @@ export default function Booking() {
         </motion.div>
 
         <NavigationButtons />
-
-
 
         {/* Mobile Cart Modal */}
         <AnimatePresence>
@@ -140,14 +135,11 @@ export default function Booking() {
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-main/50 rounded-t-xl shadow-xl p-6 overflow-auto max-h-[400px]"
+                className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-main/50 rounded-t-xl shadow-xl p-4 sm:p-6 overflow-auto max-h-[50vh] sm:max-h-[60vh]"
               >
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-lg font-semibold">Cart</h2>
-                  <button
-                    onClick={() => setShowMobileCart(false)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
+                  <button onClick={() => setShowMobileCart(false)} className="text-gray-500 hover:text-gray-700">
                     <i className="fa-solid fa-xmark text-2xl text-main"></i>
                   </button>
                 </div>
@@ -158,6 +150,5 @@ export default function Booking() {
         </AnimatePresence>
       </div>
     </div>
-
-  );
+  )
 }
