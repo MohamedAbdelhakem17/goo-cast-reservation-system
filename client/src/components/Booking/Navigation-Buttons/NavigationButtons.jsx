@@ -37,7 +37,7 @@ export default function NavigationButtons() {
                     disabled={currentStep === 1}
                     onClick={handlePrevStep}
                 >
-                    <ArrowLeft className="mx-2 inline-block" />
+                    <ArrowLeft className="me-1 inline-block" />
                     Previous
                 </NavButton>
                 <NavButton
@@ -49,7 +49,7 @@ export default function NavigationButtons() {
                     type={currentStep === TOTAL_STEPS ? "submit" : "button"}
                 >
                     {currentStep === TOTAL_STEPS ? "Complete Booking" : "Next"}
-                    <ArrowRight className="mx-2 inline-block" />
+                    <ArrowRight className="ms-1 inline-block" />
                 </NavButton>
             </div>
         </>
