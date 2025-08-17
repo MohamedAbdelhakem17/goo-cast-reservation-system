@@ -1,6 +1,6 @@
 import { Shield, Star, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
+import { logo} from "../../../assets/images"
 export default function Header() {
     return (
         <div className="bg-white border-b border-gray-200 sticky top-0 z-[500]">
@@ -9,9 +9,10 @@ export default function Header() {
                     <div>
                         <h1 className="text-2xl md:text-3xl text-main font-bold">
                             <Link href="/">
-                                Goocast Studio</Link>
+                             <img src={logo} alt="Goocast" className='w-44' />
+                             </Link>
                         </h1>
-                        <p className="text-sm md:text-base text-gray-600 mt-1">Professional studio booking</p>
+                        <p className="text-sm md:text-base text-gray-600 mt-1">Easy podcasting for everyone</p>
                     </div>
 
                     {/* Trust Indicators */}
