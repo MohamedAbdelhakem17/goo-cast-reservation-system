@@ -79,7 +79,7 @@ export default function Booking() {
         <Header />
       </div>
       <Stepper />
-      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="px-4 lg:px-8 w-full lg:max-w-7xl mx-auto">
         {/* Step Indicator */}
 
         {/* Main Content */}
@@ -97,7 +97,7 @@ export default function Booking() {
               initial="enter"
               animate="center"
               exit="exit"
-              className="px-4 sm:px-6 md:px-8 py-4"
+              className="py-4"
             >
               <motion.div
                 variants={containerVariants}
@@ -106,7 +106,7 @@ export default function Booking() {
                 exit="exit"
                 className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-1 lg:gap-6 items-start mt-6"
               >
-                <motion.div variants={itemVariants} className="p-4 sm:p-6 rounded-lg">
+                <motion.div variants={itemVariants} className="rounded-lg">
                   {stepComponents[currentStep]}
                 </motion.div>
               </motion.div>

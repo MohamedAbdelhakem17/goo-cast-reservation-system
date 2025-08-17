@@ -6,7 +6,7 @@ import BookingHeader from '../../shared/Booking-Header/BookingHeader';
 
 export default function SelectAdditionalServices() {
     return (
-        <div className="space-y-4 px-5 duration-300" >
+        <div className="space-y-4 duration-300" >
             {/* Header */}
             <BookingHeader title="Additional Services" desc="Enhance your session with our professional add-ons" />
 

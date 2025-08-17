@@ -24,9 +24,8 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     isLoading
   } = useCalendar(bookingData?.studio?.id, bookingData.date, bookingData.duration);
 
-  console.log();
   return (
-    <div className="w-full p-6 mx-auto bg-white">
+    <div className="w-full  mx-auto bg-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
