@@ -51,7 +51,7 @@ export default function useBookingFormik() {
       totalPriceAfterDiscount: 0,
       couponCode: "",
       discount: "",
-      paymentMethod: "CARD", // Default payment method
+      paymentMethod: "CASH", // Default payment method
     };
   }, [parsedData]);
 
@@ -122,7 +122,7 @@ export default function useBookingFormik() {
           values.totalPriceAfterDiscount || values.totalPrice,
         personalInfo: {
           ...values.personalInfo,
-          fullName: `${values.personalInfo.firstName}  ${values.personalInfo.lastName}`,
+          fullName: `${values.personalInfo.firstName} ${values.personalInfo.lastName}`,
         },
       };
 
