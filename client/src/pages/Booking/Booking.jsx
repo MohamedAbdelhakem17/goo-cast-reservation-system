@@ -10,6 +10,8 @@ import SelectPackage from "../../components/Booking/Select-Package/SelectPackage
 import Cart from "../../components/Booking/Cart/Cart";
 
 import { useBooking } from "../../context/Booking-Context/BookingContext";
+import Header from "../../components/Booking/Header/Header";
+import NavigationButtons from "../../components/Booking/Navigation-Buttons/NavigationButtons";
 
 // Slide animation: simple and smooth
 const slideVariants = {
@@ -72,7 +74,10 @@ export default function Booking() {
 
 
   return (
-    <div className="py-5  min-h-screen">
+    <div className="min-h-screen ">
+      <div className="sticky top-0 z-[30000]">
+        <Header />
+      </div>
       <Stepper />
       <div className="lg:px-8 lg:w-7xl w-full mx-auto ">
         {/* Step Indicator */}
@@ -111,6 +116,8 @@ export default function Booking() {
             </motion.div>
           </AnimatePresence>
         </motion.div>
+
+        <NavigationButtons />
 
 
 

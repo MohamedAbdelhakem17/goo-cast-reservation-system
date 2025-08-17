@@ -4,7 +4,6 @@ import usePriceFormat from '../../../../hooks/usePriceFormat'
 import useTimeConvert from '../../../../hooks/useTimeConvert'
 import { useBooking } from '../../../../context/Booking-Context/BookingContext'
 import ApplyDiscount from "../../Apply-Discount/ApplyDiscount"
-import useVAT from '../../../../hooks/useVAT'
 
 export default function CartContent() {
     const formatDate = (dateString) => {
@@ -61,7 +60,6 @@ export default function CartContent() {
     }
 
     const { bookingData, handleNextStep, handlePrevStep, setBookingField, currentStep, hasError } = useBooking()
-    const { calculateVAT, VAT_PERCENTAGE } = useVAT()
     const formatTime = useTimeConvert()
     const priceFormat = usePriceFormat()
 
@@ -76,13 +74,13 @@ export default function CartContent() {
         return bookingData.totalPackagePrice + totalAddOnPrice
     }, [bookingData.totalPackagePrice, totalAddOnPrice])
 
-    const vatAmount = useMemo(() => {
-        return calculateVAT(subtotal)
-    }, [subtotal])
+    // const vatAmount = useMemo(() => {
+    //     return calculateVAT(subtotal)
+    // }, [subtotal])
 
     const totalBeforeDiscount = useMemo(() => {
-        return subtotal + vatAmount
-    }, [subtotal, vatAmount])
+        return subtotal
+    }, [subtotal])
 
     const discountAmount = useMemo(() => {
         return bookingData.discount ? (totalBeforeDiscount * bookingData.discount) / 100 : 0
@@ -124,10 +122,7 @@ export default function CartContent() {
                     <span>Subtotal</span>
                     <span>{priceFormat(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600 text-md">
-                    <span>VAT ({VAT_PERCENTAGE}%)</span>
-                    <span>{priceFormat(vatAmount)}</span>
-                </div>
+
                 {discountAmount > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
                         <span>Promo Discount ({bookingData.couponCode})</span>
