@@ -96,8 +96,8 @@ export default function CartContent() {
     }, [totalBeforeDiscount, totalAfterDiscount])
 
     return (
-        <div className="sticky top-0 px-5 py-4 border border-gray-200 rounded-lg">
-            <h2 className="py-2 my-2 text-lg text-bold">Reservation Summary</h2>
+        <div className=" px-5 py-4 border border-gray-200 rounded-lg">
+            <h2 className="py-2 my-2 text-lg font-bold">Reservation Summary</h2>
 
             <StudioSection
                 studio={bookingData.studio}
@@ -116,7 +116,6 @@ export default function CartContent() {
 
             <AddOnsSection selectedAddOns={bookingData.selectedAddOns} />
 
-            {/* الفاتورة */}
             <div className="py-2 my-2 space-y-2 border-t border-b border-gray-200">
                 <div className="flex justify-between text-md">
                     <span>Subtotal</span>
