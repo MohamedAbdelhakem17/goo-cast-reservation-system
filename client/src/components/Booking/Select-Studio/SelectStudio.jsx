@@ -262,7 +262,6 @@ export default function SelectStudio() {
             </motion.div>
           ))}
         </div>
-        <NavigationButtons />
       </>
 
       {/* Modal Preview */}

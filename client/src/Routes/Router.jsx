@@ -76,7 +76,8 @@ export default function AppRouter() {
         location.pathname !== "/booking/confirmation" &&
         !location.search.startsWith("?step=")
       ) {
-        localStorage.removeItem("bookingData");
+        localStorage.removeItem("bookingData"); 
+        localStorage.removeItem("maxStepReached"); 
         localStorage.removeItem("bookingStep");
       }
     };

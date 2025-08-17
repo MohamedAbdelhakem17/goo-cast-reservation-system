@@ -61,6 +61,23 @@ export default function BookingProvider({ children }) {
     return step;
   });
 
+  const [maxStepReached, setMaxStepReached] = useState(() => {
+    const storedStep = localStorage.getItem("maxStepReached");
+    return storedStep ? parseInt(storedStep) : 1;
+  });
+
+  const goToStep = (step) => {
+    if (step <= maxStepReached) {
+      setCurrentStep(step);
+    }
+
+    if (step > maxStepReached) {
+      setMaxStepReached(step);
+      localStorage.setItem("maxStepReached", step);
+      setCurrentStep(step);
+    }
+  };
+
   // Utility function to validate studio object
   const isValidStudio = (studio) => {
     return (
@@ -139,12 +156,25 @@ export default function BookingProvider({ children }) {
 
   // Navigation handlers
   const handleNextStep = useCallback(() => {
-    setCurrentStep((prevStep) => Math.min(prevStep + 1, TOTAL_STEPS));
-  }, []);
+    setCurrentStep((prevStep) => {
+      const nextStep = Math.min(prevStep + 1, TOTAL_STEPS);
+
+      setMaxStepReached((prevMax) => {
+        if (nextStep > prevMax) {
+          localStorage.setItem("maxStepReached", nextStep);
+          return nextStep;
+        }
+        return prevMax;
+      });
+
+      return nextStep;
+    });
+  }, [TOTAL_STEPS]);
 
   const handlePrevStep = useCallback(() => {
     setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
   }, []);
+
 
   // Reset all data
   const resetBooking = () => {
@@ -170,6 +200,7 @@ export default function BookingProvider({ children }) {
     await formik.handleSubmit(...args);
   };
 
+
   // Context value
   const bookingContextValue = {
     TOTAL_STEPS,
@@ -180,12 +211,13 @@ export default function BookingProvider({ children }) {
     setBookingField,
     getBookingField,
     getBookingError,
-    setCurrentStep,
+    setCurrentStep: goToStep,
     handleNextStep,
     handlePrevStep,
     resetBooking,
+    maxStepReached,
     handleSubmit: handleBookingSubmit,
-    formik, 
+    formik,
   };
 
   return (

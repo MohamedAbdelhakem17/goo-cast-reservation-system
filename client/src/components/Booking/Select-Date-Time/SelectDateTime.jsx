@@ -25,7 +25,6 @@ export default function SelectDateTime() {
                 {/* Slots */}
                 <Slots toggleSidebar={toggleSidebar} isOpen={isOpen} setIsOpen={setIsOpen} slots={slots?.data} />
 
-                <NavigationButtons />
         </>
     )
 }

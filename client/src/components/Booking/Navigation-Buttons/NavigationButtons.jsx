@@ -17,13 +17,7 @@ function NavButton({ children, ...props }) {
 export default function NavigationButtons() {
     const { TOTAL_STEPS, currentStep, handleNextStep, handlePrevStep, hasError } = useBooking();
 
-    const handlePaymentButton = () => {
-        if (currentStep === TOTAL_STEPS) {
-            return
-        } else {
-            handleNextStep();
-        }
-    };
+
 
     return (
         <>
@@ -44,11 +38,11 @@ export default function NavigationButtons() {
                     className={`px-4 py-2  rounded-md cursor-pointer ${currentStep === TOTAL_STEPS
                         ? "bg-green-500 text-white hover:bg-green-600"
                         : "bg-main/90 text-white hover:bg-main"} disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
-                    disabled={hasError()}
-                    onClick={handlePaymentButton}
-                    type={currentStep === TOTAL_STEPS ? "submit" : "button"}
+                    disabled={hasError() || currentStep === TOTAL_STEPS}
+                    onClick={handleNextStep}
+                    type= "button"
                 >
-                    {currentStep === TOTAL_STEPS ? "Complete Booking" : "Next"}
+                    Next
                     <ArrowRight className="ms-1 inline-block" />
                 </NavButton>
             </div>
