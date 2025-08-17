@@ -65,7 +65,7 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
                             stiffness: 300,
                             damping: 30,
                         }}
-                        className="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-[55] overflow-y-auto"
+                        className="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-[5500] overflow-y-auto"
                     >
                         {/* Header */}
                         <div className="sticky top-0 bg-white border-b border-gray-200 p-6">
