@@ -4,7 +4,6 @@ import usePriceFormat from '../../../../hooks/usePriceFormat'
 import useTimeConvert from '../../../../hooks/useTimeConvert'
 import { useBooking } from '../../../../context/Booking-Context/BookingContext'
 import ApplyDiscount from "../../Apply-Discount/ApplyDiscount"
-import useVAT from '../../../../hooks/useVAT'
 
 export default function CartContent() {
     const formatDate = (dateString) => {
@@ -61,7 +60,6 @@ export default function CartContent() {
     }
 
     const { bookingData, handleNextStep, handlePrevStep, setBookingField, currentStep, hasError } = useBooking()
-    const { calculateVAT, VAT_PERCENTAGE } = useVAT()
     const formatTime = useTimeConvert()
     const priceFormat = usePriceFormat()
 
@@ -76,13 +74,13 @@ export default function CartContent() {
         return bookingData.totalPackagePrice + totalAddOnPrice
     }, [bookingData.totalPackagePrice, totalAddOnPrice])
 
-    const vatAmount = useMemo(() => {
-        return calculateVAT(subtotal)
-    }, [subtotal])
+    // const vatAmount = useMemo(() => {
+    //     return calculateVAT(subtotal)
+    // }, [subtotal])
 
     const totalBeforeDiscount = useMemo(() => {
-        return subtotal + vatAmount
-    }, [subtotal, vatAmount])
+        return subtotal
+    }, [subtotal])
 
     const discountAmount = useMemo(() => {
         return bookingData.discount ? (totalBeforeDiscount * bookingData.discount) / 100 : 0
@@ -98,8 +96,8 @@ export default function CartContent() {
     }, [totalBeforeDiscount, totalAfterDiscount])
 
     return (
-        <div className="sticky top-0 px-5 py-4 border border-gray-200 rounded-lg">
-            <h2 className="py-2 my-2 text-lg text-bold">Reservation Summary</h2>
+        <div className=" px-5 py-4 border border-gray-200 rounded-lg">
+            <h2 className="py-2 my-2 text-lg font-bold">Reservation Summary</h2>
 
             <StudioSection
                 studio={bookingData.studio}
@@ -118,16 +116,12 @@ export default function CartContent() {
 
             <AddOnsSection selectedAddOns={bookingData.selectedAddOns} />
 
-            {/* الفاتورة */}
             <div className="py-2 my-2 space-y-2 border-t border-b border-gray-200">
                 <div className="flex justify-between text-md">
                     <span>Subtotal</span>
                     <span>{priceFormat(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600 text-md">
-                    <span>VAT ({VAT_PERCENTAGE}%)</span>
-                    <span>{priceFormat(vatAmount)}</span>
-                </div>
+
                 {discountAmount > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
                         <span>Promo Discount ({bookingData.couponCode})</span>

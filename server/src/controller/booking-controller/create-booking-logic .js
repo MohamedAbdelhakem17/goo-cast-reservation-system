@@ -112,8 +112,7 @@ const createBookingLogic = async (body, user_id) => {
 
   const totalPrice = Math.round(
     packagePrice +
-    totalAddOnsPriceFromDb +
-    (packagePrice + totalAddOnsPriceFromDb) * 0.14
+    totalAddOnsPriceFromDb 
   );
   if (totalPrice !== totalPriceFromClient)
     throw new AppError(

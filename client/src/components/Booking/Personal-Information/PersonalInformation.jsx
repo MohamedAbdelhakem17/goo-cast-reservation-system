@@ -137,7 +137,7 @@ export default function PersonalInformation() {
               Payment Method
             </h3>
             <PaymentOptions />
-            <div className="mt-3 flex items-center gap-4 px-5 ">
+            <div className="mt-3 flex items-center flex-col md:flex-row gap-4 px-5 ">
               <button
                 type="button"
                 disabled={hasError() || formik.isSubmitting}
