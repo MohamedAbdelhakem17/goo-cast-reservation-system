@@ -1201,7 +1201,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
           items: selectedAddOns,
           totalPrice: addOnsTotalPriceFromDb,
         },
-        selectedPackage: pk0g,
+        selectedPackage: pkg,
       }),
     };
 
