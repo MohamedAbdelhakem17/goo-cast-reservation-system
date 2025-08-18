@@ -35,10 +35,10 @@ export default function Footer() {
 
     // Social media links
     const socialLinks = [
-        { icon: "fa-brands fa-instagram", url: "#", label: "Instagram" },
-        { icon: "fa-brands fa-twitter", url: "#", label: "Twitter" },
-        { icon: "fa-brands fa-facebook", url: "#", label: "Facebook" },
-        { icon: "fa-brands fa-spotify", url: "#", label: "Spotify" },
+        { icon: "fa-brands fa-instagram", url: "https://www.instagram.com/dottopia_agency/", label: "Instagram" },
+        { icon: "fa-brands fa-facebook", url: "https://www.facebook.com/Dottopia/", label: "Facebook" },
+        { icon: "fa-brands fa-tiktok", url: "https://www.tiktok.com/@dottopia_agency", label: "Tiktok" },
+        { icon: "fa-brands fa-linkedin", url: "https://www.linkedin.com/company/dottopia/", label: "Linkedin" },
     ];
 
     return (
@@ -202,14 +202,14 @@ export default function Footer() {
                             className="flex items-center gap-2 hover:text-main transition-colors"
                         >
                             <i className="fa-solid fa-phone"></i>
-                            <span>+20 123 456 7890</span>
+                            <span>01010955331</span>
                         </a>
                         <a
                             href="mailto:info@goocast.com"
                             className="flex items-center gap-2 hover:text-main transition-colors"
                         >
                             <i className="fa-solid fa-envelope"></i>
-                            <span>info@goocast.com</span>
+                            <span>studio@goocast.net</span>
                         </a>
                     </div>
 

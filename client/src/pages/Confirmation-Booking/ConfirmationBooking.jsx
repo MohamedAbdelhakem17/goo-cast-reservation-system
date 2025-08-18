@@ -320,7 +320,7 @@ export default function BookingConfirmation() {
                 <DetailRow
                   icon={Mail}
                   label="Email Support"
-                  value="support@goocaststudio.com"
+                  value="studio@goocast.net"
                 />
                 <DetailRow
                   icon={MapPin}
