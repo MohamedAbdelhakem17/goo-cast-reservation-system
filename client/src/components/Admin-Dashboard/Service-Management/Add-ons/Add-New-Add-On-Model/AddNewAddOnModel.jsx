@@ -23,18 +23,6 @@ const validationSchema = Yup.object({
             const allowedFormats = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/gif'];
             return value && allowedFormats.includes(value.type);
         }),
-    isFixed: Yup.boolean().required(),
-    perHourDiscounts: Yup.object().test(
-        'required-if-not-fixed',
-        'Per Hour Discounts is required when price is not fixed',
-        function (value) {
-            const { isFixed } = this.parent;
-            if (!isFixed && (!value || Object.keys(value).length === 0)) {
-                return false;
-            }
-            return true;
-        }
-    ),
 });
 
 const initialRuleState = {
@@ -78,7 +66,6 @@ export default function AddNewAddOnModel({ closeModel }) {
             description: '',
             price: '',
             image: '',
-            isFixed: false,
         },
         validationSchema,
         onSubmit: async (values) => {
