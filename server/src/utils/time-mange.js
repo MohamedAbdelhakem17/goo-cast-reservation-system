@@ -82,7 +82,6 @@ function combineDateAndTime(dateISO, time) {
     zone: "Africa/Cairo",
   }).toISO(); 
 
-  console.log(dateTimeWithOffset);
   return dateTimeWithOffset;
 }
 

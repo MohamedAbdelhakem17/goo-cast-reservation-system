@@ -35,11 +35,28 @@ app.use(
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
-        "img-src": ["'self'", "data:", "https://*.googleusercontent.com"],
+        "default-src": ["'self'"],
+        "script-src": [
+          "'self'",
+          "https://www.googletagmanager.com",
+          "https://www.google-analytics.com",
+        ],
+        "img-src": [
+          "'self'",
+          "data:",
+          "https://*.googleusercontent.com",
+          "https://www.google-analytics.com",
+        ],
+        "connect-src": [
+          "'self'",
+          "https://www.google-analytics.com",
+          "https://region1.google-analytics.com",
+        ],
       },
     },
   })
 );
+
 
 // Body parser
 app.use(express.json());

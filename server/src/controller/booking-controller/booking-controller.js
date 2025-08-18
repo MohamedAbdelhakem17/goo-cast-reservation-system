@@ -1292,7 +1292,6 @@ exports.ghlCreateBooking = asyncHandler(async (req, res) => {
   //   totalPrice: lead_value,
   // };
 
-  console.log(req.body, "req.body in ghlCreateBooking");
   // const { tempBooking } = await createBookingLogic(bookingData);
 
   // const booking = await tempBooking.save();

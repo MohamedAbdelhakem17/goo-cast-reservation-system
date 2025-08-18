@@ -69,7 +69,6 @@ const PriceRow = ({ label, value, bold = false }) => (
 export default function BookingConfirmation() {
   const { calculateVAT, VAT_PERCENTAGE } = useVAT();
 
-  console.log(VAT_PERCENTAGE);
   const navigate = useNavigate();
   const bookingData = JSON.parse(
     localStorage.getItem("bookingConfirmation")
