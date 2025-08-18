@@ -40,22 +40,31 @@ app.use(
           "'self'",
           "https://www.googletagmanager.com",
           "https://www.google-analytics.com",
+          "https://www.clarity.ms",
         ],
         "img-src": [
           "'self'",
           "data:",
           "https://*.googleusercontent.com",
           "https://www.google-analytics.com",
+          "https://www.clarity.ms",
         ],
         "connect-src": [
           "'self'",
           "https://www.google-analytics.com",
           "https://region1.google-analytics.com",
+          "https://www.clarity.ms",
+        ],
+        "frame-src": [
+          "'self'",
+          "https://www.googletagmanager.com",
+          "https://www.clarity.ms",
         ],
       },
     },
   })
 );
+
 
 
 // Body parser
