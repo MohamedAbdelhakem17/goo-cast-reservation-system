@@ -95,7 +95,6 @@ const bookingConfirmationEmailBody = (booking) => {
         <p style="margin:4px 0;"><strong>Full Name:</strong> ${booking.personalInfo?.fullName || "N/A"}</p>
         <p style="margin:4px 0;"><strong>Phone:</strong> ${booking.personalInfo?.phone || "N/A"}</p>
         <p style="margin:4px 0;"><strong>Email:</strong> ${booking.personalInfo?.email || "N/A"}</p>
-        <p style="margin:4px 0;"><strong>Brand:</strong> ${booking.personalInfo?.brand || "N/A"}</p>
       </div>
 
       <!-- Total -->
