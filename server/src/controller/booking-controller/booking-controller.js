@@ -1196,10 +1196,10 @@ exports.createBooking = asyncHandler(async (req, res) => {
       message: bookingConfirmationEmailBody({
         ...tempBooking,
         bookingId: tempBooking._id,
-        studio: { name: studio.name, image: studio.thumbnail },
+        studio: { name: studio?.name, image: studio?.thumbnail },
         selectedAddOns: {
-          items: selectedAddOns,
-          totalPrice: addOnsTotalPriceFromDb,
+          items: selectedAddOns || [],
+          totalPrice: addOnsTotalPriceFromDb || 0,
         },
         selectedPackage: pkg,
       }),

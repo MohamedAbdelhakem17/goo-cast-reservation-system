@@ -1,5 +1,7 @@
+// booking-confirmation-email.js
 const bookingConfirmationEmailBody = (booking) => {
   const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-GB", {
       weekday: "long",
@@ -9,21 +11,24 @@ const bookingConfirmationEmailBody = (booking) => {
     });
   };
 
-  const addOnsHTML = booking.selectedAddOns.items
-    .map(
-      (addOn) => `
-      <div style="border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-bottom:10px;">
-        <p style="margin:0; font-weight:600; color:#111827;">${addOn.name}</p>
-        <p style="margin:4px 0; font-size:14px; color:#6b7280;">
-          Qty: ${addOn.quantity} × ${addOn.price} EGP
-        </p>
-        <p style="margin:0; font-weight:600; color:#ed1e26;">
-          ${addOn.quantity * addOn.price} EGP
-        </p>
-      </div>
-    `
-    )
-    .join("");
+  const addOnsHTML =
+    booking.selectedAddOns?.items?.length > 0
+      ? booking.selectedAddOns.items
+          .map(
+            (addOn) => `
+        <div style="border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-bottom:10px;">
+          <p style="margin:0; font-weight:600; color:#111827;">${addOn.name}</p>
+          <p style="margin:4px 0; font-size:14px; color:#6b7280;">
+            Qty: ${addOn.quantity} × ${addOn.price} EGP
+          </p>
+          <p style="margin:0; font-weight:600; color:#ed1e26;">
+            ${addOn.quantity * addOn.price} EGP
+          </p>
+        </div>
+      `
+          )
+          .join("")
+      : `<p style="margin:0; font-size:14px; color:#6b7280;">No add-ons selected</p>`;
 
   return `
 <!DOCTYPE html>
@@ -48,14 +53,14 @@ const bookingConfirmationEmailBody = (booking) => {
         <p style="margin:0; font-size:14px; color:#6b7280;">Booking Date:</p>
         <p style="margin:4px 0; font-weight:600;">${formatDate(booking.date)}</p>
         <p style="margin:0; font-size:14px; color:#6b7280;">Booking ID:</p>
-        <p style="margin:4px 0; font-weight:600;">${booking.bookingId}</p>
+        <p style="margin:4px 0; font-weight:600;">${booking.bookingId || "N/A"}</p>
       </div>
 
       <!-- Studio Info -->
       <div style="display:flex; gap:16px; align-items:center; margin-bottom:20px;">
-        <img src="${booking.studio.image}" alt="${booking.studio.name}" style="width:120px; height:120px; border-radius:8px; object-fit:cover; border:1px solid #e5e7eb;" />
+        <img src="${booking.studio?.image || ""}" alt="${booking.studio?.name || "Studio"}" style="width:120px; height:120px; border-radius:8px; object-fit:cover; border:1px solid #e5e7eb;" />
         <div>
-          <h3 style="margin:0; font-size:18px; font-weight:700;">${booking.studio.name}</h3>
+          <h3 style="margin:0; font-size:18px; font-weight:700;">${booking.studio?.name || "Studio"}</h3>
         </div>
       </div>
 
@@ -64,15 +69,15 @@ const bookingConfirmationEmailBody = (booking) => {
         <h4 style="margin:0 0 8px; font-size:16px; font-weight:600;">Date & Time</h4>
         <p style="margin:0; font-size:14px;">${formatDate(booking.date)}</p>
         <p style="margin:4px 0 0; font-size:14px;">
-          Time Slot: <strong>${booking.startSlot} - ${booking.endSlot}</strong>
+          Time Slot: <strong>${booking.startSlot || "N/A"} - ${booking.endSlot || "N/A"}</strong>
         </p>
-        <p style="margin:4px 0 0; font-size:14px; color:#6b7280;">Duration: ${booking.duration} hours</p>
+        <p style="margin:4px 0 0; font-size:14px; color:#6b7280;">Duration: ${booking.duration || 0} hours</p>
       </div>
 
       <!-- Package -->
       <div style="margin-bottom:20px; border:1px solid #e5e7eb; border-radius:8px; padding:16px;">
         <h4 style="margin:0 0 8px; font-size:16px; font-weight:600;">Selected Package</h4>
-        <p style="margin:0; font-size:14px; font-weight:600; color:#ed1e26;">${booking.selectedPackage}</p>
+        <p style="margin:0; font-size:14px; font-weight:600; color:#ed1e26;">${booking.selectedPackage || "N/A"}</p>
       </div>
 
       <!-- Add-ons -->
@@ -80,24 +85,24 @@ const bookingConfirmationEmailBody = (booking) => {
         <h4 style="margin:0 0 8px; font-size:16px; font-weight:600;">Selected Add-ons</h4>
         ${addOnsHTML}
         <p style="margin:0; font-weight:700; text-align:right; color:#ed1e26;">
-          Total Add-ons: ${booking.selectedAddOns.totalPrice} EGP
+          Total Add-ons: ${booking.selectedAddOns?.totalPrice || 0} EGP
         </p>
       </div>
 
       <!-- Personal Info -->
       <div style="margin-bottom:20px; border:1px solid #e5e7eb; border-radius:8px; padding:16px;">
         <h4 style="margin:0 0 12px; font-size:16px; font-weight:600;">Personal Information</h4>
-        <p style="margin:4px 0;"><strong>Full Name:</strong> ${booking.personalInfo.fullName}</p>
-        <p style="margin:4px 0;"><strong>Phone:</strong> ${booking.personalInfo.phone}</p>
-        <p style="margin:4px 0;"><strong>Email:</strong> ${booking.personalInfo.email}</p>
-        <p style="margin:4px 0;"><strong>Brand:</strong> ${booking.personalInfo.brand}</p>
+        <p style="margin:4px 0;"><strong>Full Name:</strong> ${booking.personalInfo?.fullName || "N/A"}</p>
+        <p style="margin:4px 0;"><strong>Phone:</strong> ${booking.personalInfo?.phone || "N/A"}</p>
+        <p style="margin:4px 0;"><strong>Email:</strong> ${booking.personalInfo?.email || "N/A"}</p>
+        <p style="margin:4px 0;"><strong>Brand:</strong> ${booking.personalInfo?.brand || "N/A"}</p>
       </div>
 
       <!-- Total -->
       <div style="background:#ed1e26; color:#fff; text-align:center; border-radius:8px; padding:20px; margin-bottom:20px;">
         <h4 style="margin:0; font-size:18px;">Total Amount</h4>
         <p style="margin:8px 0 0; font-size:24px; font-weight:700;">
-          ${booking.totalPriceAfterDiscount} EGP
+          ${booking.totalPriceAfterDiscount || booking.totalPrice || 0} EGP
         </p>
       </div>
 
