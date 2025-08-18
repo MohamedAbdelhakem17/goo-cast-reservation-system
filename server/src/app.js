@@ -30,7 +30,16 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 }
 
 // Security headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "img-src": ["'self'", "data:", "https://*.googleusercontent.com"],
+      },
+    },
+  })
+);
 
 // Body parser
 app.use(express.json());
