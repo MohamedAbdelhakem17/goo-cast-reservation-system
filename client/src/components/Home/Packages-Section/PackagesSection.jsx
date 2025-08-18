@@ -130,8 +130,8 @@ export default function PackagesSection() {
                     variants={iconVariants}
                     whileHover="hover"
                   >
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
-                      <div className="text-white">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-main/60 backdrop-blur-sm border border-white/30">
+                      <div className="text-black">
                         {getIcon(packageItem.icon)}
                       </div>
                     </div>
