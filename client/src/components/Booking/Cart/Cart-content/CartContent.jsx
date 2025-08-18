@@ -14,31 +14,36 @@ export default function CartContent() {
     function StudioSection({ studio, date, startSlot, formatTime, duration }) {
         if (!studio) return null
         return (
-            <div className="pb-3 space-y-1 border-gray-300 border-b-1">
-                <p className="text-gray-500 text-md">
-                    <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
-                    {formatDate(date)}
-                </p>
-                <p className="text-gray-500 text-md">
-                    <i className="fa-solid fa-clock mr-2 text-[12px]"></i>
-                    {formatTime(startSlot)} ({duration}h)
-                </p>
-                <p className="text-gray-500 text-md">
-                    <i className="fa-solid fa-location-dot mr-2 text-[12px]"></i>
-                    {studio.name}
-                </p>
+            <div className="pb-4 space-y-1 border-gray-300 border-b-1 flex items-center justify-between">
+                <div className='flex-1 ml-3 space-y-4 '>
+                    <p className="text-gray-500 text-md">
+                        <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
+                        {formatDate(date)}
+                    </p>
+                    <p className="text-gray-500 text-md">
+                        <i className="fa-solid fa-clock mr-2 text-[12px]"></i>
+                        {formatTime(startSlot)} ({duration}h)
+                    </p>
+                    <p className="text-gray-500 text-md">
+                        <i className="fa-solid fa-location-dot mr-2 text-[12px]"></i>
+                        {studio.name}
+                    </p>
+                </div>
+                <img src={studio?.image} alt={studio.name} className='w-[200px] aspect-[1/.5] rounded-md' />
             </div>
         )
     }
 
-    function PackageSection({ selectedPackage, duration, totalPackagePrice, priceFormat }) {
+    function PackageSection({ selectedPackage, duration, priceFormat }) {
         if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null
         return (
-            <div className="flex items-center justify-between pt-2 pb-1">
-                <p className="text-gray-500 text-md">
-                    {selectedPackage.name} ({duration}h)
-                </p>
-                <p className="text-gray-500 text-md">{priceFormat(totalPackagePrice)}</p>
+            <div className="flex  items-center justify-between py-1">
+                    <p className="text-gray-500 text-md">
+                        {selectedPackage.name}
+                    </p>
+                    <p className="text-gray-500 text-md">
+                        {priceFormat(selectedPackage.price)}   x {duration}h
+                    </p>
             </div>
         )
     }
