@@ -16,7 +16,6 @@ import usePriceFormat from "../../hooks/usePriceFormat";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import BookingReceiptPDF from "../../components/shared/Booking-Receipt-PDF/BookingReceiptPDF";
 import useDateFormat from "../../hooks/useDateFormat";
-import useVAT from "../../hooks/useVAT";
 import { useMemo } from "react";
 
 const fadeInUp = {
@@ -67,7 +66,6 @@ const PriceRow = ({ label, value, bold = false }) => (
 );
 
 export default function BookingConfirmation() {
-  const { calculateVAT, VAT_PERCENTAGE } = useVAT();
 
   const navigate = useNavigate();
   const bookingData = JSON.parse(
@@ -81,10 +79,7 @@ export default function BookingConfirmation() {
     return bookingData.totalPackagePrice + bookingData.totalAddOnsPrice;
   }, [bookingData.totalPackagePrice, bookingData.totalAddOnsPrice]);
 
-  const vatAmount = useMemo(() => {
-    return calculateVAT(subtotal);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subtotal]);
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
@@ -258,10 +253,6 @@ export default function BookingConfirmation() {
                   <PriceRow
                     label="Subtotal"
                     value={priceFormat(subtotal)}
-                  />
-                  <PriceRow
-                    label={`VAT (${VAT_PERCENTAGE}%`}
-                    value={priceFormat(vatAmount)}
                   />
                   <div className="flex justify-between text-gray-600 text-md"></div>
                 </div>
