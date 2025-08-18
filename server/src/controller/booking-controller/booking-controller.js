@@ -1211,6 +1211,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration: duration,
       totalPrice: tempBooking.totalPrice,
       totalPriceAfterDiscount: totalPriceAfterDiscount,
+      bookingId: tempBooking._id,
     };
 
     const emailOptions = {
