@@ -61,7 +61,7 @@ const bookingConfirmationEmailBody = (booking) => {
 
       <!-- Studio Info -->
       <div
-        style="display:flex; flex-direction:column; gap:12px; align-items:flex-start; margin-bottom:20px; width:100%;">
+        style="display:flex; flex-direction:column; gap:12px; align-items:flex-center; margin-bottom:20px; width:100%;">
         <img src="${booking.studio?.image || ""}" alt="${booking.studio?.name || " Studio"}"
           style="width:100%; height:200px; border-radius:8px; object-fit:cover; border:1px solid #e5e7eb;" />
         <div style="width:100%;">
