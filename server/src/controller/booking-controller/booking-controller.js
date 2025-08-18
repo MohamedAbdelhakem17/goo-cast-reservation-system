@@ -1190,19 +1190,33 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration,
     } = await createBookingLogic(req.body, user_id);
 
+    const emailBookingData = {
+      studio: {
+        name: studio.name,
+        image: studio.thumbnail,
+      },
+      personalInfo: {
+        fullName: personalInfo.fullName,
+        email: personalInfo.email,
+        phone: personalInfo.phone,
+      },
+      selectedAddOns: {
+        totalPrice: addOnsTotalPriceFromDb,
+        items: selectedAddOns,
+      },
+      selectedPackage: pkg.name,
+      date: bookingDate,
+      startSlot: startSlot,
+      endSlot: endSlot,
+      duration: duration,
+      totalPrice: tempBooking.totalPrice,
+      totalPriceAfterDiscount: totalPriceAfterDiscount,
+    };
+
     const emailOptions = {
       to: personalInfo.email,
       subject: "Booking Confirmation",
-      message: bookingConfirmationEmailBody({
-        ...tempBooking,
-        bookingId: tempBooking._id,
-        studio: { name: studio?.name, image: studio?.thumbnail },
-        selectedAddOns: {
-          items: selectedAddOns || [],
-          totalPrice: addOnsTotalPriceFromDb || 0,
-        },
-        selectedPackage: pkg,
-      }),
+      message: bookingConfirmationEmailBody(emailBookingData),
     };
 
     const userData = {
