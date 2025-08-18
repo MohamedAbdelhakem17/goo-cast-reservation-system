@@ -1282,6 +1282,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration,
     } = await createBookingLogic(req.body, user_id);
 
+    const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name} | ${pkg.session_type}`;
     const emailBookingData = {
       studio: {
         name: studio.name,
@@ -1308,7 +1309,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
     const emailOptions = {
       to: personalInfo.email,
-      subject: "Booking Confirmation",
+      subject: bookingTitle,
       message: bookingConfirmationEmailBody(emailBookingData),
     };
 
@@ -1319,7 +1320,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     };
 
     const opportunityData = {
-      name: `Goocast | ${personalInfo.fullName} | ${pkg.name} | ${pkg.session_type}`,
+      name: bookingTitle,
       // Goocast | Full Name | Service Name | Session
       price: totalPriceAfterDiscount,
       sessionType: pkg.session_type,
