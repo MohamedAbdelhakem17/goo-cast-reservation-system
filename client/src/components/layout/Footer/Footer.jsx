@@ -107,6 +107,7 @@ export default function Footer() {
                                 <motion.a
                                     key={index}
                                     href={social.url}
+                                    target="_blank"
                                     aria-label={social.label}
                                     className="w-9 h-9 rounded-full bg-gray-100 hover:bg-main hover:text-white flex items-center justify-center text-gray-600 transition-colors duration-300"
                                     whileHover={{ y: -3, scale: 1.1 }}
