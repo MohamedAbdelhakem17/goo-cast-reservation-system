@@ -43,7 +43,6 @@ passport.use(
           active: true,
         });
 
-        console.log("Google login success:", user);
 
         return done(null, user);
       } catch (err) {
