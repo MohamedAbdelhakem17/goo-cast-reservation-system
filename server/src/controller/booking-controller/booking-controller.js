@@ -1226,7 +1226,8 @@ exports.createBooking = asyncHandler(async (req, res) => {
     };
 
     const opportunityData = {
-      name: `${personalInfo.fullName} - ${pkg.name} , ${pkg.session_type} - ${new Date(bookingDate).toISOString().split("T")[0]}`,
+      name: `Goocast | ${personalInfo.fullName} | ${pkg.name} | ${pkg.session_type}`,
+      // Goocast | Full Name | Service Name | Session
       price: totalPriceAfterDiscount,
       sessionType: pkg.session_type,
       duration: duration,
