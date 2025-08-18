@@ -30,41 +30,40 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 }
 
 // Security headers
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        "default-src": ["'self'"],
-        "script-src": [
-          "'self'",
-          "https://www.googletagmanager.com",
-          "https://www.google-analytics.com",
-          "https://*.clarity.ms",
-        ],
-        "img-src": [
-          "'self'",
-          "data:",
-          "https://*.googleusercontent.com",
-          "https://www.google-analytics.com",
-          "https://*.clarity.ms",
-        ],
-        "connect-src": [
-          "'self'",
-          "https://www.google-analytics.com",
-          "https://region1.google-analytics.com",
-          "https://*.clarity.ms",
-        ],
-        "frame-src": [
-          "'self'",
-          "https://www.googletagmanager.com",
-          "https://*.clarity.ms",
-        ],
-      },
-    },
-  })
-);
-
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       useDefaults: true,
+//       directives: {
+//         "default-src": ["'self'"],
+//         "script-src": [
+//           "'self'",
+//           "https://www.googletagmanager.com",
+//           "https://www.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "img-src": [
+//           "'self'",
+//           "data:",
+//           "https://*.googleusercontent.com",
+//           "https://www.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "connect-src": [
+//           "'self'",
+//           "https://www.google-analytics.com",
+//           "https://region1.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "frame-src": [
+//           "'self'",
+//           "https://www.googletagmanager.com",
+//           "https://*.clarity.ms",
+//         ],
+//       },
+//     },
+//   })
+// );
 
 
 
