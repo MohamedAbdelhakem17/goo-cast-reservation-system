@@ -33,13 +33,16 @@ const bookingConfirmationEmailBody = (booking) => {
   return `
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Booking Confirmation</title>
 </head>
+
 <body style="font-family: Arial, sans-serif; background:#f3f4f6; margin:0; padding:20px; color:#111827;">
-  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;">
-    
+  <div
+    style="max-width:600px; margin:auto; background:#ffffff; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;">
+
     <!-- Header -->
     <div style="background:#ed1e26; padding:20px; text-align:center; color:#fff;">
       <h2 style="margin:0; font-size:22px;">Booking Confirmation</h2>
@@ -47,7 +50,7 @@ const bookingConfirmationEmailBody = (booking) => {
     </div>
 
     <div style="padding:20px;">
-      
+
       <!-- Booking Info -->
       <div style="margin-bottom:20px;">
         <p style="margin:0; font-size:14px; color:#6b7280;">Booking Date:</p>
@@ -57,9 +60,11 @@ const bookingConfirmationEmailBody = (booking) => {
       </div>
 
       <!-- Studio Info -->
-      <div style="display:flex; gap:16px; align-items:center; margin-bottom:20px;">
-        <img src="${booking.studio?.image || ""}" alt="${booking.studio?.name || "Studio"}" style="width:120px; height:120px; border-radius:8px; object-fit:cover; border:1px solid #e5e7eb;" />
-        <div>
+      <div
+        style="display:flex; flex-direction:column; gap:12px; align-items:flex-start; margin-bottom:20px; width:100%;">
+        <img src="${booking.studio?.image || ""}" alt="${booking.studio?.name || " Studio"}"
+          style="width:100%; height:200px; border-radius:8px; object-fit:cover; border:1px solid #e5e7eb;" />
+        <div style="width:100%;">
           <h3 style="margin:0; font-size:18px; font-weight:700;">${booking.studio?.name || "Studio"}</h3>
         </div>
       </div>
@@ -95,11 +100,11 @@ const bookingConfirmationEmailBody = (booking) => {
         <p style="margin:4px 0;"><strong>Full Name:</strong> ${booking.personalInfo?.fullName || "N/A"}</p>
         <p style="margin:4px 0;"><strong>Phone:</strong> ${booking.personalInfo?.phone || "N/A"}</p>
         <p style="margin:4px 0;"><strong>Email:</strong> ${booking.personalInfo?.email || "N/A"}</p>
-        <p style="margin:4px 0;"><strong>Brand:</strong> ${booking.personalInfo?.brand || "N/A"}</p>
       </div>
 
       <!-- Total -->
-      <div style="background:#ed1e26; color:#fff; text-align:center; border-radius:8px; padding:20px; margin-bottom:20px;">
+      <div
+        style="background:#ed1e26; color:#fff; text-align:center; border-radius:8px; padding:20px; margin-bottom:20px;">
         <h4 style="margin:0; font-size:18px;">Total Amount</h4>
         <p style="margin:8px 0 0; font-size:24px; font-weight:700;">
           ${booking.totalPriceAfterDiscount || booking.totalPrice || 0} EGP
@@ -109,6 +114,7 @@ const bookingConfirmationEmailBody = (booking) => {
     </div>
   </div>
 </body>
+
 </html>
 `;
 };
