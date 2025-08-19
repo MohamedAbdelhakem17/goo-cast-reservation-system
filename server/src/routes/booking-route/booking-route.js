@@ -6,10 +6,12 @@ const protectRoute = require("../../middleware/protect.middleware");
 const { USER_ROLE } = require("../../config/system-variables");
 const bookingController = require("../../controller/booking-controller/booking-controller");
 
-// get Fully booked dates for a studio
-router
-  .route("/fully-booked/:studioId/")
-  .get(bookingController.getFullyBookedDates);
+// // get Fully booked dates for a studio
+// router
+//   .route("/fully-booked/:studioId")
+//   .get(bookingController.getFullyBookedDates);
+
+router.route("/fully-booked").get(bookingController.getFullyBookedDates);
 
 router
   .route("/available-studios/:date/:categoryId")

@@ -178,46 +178,110 @@ const isDurationAvailable = (
 };
 
 // Get Fully Booked Dates Based on Required Duration
+// exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
+//   const { studioId } = req.params;
+//   const requiredDuration = parseInt(req.query.duration) || 0;
+//   const requiredDurationMinutes = requiredDuration * 60;
+
+//   const studio = await StudioModel.findById(studioId);
+//   if (!studio)
+//     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+
+//   const bookings = await BookingModel.find({ studio: studioId });
+
+//   const groupedByDate = {};
+
+//   for (const booking of bookings) {
+//     const day = booking.date.toISOString().split("T")[0];
+//     if (!groupedByDate[day]) groupedByDate[day] = [];
+//     const start = booking.startSlot;
+//     const end = booking.endSlot;
+//     for (let i = start; i < end; i += 60) {
+//       groupedByDate[day].push(i);
+//     }
+//   }
+
+//   const startOfDay = timeToMinutes(studio.startTime);
+//   const endOfDay = timeToMinutes(studio.endTime);
+//   const totalSlots = getTimeSlots(startOfDay, endOfDay);
+
+//   const fullyBookedDates = [];
+
+//   const allDates = Object.keys(groupedByDate);
+//   const uniqueDates = [...new Set([...allDates])];
+
+//   for (const day of uniqueDates) {
+//     const bookedSlots = groupedByDate[day];
+//     const isAvailable = isDurationAvailable(
+//       bookedSlots,
+//       totalSlots,
+//       requiredDurationMinutes / 60
+//     );
+//     if (!isAvailable) {
+//       fullyBookedDates.push(day);
+//     }
+//   }
+
+//   res.status(200).json({
+//     status: HTTP_STATUS_TEXT.SUCCESS,
+//     data: fullyBookedDates,
+//   });
+// });
+
 exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
-  const { studioId } = req.params;
   const requiredDuration = parseInt(req.query.duration) || 0;
   const requiredDurationMinutes = requiredDuration * 60;
 
-  const studio = await StudioModel.findById(studioId);
-  if (!studio)
-    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+  const studios = await StudioModel.find();
 
-  const bookings = await BookingModel.find({ studio: studioId });
+  if (!studios || studios.length === 0) {
+    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No studios found"));
+  }
+
+  const bookings = await BookingModel.find();
 
   const groupedByDate = {};
 
   for (const booking of bookings) {
     const day = booking.date.toISOString().split("T")[0];
     if (!groupedByDate[day]) groupedByDate[day] = [];
-    const start = booking.startSlot;
-    const end = booking.endSlot;
-    for (let i = start; i < end; i += 60) {
-      groupedByDate[day].push(i);
-    }
+    groupedByDate[day].push(booking);
   }
-
-  const startOfDay = timeToMinutes(studio.startTime);
-  const endOfDay = timeToMinutes(studio.endTime);
-  const totalSlots = getTimeSlots(startOfDay, endOfDay);
 
   const fullyBookedDates = [];
 
-  const allDates = Object.keys(groupedByDate);
-  const uniqueDates = [...new Set([...allDates])];
+  for (const [day, dayBookings] of Object.entries(groupedByDate)) {
+    let dayFullyBooked = true;
 
-  for (const day of uniqueDates) {
-    const bookedSlots = groupedByDate[day];
-    const isAvailable = isDurationAvailable(
-      bookedSlots,
-      totalSlots,
-      requiredDurationMinutes / 60
-    );
-    if (!isAvailable) {
+    for (const studio of studios) {
+      const studioBookings = dayBookings.filter(
+        (b) => b.studio.toString() === studio._id.toString()
+      );
+
+      const bookedSlots = [];
+      for (const booking of studioBookings) {
+        for (let i = booking.startSlot; i < booking.endSlot; i += 60) {
+          bookedSlots.push(i);
+        }
+      }
+
+      const startOfDay = timeToMinutes(studio.startTime);
+      const endOfDay = timeToMinutes(studio.endTime);
+      const totalSlots = getTimeSlots(startOfDay, endOfDay);
+
+      const isAvailable = isDurationAvailable(
+        bookedSlots,
+        totalSlots,
+        requiredDurationMinutes / 60
+      );
+
+      if (isAvailable) {
+        dayFullyBooked = false;
+        break;
+      }
+    }
+
+    if (dayFullyBooked) {
       fullyBookedDates.push(day);
     }
   }
