@@ -7,21 +7,40 @@ import { useGetData, usePostData, useUpdateData } from "../../hooks/useApi";
 const sortedStudioId = JSON.parse(localStorage.getItem("bookingData"))?.studio
   ?.id;
 
-const fetchFullyBookedDates = async ({ studioId, duration }) => {
-  if (!studioId || !duration) return []; 
+// const fetchFullyBookedDates = async ({ studioId, duration }) => {
+//   if (!studioId || !duration) return [];
 
-  const res = await axios.get(`${BASE_URL}/booking/fully-booked/${studioId}`, {
-    params: { duration },
-  });
+//   const res = await axios.get(
+//     `${BASE_URL}/booking/fully-booked/${studioId}?duration=${duration}`
+//   );
 
-  return res?.data?.data || [];
+//   return res?.data?.data || [];
+// };
+
+const fetchFullyBookedDates = async ({ duration }) => {
+  if (!duration) return [];
+
+  const res = await axios.get(
+    `${BASE_URL}/bookings/fully-booked?duration=${duration}`
+  );
+
+  return res?.data || [];
 };
 
-const GetFullBookedStudios = (studioId, duration) => {
+// const GetFullBookedStudios = (studioId, duration) => {
+//   return useQuery({
+//     queryKey: ["fullyBookedDates", studioId, duration],
+//     queryFn: () => fetchFullyBookedDates({ studioId, duration }),
+//     enabled: !!studioId && !!duration,
+//     staleTime: 5 * 60 * 1000,
+//   });
+// };
+
+const GetFullyBookedDates = (duration) => {
   return useQuery({
-    queryKey: ["fullyBookedDates", studioId, duration],
-    queryFn: () => fetchFullyBookedDates({ studioId, duration }),
-    enabled: !!studioId && !!duration,
+    queryKey: ["fullyBookedDates", duration],
+    queryFn: () => fetchFullyBookedDates({ duration }),
+    enabled: !!duration,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -86,7 +105,7 @@ const GetUserBookings = () =>
   useGetData("userBookings", `${BASE_URL}/bookings/user-bookings`);
 
 export {
-  GetFullBookedStudios,
+  GetFullyBookedDates,
   GetAvailableSlots,
   GetBookings,
   ChangeBookingStatus,

@@ -8,6 +8,37 @@ import Loading from "../../../shared/Loading/Loading";
 
 export default function Calendar({ openToggle, getAvailableSlots }) {
   const { setBookingField, bookingData } = useBooking();
+  // function برا
+  const handleDayClick = (day, currentDate, isBlocked) => {
+    switch (true) {
+      case isBlocked:
+        return;
+
+      default: {
+        const selected = DateTime.fromObject(
+          {
+            year: currentDate.getFullYear(),
+            month: currentDate.getMonth() + 1,
+            day: day.date,
+            hour: 12,
+          },
+          { zone: "Africa/Cairo" }
+        ).toJSDate();
+
+        setSelectedDate(selected);
+        setBookingField("date", selected);
+        setBookingField("startSlot", null);
+        setBookingField("endSlot", null);
+        openToggle(true);
+        getAvailableSlots({
+          studioId: bookingData?.studio?.id,
+          date: selected,
+          duration: bookingData.duration || 2,
+        });
+      }
+    }
+  };
+
   const [isOpen, setIsOpen] = useState(!bookingData.duration || bookingData.duration === 1);
 
   const {
@@ -23,6 +54,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     monthNames,
     isLoading
   } = useCalendar(bookingData?.studio?.id, bookingData.date, bookingData.duration);
+  console.log("calendarDays", calendarDays);
 
   return (
     <div className="w-full  mx-auto bg-white">
@@ -72,38 +104,16 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
               <div
                 key={index}
                 className={`relative lg:h-20 border-r border-b border-gray-200 last:border-r-0 h-15
-                  ${day.isEmpty ? "bg-gray-50"
-                    : day.blocked ? "bg-white cursor-not-allowed"
-                      : "bg-white hover:bg-blue-50 cursor-pointer transition-colors"}
-                  ${(selectedDate ? isSelected(day.date) : isToday(day.date))
+    ${day.blocked
+                    ? "bg-gray-50 cursor-not-allowed"
+                    : "bg-white hover:bg-blue-50 cursor-pointer transition-colors"}
+    ${(selectedDate ? isSelected(day.date) : isToday(day.date))
                     ? "bg-blue-100 ring-2 ring-main ring-inset"
                     : ""}
-                `}
-                onClick={() => {
-                  if (!day.blocked && !day.isEmpty) {
-                    const selected = DateTime.fromObject(
-                      {
-                        year: currentDate.getFullYear(),
-                        month: currentDate.getMonth() + 1,
-                        day: day.date,
-                        hour: 12
-                      },
-                      { zone: "Africa/Cairo" }
-                    ).toJSDate();
-
-                    setSelectedDate(selected);
-                    setBookingField("date", selected);
-                    setBookingField("startSlot", null);
-                    setBookingField("endSlot", null);
-                    openToggle(true);
-                    getAvailableSlots({
-                      studioId: bookingData?.studio?.id,
-                      date: selected,
-                      duration: bookingData.duration || 2
-                    });
-                  }
-                }}
+  `}
+                onClick={() => handleDayClick(day, currentDate, day.blocked)}
               >
+
                 {/* Blocked */}
                 {day.blocked && !day.isEmpty && (
                   <div
