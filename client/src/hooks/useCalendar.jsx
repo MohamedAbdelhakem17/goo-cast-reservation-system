@@ -136,7 +136,7 @@
 // }
 
 import { useState, useEffect } from "react";
-import { GetFullBookedStudios } from "../apis/Booking/booking.api";
+import { GetFullyBookedDates } from "../apis/Booking/booking.api";
 
 export function useCalendar(studioId, selectedBookingDate, duration) {
     const today = new Date();
@@ -149,8 +149,10 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         return date;
     };
 
-    const { isLoading, data } = GetFullBookedStudios(studioId, duration);
-    const disabledDates = data?.data?.map((dateStr) => new Date(dateStr)) || [];
+    const { data: data, isLoading } = GetFullyBookedDates(duration);
+
+    // تأكد إن البيانات موجودة ومن النوع الصحيح
+    const disabledDates = data?.data || [];
 
     const [currentDate, setCurrentDate] = useState(
         selectedBookingDate ? new Date(selectedBookingDate) : handleStartDate()
@@ -194,16 +196,23 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
+        // تحقق من إن التاريخ في الماضي
         const isPast = dateToCheck < todayStart;
 
-        const isDisabled = disabledDates.some(
-            (d) =>
-                d.getFullYear() === dateToCheck.getFullYear() &&
-                d.getMonth() === dateToCheck.getMonth() &&
-                d.getDate() === dateToCheck.getDate()
-        );
+        // تحويل التاريخ لـ yyyy-mm-dd format للمقارنة مع البيانات من الـ API
+        const dateStr = dateToCheck.toISOString().split("T")[0];
 
-        return isPast || isDisabled;
+        // تحقق من إن التاريخ ده محجوز بالكامل
+        const isFullyBooked = disabledDates.includes(dateStr);
+
+        return isPast || isFullyBooked;
+    };
+
+    // دالة منفصلة للتحقق من التواريخ المحجوزة بالكامل فقط
+    const isDateFullyBooked = (day) => {
+        const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        const dateStr = dateToCheck.toISOString().split("T")[0];
+        return disabledDates.includes(dateStr);
     };
 
     const isToday = (day) => {
@@ -222,23 +231,40 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
 
     const calendarDays = [];
 
+    // Empty cells for days before month start
     for (let i = 0; i < firstDayWeekday; i++) {
-        calendarDays.push({ date: null, blocked: true, isEmpty: true });
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        calendarDays.push({
-            date: day,
-            blocked: isDateInPastOrDisabled(day),
-            isEmpty: false,
-            isToday: isToday(day),
-            isSelected: isSelected(day),
+        calendarDays.push({ 
+            date: null, 
+            blocked: true, 
+            isEmpty: true,
+            fullyBooked: false
         });
     }
 
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const isBlocked = isDateInPastOrDisabled(day);
+        const isBookedFully = isDateFullyBooked(day);
+        
+        calendarDays.push({
+            date: day,
+            blocked: isBlocked,
+            isEmpty: false,
+            isToday: isToday(day),
+            isSelected: isSelected(day),
+            fullyBooked: isBookedFully, // إضافة flag للتواريخ المحجوزة بالكامل
+        });
+    }
+
+    // Empty cells after month end
     const remainingCells = 42 - calendarDays.length;
     for (let i = 0; i < remainingCells; i++) {
-        calendarDays.push({ date: null, blocked: true, isEmpty: true });
+        calendarDays.push({ 
+            date: null, 
+            blocked: true, 
+            isEmpty: true,
+            fullyBooked: false
+        });
     }
 
     const daysOfWeek = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
@@ -259,6 +285,8 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         isToday,
         isLoading,
         monthNames,
-        daysOfWeek
+        daysOfWeek,
+        disabledDates, // return البيانات للاستخدام في مكان تاني
+        isDateFullyBooked // return الدالة للاستخدام في الـ component
     };
-} 
+}

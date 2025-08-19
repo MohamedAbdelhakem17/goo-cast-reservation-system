@@ -2,10 +2,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 import Loading from "../../shared/Loading/Loading";
-import { useGetAvailableStudio } from "../../../apis/Booking/booking.api";
+// import { useGetAvailableStudio } from "../../../apis/Booking/booking.api";
 import NavigationButtons from "../Navigation-Buttons/NavigationButtons";
 import BookingHeader from "../../shared/Booking-Header/BookingHeader";
 import { trackEvent } from "../../../GTM/gtm";
+import useGetAllStudios from "../../../apis/studios/studios.api";
 
 export default function SelectStudio() {
   const { setBookingField, bookingData, handleNextStep } = useBooking();
@@ -17,7 +18,7 @@ export default function SelectStudio() {
   const [previewIndex, setPreviewIndex] = useState(null);
   const [hoveredImage, setHoveredImage] = useState(null);
 
-  const { data: studiosData, isLoading } = useGetAvailableStudio();
+  const { data: studiosData, isLoading } = useGetAllStudios();
 
   const selectStudio = (studio) => {
     setBookingField("studio", studio);
