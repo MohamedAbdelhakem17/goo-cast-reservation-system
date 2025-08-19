@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import {
   Check,
   Download,
-  Share2,
   MapPin,
   Calendar,
   Clock,
@@ -215,7 +214,7 @@ export default function BookingConfirmation() {
                   Before Your Session
                 </h3>
                 <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-                  <li>Arrive 15 minutes early for setup</li>
+                  <li>Arrive 30 minutes early for setup</li>
                   <li>Bring a valid ID for check-in</li>
                   <li>Review our studio guidelines and policies</li>
                 </ul>
