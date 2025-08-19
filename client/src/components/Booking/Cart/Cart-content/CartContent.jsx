@@ -15,7 +15,7 @@ export default function CartContent() {
         if (!studio) return null
         return (
             <div className="pb-4 space-y-1 border-gray-300 border-b-1 flex items-center justify-between">
-                <div className='flex-1 ml-3 space-y-4 '>
+                <div className='flex-1 ml-3 '>
                     <p className="text-gray-500 text-md">
                         <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
                         {formatDate(date)}
@@ -29,7 +29,7 @@ export default function CartContent() {
                         {studio.name}
                     </p>
                 </div>
-                <img src={studio?.image} alt={studio.name} className='w-[200px] aspect-[1/.5] rounded-md' />
+                <img src={studio?.image} alt={studio.name} className='w-20 h-20 rounded-md' />
             </div>
         )
     }
