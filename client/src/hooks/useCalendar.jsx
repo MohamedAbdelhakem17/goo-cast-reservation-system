@@ -151,7 +151,6 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
 
     const { data: data, isLoading } = GetFullyBookedDates(duration);
 
-    // تأكد إن البيانات موجودة ومن النوع الصحيح
     const disabledDates = data?.data || [];
 
     const [currentDate, setCurrentDate] = useState(
@@ -196,19 +195,15 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-        // تحقق من إن التاريخ في الماضي
         const isPast = dateToCheck < todayStart;
 
-        // تحويل التاريخ لـ yyyy-mm-dd format للمقارنة مع البيانات من الـ API
         const dateStr = dateToCheck.toISOString().split("T")[0];
 
-        // تحقق من إن التاريخ ده محجوز بالكامل
         const isFullyBooked = disabledDates.includes(dateStr);
 
         return isPast || isFullyBooked;
     };
 
-    // دالة منفصلة للتحقق من التواريخ المحجوزة بالكامل فقط
     const isDateFullyBooked = (day) => {
         const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         const dateStr = dateToCheck.toISOString().split("T")[0];
@@ -233,9 +228,9 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
 
     // Empty cells for days before month start
     for (let i = 0; i < firstDayWeekday; i++) {
-        calendarDays.push({ 
-            date: null, 
-            blocked: true, 
+        calendarDays.push({
+            date: null,
+            blocked: true,
             isEmpty: true,
             fullyBooked: false
         });
@@ -245,23 +240,23 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
     for (let day = 1; day <= daysInMonth; day++) {
         const isBlocked = isDateInPastOrDisabled(day);
         const isBookedFully = isDateFullyBooked(day);
-        
+
         calendarDays.push({
             date: day,
             blocked: isBlocked,
             isEmpty: false,
             isToday: isToday(day),
             isSelected: isSelected(day),
-            fullyBooked: isBookedFully, // إضافة flag للتواريخ المحجوزة بالكامل
+            fullyBooked: isBookedFully,
         });
     }
 
     // Empty cells after month end
     const remainingCells = 42 - calendarDays.length;
     for (let i = 0; i < remainingCells; i++) {
-        calendarDays.push({ 
-            date: null, 
-            blocked: true, 
+        calendarDays.push({
+            date: null,
+            blocked: true,
             isEmpty: true,
             fullyBooked: false
         });
@@ -286,7 +281,7 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         isLoading,
         monthNames,
         daysOfWeek,
-        disabledDates, // return البيانات للاستخدام في مكان تاني
-        isDateFullyBooked // return الدالة للاستخدام في الـ component
+        disabledDates,
+        isDateFullyBooked
     };
 }

@@ -11,7 +11,7 @@ const passport = require("passport");
 const session = require("express-session");
 const morgan = require("morgan");
 const cors = require("cors");
-const helmet = require("helmet");
+// const helmet = require("helmet");
 
 const databaseConnect = require("./config/database-connection");
 const errorMiddlewareHandler = require("./middleware/error-middleware-handler");
