@@ -12,6 +12,7 @@ import Cart from "../../components/Booking/Cart/Cart";
 import { useBooking } from "../../context/Booking-Context/BookingContext";
 import Header from "../../components/Booking/Header/Header";
 import NavigationButtons from "../../components/Booking/Navigation-Buttons/NavigationButtons";
+import { useEffect } from "react";
 
 // Slide animation: simple and smooth
 const slideVariants = {
@@ -72,6 +73,13 @@ export default function Booking() {
     5: <PersonalInformation />,
   };
 
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("bookingData");
+      localStorage.removeItem("maxStepReached");
+      localStorage.removeItem("bookingStep");
+    }
+  }, [])
 
   return (
     <div className="min-h-screen">
