@@ -18,7 +18,6 @@ export const useGetData = (key, url, filters = {}) => {
                 const { data } = await axiosInstance.get(`${url}?${params.toString()}`, {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
 
