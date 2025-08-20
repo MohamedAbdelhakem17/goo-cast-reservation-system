@@ -1393,7 +1393,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     const appointmentData = {
       startTime: combineDateAndTime(bookingDate, startSlot),
       endTime: combineDateAndTime(bookingDate, endSlot),
-      title: `${studio.name} - Booking`,
+      title: bookingTitle,
       notes: personalInfo.fullName || personalInfo.name,
       studioId: studio._id,
     };
