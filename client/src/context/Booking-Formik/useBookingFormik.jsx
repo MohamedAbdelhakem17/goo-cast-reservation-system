@@ -137,11 +137,14 @@ export default function useBookingFormik() {
           addToast(
             res.message || "Booking submitted successfully",
             "success",
-            3000
+            1000
           );
           setTimeout(() => {
+            localStorage.removeItem("bookingData");
+            localStorage.removeItem("maxStepReached");
+            localStorage.removeItem("bookingStep");
             navigate("/booking/confirmation");
-          }, 3200);
+          }, 1200);
         },
         onError: (error) => {
           addToast(
