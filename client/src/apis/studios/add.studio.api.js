@@ -130,7 +130,6 @@ const AddStudio = () => {
             const { data } = await axios.post(`${BASE_URL}/studio`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    authorization: "Bearer " + localStorage.getItem("token"),
                 },
             });
             return data;

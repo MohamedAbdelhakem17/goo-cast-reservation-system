@@ -34,7 +34,6 @@ export const AddNewPackage = () => {
                 const response = await axios.post(`${BASE_URL}/hourly-packages`, data, {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
                 return response.data;
@@ -57,7 +56,6 @@ export const DeletePackage = () => {
                 const { data } = await axios.delete(`${BASE_URL}/hourly-packages/${packageId}`, {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
                 return data;
@@ -80,7 +78,6 @@ export const UpdatePackage = () => {
                 const response = await axios.put(`${BASE_URL}/hourly-packages/${id}`, data, {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
                 return response.data;
@@ -142,7 +139,6 @@ export const AddNewAddOn = () => {
                 const response = await axios.post(`${BASE_URL}/add-ons`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
 
@@ -166,7 +162,6 @@ export const DeleteAddOn = () => {
                 const { data } = await axios.delete(`${BASE_URL}/add-ons/${addOnId}`, {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
                 return data;
@@ -207,7 +202,6 @@ export const UpdateAddOn = () => {
                 const response = await axios.put(`${BASE_URL}/add-ons/${id}`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
                 return response.data;

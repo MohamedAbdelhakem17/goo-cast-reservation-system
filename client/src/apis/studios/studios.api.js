@@ -47,7 +47,6 @@ const DeleteStudio = () => {
                 const { data } = await axios.delete(`${BASE_URL}/studio/${studioId}`, {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
                 return data;
@@ -113,7 +112,6 @@ const UpdateStudio = () => {
                 const response = await axios.put(`${BASE_URL}/studio/${id}`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
 
