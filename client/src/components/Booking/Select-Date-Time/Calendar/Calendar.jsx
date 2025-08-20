@@ -54,7 +54,6 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     monthNames,
     isLoading
   } = useCalendar(bookingData?.studio?.id, bookingData.date, bookingData.duration);
-  console.log("calendarDays", calendarDays);
 
   return (
     <div className="w-full  mx-auto bg-white">

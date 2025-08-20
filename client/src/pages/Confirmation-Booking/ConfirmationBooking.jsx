@@ -16,6 +16,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import BookingReceiptPDF from "../../components/shared/Booking-Receipt-PDF/BookingReceiptPDF";
 import useDateFormat from "../../hooks/useDateFormat";
 import { useMemo } from "react";
+import { useEffect } from "react";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -50,9 +51,8 @@ function DetailRow({ icon: Icon, label, value }) {
 const PriceRow = ({ label, value, bold = false }) => (
   <div className="flex justify-between py-2 items-center">
     <span
-      className={`text-gray-600 ${
-        bold ? "text-lg font-semibold text-gray-900" : ""
-      }`}
+      className={`text-gray-600 ${bold ? "text-lg font-semibold text-gray-900" : ""
+        }`}
     >
       {label}
     </span>
@@ -80,6 +80,14 @@ export default function BookingConfirmation() {
 
 
 
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("bookingConfirmation");
+      localStorage.removeItem("bookingStep");
+      localStorage.removeItem("bookingData");
+    }
+  }, []);
+  
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
       <motion.div

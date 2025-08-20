@@ -54,14 +54,14 @@ const createBookingLogic = require("./create-booking-logic .js");
   //         },
   //     });
   //     if (bookings.length === 0) {
-  //         // console.log("No bookings found for this date");
+//         //
   //     }
   //     const bookedSlots = bookings.map(book => {
   //         const start = timeToMinutes(book.timeSlot);
   //         const end = start + (book.duration * 60);
   //         return { start, end };
   //     });
-  //     // console.log('Booked slots:', bookedSlots);
+//     //
   //     // Calculate available slots
   //     const availableSlots = [];
   //     // Check available slots within the studio's working hours
@@ -137,9 +137,6 @@ const createBookingLogic = require("./create-booking-logic .js");
 
 // get fully booked dates for a studio
 const print = (val, lab) => {
-  console.log("================ ", lab, " ================");
-  console.log(val);
-  console.log("============================================");
 };
 
 // Get Full Booked Date
@@ -1151,7 +1148,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   //             booking
   //         });
   //     } catch (error) {
-  //         console.log(error);
+//
   //         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
   //     }
   // });
@@ -1402,7 +1399,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     };
 
     let opportunityID;
-    // return console.log(appointmentData, "appointmentData");
+// return
     try {
       opportunityID = await saveOpportunityInGoHighLevel(
         userData,

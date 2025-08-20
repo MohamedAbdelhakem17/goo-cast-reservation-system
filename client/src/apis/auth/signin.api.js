@@ -18,6 +18,7 @@ const useSigninForm = (onSuccessCallback) => {
         onSuccess: (data) => {
             dispatch({ type: "LOGIN", payload: data });
             setServerError("");
+            location.href = "/"; 
             if (onSuccessCallback) onSuccessCallback();
         },
         onError: (error) => {

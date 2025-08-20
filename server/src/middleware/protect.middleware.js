@@ -1,43 +1,28 @@
-const jwt = require("jsonwebtoken");
-const { HTTP_STATUS_TEXT } = require("../config/system-variables");
 const AppError = require("../utils/app-error");
-const AuthModel = require("../models/user-model/user-model");
+const { HTTP_STATUS_TEXT } = require("../config/system-variables");
 
-const protectRoute = async (req, res, next) => {
-
+const protectRoute = (req, res, next) => {
+  console.log("Protecting route:", req.isAuthenticated());
   if (!req.isAuthenticated()) {
     return next(
       new AppError(
         401,
         HTTP_STATUS_TEXT.FAIL,
-        "You are not logged in please login first"
-      )
-    );
-  }
-  
-  const user = await AuthModel.findById(req.user._id);
-
-  if (!user) {
-    return next(
-      new AppError(
-        404,
-        HTTP_STATUS_TEXT.FAIL,
-        "The user that belongs to this token no longer exists."
+        "You are not logged in. Please login first."
       )
     );
   }
 
-  if (user.active === false) {
+  if (!req.user.active) {
     return next(
       new AppError(
         401,
         HTTP_STATUS_TEXT.FAIL,
-        "Your account is not active please contact the admin"
+        "Your account is not active, please contact the admin."
       )
     );
   }
 
-  req.user = user;
   next();
 };
 
