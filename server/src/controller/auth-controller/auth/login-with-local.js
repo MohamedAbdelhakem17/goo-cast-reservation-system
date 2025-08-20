@@ -72,6 +72,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await AuthModel.findById(id);
+    console.log("Deserializing user:", user);
     if (!user) {
       return done(
         new AppError(
