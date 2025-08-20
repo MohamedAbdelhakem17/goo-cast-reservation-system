@@ -8,7 +8,7 @@ require("dotenv").config({
 // ====== Imports ======
 const express = require("express");
 const passport = require("passport");
-const session = require("express-session");
+const expressSession = require("express-session");
 const morgan = require("morgan");
 const cors = require("cors");
 // const helmet = require("helmet");
@@ -65,32 +65,18 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 //   })
 // );
 
-
-
 // Body parser
 app.use(express.json());
 
 // CORS configuration
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "*",
-    credentials: true,
-  })
-);
+app.use(cors("*"));
 
 // Session configuration
 app.use(
-  session({
+  expressSession({
     secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-      secure: process.env.ENVIRONMENT_MODE !== "development",
-      sameSite:
-        process.env.ENVIRONMENT_MODE === "development" ? "lax" : "strict",
-    },
   })
 );
 
