@@ -257,7 +257,7 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
 
       const bookedSlots = [];
       for (const booking of studioBookings) {
-        for (let i = booking.startSlot; i < booking.endSlot; i += 60) {
+        for (let i = booking.startSlot; i < booking.endSlot; i += 30) {
           bookedSlots.push(i);
         }
       }
@@ -479,7 +479,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "studioId, date and duration are required"
+        "date and duration are required"
       )
     );
   }

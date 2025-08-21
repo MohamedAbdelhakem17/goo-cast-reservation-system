@@ -35,7 +35,7 @@ export default function PersonalInformation() {
   };
 
   return (
-    <div className="space-y-4 py-6 px-4 sm:px-6 lg:px-8 duration-300 mx-auto">
+    <div className="space-y-4 py-6  duration-300 mx-auto">
       {/* Header */}
       <BookingHeader
         title="Payment Information"
@@ -44,7 +44,7 @@ export default function PersonalInformation() {
 
       {/* Responsive Content */}
       <div className="flex flex-col lg:flex-row items-start gap-6 w-full">
-        <div className="border-1 border-gray-100 shadow-sm px-2 py-5 rounded-md lg:w-2/3 w-full">
+        <div className="border-1 border-gray-100 shadow-sm py-5 rounded-md lg:w-2/3 w-full">
           {/* Form section */}
           <form className="w-full space-y-2 px-5 ">
             <motion.div
