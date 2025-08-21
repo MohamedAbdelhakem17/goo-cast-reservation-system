@@ -15,7 +15,7 @@ export default function CartContent() {
         if (!studio) return null
         return (
             <div className="pb-4 space-y-1 border-gray-300 border-b-1 flex items-center justify-between">
-                <div className='flex-1 ml-3 '>
+                <div className='flex-1 '>
                     <p className="text-gray-500 text-md">
                         <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
                         {formatDate(date)}

@@ -191,13 +191,22 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         currentDate.getFullYear() === today.getFullYear() &&
         currentDate.getMonth() === today.getMonth();
 
+    // Helper function to format date as YYYY-MM-DD without timezone issues
+    const formatDateToString = (year, month, day) => {
+        const date = new Date(year, month, day);
+        return date.getFullYear() + '-' + 
+               String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+               String(date.getDate()).padStart(2, '0');
+    };
+
     const isDateInPastOrDisabled = (day) => {
         const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
         const isPast = dateToCheck < todayStart;
 
-        const dateStr = dateToCheck.toISOString().split("T")[0];
+        // استخدام الـ helper function بدلاً من toISOString
+        const dateStr = formatDateToString(currentDate.getFullYear(), currentDate.getMonth(), day);
 
         const isFullyBooked = disabledDates.includes(dateStr);
 
@@ -205,8 +214,8 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
     };
 
     const isDateFullyBooked = (day) => {
-        const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-        const dateStr = dateToCheck.toISOString().split("T")[0];
+        // استخدام نفس الـ helper function هنا كمان
+        const dateStr = formatDateToString(currentDate.getFullYear(), currentDate.getMonth(), day);
         return disabledDates.includes(dateStr);
     };
 
