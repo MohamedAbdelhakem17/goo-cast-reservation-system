@@ -70,7 +70,7 @@ export default function SelectStudio() {
           desc="Select the studio that best fits your needs"
         />
 
-        <div className="flex flex-wrap gap-3 justify-evenly">
+        <div className="flex flex-wrap gap-3 justify-between">
           {studiosData.data.map((studio) => (
             <motion.div
               key={studio.id}
