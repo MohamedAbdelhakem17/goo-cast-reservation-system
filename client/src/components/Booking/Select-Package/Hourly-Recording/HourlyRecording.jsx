@@ -70,7 +70,7 @@ export default function HourlyRecording() {
 
       {/* Packages */}
       <motion.div
-        className="flex flex-wrap justify-center gap-8 px-8 mt-10 lg:justify-evenly"
+        className="flex flex-wrap justify-center gap-8 px-8 lg:px-0 mt-10 lg:justify-between"
         variants={containerVariants}
         initial="hidden"
         animate="visible"

@@ -11,7 +11,7 @@ export default function Stepper() {
   }));
 
   return (
-    <div className="px-4 lg:px-8 bg-white w-[100vw]">
+    <div className="px-4 lg:px-8 bg-white w-[100vw] py-4">
       {/* Desktop/Tablet View */}
       <div className="hidden sm:flex items-center justify-between max-w-5xl mx-auto scale-[.9]">
         {steps.map((step, index) => (
@@ -41,7 +41,7 @@ export default function Stepper() {
                 )}
               </div>
               <div
-                className={`text-sm text-center max-w-20 lg:max-w-24 ${step.id === currentStep
+                className={`text-sm text-center max-w-fit lg:max-w-fit ${step.id === currentStep
                   ? "text-[#FF3B30] font-medium"
                   : "text-gray-600"
                   }`}
