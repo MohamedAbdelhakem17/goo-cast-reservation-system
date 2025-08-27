@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetPackagesByCategory } from "../../../../apis/services/services.api";
 import BookingHeader from "../../../shared/Booking-Header/BookingHeader";
-import { trackEvent } from "../../../../GTM/gtm";
+import { trackEvent, trackBookingStep } from "../../../../GTM/gtm";
 import usePriceFormat from "./../../../../hooks/usePriceFormat";
 
 export default function HourlyRecording() {
-  const { setBookingField, handleNextStep, bookingData } = useBooking();
+  const { setBookingField, handleNextStep, bookingData, currentStep } = useBooking();
   const { mutate: getPackages, data: packages } = GetPackagesByCategory();
   const priceFormat = usePriceFormat();
 
@@ -28,7 +28,9 @@ export default function HourlyRecording() {
       slug: pkg.category.slug,
       price: pkg.price,
     });
-    trackEvent("select_package", { package_name: pkg.name });
+    trackEvent("select_package", { package_name: pkg.name, price: pkg.price });
+    trackBookingStep(currentStep, { totalPrice: pkg.price })
+
     setBookingField("startSlot", null);
     setBookingField("endSlot", null);
     setBookingField("studio", null);
@@ -88,8 +90,8 @@ export default function HourlyRecording() {
             >
               <div
                 className={`flex flex-col rounded-xl h-full p-4 border-1 overflow-hidden transition-colors duration-300 ${isActive
-                    ? "border-main border-2 shadow-sm shadow-main/20"
-                    : "border-gray-200  border-2 shadow-md  "
+                  ? "border-main border-2 shadow-sm shadow-main/20"
+                  : "border-gray-200  border-2 shadow-md  "
                   }`}
               >
                 {/* Card Header */}
@@ -102,8 +104,8 @@ export default function HourlyRecording() {
 
                   <div
                     className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${isActive
-                        ? "bg-[#FF3B30] text-white"
-                        : "bg-gray-100 text-gray-600"
+                      ? "bg-[#FF3B30] text-white"
+                      : "bg-gray-100 text-gray-600"
                       }`}
                   >
                     <i className={`fa-solid fa-${pkg.icon}`}></i>
@@ -113,7 +115,7 @@ export default function HourlyRecording() {
                   </h5>
                 </div>
 
-                <div className={`text-3xl font-bold text-center ${isActive ? 'text-main' : 'text-gray-900'} p-2` }>
+                <div className={`text-3xl font-bold text-center ${isActive ? 'text-main' : 'text-gray-900'} p-2`}>
                   {priceFormat(pkg.price)}
                   <span className="inline-block my-1 text-sm font-normal text-gray-600">/hour</span>
                 </div>
@@ -148,8 +150,8 @@ export default function HourlyRecording() {
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     className={`w-full py-2 px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center  ${isActive
-                        ? "bg-main text-white"
-                        : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
+                      ? "bg-main text-white"
+                      : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
                       }`}
                     onClick={() => {
                       handlePackageSelect(pkg);

@@ -139,6 +139,7 @@ export default function useBookingFormik() {
             "success",
             1000
           );
+          formik.resetForm()
           setTimeout(() => {
             localStorage.removeItem("bookingData");
             localStorage.removeItem("maxStepReached");
@@ -192,3 +193,8 @@ export default function useBookingFormik() {
     getBookingError,
   };
 }
+
+
+
+
+
