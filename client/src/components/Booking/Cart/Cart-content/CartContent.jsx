@@ -4,6 +4,7 @@ import usePriceFormat from '../../../../hooks/usePriceFormat'
 import useTimeConvert from '../../../../hooks/useTimeConvert'
 import { useBooking } from '../../../../context/Booking-Context/BookingContext'
 import ApplyDiscount from "../../Apply-Discount/ApplyDiscount"
+import { trackBookingStep } from '../../../../GTM/gtm'
 
 export default function CartContent() {
     const formatDate = (dateString) => {
@@ -38,12 +39,12 @@ export default function CartContent() {
         if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null
         return (
             <div className="flex  items-center justify-between py-1">
-                    <p className="text-gray-500 text-md">
-                        {selectedPackage.name}
-                    </p>
-                    <p className="text-gray-500 text-md">
-                        {priceFormat(selectedPackage.price)}   x {duration}h
-                    </p>
+                <p className="text-gray-500 text-md">
+                    {selectedPackage.name}
+                </p>
+                <p className="text-gray-500 text-md">
+                    {priceFormat(selectedPackage.price)}   x {duration}h
+                </p>
             </div>
         )
     }
@@ -96,6 +97,7 @@ export default function CartContent() {
     }, [totalBeforeDiscount, discountAmount])
 
     useEffect(() => {
+        trackBookingStep(currentStep, { totalPrice: totalBeforeDiscount, totalPriceAfterDiscount :totalAfterDiscount })
         setBookingField("totalPrice", totalBeforeDiscount)
         setBookingField("totalPriceAfterDiscount", totalAfterDiscount)
     }, [totalBeforeDiscount, totalAfterDiscount])

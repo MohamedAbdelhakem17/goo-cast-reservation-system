@@ -3,7 +3,7 @@ const FaqModel = require("./models/faq-model/faq-model");
 
 mongoose
   .connect(
-    "mongodb+srv://abdelhakem:gUWwV4BpMRv8z9f2@dottopia.gjvd3.mongodb.net/goocast?retryWrites=true&w=majority&appName=dottopia"
+    "mongodb://abdelhakem:A%24dM0ng0%212025%23@mongo.dottopia.com:27017/goocast?authSource=admin"
   )
   .then(() => {
     console.log("Connected to MongoDB");

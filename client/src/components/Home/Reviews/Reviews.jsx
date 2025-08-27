@@ -253,7 +253,7 @@ export default function Reviews() {
       >
         <div className="flex justify-center items-center gap-2 sm:gap-4 md:gap-6 w-full max-w-7xl mx-auto px-2">
           <AnimatePresence mode="wait">
-            {displayedReviews.map((review, index) => {
+            {displayedReviews?.map((review, index) => {
               let containerClasses = ""
               let contentClasses = ""
 
