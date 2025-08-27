@@ -10,13 +10,14 @@ import {
   Mail,
   CreditCard,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import usePriceFormat from "../../hooks/usePriceFormat";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import BookingReceiptPDF from "../../components/shared/Booking-Receipt-PDF/BookingReceiptPDF";
 import useDateFormat from "../../hooks/useDateFormat";
 import { useMemo } from "react";
 import { useEffect } from "react";
+import { trackPageView } from "../../GTM/gtm";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -65,7 +66,7 @@ const PriceRow = ({ label, value, bold = false }) => (
 );
 
 export default function BookingConfirmation() {
-
+  const location = useLocation()
   const navigate = useNavigate();
   const bookingData = JSON.parse(
     localStorage.getItem("bookingConfirmation")
@@ -81,13 +82,25 @@ export default function BookingConfirmation() {
 
 
   useEffect(() => {
+    trackPageView(location.pathname, {
+      total_price: bookingData.totalPrice,
+      totalAddOnsPrice: bookingData.totalAddOnsPrice,
+      totalPackagePrice: bookingData.totalPackagePrice,
+      totalPriceAfterDiscount: bookingData.totalPriceAfterDiscount
+    })
     return () => {
       localStorage.removeItem("bookingConfirmation");
       localStorage.removeItem("bookingStep");
       localStorage.removeItem("bookingData");
     }
-  }, []);
-  
+  }, [
+    location.pathname,
+    bookingData.totalPrice,
+    bookingData.totalAddOnsPrice,
+    bookingData.totalPackagePrice,
+    bookingData.totalPriceAfterDiscount
+  ]);
+
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
       <motion.div

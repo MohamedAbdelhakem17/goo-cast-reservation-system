@@ -5,11 +5,11 @@ import Loading from "../../shared/Loading/Loading";
 // import { useGetAvailableStudio } from "../../../apis/Booking/booking.api";
 import NavigationButtons from "../Navigation-Buttons/NavigationButtons";
 import BookingHeader from "../../shared/Booking-Header/BookingHeader";
-import { trackEvent } from "../../../GTM/gtm";
+import { trackEvent, trackBookingStep } from "../../../GTM/gtm";
 import useGetAllStudios from "../../../apis/studios/studios.api";
 
 export default function SelectStudio() {
-  const { setBookingField, bookingData, handleNextStep } = useBooking();
+  const { setBookingField, bookingData, handleNextStep, currentStep } = useBooking();
   const [selectedStudio, setSelectedStudio] = useState(
     bookingData?.studio?.id || null
   );
@@ -23,7 +23,7 @@ export default function SelectStudio() {
   const selectStudio = (studio) => {
     setBookingField("studio", studio);
     setBookingField("startSlot", null);
-    setBookingField("duration",1);
+    setBookingField("duration", 1);
     setBookingField("endSlot", null);
     setSelectedStudio(studio.id);
   };
@@ -74,11 +74,10 @@ export default function SelectStudio() {
           {studiosData.data.map((studio) => (
             <motion.div
               key={studio.id}
-              className={`bg-white rounded-2xl overflow-hidden shadow-md transition-shadow duration-300 cursor-pointer w-full md:w-[45%] border-2 border-gray-300  ${
-                selectedStudio === studio._id
-                  ? "border-main/50 scale-[.98]"
-                  : ""
-              }`}
+              className={`bg-white rounded-2xl overflow-hidden shadow-md transition-shadow duration-300 cursor-pointer w-full md:w-[45%] border-2 border-gray-300  ${selectedStudio === studio._id
+                ? "border-main/50 scale-[.98]"
+                : ""
+                }`}
               variants={itemVariants}
               whileHover={{
                 y: -10,
@@ -91,6 +90,7 @@ export default function SelectStudio() {
                   image: studio.thumbnail,
                 });
                 trackEvent("select_studio", { studio_name: studio.name });
+                trackBookingStep(currentStep, { totalPrice: bookingData.selectedPackage.price })
               }}
             >
               {/* Image with Click Indicator */}
@@ -195,11 +195,10 @@ export default function SelectStudio() {
                 <ul className="mt-3 text-gray-600">
                   <li className="flex items-start text-sm">
                     <span
-                      className={`mr-2 ${
-                        selectedStudio === studio._id
-                          ? "text-main"
-                          : "text-black"
-                      }`}
+                      className={`mr-2 ${selectedStudio === studio._id
+                        ? "text-main"
+                        : "text-black"
+                        }`}
                     >
                       •
                     </span>
@@ -207,11 +206,10 @@ export default function SelectStudio() {
                   </li>
                   <li className="flex items-start text-sm">
                     <span
-                      className={`mr-2 ${
-                        selectedStudio === studio._id
-                          ? "text-main"
-                          : "text-black"
-                      }`}
+                      className={`mr-2 ${selectedStudio === studio._id
+                        ? "text-main"
+                        : "text-black"
+                        }`}
                     >
                       •
                     </span>
@@ -226,11 +224,10 @@ export default function SelectStudio() {
                       className="flex items-start text-sm"
                     >
                       <span
-                        className={`mr-2 ${
-                          selectedStudio === studio._id
-                            ? "text-main"
-                            : "text-black"
-                        }`}
+                        className={`mr-2 ${selectedStudio === studio._id
+                          ? "text-main"
+                          : "text-black"
+                          }`}
                       >
                         •
                       </span>
@@ -250,11 +247,10 @@ export default function SelectStudio() {
                       });
                       handleNextStep();
                     }}
-                    className={`w-full py-2 px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center ${
-                      selectedStudio === studio._id
-                        ? "bg-main text-white"
-                        : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
-                    }`}
+                    className={`w-full py-2 px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center ${selectedStudio === studio._id
+                      ? "bg-main text-white"
+                      : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
+                      }`}
                   >
                     {selectedStudio === studio._id ? "Selected" : "Select"}
                   </motion.button>
