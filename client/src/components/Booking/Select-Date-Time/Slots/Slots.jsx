@@ -5,10 +5,11 @@ import { useBooking } from "../../../../context/Booking-Context/BookingContext"
 import Loading from "../../../shared/Loading/Loading"
 import { calculateEndTime, calculateTotalPrice } from "../../../../hooks/useManageSlots"
 import SlotButton from "./SlotButton/SlotButton"
+import { trackBookingStep } from "../../../../GTM/gtm"
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
     const [selectedTime, setSelectedTime] = useState(null)
-    const { handleNextStep, bookingData, setBookingField } = useBooking()
+    const { handleNextStep, bookingData, setBookingField, currentStep } = useBooking()
 
     const formattedDate = useMemo(() => {
         if (!bookingData?.date) return ""
@@ -31,10 +32,11 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
             setBookingField("startSlot", time)
             setBookingField("endSlot", endTime)
             setBookingField("totalPackagePrice", totalPrice)
+            trackBookingStep(currentStep, { totalPrice: totalPrice })
 
             handleNextStep()
         },
-        [bookingData.duration, bookingData?.selectedPackage?.price, setIsOpen, setBookingField, handleNextStep]
+        [bookingData.duration, bookingData?.selectedPackage?.price, setIsOpen, setBookingField, handleNextStep, currentStep]
     )
 
     return (
