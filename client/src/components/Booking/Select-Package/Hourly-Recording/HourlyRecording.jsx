@@ -5,6 +5,7 @@ import { GetPackagesByCategory } from "../../../../apis/services/services.api";
 import BookingHeader from "../../../shared/Booking-Header/BookingHeader";
 import { trackEvent, trackBookingStep } from "../../../../GTM/gtm";
 import usePriceFormat from "./../../../../hooks/usePriceFormat";
+import { Check } from "lucide-react";
 
 export default function HourlyRecording() {
   const { setBookingField, handleNextStep, bookingData, currentStep } = useBooking();
@@ -53,14 +54,14 @@ export default function HourlyRecording() {
     },
   };
 
-  const benefitVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { type: "spring", stiffness: 100 },
-    },
-  };
+  // const benefitVariants = {
+  //   hidden: { opacity: 0, x: -10 },
+  //   visible: {
+  //     opacity: 1,
+  //     x: 0,
+  //     transition: { type: "spring", stiffness: 100 },
+  //   },
+  // };
 
   return (
     <>
@@ -77,7 +78,7 @@ export default function HourlyRecording() {
         initial="hidden"
         animate="visible"
       >
-        {packages?.data?.map((pkg) => {
+        {packages?.data?.map((pkg , index) => {
           const isActive = selectedPackage === pkg._id;
 
           return (
@@ -103,7 +104,7 @@ export default function HourlyRecording() {
                   /> */}
 
                   <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${isActive
+                    className={`w-16 h-16 rounded-full flex items-center justify-center mb-2 ${isActive
                       ? "bg-[#FF3B30] text-white"
                       : "bg-gray-100 text-gray-600"
                       }`}
@@ -119,29 +120,70 @@ export default function HourlyRecording() {
                   {priceFormat(pkg.price)}
                   <span className="inline-block my-1 text-sm font-normal text-gray-600">/hour</span>
                 </div>
-                {/* Description */}
-                <div className="flex-1 mt-2">
-                  <ul className="mb-4 space-y-2 list-disc-main">
-                    {[...pkg.details, ...pkg.post_session_benefits].map(
-                      (text, index) => (
-                        <motion.li
-                          key={index}
-                          variants={benefitVariants}
-                          className="flex items-start text-sm text-gray-600 "
-                        >
-                          <span
-                            className={`mr-2 ${isActive ? "text-main" : "text-black"
-                              }`}
-                          >
-                            •
-                          </span>{" "}
-                          {text}
-                        </motion.li>
-                      )
-                    )}
-                  </ul>
-                </div>
 
+                {/* Content */}
+                <div className="p-6">
+                  {/* Header */}
+                  <motion.div
+                    className="mb-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                  >
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-3 text-center">
+                      {pkg.description}
+                    </p>
+
+
+                  </motion.div>
+
+                  {/* Package Details */}
+                  <motion.div
+                    className="mb-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 + index * 0.1 }}
+                  >
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">{"What's Included:"}</h4>
+                    <ul className="space-y-2">
+                      {pkg.details.map((detail, idx) => (
+                        <motion.li
+                          key={idx}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.7 + idx * 0.1 }}
+                          className="flex items-start gap-2 text-sm text-gray-600"
+                        >
+                          <Check className="w-4 h-4 text-main mt-0.5 flex-shrink-0" />
+                          <span>{detail}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+
+                  {/* Post Session Benefits */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 + index * 0.1 }}
+                  >
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">After Your Session:</h4>
+                    <ul className="space-y-2">
+                      {pkg.post_session_benefits.map((benefit, idx) => (
+                        <motion.li
+                          key={idx}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.9 + idx * 0.1 }}
+                          className="flex items-start gap-2 text-sm text-gray-600"
+                        >
+                          <Check className="w-4 h-4 text-main mt-0.5 flex-shrink-0" />
+                          <span>{benefit}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </div>
 
 
                 {/* Action Button */}
@@ -163,6 +205,7 @@ export default function HourlyRecording() {
                       : "Select & Continue"}
                   </motion.button>
                 </div>
+
               </div>
             </motion.div>
           );

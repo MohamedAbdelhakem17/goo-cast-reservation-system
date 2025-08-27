@@ -4,11 +4,11 @@ import { logo} from "../../../assets/images"
 export default function Header() {
     return (
         <div className="bg-white border-b border-gray-200 sticky top-0 z-[500]">
-            <div className="px-4 lg:px-8 w-full lg:max-w-7xl mx-auto py-4">
+            <div className="px-4 lg:px-8 w-full lg:max-w-6xl mx-auto py-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl md:text-3xl text-main font-bold">
-                            <Link href="/">
+                            <Link to="/">
                              <img src={logo} alt="Goocast" className='w-44' />
                              </Link>
                         </h1>

@@ -201,7 +201,7 @@ export default function PackagesSection() {
                           transition={{ delay: 0.7 + idx * 0.1 }}
                           className="flex items-start gap-2 text-sm text-gray-600"
                         >
-                          <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <Check className="w-4 h-4 text-main mt-0.5 flex-shrink-0" />
                           <span>{detail}</span>
                         </motion.li>
                       ))}
@@ -224,7 +224,7 @@ export default function PackagesSection() {
                           transition={{ delay: 0.9 + idx * 0.1 }}
                           className="flex items-start gap-2 text-sm text-gray-600"
                         >
-                          <Check className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                          <Check className="w-4 h-4 text-main mt-0.5 flex-shrink-0" />
                           <span>{benefit}</span>
                         </motion.li>
                       ))}
