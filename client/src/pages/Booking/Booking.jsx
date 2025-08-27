@@ -87,7 +87,7 @@ export default function Booking() {
         <Header />
       </div>
       <Stepper />
-      <div className="px-4 lg:px-8 w-full lg:max-w-7xl mx-auto">
+      <div className="px-4 lg:px-8 w-full lg:max-w-6xl mx-auto">
         {/* Step Indicator */}
 
         {/* Main Content */}
