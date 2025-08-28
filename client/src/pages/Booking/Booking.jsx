@@ -82,7 +82,7 @@ export default function Booking() {
   }, [])
 
   return <div className="min-h-screen">
-    <div className="sticky top-0 z-[300] scale-x-90">
+    <div className="sticky top-0 z-[300]">
       <Header />
       <Stepper />
     </div>
