@@ -169,19 +169,20 @@ const createAppointment = async (contactId, appointmentData) => {
   const studio = await studioModel.findById(appointmentData.studioId);
   const calendarId = studio?.calendarId;
 
-  
   const body = {
-    calendarId:  process.env.GO_HIGH_LEVEL_CALENDAR_ID,
+    calendarId: process.env.GO_HIGH_LEVEL_CALENDAR_ID,
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     contactId,
     startTime: appointmentData.startTime,
     endTime: appointmentData.endTime,
     title: appointmentData.title || "Booking Appointment",
     notes: appointmentData.notes || "",
+    ignoreDateRange: true,
+    ignoreFreeSlotValidation: true,
   };
 
   // console.log("Creating appointment with body:", body);
-    // return console.log(calendarId, "calendarId");
+  // return console.log(calendarId, "calendarId");
 
   try {
     const response = await axios.post(url, body, { headers });
@@ -194,7 +195,7 @@ const createAppointment = async (contactId, appointmentData) => {
     }
   }
 };
-// hhPBOYYzmhXpokypAzOx
+
 /**
  * Main function to save opportunity and appointment in Go High Level.
  */
