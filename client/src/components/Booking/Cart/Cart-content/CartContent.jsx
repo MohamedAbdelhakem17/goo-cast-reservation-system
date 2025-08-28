@@ -80,27 +80,23 @@ export default function CartContent() {
         return bookingData.totalPackagePrice + totalAddOnPrice
     }, [bookingData.totalPackagePrice, totalAddOnPrice])
 
-    // const vatAmount = useMemo(() => {
-    //     return calculateVAT(subtotal)
-    // }, [subtotal])
-
-    const totalBeforeDiscount = useMemo(() => {
-        return subtotal
-    }, [subtotal])
-
     const discountAmount = useMemo(() => {
-        return bookingData.discount ? (totalBeforeDiscount * bookingData.discount) / 100 : 0
-    }, [totalBeforeDiscount, bookingData.discount])
+        return bookingData.discount
+            ? (bookingData.totalPackagePrice * bookingData.discount) / 100
+            : 0
+    }, [bookingData.totalPackagePrice, bookingData.discount])
 
     const totalAfterDiscount = useMemo(() => {
-        return totalBeforeDiscount - discountAmount
-    }, [totalBeforeDiscount, discountAmount])
+        return (bookingData.totalPackagePrice - discountAmount) + totalAddOnPrice
+    }, [bookingData.totalPackagePrice, discountAmount, totalAddOnPrice])
+
+    // const vatAmount = useMemo(() => { // return calculateVAT(subtotal) // }, [subtotal])
 
     useEffect(() => {
-        trackBookingStep(currentStep, { totalPrice: totalBeforeDiscount, totalPriceAfterDiscount :totalAfterDiscount })
-        setBookingField("totalPrice", totalBeforeDiscount)
+        trackBookingStep(currentStep, { totalPrice: subtotal, totalPriceAfterDiscount: totalAfterDiscount })
+        setBookingField("totalPrice", subtotal)
         setBookingField("totalPriceAfterDiscount", totalAfterDiscount)
-    }, [totalBeforeDiscount, totalAfterDiscount])
+    }, [subtotal, totalAfterDiscount])
 
     return (
         <div className=" px-5 py-4 border border-gray-200 rounded-lg">
