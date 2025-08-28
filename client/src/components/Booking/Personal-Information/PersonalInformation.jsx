@@ -35,7 +35,7 @@ export default function PersonalInformation() {
   };
 
   return (
-    <div className="space-y-4 py-6  duration-300 mx-auto">
+    <div className="space-y-4   duration-300 mx-auto">
       {/* Header */}
       <BookingHeader
         title="Payment Information"
