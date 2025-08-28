@@ -9,7 +9,7 @@ export default function Header() {
                     <div>
                         <h1 className="text-2xl md:text-3xl text-main font-bold">
                             <Link to="/">
-                             <img src={logo} alt="Goocast" className='w-44' />
+                             <img src={logo} alt="Goocast" className='w-36' />
                              </Link>
                         </h1>
                         <p className="text-sm md:text-base text-gray-600 mt-1">Easy podcasting for everyone</p>
