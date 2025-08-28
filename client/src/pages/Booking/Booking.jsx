@@ -81,82 +81,84 @@ export default function Booking() {
     }
   }, [])
 
-  return (
-    <div className="min-h-screen">
-      <div className="sticky top-0 z-[300]">
-        <Header />
-      </div>
+  return <div className="min-h-screen">
+    <div className="sticky top-0 z-[300] scale-x-90">
+      <Header />
       <Stepper />
-      <div className="px-4 lg:px-8 w-full lg:max-w-6xl mx-auto">
-        {/* Step Indicator */}
+    </div>
 
-        {/* Main Content */}
-        <motion.div
-          className="bg-white rounded-xl overflow-hidden"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <AnimatePresence mode="wait" custom={currentStep}>
+    <div className="px-3 md:px-4 lg:px-6 w-full lg:max-w-4xl xl:max-w-6xl mx-auto ">
+      {/* Step Indicator */}
+
+      {/* Main Content */}
+      <motion.div
+        className="bg-white rounded-xl overflow-hidden "
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <AnimatePresence mode="wait" custom={currentStep}>
+          <motion.div
+            key={currentStep}
+            custom={currentStep}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+          >
             <motion.div
-              key={currentStep}
-              custom={currentStep}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
               exit="exit"
-              className="py-4"
+              className="space-y-4 md:space-y-6 lg:grid lg:grid-cols-1 lg:gap-6 items-start"
             >
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-1 lg:gap-6 items-start mt-6"
-              >
-                <motion.div variants={itemVariants} className="rounded-lg">
-                  {stepComponents[currentStep]}
-                </motion.div>
+              <motion.div variants={itemVariants} className="rounded-lg">
+                {stepComponents[currentStep]}
               </motion.div>
             </motion.div>
-          </AnimatePresence>
-        </motion.div>
-
-        <NavigationButtons />
-
-        {/* Mobile Cart Modal */}
-        <AnimatePresence>
-          {showMobileCart && (
-            <>
-              {/* Background Overlay */}
-              <motion.div
-                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-                onClick={() => setShowMobileCart(false)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              />
-
-              {/* Cart Modal */}
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-main/50 rounded-t-xl shadow-xl p-4 sm:p-6 overflow-auto max-h-[50vh] sm:max-h-[60vh]"
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-semibold">Cart</h2>
-                  <button onClick={() => setShowMobileCart(false)} className="text-gray-500 hover:text-gray-700">
-                    <i className="fa-solid fa-xmark text-2xl text-main"></i>
-                  </button>
-                </div>
-                <Cart />
-              </motion.div>
-            </>
-          )}
+          </motion.div>
         </AnimatePresence>
-      </div>
+      </motion.div>
+
+      <NavigationButtons />
+
+      {/* Mobile Cart Modal */}
+      <AnimatePresence>
+        {showMobileCart && (
+          <>
+            {/* Background Overlay */}
+            <motion.div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+              onClick={() => setShowMobileCart(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            {/* Cart Modal */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+              className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-main/50 rounded-t-xl shadow-xl p-4 sm:p-6 overflow-auto max-h-[45vh] md:max-h-[55vh] lg:max-h-[60vh]"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">Cart</h2>
+                <button
+                  onClick={() => setShowMobileCart(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <i className="fa-solid fa-xmark text-2xl text-main"></i>
+                </button>
+              </div>
+              <Cart />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
-  )
+  </div>
+
 }
