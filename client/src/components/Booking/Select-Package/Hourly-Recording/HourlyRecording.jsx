@@ -8,7 +8,7 @@ import usePriceFormat from "./../../../../hooks/usePriceFormat";
 import { Check } from "lucide-react";
 
 export default function HourlyRecording() {
-  const { setBookingField, handleNextStep, bookingData, currentStep, STEP_LABELS } = useBooking();
+  const { setBookingField, handleNextStep, bookingData, currentStep, stepLabels } = useBooking();
   const { mutate: getPackages, data: packages } = GetPackagesByCategory();
   const priceFormat = usePriceFormat();
 
@@ -31,7 +31,7 @@ export default function HourlyRecording() {
     });
 
     trackEvent("select_package", { package_name: pkg.name, price: pkg.price });
-    trackBookingStep(STEP_LABELS[currentStep], { totalPrice: pkg.price })
+    trackBookingStep(stepLabels[currentStep], { totalPrice: pkg.price })
 
     setBookingField("startSlot", null);
     setBookingField("endSlot", null);
