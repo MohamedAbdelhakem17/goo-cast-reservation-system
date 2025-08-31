@@ -82,12 +82,6 @@ export default function BookingConfirmation() {
 
 
   useEffect(() => {
-    trackPageView(location.pathname, {
-      total_price: bookingData.totalPrice,
-      totalAddOnsPrice: bookingData.totalAddOnsPrice,
-      totalPackagePrice: bookingData.totalPackagePrice,
-      totalPriceAfterDiscount: bookingData.totalPriceAfterDiscount
-    })
     return () => {
       localStorage.removeItem("bookingConfirmation");
       localStorage.removeItem("bookingStep");
@@ -100,6 +94,16 @@ export default function BookingConfirmation() {
     bookingData.totalPackagePrice,
     bookingData.totalPriceAfterDiscount
   ]);
+
+
+  useEffect(() => {
+    trackPageView(location.pathname, {
+      total_price: bookingData.totalPrice,
+      totalAddOnsPrice: bookingData.totalAddOnsPrice,
+      totalPackagePrice: bookingData.totalPackagePrice,
+      totalPriceAfterDiscount: bookingData.totalPriceAfterDiscount
+    })
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
