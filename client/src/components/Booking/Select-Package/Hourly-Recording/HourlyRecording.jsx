@@ -29,6 +29,7 @@ export default function HourlyRecording() {
       slug: pkg.category.slug,
       price: pkg.price,
     });
+
     trackEvent("select_package", { package_name: pkg.name, price: pkg.price });
     trackBookingStep(currentStep, { totalPrice: pkg.price })
 
@@ -73,7 +74,7 @@ export default function HourlyRecording() {
 
       {/* Packages */}
       <motion.div
-        className="flex flex-wrap justify-center gap-8 px-8 lg:px-0 mt-10 lg:justify-between"
+        className="flex flex-wrap justify-center gap-2 px-8 lg:px-0  lg:justify-around scale-90"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -87,16 +88,16 @@ export default function HourlyRecording() {
               variants={cardVariants}
               whileHover={{ y: -5 }}
               onClick={() => handlePackageSelect(pkg)}
-              className="cursor-pointer  w-full md:w-[45%]"
+              className="cursor-pointer  w-full md:w-[40%]"
             >
               <div
-                className={`flex flex-col rounded-xl h-full p-4 border-1 overflow-hidden transition-colors duration-300 ${isActive
+                className={`flex flex-col rounded-xl h-full  py-3 border-1 overflow-hidden transition-colors duration-300 ${isActive
                   ? "border-main border-2 shadow-sm shadow-main/20"
-                  : "border-gray-200  border-2 shadow-md  "
+                  : "border-gray-100  border-1 shadow-sm  "
                   }`}
               >
                 {/* Card Header */}
-                <div className="flex flex-col items-center gap-4">
+                <div className="flex flex-col items-center gap-2">
                   {/* <img
                     src={pkg.image}
                     alt={pkg.name}
@@ -104,7 +105,7 @@ export default function HourlyRecording() {
                   /> */}
 
                   <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center mb-2 ${isActive
+                    className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${isActive
                       ? "bg-[#FF3B30] text-white"
                       : "bg-gray-100 text-gray-600"
                       }`}
@@ -122,7 +123,7 @@ export default function HourlyRecording() {
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div className="px-6">
                   {/* Header */}
                   <motion.div
                     className="mb-4"
@@ -139,7 +140,7 @@ export default function HourlyRecording() {
 
                   {/* Package Details */}
                   <motion.div
-                    className="mb-4"
+                    className="mb-2"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 + index * 0.1 }}
@@ -187,7 +188,7 @@ export default function HourlyRecording() {
 
 
                 {/* Action Button */}
-                <div className="mt-auto">
+                <div className="mt-auto px-4">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}

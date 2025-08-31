@@ -70,11 +70,11 @@ export default function SelectStudio() {
           desc="Select the studio that best fits your needs"
         />
 
-        <div className="flex flex-wrap gap-3 justify-between">
+        <div className="flex flex-wrap gap-3 justify-around scale-90">
           {studiosData.data.map((studio) => (
             <motion.div
               key={studio.id}
-              className={`bg-white rounded-2xl overflow-hidden shadow-md transition-shadow duration-300 cursor-pointer w-full md:w-[45%] border-2 border-gray-300  ${selectedStudio === studio._id
+              className={`bg-white rounded-2xl overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer w-full md:w-[40%] border-1 border-gray-100  ${selectedStudio === studio._id
                 ? "border-main/50 scale-[.98]"
                 : ""
                 }`}

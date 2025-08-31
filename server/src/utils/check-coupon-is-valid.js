@@ -41,6 +41,7 @@ const checkCouponIsValid = async ({ coupon_id, user_id, email }) => {
   // }
 
   // check max uses
+  
   const totalUses = coupon.user_id_used.length + coupon.user_email_used.length;
   if (totalUses >= coupon.max_uses) {
     throw new AppError(
@@ -59,6 +60,7 @@ const checkCouponIsValid = async ({ coupon_id, user_id, email }) => {
   //   coupon.user_email_used.push(emailLower);
   // }
 
+  coupon.times_used += 1;
   await coupon.save();
 
   return {
