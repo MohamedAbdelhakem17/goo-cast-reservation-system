@@ -76,8 +76,8 @@ export default function AppRouter() {
         location.pathname !== "/booking/confirmation" &&
         !location.search.startsWith("?step=")
       ) {
-        localStorage.removeItem("bookingData"); 
-        localStorage.removeItem("maxStepReached"); 
+        localStorage.removeItem("bookingData");
+        localStorage.removeItem("maxStepReached");
         localStorage.removeItem("bookingStep");
       }
     };
@@ -85,8 +85,11 @@ export default function AppRouter() {
   }, [location]);
 
   useEffect(() => {
-    trackPageView(location.pathname);
-  }, [location]);
+    const confirmationBooking = location.pathname === "/booking/confirmation"
+    if (!confirmationBooking) {
+      trackPageView(location.pathname);
+    }
+  }, [location.pathname]);
 
   if (loading) return <LoadingScreen />; // Show loading screen while auth state is being determined
 
