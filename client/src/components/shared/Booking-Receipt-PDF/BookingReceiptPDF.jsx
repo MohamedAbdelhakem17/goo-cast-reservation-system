@@ -168,7 +168,7 @@ const BookingReceiptPDF = ({ booking }) => {
                     <View style={[styles.row, { marginTop: 10 }]}>
                         <Text>Total:</Text>
                         <Text style={{ fontWeight: 'bold' }}>
-                            {priceFormat(booking.totalPrice)}
+                            {priceFormat(booking.totalPriceAfterDiscount || booking.totalPrice)}
                         </Text>
                     </View>
                 </View>
