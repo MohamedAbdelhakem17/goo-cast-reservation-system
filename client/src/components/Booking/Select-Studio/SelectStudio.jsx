@@ -9,7 +9,7 @@ import { trackEvent, trackBookingStep } from "../../../GTM/gtm";
 import useGetAllStudios from "../../../apis/studios/studios.api";
 
 export default function SelectStudio() {
-  const { setBookingField, bookingData, handleNextStep, currentStep } = useBooking();
+  const { setBookingField, bookingData, handleNextStep, currentStep , STEP_LABELS } = useBooking();
   const [selectedStudio, setSelectedStudio] = useState(
     bookingData?.studio?.id || null
   );
@@ -90,7 +90,7 @@ export default function SelectStudio() {
                   image: studio.thumbnail,
                 });
                 trackEvent("select_studio", { studio_name: studio.name });
-                trackBookingStep(currentStep, { totalPrice: bookingData.selectedPackage.price })
+                trackBookingStep(STEP_LABELS[currentStep], { totalPrice: bookingData.selectedPackage.price })
               }}
             >
               {/* Image with Click Indicator */}

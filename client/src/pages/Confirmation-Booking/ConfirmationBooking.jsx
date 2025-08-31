@@ -283,7 +283,7 @@ export default function BookingConfirmation() {
                 <div className="pt-3">
                   <PriceRow
                     label="Total"
-                    value={priceFormat(bookingData?.totalPrice)}
+                    value={priceFormat(bookingData?.totalPriceAfterDiscount || bookingData?.totalPrice)}
                     bold
                   />
                 </div>

@@ -9,7 +9,7 @@ import { trackBookingStep } from "../../../../GTM/gtm"
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
     const [selectedTime, setSelectedTime] = useState(null)
-    const { handleNextStep, bookingData, setBookingField, currentStep } = useBooking()
+    const { handleNextStep, bookingData, setBookingField, currentStep, STEP_LABELS } = useBooking()
 
     const formattedDate = useMemo(() => {
         if (!bookingData?.date) return ""
@@ -32,7 +32,7 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
             setBookingField("startSlot", time)
             setBookingField("endSlot", endTime)
             setBookingField("totalPackagePrice", totalPrice)
-            trackBookingStep(currentStep, { totalPrice: totalPrice })
+            trackBookingStep(STEP_LABELS[currentStep], { totalPrice: totalPrice })
 
             handleNextStep()
         },
