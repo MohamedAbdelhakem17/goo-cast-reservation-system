@@ -11,7 +11,7 @@ export default function Stepper() {
   }));
 
   return (
-    <div className="px-4 lg:px-8 bg-white w-[100vw] py-4">
+    <div className="px-4 lg:px-8 bg-white w-[100vw] py-2">
       {/* Desktop/Tablet View */}
       <div className="hidden sm:flex items-center justify-between max-w-5xl mx-auto scale-[.9]">
         {steps.map((step, index) => (
@@ -26,7 +26,7 @@ export default function Stepper() {
               className="flex flex-col items-center focus:outline-none cursor-pointer disabled:cursor-not-allowed "
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 mb-2 transition-colors duration-300
+                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 mb-2 transition-colors duration-300
                 ${step.id < currentStep
                     ? "bg-[#FF3B30] border-[#FF3B30] text-white"
                     : step.id === currentStep

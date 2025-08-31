@@ -34,7 +34,11 @@ export default function ApplyDiscount() {
     const { mutate: applyCoupon } = ApplyCoupon()
 
     const discount = getBookingField("discount")
-    const totalPrice = getBookingField("totalPrice")
+    const totalPackagePrice = getBookingField("totalPackagePrice") // package price only
+    const totalAddOns = getBookingField("selectedAddOns")?.reduce(
+        (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
+        0
+    ) || 0
 
     const handleApplyCoupon = () => {
         applyCoupon(
@@ -45,9 +49,14 @@ export default function ApplyDiscount() {
             {
                 onSuccess: (response) => {
                     setBookingField("couponCode", coupon)
-                    const totalPrice = getBookingField("totalPrice")
                     const discount = response.data.discount
-                    const totalPriceAfterDiscount = totalPrice - totalPrice * (discount / 100)
+
+                    // Apply discount only on the package price
+                    const packageAfterDiscount = totalPackagePrice - totalPackagePrice * (discount / 100)
+
+                    // Final total = (discounted package) + (full add-ons price)
+                    const totalPriceAfterDiscount = packageAfterDiscount + totalAddOns
+
                     setBookingField("totalPriceAfterDiscount", totalPriceAfterDiscount)
                     setBookingField("discount", discount)
                     addToast(response.message || "Coupon Applied Successfully", "success")
@@ -71,20 +80,17 @@ export default function ApplyDiscount() {
                             <div>
                                 <div className="text-sm">{coupon}</div>
                                 <div className="text-xs text-green-600">
-                                    {discount} % Discount
+                                    {discount} % Discount (applied on package only)
                                 </div>
                             </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                            <span className="text-sm text-green-600"> - {priceFormat(totalPrice * (discount / 100))}</span>
+                            {/* Show discount value calculated from the package price */}
+                            <span className="text-sm text-green-600"> - {priceFormat(totalPackagePrice * (discount / 100))}</span>
                         </div>
                     </div>
                     : <CouponInput coupon={coupon} setCoupon={setCoupon} onApply={handleApplyCoupon} disabled={!coupon} />
             }
-            {/* <div className="text-xs text-gray-500 mt-2">
-                Try: FIRST20, STUDIO10, SUMMER25, or WELCOME15
-            </div> */}
         </div>
     )
 }
-

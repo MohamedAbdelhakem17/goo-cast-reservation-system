@@ -164,24 +164,42 @@ const createOpportunity = async (opportunityData) => {
 /**
  * Create an appointment in Go High Level.
  */
+
+const getCalendarUsers = async (calendarId) => {
+  const url = `${process.env.GO_HIGH_LEVEL_URL}/calendars/${calendarId}`;
+
+  try {
+    const res = await axios.get(url, { headers });
+
+    return res.data.calendar.teamMembers[0].userId;
+  } catch (err) {
+    console.error(
+      "❌ Error fetching calendar users:",
+      err.response?.data || err.message
+    );
+    return [];
+  }
+};
+
 const createAppointment = async (contactId, appointmentData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/calendars/events/appointments";
   const studio = await studioModel.findById(appointmentData.studioId);
-  const calendarId = studio?.calendarId;
+  // const calendarId = studio?.calendarId;
+  const assignedUserId = await getCalendarUsers(process.env.GO_HIGH_LEVEL_CALENDAR_ID);
 
-  
   const body = {
-    calendarId:  process.env.GO_HIGH_LEVEL_CALENDAR_ID,
+    calendarId: process.env.GO_HIGH_LEVEL_CALENDAR_ID,
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
     contactId,
     startTime: appointmentData.startTime,
     endTime: appointmentData.endTime,
     title: appointmentData.title || "Booking Appointment",
     notes: appointmentData.notes || "",
+    ignoreDateRange: true,
+    ignoreFreeSlotValidation: true,
+   assignedUserId
   };
 
-  // console.log("Creating appointment with body:", body);
-    // return console.log(calendarId, "calendarId");
 
   try {
     const response = await axios.post(url, body, { headers });
@@ -194,7 +212,7 @@ const createAppointment = async (contactId, appointmentData) => {
     }
   }
 };
-// hhPBOYYzmhXpokypAzOx
+
 /**
  * Main function to save opportunity and appointment in Go High Level.
  */
