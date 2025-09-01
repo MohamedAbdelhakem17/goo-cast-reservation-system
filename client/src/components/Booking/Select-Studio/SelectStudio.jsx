@@ -5,11 +5,11 @@ import Loading from "../../shared/Loading/Loading";
 // import { useGetAvailableStudio } from "../../../apis/Booking/booking.api";
 import NavigationButtons from "../Navigation-Buttons/NavigationButtons";
 import BookingHeader from "../../shared/Booking-Header/BookingHeader";
-import { trackEvent, trackBookingStep } from "../../../GTM/gtm";
+import { tracking } from "../../../GTM/gtm";
 import useGetAllStudios from "../../../apis/studios/studios.api";
 
 export default function SelectStudio() {
-  const { setBookingField, bookingData, handleNextStep, currentStep , stepLabels } = useBooking();
+  const { setBookingField, bookingData, handleNextStep, currentStep, stepLabels } = useBooking();
   const [selectedStudio, setSelectedStudio] = useState(
     bookingData?.studio?.id || null
   );
@@ -89,8 +89,7 @@ export default function SelectStudio() {
                   name: studio.name,
                   image: studio.thumbnail,
                 });
-                trackEvent("select_studio", { studio_name: studio.name });
-                trackBookingStep(stepLabels[currentStep], { totalPrice: bookingData.selectedPackage.price })
+                tracking("Add to Cart", { studio_name: studio.name });
               }}
             >
               {/* Image with Click Indicator */}

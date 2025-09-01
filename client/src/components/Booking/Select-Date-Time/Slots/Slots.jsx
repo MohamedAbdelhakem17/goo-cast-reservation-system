@@ -5,7 +5,7 @@ import { useBooking } from "../../../../context/Booking-Context/BookingContext"
 import Loading from "../../../shared/Loading/Loading"
 import { calculateEndTime, calculateTotalPrice } from "../../../../hooks/useManageSlots"
 import SlotButton from "./SlotButton/SlotButton"
-import { trackBookingStep } from "../../../../GTM/gtm"
+import { tracking } from "../../../../GTM/gtm"
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
     const [selectedTime, setSelectedTime] = useState(null)
@@ -32,7 +32,7 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
             setBookingField("startSlot", time)
             setBookingField("endSlot", endTime)
             setBookingField("totalPackagePrice", totalPrice)
-            trackBookingStep(stepLabels[currentStep], { totalPrice: totalPrice })
+            tracking("Add to Cart", { totalPrice: totalPrice, statTime, time, duration: bookingData.duration })
 
             handleNextStep()
         },

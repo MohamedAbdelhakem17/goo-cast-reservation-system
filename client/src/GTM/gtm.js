@@ -26,3 +26,12 @@ export function trackBookingStep(step, params) {
     });
   }
 }
+
+export function tracking(event, params) {
+  if (window.dataLayer) {
+    window.dataLayer.push({
+      event: event,
+      ...params,
+    });
+  }
+}

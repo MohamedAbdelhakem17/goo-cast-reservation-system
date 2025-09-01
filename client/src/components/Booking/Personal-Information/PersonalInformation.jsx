@@ -6,7 +6,7 @@ import Cart from "../Cart/Cart";
 import PaymentOptions from "./Payment-Way/PaymentWay";
 import BookingHeader from "../../shared/Booking-Header/BookingHeader";
 import { Loader } from "lucide-react";
-import { trackEvent } from "../../../GTM/gtm";
+import { tracking  } from "../../../GTM/gtm";
 
 export default function PersonalInformation() {
   const inputRef = useRef(null);
@@ -23,6 +23,7 @@ export default function PersonalInformation() {
   const { firstName, lastName, phone, email, brand } = bookingData.personalInfo;
 
   useEffect(() => {
+    tracking("Add Payment Info")
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -58,7 +59,10 @@ export default function PersonalInformation() {
                 label="First Name"
                 placeholder="Enter your First Name"
                 errors={getBookingError("personalInfo.firstName")}
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  formik.handleBlur()
+                  tracking("User Data", { firstName })
+                }}
                 onChange={(e) =>
                   setBookingField("personalInfo.firstName", e.target.value)
                 }
@@ -74,7 +78,10 @@ export default function PersonalInformation() {
                 label="Last Name"
                 placeholder="Enter your Last Name"
                 errors={getBookingError("personalInfo.lastName")}
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  formik.handleBlur()
+                  tracking("User Data", { lastName })
+                }}
                 onChange={(e) =>
                   setBookingField("personalInfo.lastName", e.target.value)
                 }
@@ -90,7 +97,10 @@ export default function PersonalInformation() {
                 label="Email"
                 placeholder="Enter your Email"
                 errors={getBookingError("personalInfo.email")}
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  formik.handleBlur()
+                  tracking("User Data", { email })
+                }}
                 onChange={(e) =>
                   setBookingField("personalInfo.email", e.target.value)
                 }
@@ -107,7 +117,10 @@ export default function PersonalInformation() {
                 label="Phone Number"
                 placeholder="Enter your Phone Number"
                 errors={getBookingError("personalInfo.phone")}
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  formik.handleBlur()
+                  tracking("User Data", { phone })
+                }}
                 touched={formik.touched.phoneNumber}
                 onChange={(e) =>
                   setBookingField("personalInfo.phone", e.target.value)
@@ -126,7 +139,10 @@ export default function PersonalInformation() {
                 onChange={(e) =>
                   setBookingField("personalInfo.brand", e.target.value)
                 }
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  formik.handleBlur()
+                  tracking("User Data", { notes: brand })
+                }}
                 touched={formik.touched.brandName}
               />
             </motion.div>
@@ -144,19 +160,18 @@ export default function PersonalInformation() {
                 onClick={
                   !formik.isSubmitting
                     ? () => {
-                        handleSubmit();
-                        trackEvent("create_booking", {
-                          totalPrice: bookingData.totalPrice,
-                        });
-                      }
+                      handleSubmit();
+                      tracking("create_booking", {
+                        totalPrice: bookingData.totalPrice,
+                      });
+                    }
                     : undefined
                 }
                 className={`w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center md:flex-row flex-col justify-center my-2 transition-all duration-200 
-    ${
-      hasError() || formik.isSubmitting
-        ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-        : "bg-main text-white hover:opacity-90"
-    }`}
+    ${hasError() || formik.isSubmitting
+                    ? "bg-gray-100 text-gray-300 cursor-not-allowed"
+                    : "bg-main text-white hover:opacity-90"
+                  }`}
               >
                 {formik.isSubmitting ? (
                   <div className="flex items-center gap-2">
