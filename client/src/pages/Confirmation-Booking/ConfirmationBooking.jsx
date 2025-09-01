@@ -99,7 +99,7 @@ export default function BookingConfirmation() {
 
 
   useEffect(() => {
-    if (bookingData?.totalPrice && !bookingData?.pixelFired) {
+    if (bookingData?.totalPrice ) {
       tracking("purchase", {
         value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
         currency: "EGP",
@@ -119,9 +119,8 @@ export default function BookingConfirmation() {
         content_type: "product"
       });
 
-      bookingData.pixelFired = true;
     }
-  }, [bookingData]);
+  }, []);
 
 
   return (
