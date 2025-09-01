@@ -6,7 +6,7 @@ import Cart from "../Cart/Cart";
 import PaymentOptions from "./Payment-Way/PaymentWay";
 import BookingHeader from "../../shared/Booking-Header/BookingHeader";
 import { Loader } from "lucide-react";
-import { tracking  } from "../../../GTM/gtm";
+import { tracking } from "../../../GTM/gtm";
 
 export default function PersonalInformation() {
   const inputRef = useRef(null);
@@ -59,13 +59,14 @@ export default function PersonalInformation() {
                 label="First Name"
                 placeholder="Enter your First Name"
                 errors={getBookingError("personalInfo.firstName")}
-                onBlur={() => {
-                  formik.handleBlur()
-                  tracking("User Data", { firstName })
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("User Data", { firstName });
                 }}
-                onChange={(e) =>
-                  setBookingField("personalInfo.firstName", e.target.value)
-                }
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.firstName", e.target.value);
+                }}
                 touched={formik.touched.firstName}
                 value={firstName}
                 inputRef={inputRef}
@@ -78,13 +79,14 @@ export default function PersonalInformation() {
                 label="Last Name"
                 placeholder="Enter your Last Name"
                 errors={getBookingError("personalInfo.lastName")}
-                onBlur={() => {
-                  formik.handleBlur()
-                  tracking("User Data", { lastName })
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("User Data", { lastName });
                 }}
-                onChange={(e) =>
-                  setBookingField("personalInfo.lastName", e.target.value)
-                }
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.lastName", e.target.value);
+                }}
                 touched={formik.touched.lastName}
                 value={lastName}
               />
@@ -97,13 +99,14 @@ export default function PersonalInformation() {
                 label="Email"
                 placeholder="Enter your Email"
                 errors={getBookingError("personalInfo.email")}
-                onBlur={() => {
-                  formik.handleBlur()
-                  tracking("User Data", { email })
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("User Data", { email });
                 }}
-                onChange={(e) =>
-                  setBookingField("personalInfo.email", e.target.value)
-                }
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.email", e.target.value);
+                }}
                 touched={formik.touched.email}
                 value={email}
               />
@@ -117,14 +120,15 @@ export default function PersonalInformation() {
                 label="Phone Number"
                 placeholder="Enter your Phone Number"
                 errors={getBookingError("personalInfo.phone")}
-                onBlur={() => {
-                  formik.handleBlur()
-                  tracking("User Data", { phone })
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("User Data", { phone });
+                }}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.phone", e.target.value);
                 }}
                 touched={formik.touched.phoneNumber}
-                onChange={(e) =>
-                  setBookingField("personalInfo.phone", e.target.value)
-                }
               />
             </motion.div>
 
@@ -136,23 +140,28 @@ export default function PersonalInformation() {
                 value={brand}
                 placeholder="Any special requirements, equipment needs, or additional information..."
                 errors={getBookingError("personalInfo.brand")}
-                onChange={(e) =>
-                  setBookingField("personalInfo.brand", e.target.value)
-                }
-                onBlur={() => {
-                  formik.handleBlur()
-                  tracking("User Data", { notes: brand })
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("User Data", { notes: brand });
+                }}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.brand", e.target.value);
                 }}
                 touched={formik.touched.brandName}
               />
             </motion.div>
           </form>
+
+          {/* Payment Section */}
           <div className="px-5 py-4 border-t border-gray-200">
             <h3 className="font-semibold text-gray-700 flex items-center gap-2">
               <i className="fa-solid fa-credit-card mr-3"></i>
               Payment Method
             </h3>
             <PaymentOptions />
+
+            {/* Action Buttons */}
             <div className="mt-3 flex items-center flex-col md:flex-row gap-4 px-5 ">
               <button
                 type="button"
@@ -168,7 +177,7 @@ export default function PersonalInformation() {
                     : undefined
                 }
                 className={`w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center md:flex-row flex-col justify-center my-2 transition-all duration-200 
-    ${hasError() || formik.isSubmitting
+            ${hasError() || formik.isSubmitting
                     ? "bg-gray-100 text-gray-300 cursor-not-allowed"
                     : "bg-main text-white hover:opacity-90"
                   }`}
@@ -192,11 +201,13 @@ export default function PersonalInformation() {
             </div>
           </div>
         </div>
+
         {/* Cart section */}
         <div className="w-full lg:w-1/3">
           <Cart />
         </div>
       </div>
+
     </div>
   );
 }
