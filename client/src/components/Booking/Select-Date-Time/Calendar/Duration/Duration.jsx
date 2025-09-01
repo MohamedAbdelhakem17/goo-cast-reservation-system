@@ -27,7 +27,7 @@ export default function Duration({ isOpen, setIsOpen }) {
     }
 
     return (
-        <div className="relative z-[502]">
+        <div className="relative z-[30]">
             {/* Main Display */}
             <div
                 className="flex items-center justify-between w-full gap-4 px-3 py-2 transition-colors border-2 border-gray-100 rounded-md cursor-pointer hover:border-gray-200 sm:w-auto"
@@ -63,7 +63,7 @@ export default function Duration({ isOpen, setIsOpen }) {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute top-full lg:left-0 mt-2 w-[250px] right-0 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden "
+                            className="absolute top-full lg:left-0 mt-2 w-[250px] right-0 bg-white rounded-lg shadow-xl border border-gray-200 z-[500] overflow-hidden "
                         >
                             {/* Header */}
                             <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
@@ -79,7 +79,7 @@ export default function Duration({ isOpen, setIsOpen }) {
                             </div>
 
                             {/* Duration Options */}
-                            <div className="py-2 max-h-[300px] overflow-y-auto ">
+                            <div className="py-2 min-h-[300px] overflow-y-auto ">
                                 {durationOptions.map((option, index) => (
                                     <motion.button
                                         key={option.value}
