@@ -8,7 +8,7 @@ import { tracking } from '../../../GTM/gtm'
 
 export default function SelectPackage() {
   useEffect(() => {
-    tracking("View Content")
+    tracking("view_content")
   }, [])
   // const { data: categories, isLoading } = GetAllCategories()
   // const { mutate: getPackages, isLoading: packagesLoading, data } = GetPackagesByCategory()

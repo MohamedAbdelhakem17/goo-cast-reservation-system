@@ -32,7 +32,7 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
             setBookingField("startSlot", time)
             setBookingField("endSlot", endTime)
             setBookingField("totalPackagePrice", totalPrice)
-            tracking("Add to Cart", { totalPrice: totalPrice, statTime: time, duration: bookingData.duration })
+            tracking("add_to_cart", { totalPrice: totalPrice, statTime: time, duration: bookingData.duration })
 
             handleNextStep()
         },
