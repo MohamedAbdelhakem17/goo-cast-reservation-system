@@ -5,10 +5,12 @@ import Studio from "@/components/Home/Studio/Studio";
 import PackagesSection from "@/components/Home/Packages-Section/PackagesSection";
 import Reviews from "@/components/Home/Reviews/Reviews";
 import BookNow from "@/components/Home/Book-Now/BookNow";
+import { tracking } from "../../GTM/gtm";
+import { useLocation } from "react-router-dom";
 
 const Home = () => {
   const [showMessage, setShowMessage] = useState(false);
-
+  const location = useLocation()
   useEffect(() => {
     const isActivated = localStorage.getItem("emailActivated");
     if (isActivated === "true") {
@@ -19,6 +21,11 @@ const Home = () => {
       }, 1000);
     }
   }, []);
+
+  // Add Page View event 
+  useEffect(() => {
+    tracking("pageview", location.pathname)
+  }, [])
 
   return (
     <main className="container mx-auto py-5 my-5">

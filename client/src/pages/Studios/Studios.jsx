@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import StarRating from "../../hooks/useRate";
 // import useQuickBooking from "../../hooks/useQuickBooking";
 import useGetAllStudios from "../../apis/studios/studios.api";
+import { tracking } from "../../GTM/gtm";
 // import usePriceFormat from "../../hooks/usePriceFormat";
 export default function Studios() {
   // Sample studio data - using exactly what was provided
@@ -14,6 +15,10 @@ export default function Studios() {
 
 
   // const { handleQuickBooking } = useQuickBooking();
+  // add View Category event
+  useEffect(() => {
+    tracking("View Category")
+  }, [])
 
   const containerVariants = {
     hidden: { opacity: 0 },

@@ -3,8 +3,13 @@ import AddOns from './Add-Ons/AddOns';
 import Cart from '../Cart/Cart';
 import Faq from './Faq/Faq';
 import BookingHeader from '../../shared/Booking-Header/BookingHeader';
+import { useEffect } from 'react';
+import { tracking } from '../../../GTM/gtm';
 
 export default function SelectAdditionalServices() {
+    useEffect(() => {
+        tracking("Initiate Checkout")
+    }, [])
     return (
         <div className="space-y-4 duration-300" >
             {/* Header */}
@@ -26,7 +31,7 @@ export default function SelectAdditionalServices() {
                         boundaryElement="#cart-wrapper"
                     // hideOnBoundaryHit={false}
                     > */}
-                        <Cart />
+                    <Cart />
                     {/* </Sticky> */}
                 </div>
             </div>
