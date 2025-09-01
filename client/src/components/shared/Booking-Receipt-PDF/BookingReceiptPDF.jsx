@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
 
     },
     logo: {
-        width: 120,
-        height: 60,
+        width: 100,
+        height: 80,
         paddingBottom: 10,
         paddingTop: 10,
     },
@@ -165,6 +165,15 @@ const BookingReceiptPDF = ({ booking }) => {
                             <Text>{priceFormat(booking.totalAddOnsPrice)}</Text>
                         </View>
                     )}
+
+                    {
+                        booking.totalPriceAfterDiscount !== booking.totalPrice && <View style={[styles.row, { marginTop: 10 }]}>
+                            <Text>discount:</Text>
+                            <Text style={{ fontWeight: 'bold' }}>
+                                {priceFormat(booking.totalPriceA || booking.totalPriceAfterDiscount)}
+                            </Text>
+                        </View>
+                    }
                     <View style={[styles.row, { marginTop: 10 }]}>
                         <Text>Total:</Text>
                         <Text style={{ fontWeight: 'bold' }}>
