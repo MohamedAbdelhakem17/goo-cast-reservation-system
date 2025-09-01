@@ -98,12 +98,30 @@ export default function BookingConfirmation() {
 
   useEffect(() => {
     tracking("Purchase", {
-      total_price: bookingData.totalPrice,
-      totalAddOnsPrice: bookingData.totalAddOnsPrice,
-      totalPackagePrice: bookingData.totalPackagePrice,
-      totalPriceAfterDiscount: bookingData.totalPriceAfterDiscount
-    })
-  }, [])
+      value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
+      currency: "EGP", 
+      booking_id: bookingData._id, 
+      user: {
+        id: bookingData.user?._id,
+        name: bookingData.user?.name,
+        email: bookingData.user?.email,
+        phone: bookingData.user?.phone
+      },
+      contents: [
+        {
+          id: bookingData?.package?._id,
+          quantity: 1,
+          item_price: bookingData.totalPackagePrice,
+        },
+        ...bookingData.addOns.map(addOn => ({
+          id: addOn.item,
+          quantity: addOn.quantity,
+          item_price: addOn.price,
+        }))
+      ],
+      content_type: "product"
+    });
+  }, [bookingData]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
