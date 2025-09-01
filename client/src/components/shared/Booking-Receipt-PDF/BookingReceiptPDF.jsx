@@ -10,7 +10,7 @@ import {
 } from '@react-pdf/renderer';
 import usePriceFormat from '../../../hooks/usePriceFormat';
 import useDateFormat from '../../../hooks/useDateFormat';
-import { logo } from '../../../assets/images';
+import logo from './logo.png';
 import useTimeConvert from '../../../hooks/useTimeConvert';
 
 // Styles
@@ -29,10 +29,10 @@ const styles = StyleSheet.create({
 
     },
     logo: {
-        width: 100,
-        height: 80,
-        paddingBottom: 10,
-        paddingTop: 10,
+        width: 150,          
+        objectFit: "contain",  
+        marginBottom: 5,
+        marginTop: 5,
     },
     title: {
         fontSize: 16,
@@ -170,7 +170,7 @@ const BookingReceiptPDF = ({ booking }) => {
                         booking.totalPriceAfterDiscount !== booking.totalPrice && <View style={[styles.row, { marginTop: 10 }]}>
                             <Text>discount:</Text>
                             <Text style={{ fontWeight: 'bold' }}>
-                                {priceFormat(booking.totalPriceA || booking.totalPriceAfterDiscount)}
+                                {priceFormat(booking.totalPrice - booking.totalPriceAfterDiscount)}
                             </Text>
                         </View>
                     }

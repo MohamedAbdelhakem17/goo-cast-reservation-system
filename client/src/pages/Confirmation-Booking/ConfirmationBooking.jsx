@@ -100,7 +100,7 @@ export default function BookingConfirmation() {
 
   useEffect(() => {
     if (bookingData?.totalPrice && !bookingData?.pixelFired) {
-      tracking("Purchase", {
+      tracking("purchase", {
         value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
         currency: "EGP",
         transaction_id: bookingData._id,

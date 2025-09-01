@@ -30,7 +30,7 @@ export default function HourlyRecording() {
       price: pkg.price,
     });
 
-    tracking("Add to Cart", { package_name: pkg.name, price: pkg.price });
+    tracking("add_to_cart", { package_name: pkg.name, price: pkg.price });
 
 
     setBookingField("startSlot", null);

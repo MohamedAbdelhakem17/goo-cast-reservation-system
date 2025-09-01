@@ -48,13 +48,13 @@ export default function AddOns() {
 
   const handleIncrement = (id, name, price) => {
     const currentQty = getQuantity(id);
-    tracking("Add to Cart ", { addon_name: name, addon_price: price, addon_quantity: currentQty + 1 });
+    tracking("add_to_cart ", { addon_name: name, addon_price: price, addon_quantity: currentQty + 1 });
     handleAddOnChange(id, name, currentQty + 1, price);
   };
 
   const handleDecrement = (id, name, price) => {
     const currentQty = getQuantity(id);
-    tracking("Remove from Cart ", { addon_name: name, addon_price: price, addon_quantity: 1 });
+    tracking("remove_from_cart ", { addon_name: name, addon_price: price, addon_quantity: 1 });
     if (currentQty > 0) {
       handleAddOnChange(id, name, currentQty - 1, price);
     }
@@ -64,7 +64,7 @@ export default function AddOns() {
     const addon = addOns?.data?.find((item) => item._id === id);
     if (addon) {
       handleAddOnChange(id, addon.name, 0, addon.price);
-      tracking("Remove from Cart ", { addon_name: addon.name, addon_price: addon.price });
+      tracking("remove_from_cart ", { addon_name: addon.name, addon_price: addon.price });
 
     }
   };
