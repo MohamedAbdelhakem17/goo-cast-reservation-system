@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
+import axios from "axios";
+import BASE_URL from "./../../apis/BASE_URL";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -12,14 +14,14 @@ const initialState = {
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
-      localStorage.setItem("user", JSON.stringify(action.payload)); 
+      localStorage.setItem("user", JSON.stringify(action.payload));
       return {
         isAuthenticated: true,
         user: action.payload,
         loading: false,
       };
     case "LOGOUT":
-      localStorage.removeItem("user"); 
+      localStorage.removeItem("user");
       return {
         isAuthenticated: false,
         user: null,
@@ -33,13 +35,32 @@ const authReducer = (state, action) => {
 export default function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      dispatch({ type: "LOGIN", payload: JSON.parse(storedUser) });
-    } else {
-      dispatch({ type: "LOGOUT" });
+  const isValidSession = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/auth/is-login`, {
+        withCredentials: true,
+      });
+      return response.data?.isValid ?? false;
+    } catch (err) {
+      console.error("Session check failed:", err);
+      return false;
     }
+  };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        dispatch({ type: "LOGIN", payload: JSON.parse(storedUser) });
+      }
+
+      const valid = await isValidSession();
+      if (!valid) {
+        dispatch({ type: "LOGOUT" });
+      }
+    };
+
+    checkAuth();
   }, []);
 
   return (

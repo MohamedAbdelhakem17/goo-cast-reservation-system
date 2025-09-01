@@ -18,6 +18,7 @@ import useDateFormat from "../../hooks/useDateFormat";
 import { useMemo } from "react";
 import { useEffect } from "react";
 import { tracking } from "../../GTM/gtm";
+import useTimeConvert from "../../hooks/useTimeConvert";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -74,6 +75,7 @@ export default function BookingConfirmation() {
 
   const priceFormat = usePriceFormat();
   const dateFormat = useDateFormat();
+  const formatTime = useTimeConvert()
 
   const subtotal = useMemo(() => {
     return bookingData.totalPackagePrice + bookingData.totalAddOnsPrice;
@@ -97,31 +99,30 @@ export default function BookingConfirmation() {
 
 
   useEffect(() => {
-    tracking("Purchase", {
-      value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
-      currency: "EGP", 
-      booking_id: bookingData._id, 
-      user: {
-        id: bookingData.user?._id,
-        name: bookingData.user?.name,
-        email: bookingData.user?.email,
-        phone: bookingData.user?.phone
-      },
-      contents: [
-        {
-          id: bookingData?.package?._id,
-          quantity: 1,
-          item_price: bookingData.totalPackagePrice,
-        },
-        ...bookingData.addOns.map(addOn => ({
-          id: addOn.item,
-          quantity: addOn.quantity,
-          item_price: addOn.price,
-        }))
-      ],
-      content_type: "product"
-    });
+    if (bookingData?.totalPrice && !bookingData?.pixelFired) {
+      tracking("Purchase", {
+        value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
+        currency: "EGP",
+        transaction_id: bookingData._id,
+        contents: [
+          {
+            id: bookingData?.package?._id,
+            quantity: 1,
+            item_price: bookingData.totalPackagePrice,
+          },
+          ...bookingData.addOns.map(addOn => ({
+            id: addOn.item,
+            quantity: addOn.quantity,
+            item_price: addOn.price,
+          }))
+        ],
+        content_type: "product"
+      });
+
+      bookingData.pixelFired = true;
+    }
   }, [bookingData]);
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
@@ -204,7 +205,7 @@ export default function BookingConfirmation() {
                 <DetailRow
                   icon={Clock}
                   label="Time & Duration"
-                  value={`${bookingData?.startSlot} (${bookingData?.duration}h)`}
+                  value={`${formatTime(bookingData?.startSlot)} (${bookingData?.duration}h)`}
                 />
               </div>
             </motion.div>
@@ -296,6 +297,14 @@ export default function BookingConfirmation() {
                     label="Subtotal"
                     value={priceFormat(subtotal)}
                   />
+                  {/* If discount  */}
+                  {
+                    bookingData.totalPriceAfterDiscount !== bookingData.totalPrice && <PriceRow
+                      label="discount"
+                      value={priceFormat(+bookingData.totalPrice - bookingData.totalPriceAfterDiscount)}
+                    />
+                  }
+
                   <div className="flex justify-between text-gray-600 text-md"></div>
                 </div>
                 <div className="pt-3">

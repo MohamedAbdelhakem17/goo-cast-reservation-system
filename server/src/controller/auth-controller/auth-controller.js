@@ -425,9 +425,20 @@ exports.updatePassword = asyncHandler(async (req, res) => {
 
 exports.isLogin = asyncHandler(async (req, res) => {
   if (req.isAuthenticated()) {
-    res.json({ user: req.user });
+    return res.json({
+      status: HTTP_STATUS_TEXT.SUCCESS,
+      isValid: true,
+    });
   } else {
-    res.json({ user: null });
+    req.logout(() => {
+      req.session.destroy(() => {
+        res.clearCookie("connect.sid");
+        return res.json({
+          status: HTTP_STATUS_TEXT.FAIL,
+          isValid: false,
+        });
+      });
+    });
   }
 });
 
