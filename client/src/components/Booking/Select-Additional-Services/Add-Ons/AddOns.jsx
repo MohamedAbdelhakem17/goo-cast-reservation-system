@@ -48,13 +48,13 @@ export default function AddOns() {
 
   const handleIncrement = (id, name, price) => {
     const currentQty = getQuantity(id);
-    trackEvent("Add to Cart ", { addon_name: name, addon_price: price, addon_quantity: currentQty + 1 });
+    tracking("Add to Cart ", { addon_name: name, addon_price: price, addon_quantity: currentQty + 1 });
     handleAddOnChange(id, name, currentQty + 1, price);
   };
 
   const handleDecrement = (id, name, price) => {
     const currentQty = getQuantity(id);
-    trackEvent("Remove from Cart ", { addon_name: name, addon_price: price, addon_quantity: 1 });
+    tracking("Remove from Cart ", { addon_name: name, addon_price: price, addon_quantity: 1 });
     if (currentQty > 0) {
       handleAddOnChange(id, name, currentQty - 1, price);
     }
