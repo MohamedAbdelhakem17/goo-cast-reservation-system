@@ -64,6 +64,8 @@ export default function AddOns() {
     const addon = addOns?.data?.find((item) => item._id === id);
     if (addon) {
       handleAddOnChange(id, addon.name, 0, addon.price);
+      tracking("Remove from Cart ", { addon_name: addon.name, addon_price: addon.price });
+
     }
   };
 
