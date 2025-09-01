@@ -2,9 +2,14 @@
 // import { GetAllCategories, GetPackagesByCategory } from '../../../apis/services/services.api'
 // import Loading from '../../shared/Loading/Loading'
 // import Tabs from '../../shared/Tabs/Tabs'
+import { useEffect } from 'react'
 import HourlyRecording from './Hourly-Recording/HourlyRecording'
+import { tracking } from '../../../GTM/gtm'
 
 export default function SelectPackage() {
+  useEffect(() => {
+    tracking("View Content")
+  }, [])
   // const { data: categories, isLoading } = GetAllCategories()
   // const { mutate: getPackages, isLoading: packagesLoading, data } = GetPackagesByCategory()
   // const categoryId = JSON.parse(localStorage.getItem("bookingData"))?.selectedPackage?.category

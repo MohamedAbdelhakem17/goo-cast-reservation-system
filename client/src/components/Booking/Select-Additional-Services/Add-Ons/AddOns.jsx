@@ -4,7 +4,7 @@ import { GetAllAddOns } from "../../../../apis/services/services.api";
 import Loading from "../../../shared/Loading/Loading";
 import { useCallback } from "react";
 import usePriceFormat from "../../../../hooks/usePriceFormat";
-import { trackEvent, trackBookingStep } from "../../../../GTM/gtm";
+import { tracking } from "../../../../GTM/gtm";
 
 
 export default function AddOns() {
@@ -37,7 +37,6 @@ export default function AddOns() {
       }
 
       setBookingField("selectedAddOns", updatedAddOns);
-      trackEvent("select_addon", { addon_name: name, addon_price: price, addon_quantity: quantity });
     },
     [bookingData.selectedAddOns, setBookingField]
   );
@@ -49,11 +48,13 @@ export default function AddOns() {
 
   const handleIncrement = (id, name, price) => {
     const currentQty = getQuantity(id);
+    trackEvent("Add to Cart ", { addon_name: name, addon_price: price, addon_quantity: currentQty + 1 });
     handleAddOnChange(id, name, currentQty + 1, price);
   };
 
   const handleDecrement = (id, name, price) => {
     const currentQty = getQuantity(id);
+    trackEvent("Remove from Cart ", { addon_name: name, addon_price: price, addon_quantity: 1 });
     if (currentQty > 0) {
       handleAddOnChange(id, name, currentQty - 1, price);
     }
