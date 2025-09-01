@@ -8,7 +8,6 @@ import MainLayout from "../components/layout/Main-Layout/MainLayout";
 import UserDashboardLayout from "../components/layout/User-Dashboard/UserDashboard";
 import ErrorBoundary from "../components/Error-Boundary/ErrorBoundary";
 import { useAuth } from "../context/Auth-Context/AuthContext";
-import { trackPageView } from "../GTM/gtm";
 
 // Pages Public
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -84,12 +83,7 @@ export default function AppRouter() {
     cleanLocalStorage();
   }, [location]);
 
-  useEffect(() => {
-    const confirmationBooking = location.pathname === "/booking/confirmation"
-    if (!confirmationBooking) {
-      trackPageView(location.pathname);
-    }
-  }, [location.pathname]);
+
 
   if (loading) return <LoadingScreen />; // Show loading screen while auth state is being determined
 

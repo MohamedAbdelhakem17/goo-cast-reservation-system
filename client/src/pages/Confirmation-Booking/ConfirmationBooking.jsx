@@ -17,7 +17,7 @@ import BookingReceiptPDF from "../../components/shared/Booking-Receipt-PDF/Booki
 import useDateFormat from "../../hooks/useDateFormat";
 import { useMemo } from "react";
 import { useEffect } from "react";
-import { trackPageView } from "../../GTM/gtm";
+import { tracking } from "../../GTM/gtm";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -97,7 +97,7 @@ export default function BookingConfirmation() {
 
 
   useEffect(() => {
-    trackPageView(location.pathname, {
+    tracking("Purchase", {
       total_price: bookingData.totalPrice,
       totalAddOnsPrice: bookingData.totalAddOnsPrice,
       totalPackagePrice: bookingData.totalPackagePrice,
