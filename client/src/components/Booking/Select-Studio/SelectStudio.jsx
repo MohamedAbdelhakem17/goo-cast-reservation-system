@@ -89,7 +89,7 @@ export default function SelectStudio() {
                   name: studio.name,
                   image: studio.thumbnail,
                 });
-                tracking("Add to Cart", { studio_name: studio.name });
+                tracking("add_to_cart", { studio_name: studio.name });
               }}
             >
               {/* Image with Click Indicator */}

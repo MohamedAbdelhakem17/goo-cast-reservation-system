@@ -23,7 +23,7 @@ export default function PersonalInformation() {
   const { firstName, lastName, phone, email, brand } = bookingData.personalInfo;
 
   useEffect(() => {
-    tracking("Add Payment Info")
+    tracking("add_Payment_info")
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -61,7 +61,7 @@ export default function PersonalInformation() {
                 errors={getBookingError("personalInfo.firstName")}
                 onBlur={(e) => {
                   formik.handleBlur(e);
-                  tracking("User Data", { firstName });
+                  tracking("user_data", { firstName });
                 }}
                 onChange={(e) => {
                   formik.handleChange(e);
@@ -81,7 +81,7 @@ export default function PersonalInformation() {
                 errors={getBookingError("personalInfo.lastName")}
                 onBlur={(e) => {
                   formik.handleBlur(e);
-                  tracking("User Data", { lastName });
+                  tracking("user_data", { lastName });
                 }}
                 onChange={(e) => {
                   formik.handleChange(e);
@@ -101,7 +101,7 @@ export default function PersonalInformation() {
                 errors={getBookingError("personalInfo.email")}
                 onBlur={(e) => {
                   formik.handleBlur(e);
-                  tracking("User Data", { email });
+                  tracking("user_data", { email });
                 }}
                 onChange={(e) => {
                   formik.handleChange(e);
@@ -122,7 +122,7 @@ export default function PersonalInformation() {
                 errors={getBookingError("personalInfo.phone")}
                 onBlur={(e) => {
                   formik.handleBlur(e);
-                  tracking("User Data", { phone });
+                  tracking("user_data", { phone });
                 }}
                 onChange={(e) => {
                   formik.handleChange(e);
@@ -132,7 +132,7 @@ export default function PersonalInformation() {
               />
             </motion.div>
 
-            <motion.div {...motionProps}>
+            <motion.div {...motionProps}>``
               <BookingInput
                 type="text"
                 id="brandName"
@@ -142,7 +142,7 @@ export default function PersonalInformation() {
                 errors={getBookingError("personalInfo.brand")}
                 onBlur={(e) => {
                   formik.handleBlur(e);
-                  tracking("User Data", { notes: brand });
+                  tracking("user_data", { notes: brand });
                 }}
                 onChange={(e) => {
                   formik.handleChange(e);

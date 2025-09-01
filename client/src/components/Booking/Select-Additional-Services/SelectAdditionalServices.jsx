@@ -8,7 +8,7 @@ import { tracking } from '../../../GTM/gtm';
 
 export default function SelectAdditionalServices() {
     useEffect(() => {
-        tracking("Initiate Checkout")
+        tracking("initiate_checkout")
     }, [])
     return (
         <div className="space-y-4 duration-300" >

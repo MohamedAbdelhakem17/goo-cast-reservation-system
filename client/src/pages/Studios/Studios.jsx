@@ -17,7 +17,7 @@ export default function Studios() {
   // const { handleQuickBooking } = useQuickBooking();
   // add View Category event
   useEffect(() => {
-    tracking("View Category")
+    tracking("view_category")
   }, [])
 
   const containerVariants = {
