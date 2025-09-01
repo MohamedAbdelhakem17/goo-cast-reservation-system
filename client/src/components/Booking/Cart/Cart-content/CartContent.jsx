@@ -93,7 +93,6 @@ export default function CartContent() {
     // const vatAmount = useMemo(() => { // return calculateVAT(subtotal) // }, [subtotal])
 
     useEffect(() => {
-        trackBookingStep(currentStep, { totalPrice: subtotal, totalPriceAfterDiscount: totalAfterDiscount })
         setBookingField("totalPrice", subtotal)
         setBookingField("totalPriceAfterDiscount", totalAfterDiscount)
     }, [subtotal, totalAfterDiscount])
