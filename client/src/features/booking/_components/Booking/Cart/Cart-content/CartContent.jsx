@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo } from 'react'
-import usePriceFormat from '../../../../hooks/usePriceFormat'
-import useTimeConvert from '../../../../hooks/useTimeConvert'
-import { useBooking } from '../../../../context/Booking-Context/BookingContext'
+import usePriceFormat from '@/hooks/usePriceFormat'
+import useTimeConvert from '@/hooks/useTimeConvert'
+import { useBooking } from '@/context/Booking-Context/BookingContext'
 import ApplyDiscount from "../../Apply-Discount/ApplyDiscount"
-import useVAT from '../../../../hooks/useVAT'
+import useVAT from '@/hooks/useVAT'
 
 export default function CartContent() {
     const formatDate = (dateString) => {

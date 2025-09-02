@@ -5,8 +5,9 @@ import {logo} from "@/assets/images";
 import AuthModelProvider from "@/context/Auth-Model-Context/AuthModelContext";
 import { useAuth } from "@/context/Auth-Context/AuthContext";
 
-import { navLinkClasses, AuthButtons, AuthModel, MobileToggle, MobileMenu, UserProfile } from "./_components";
+import { AuthButtons, AuthModel, MobileToggle, MobileMenu, UserProfile } from "./_components";
 import { PUBLIC_ROUTES } from "@/constants/routes";
+import navLinkClasses from './_assets/nav-link-classes';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);

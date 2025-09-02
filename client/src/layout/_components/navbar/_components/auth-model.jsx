@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Signin from "@/features/auth/pages/Signin/Signin";
 import Signup from "@/features/auth/pages/Signup/Signup";
-import { useAuthModel } from "../../../context/Auth-Model-Context/AuthModelContext";
+import { useAuthModel } from "@/context/Auth-Model-Context/AuthModelContext";
 
 export default function AuthModel() {
   const { isSigninOpen, isSignupOpen, setIsSignupOpen, setIsSigninOpen } =

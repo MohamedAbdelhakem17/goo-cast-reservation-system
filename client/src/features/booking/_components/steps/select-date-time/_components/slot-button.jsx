@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import useTimeConvert from "../../../../../hooks/useTimeConvert"
+import useTimeConvert from "@/hooks/useTimeConvert"
 
 export default function SlotButton({ time, isSelected, onClick, index }) {
     const timeFormat = useTimeConvert()

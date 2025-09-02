@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GetFullBookedStudios } from "../apis/Booking/booking.api";
+import { GetFullyBookedDates } from "@/apis/Booking/booking.api";
 
 export function useCalendar(studioId, selectedBookingDate, duration) {
     const today = new Date();
@@ -12,8 +12,9 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         return date;
     };
 
-    const { isLoading, data } = GetFullBookedStudios(studioId, duration);
-    const disabledDates = data?.data?.map((dateStr) => new Date(dateStr)) || [];
+    const { data: data, isLoading } = GetFullyBookedDates(duration);
+
+    const disabledDates = data?.data || [];
 
     const [currentDate, setCurrentDate] = useState(
         selectedBookingDate ? new Date(selectedBookingDate) : handleStartDate()
@@ -53,20 +54,32 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         currentDate.getFullYear() === today.getFullYear() &&
         currentDate.getMonth() === today.getMonth();
 
+    // Helper function to format date as YYYY-MM-DD without timezone issues
+    const formatDateToString = (year, month, day) => {
+        const date = new Date(year, month, day);
+        return date.getFullYear() + '-' + 
+               String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+               String(date.getDate()).padStart(2, '0');
+    };
+
     const isDateInPastOrDisabled = (day) => {
         const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
         const isPast = dateToCheck < todayStart;
 
-        const isDisabled = disabledDates.some(
-            (d) =>
-                d.getFullYear() === dateToCheck.getFullYear() &&
-                d.getMonth() === dateToCheck.getMonth() &&
-                d.getDate() === dateToCheck.getDate()
-        );
+        // استخدام الـ helper function بدلاً من toISOString
+        const dateStr = formatDateToString(currentDate.getFullYear(), currentDate.getMonth(), day);
 
-        return isPast || isDisabled;
+        const isFullyBooked = disabledDates.includes(dateStr);
+
+        return isPast || isFullyBooked;
+    };
+
+    const isDateFullyBooked = (day) => {
+        // استخدام نفس الـ helper function هنا كمان
+        const dateStr = formatDateToString(currentDate.getFullYear(), currentDate.getMonth(), day);
+        return disabledDates.includes(dateStr);
     };
 
     const isToday = (day) => {
@@ -85,23 +98,40 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
 
     const calendarDays = [];
 
+    // Empty cells for days before month start
     for (let i = 0; i < firstDayWeekday; i++) {
-        calendarDays.push({ date: null, blocked: true, isEmpty: true });
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
         calendarDays.push({
-            date: day,
-            blocked: isDateInPastOrDisabled(day),
-            isEmpty: false,
-            isToday: isToday(day),
-            isSelected: isSelected(day),
+            date: null,
+            blocked: true,
+            isEmpty: true,
+            fullyBooked: false
         });
     }
 
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const isBlocked = isDateInPastOrDisabled(day);
+        const isBookedFully = isDateFullyBooked(day);
+
+        calendarDays.push({
+            date: day,
+            blocked: isBlocked,
+            isEmpty: false,
+            isToday: isToday(day),
+            isSelected: isSelected(day),
+            fullyBooked: isBookedFully,
+        });
+    }
+
+    // Empty cells after month end
     const remainingCells = 42 - calendarDays.length;
     for (let i = 0; i < remainingCells; i++) {
-        calendarDays.push({ date: null, blocked: true, isEmpty: true });
+        calendarDays.push({
+            date: null,
+            blocked: true,
+            isEmpty: true,
+            fullyBooked: false
+        });
     }
 
     const daysOfWeek = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
@@ -122,6 +152,8 @@ export function useCalendar(studioId, selectedBookingDate, duration) {
         isToday,
         isLoading,
         monthNames,
-        daysOfWeek
+        daysOfWeek,
+        disabledDates,
+        isDateFullyBooked
     };
-} 
+}

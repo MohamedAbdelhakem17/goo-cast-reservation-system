@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown } from "lucide-react"
-import { GetAllFaqs } from "../../../../apis/faq/faq"
+import { GetAllFaqs } from "@/apis/faq/faq"
 
 export default function Faq() {
     const [openItem, setOpenItem] = useState(null)

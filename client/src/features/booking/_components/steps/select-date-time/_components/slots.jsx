@@ -1,14 +1,15 @@
 import { useState, useMemo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
-import { useBooking } from "../../../../context/Booking-Context/BookingContext"
-import Loading from "../../../shared/Loading/Loading"
-import { calculateEndTime, calculateTotalPrice } from "../../../../hooks/useManageSlots"
-import SlotButton from "./SlotButton/SlotButton"
+import { useBooking } from "@/context/Booking-Context/BookingContext"
+import { Loading } from '@/components/common';
+import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots"
+import SlotButton from './slot-button';
+import { tracking } from '@/utils/gtm';
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
     const [selectedTime, setSelectedTime] = useState(null)
-    const { handleNextStep, bookingData, setBookingField } = useBooking()
+    const { handleNextStep, bookingData, setBookingField, currentStep, stepLabels } = useBooking()
 
     const formattedDate = useMemo(() => {
         if (!bookingData?.date) return ""
@@ -31,14 +32,15 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
             setBookingField("startSlot", time)
             setBookingField("endSlot", endTime)
             setBookingField("totalPackagePrice", totalPrice)
+            tracking("add_to_cart", { totalPrice: totalPrice, statTime: time, duration: bookingData.duration })
 
             handleNextStep()
         },
-        [bookingData.duration, bookingData?.selectedPackage?.price, setIsOpen, setBookingField, handleNextStep]
+        [bookingData.duration, bookingData?.selectedPackage?.price, setIsOpen, setBookingField, handleNextStep, currentStep]
     )
 
     return (
-        < >
+        <>
             {/* Overlay */}
             <AnimatePresence>
                 {isOpen && (
@@ -65,7 +67,7 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
                             stiffness: 300,
                             damping: 30,
                         }}
-                        className="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-[55] overflow-y-auto"
+                        className="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-[5500] overflow-y-auto"
                     >
                         {/* Header */}
                         <div className="sticky top-0 bg-white border-b border-gray-200 p-6">

@@ -2,13 +2,14 @@ import Sticky from 'react-sticky-el';
 import AddOns from './Add-Ons/AddOns';
 import Cart from '../Cart/Cart';
 import Faq from './Faq/Faq';
-import BookingHeader from '../../shared/Booking-Header/BookingHeader';
+import BookingHeader from "../../booking-label";
 
 export default function SelectAdditionalServices() {
     return (
         <div className="space-y-4 px-5 duration-300" >
             {/* Header */}
             <BookingHeader title="Additional Services" desc="Enhance your session with our professional add-ons" />
+
 
             {/* Responsive Content */}
             <div className="flex flex-col lg:flex-row gap-6 mb-[10px]" id='cart-wrapper'>
@@ -26,7 +27,7 @@ export default function SelectAdditionalServices() {
                         boundaryElement="#cart-wrapper"
                     // hideOnBoundaryHit={false}
                     > */}
-                        <Cart />
+                    <Cart />
                     {/* </Sticky> */}
                 </div>
             </div>
@@ -35,8 +36,3 @@ export default function SelectAdditionalServices() {
 }
 
 
-// m  360 / 60 = 6  => 6 * 15 = 90
-// h  360 / 12 = 30 => 3 * 30 = 90
-// .25 h = 30 * .25 = 7.5
-//  3:15 = 90 + 7.5 =  97.5
-// def = 97.5 - 90 = 7.5 

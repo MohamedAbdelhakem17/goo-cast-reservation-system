@@ -1,4 +1,4 @@
-import { useAuthModel } from "../../../context/Auth-Model-Context/AuthModelContext"
+import { useAuthModel } from "@/context/Auth-Model-Context/AuthModelContext"
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function MobileToggle() {

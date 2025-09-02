@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import Signout from '../../../apis/auth/signout.api';
-import { useAuth } from '../../../context/Auth-Context/AuthContext';
-import { motion , AnimatePresence } from "framer-motion";
+import { useAuth } from '@/context/Auth-Context/AuthContext';
+import { motion, AnimatePresence } from "framer-motion";
 import { NavLink } from 'react-router-dom';
+import Signout from '@/apis/auth/signout.api';
 
 export default function UserProfile() {
     const { handelLogout } = Signout();
