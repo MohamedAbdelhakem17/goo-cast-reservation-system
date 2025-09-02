@@ -2,11 +2,16 @@ import Sticky from 'react-sticky-el';
 import AddOns from './Add-Ons/AddOns';
 import Cart from '../Cart/Cart';
 import Faq from './Faq/Faq';
-import BookingHeader from "../../booking-label";
+import BookingHeader from '../../shared/Booking-Header/BookingHeader';
+import { useEffect } from 'react';
+import { tracking } from '../../../GTM/gtm';
 
 export default function SelectAdditionalServices() {
+    useEffect(() => {
+        tracking("initiate_checkout")
+    }, [])
     return (
-        <div className="space-y-4 px-5 duration-300" >
+        <div className="space-y-4 duration-300" >
             {/* Header */}
             <BookingHeader title="Additional Services" desc="Enhance your session with our professional add-ons" />
 

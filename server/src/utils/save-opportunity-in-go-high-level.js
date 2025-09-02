@@ -1,4 +1,5 @@
 const axios = require("axios");
+const studioModel = require("../models/studio-model/studio-model");
 
 const headers = {
   "Content-Type": "application/json",
@@ -9,6 +10,7 @@ const headers = {
 /**
  * Search for a contact in Go High Level by a specific field (email or phone).
  */
+
 const searchContact = async (field, value) => {
   if (!value) return null;
 
@@ -34,12 +36,12 @@ const searchContact = async (field, value) => {
  */
 const createContact = async (contactData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/contacts";
-  const [firstName, lastName] = contactData.name.split(" ");
+  const [firstName, lastName] = contactData?.name?.split(" ") || [];
   const body = {
     locationId: process.env.GO_HIGH_LEVEL_LOCATION_ID,
-    first_name: firstName,
-    last_name: lastName,
-    full_name: contactData.name,
+    firstName: firstName,
+    lastName: lastName,
+    name: contactData.name,
     email: contactData.email,
     phone: contactData.phone,
   };
@@ -107,36 +109,36 @@ const createOpportunity = async (opportunityData) => {
     status: "open",
     customFields: [
       {
-        id: "dT2pk8lhCsliZZvGTMKy",
         key: "payment_status",
         field_value: "Pending",
       },
       {
-        id: "FJ8o6VX0okwMKvNcm2XZ",
         key: "session_type",
         field_value: opportunityData.sessionType,
       },
       {
-        id: "IJt4YVb1prb3MACAUE8M",
         key: "session_deuration",
         field_value: opportunityData.duration,
       },
       {
-        id: "vbUnGycab4X5kR4bB5OS",
-        key: "opportunity.studio_name",
+        key: "studio_name",
         field_value: opportunityData.studioName,
       },
       {
-        id: "gkl2UWx88U1kiLEU5aay",
         key: "appointments_status",
         field_value: "Confirmed",
+      },
+      {
+        key: "booking_id",
+        field_value: opportunityData.bookingId.toString(),
       },
     ],
   };
 
   try {
     const response = await axios.post(url, body, { headers });
-    return response.data.opportunity.id;
+    const opportunityID = response.data.opportunity.id;
+    return opportunityID;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const { status, data } = error.response || {};
@@ -162,8 +164,28 @@ const createOpportunity = async (opportunityData) => {
 /**
  * Create an appointment in Go High Level.
  */
+
+const getCalendarUsers = async (calendarId) => {
+  const url = `${process.env.GO_HIGH_LEVEL_URL}/calendars/${calendarId}`;
+
+  try {
+    const res = await axios.get(url, { headers });
+
+    return res.data.calendar.teamMembers[0].userId;
+  } catch (err) {
+    console.error(
+      "❌ Error fetching calendar users:",
+      err.response?.data || err.message
+    );
+    return [];
+  }
+};
+
 const createAppointment = async (contactId, appointmentData) => {
   const url = process.env.GO_HIGH_LEVEL_URL + "/calendars/events/appointments";
+  const studio = await studioModel.findById(appointmentData.studioId);
+  // const calendarId = studio?.calendarId;
+  const assignedUserId = await getCalendarUsers(process.env.GO_HIGH_LEVEL_CALENDAR_ID);
 
   const body = {
     calendarId: process.env.GO_HIGH_LEVEL_CALENDAR_ID,
@@ -173,38 +195,51 @@ const createAppointment = async (contactId, appointmentData) => {
     endTime: appointmentData.endTime,
     title: appointmentData.title || "Booking Appointment",
     notes: appointmentData.notes || "",
+    ignoreDateRange: true,
+    ignoreFreeSlotValidation: true,
+   assignedUserId
   };
+
 
   try {
     const response = await axios.post(url, body, { headers });
-    console.log("✅ Appointment created:");
-    return response.data?.data?.id;
+    console.log("✅ Appointment created:", response.data);
+    return true;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("Create appointment error:", error.response?.data);
+      return false;
     }
-    throw error;
   }
 };
 
 /**
  * Main function to save opportunity and appointment in Go High Level.
  */
+
 const saveOpportunityInGoHighLevel = async (
   userData,
   opportunityData,
   appointmentData
 ) => {
+  let opportunityID;
   // Get or create the contact ID
   const contactId = await getContactID(userData);
   opportunityData.contactId = contactId;
 
-  // Create or update the opportunity
-  await createOpportunity(opportunityData);
-
-  // If appointment data is provided, create the appointment
+  // If appointment data is provided, create the appointment first
   if (appointmentData?.startTime) {
-    await createAppointment(contactId, appointmentData);
+    const appointmentCreated = await createAppointment(
+      contactId,
+      appointmentData
+    );
+    // Create opportunity only if appointment creation succeeded
+    if (appointmentCreated) {
+      opportunityID = await createOpportunity(opportunityData);
+    } else {
+      throw new Error("Failed to create appointment in Go High Level");
+    }
+    return opportunityID;
   }
 };
 

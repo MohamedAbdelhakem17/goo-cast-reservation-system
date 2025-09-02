@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import {
   Check,
   Download,
-  Share2,
   MapPin,
   Calendar,
   Clock,
@@ -11,13 +10,15 @@ import {
   Mail,
   CreditCard,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import usePriceFormat from "../../../../hooks/usePriceFormat";
+import { useLocation, useNavigate } from "react-router-dom";
+import usePriceFormat from "../../hooks/usePriceFormat";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import BookingReceiptPDF from "../../../../components/shared/Booking-Receipt-PDF/BookingReceiptPDF";
-import useDateFormat from "../../../../hooks/useDateFormat";
-import useVAT from "../../../../hooks/useVAT";
+import BookingReceiptPDF from "../../components/shared/Booking-Receipt-PDF/BookingReceiptPDF";
+import useDateFormat from "../../hooks/useDateFormat";
 import { useMemo } from "react";
+import { useEffect } from "react";
+import { tracking } from "../../GTM/gtm";
+import useTimeConvert from "../../hooks/useTimeConvert";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -52,9 +53,8 @@ function DetailRow({ icon: Icon, label, value }) {
 const PriceRow = ({ label, value, bold = false }) => (
   <div className="flex justify-between py-2 items-center">
     <span
-      className={`text-gray-600 ${
-        bold ? "text-lg font-semibold text-gray-900" : ""
-      }`}
+      className={`text-gray-600 ${bold ? "text-lg font-semibold text-gray-900" : ""
+        }`}
     >
       {label}
     </span>
@@ -67,9 +67,7 @@ const PriceRow = ({ label, value, bold = false }) => (
 );
 
 export default function BookingConfirmation() {
-  const { calculateVAT, VAT_PERCENTAGE } = useVAT();
-
-  console.log(VAT_PERCENTAGE);
+  const location = useLocation()
   const navigate = useNavigate();
   const bookingData = JSON.parse(
     localStorage.getItem("bookingConfirmation")
@@ -77,15 +75,53 @@ export default function BookingConfirmation() {
 
   const priceFormat = usePriceFormat();
   const dateFormat = useDateFormat();
+  const formatTime = useTimeConvert()
 
   const subtotal = useMemo(() => {
     return bookingData.totalPackagePrice + bookingData.totalAddOnsPrice;
   }, [bookingData.totalPackagePrice, bookingData.totalAddOnsPrice]);
 
-  const vatAmount = useMemo(() => {
-    return calculateVAT(subtotal);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subtotal]);
+
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("bookingConfirmation");
+      localStorage.removeItem("bookingStep");
+      localStorage.removeItem("bookingData");
+    }
+  }, [
+    location.pathname,
+    bookingData.totalPrice,
+    bookingData.totalAddOnsPrice,
+    bookingData.totalPackagePrice,
+    bookingData.totalPriceAfterDiscount
+  ]);
+
+
+  useEffect(() => {
+    if (bookingData?.totalPrice ) {
+      tracking("purchase", {
+        value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
+        currency: "EGP",
+        transaction_id: bookingData._id,
+        contents: [
+          {
+            id: bookingData?.package?._id,
+            quantity: 1,
+            item_price: bookingData.totalPackagePrice,
+          },
+          ...bookingData.addOns.map(addOn => ({
+            id: addOn.item,
+            quantity: addOn.quantity,
+            item_price: addOn.price,
+          }))
+        ],
+        content_type: "product"
+      });
+
+    }
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
@@ -168,7 +204,7 @@ export default function BookingConfirmation() {
                 <DetailRow
                   icon={Clock}
                   label="Time & Duration"
-                  value={`${bookingData?.startSlot} (${bookingData?.duration}h)`}
+                  value={`${formatTime(bookingData?.startSlot)} (${bookingData?.duration}h)`}
                 />
               </div>
             </motion.div>
@@ -221,7 +257,7 @@ export default function BookingConfirmation() {
                   Before Your Session
                 </h3>
                 <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-                  <li>Arrive 15 minutes early for setup</li>
+                  <li>Arrive 30 minutes early for setup</li>
                   <li>Bring a valid ID for check-in</li>
                   <li>Review our studio guidelines and policies</li>
                 </ul>
@@ -260,17 +296,21 @@ export default function BookingConfirmation() {
                     label="Subtotal"
                     value={priceFormat(subtotal)}
                   />
-                  <PriceRow
-                    label={`VAT (${VAT_PERCENTAGE}%`}
-                    value={priceFormat(vatAmount)}
-                  />
+                  {/* If discount  */}
+                  {
+                    bookingData.totalPriceAfterDiscount !== bookingData.totalPrice && <PriceRow
+                      label="discount"
+                      value={priceFormat(+bookingData.totalPrice - bookingData.totalPriceAfterDiscount)}
+                    />
+                  }
+
                   <div className="flex justify-between text-gray-600 text-md"></div>
                 </div>
                 <div className="pt-3">
                   <PriceRow
                     label="Total"
-                    value={priceFormat(bookingData?.totalPrice)}
-                    bold
+                    value={priceFormat(bookingData.totalPriceAfterDiscount || bookingData.totalPrice)}
+                    bold={true}
                   />
                 </div>
               </div>
@@ -330,7 +370,7 @@ export default function BookingConfirmation() {
                 <DetailRow
                   icon={Mail}
                   label="Email Support"
-                  value="support@goocaststudio.com"
+                  value="studio@goocast.net"
                 />
                 <DetailRow
                   icon={MapPin}

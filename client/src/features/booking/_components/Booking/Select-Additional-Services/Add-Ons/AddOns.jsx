@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { GetAllAddOns } from "@/apis/services/services.api";
 import { useCallback } from "react";
-import usePriceFormat from "@/hooks/usePriceFormat";
-import { trackEvent } from "@/utils/gtm";
-import { Loading } from '@/components/common';
+import usePriceFormat from "../../../../hooks/usePriceFormat";
+import { tracking } from "../../../../GTM/gtm";
+
 
 export default function AddOns() {
   const { data: addOns, isLoading } = GetAllAddOns();
@@ -36,7 +36,6 @@ export default function AddOns() {
       }
 
       setBookingField("selectedAddOns", updatedAddOns);
-      trackEvent("select_addon", { addon_name: name });
     },
     [bookingData.selectedAddOns, setBookingField]
   );
@@ -48,11 +47,13 @@ export default function AddOns() {
 
   const handleIncrement = (id, name, price) => {
     const currentQty = getQuantity(id);
+    tracking("add_to_cart ", { addon_name: name, addon_price: price, addon_quantity: currentQty + 1 });
     handleAddOnChange(id, name, currentQty + 1, price);
   };
 
   const handleDecrement = (id, name, price) => {
     const currentQty = getQuantity(id);
+    tracking("remove_from_cart ", { addon_name: name, addon_price: price, addon_quantity: 1 });
     if (currentQty > 0) {
       handleAddOnChange(id, name, currentQty - 1, price);
     }
@@ -62,6 +63,8 @@ export default function AddOns() {
     const addon = addOns?.data?.find((item) => item._id === id);
     if (addon) {
       handleAddOnChange(id, addon.name, 0, addon.price);
+      tracking("remove_from_cart ", { addon_name: addon.name, addon_price: addon.price });
+
     }
   };
 

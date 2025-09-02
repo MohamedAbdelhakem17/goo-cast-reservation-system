@@ -4,6 +4,7 @@ import { useToast } from "../../context/Toaster-Context/ToasterContext";
 import { CreateBooking } from "../../apis/Booking/booking.api";
 import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { DateTime } from 'luxon';
 export default function useBookingFormik() {
   const parsedData = useMemo(() => {
     const localStorageData = localStorage.getItem("bookingData");
@@ -15,12 +16,13 @@ export default function useBookingFormik() {
     if (parsedData) return parsedData;
 
     const handelStartDate = () => {
-      const date = new Date();
-      const hour = date.getHours();
-      hour > 18
-        ? date.setDate(date.getDate() + 1)
-        : date.setDate(date.getDate());
-      return date;
+      let date = DateTime.now().setZone("Africa/Cairo");
+
+      if (date.hour > 18) {
+        date = date.plus({ days: 1 });
+      }
+
+      return date.toISO();
     };
 
     return {
@@ -33,7 +35,7 @@ export default function useBookingFormik() {
       date: handelStartDate(),
       startSlot: null,
       endSlot: null,
-      duration: 2,
+      duration: 1,
       persons: 1,
       selectedPackage: {},
       selectedAddOns: [],
@@ -49,7 +51,7 @@ export default function useBookingFormik() {
       totalPriceAfterDiscount: 0,
       couponCode: "",
       discount: "",
-      paymentMethod: "CARD", // Default payment method
+      paymentMethod: "CASH", // Default payment method
     };
   }, [parsedData]);
 
@@ -120,7 +122,7 @@ export default function useBookingFormik() {
           values.totalPriceAfterDiscount || values.totalPrice,
         personalInfo: {
           ...values.personalInfo,
-          fullName: `${values.personalInfo.firstName}  ${values.personalInfo.lastName}`,
+          fullName: `${values.personalInfo.firstName} ${values.personalInfo.lastName}`,
         },
       };
 
@@ -135,11 +137,15 @@ export default function useBookingFormik() {
           addToast(
             res.message || "Booking submitted successfully",
             "success",
-            3000
+            1000
           );
+          formik.resetForm()
           setTimeout(() => {
+            localStorage.removeItem("bookingData");
+            localStorage.removeItem("maxStepReached");
+            localStorage.removeItem("bookingStep");
             navigate("/booking/confirmation");
-          }, 3200);
+          }, 1200);
         },
         onError: (error) => {
           addToast(
@@ -187,3 +193,8 @@ export default function useBookingFormik() {
     getBookingError,
   };
 }
+
+
+
+
+

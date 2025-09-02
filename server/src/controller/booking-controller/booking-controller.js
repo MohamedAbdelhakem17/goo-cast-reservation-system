@@ -21,6 +21,8 @@ const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model");
 
 const saveOpportunityInGoHighLevel = require("../../utils/save-opportunity-in-go-high-level");
+const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
+
 const { getCategoryMinHour } = require("../../utils/get-category-hour.js");
 const { getFreeSlots } = require("../../utils/get-free-slots.js");
 const createBookingLogic = require("./create-booking-logic .js");
@@ -52,14 +54,14 @@ const createBookingLogic = require("./create-booking-logic .js");
   //         },
   //     });
   //     if (bookings.length === 0) {
-  //         // console.log("No bookings found for this date");
+//         //
   //     }
   //     const bookedSlots = bookings.map(book => {
   //         const start = timeToMinutes(book.timeSlot);
   //         const end = start + (book.duration * 60);
   //         return { start, end };
   //     });
-  //     // console.log('Booked slots:', bookedSlots);
+//     //
   //     // Calculate available slots
   //     const availableSlots = [];
   //     // Check available slots within the studio's working hours
@@ -135,13 +137,10 @@ const createBookingLogic = require("./create-booking-logic .js");
 
 // get fully booked dates for a studio
 const print = (val, lab) => {
-  console.log("================ ", lab, " ================");
-  console.log(val);
-  console.log("============================================");
 };
 
 // Get Full Booked Date
-const getTimeSlots = (startMinutes, endMinutes, slotDuration = 60) => {
+const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
   const slots = [];
   for (
     let time = startMinutes;
@@ -176,46 +175,110 @@ const isDurationAvailable = (
 };
 
 // Get Fully Booked Dates Based on Required Duration
+// exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
+//   const { studioId } = req.params;
+//   const requiredDuration = parseInt(req.query.duration) || 0;
+//   const requiredDurationMinutes = requiredDuration * 60;
+
+//   const studio = await StudioModel.findById(studioId);
+//   if (!studio)
+//     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+
+//   const bookings = await BookingModel.find({ studio: studioId });
+
+//   const groupedByDate = {};
+
+//   for (const booking of bookings) {
+//     const day = booking.date.toISOString().split("T")[0];
+//     if (!groupedByDate[day]) groupedByDate[day] = [];
+//     const start = booking.startSlot;
+//     const end = booking.endSlot;
+//     for (let i = start; i < end; i += 60) {
+//       groupedByDate[day].push(i);
+//     }
+//   }
+
+//   const startOfDay = timeToMinutes(studio.startTime);
+//   const endOfDay = timeToMinutes(studio.endTime);
+//   const totalSlots = getTimeSlots(startOfDay, endOfDay);
+
+//   const fullyBookedDates = [];
+
+//   const allDates = Object.keys(groupedByDate);
+//   const uniqueDates = [...new Set([...allDates])];
+
+//   for (const day of uniqueDates) {
+//     const bookedSlots = groupedByDate[day];
+//     const isAvailable = isDurationAvailable(
+//       bookedSlots,
+//       totalSlots,
+//       requiredDurationMinutes / 60
+//     );
+//     if (!isAvailable) {
+//       fullyBookedDates.push(day);
+//     }
+//   }
+
+//   res.status(200).json({
+//     status: HTTP_STATUS_TEXT.SUCCESS,
+//     data: fullyBookedDates,
+//   });
+// });
+
 exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
-  const { studioId } = req.params;
   const requiredDuration = parseInt(req.query.duration) || 0;
   const requiredDurationMinutes = requiredDuration * 60;
 
-  const studio = await StudioModel.findById(studioId);
-  if (!studio)
-    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+  const studios = await StudioModel.find();
 
-  const bookings = await BookingModel.find({ studio: studioId });
+  if (!studios || studios.length === 0) {
+    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No studios found"));
+  }
+
+  const bookings = await BookingModel.find();
 
   const groupedByDate = {};
 
   for (const booking of bookings) {
     const day = booking.date.toISOString().split("T")[0];
     if (!groupedByDate[day]) groupedByDate[day] = [];
-    const start = booking.startSlot;
-    const end = booking.endSlot;
-    for (let i = start; i < end; i += 60) {
-      groupedByDate[day].push(i);
-    }
+    groupedByDate[day].push(booking);
   }
-
-  const startOfDay = timeToMinutes(studio.startTime);
-  const endOfDay = timeToMinutes(studio.endTime);
-  const totalSlots = getTimeSlots(startOfDay, endOfDay);
 
   const fullyBookedDates = [];
 
-  const allDates = Object.keys(groupedByDate);
-  const uniqueDates = [...new Set([...allDates])];
+  for (const [day, dayBookings] of Object.entries(groupedByDate)) {
+    let dayFullyBooked = true;
 
-  for (const day of uniqueDates) {
-    const bookedSlots = groupedByDate[day];
-    const isAvailable = isDurationAvailable(
-      bookedSlots,
-      totalSlots,
-      requiredDurationMinutes / 60
-    );
-    if (!isAvailable) {
+    for (const studio of studios) {
+      const studioBookings = dayBookings.filter(
+        (b) => b.studio.toString() === studio._id.toString()
+      );
+
+      const bookedSlots = [];
+      for (const booking of studioBookings) {
+        for (let i = booking.startSlot; i < booking.endSlot; i += 30) {
+          bookedSlots.push(i);
+        }
+      }
+
+      const startOfDay = timeToMinutes(studio.startTime);
+      const endOfDay = timeToMinutes(studio.endTime);
+      const totalSlots = getTimeSlots(startOfDay, endOfDay);
+
+      const isAvailable = isDurationAvailable(
+        bookedSlots,
+        totalSlots,
+        requiredDurationMinutes / 60
+      );
+
+      if (isAvailable) {
+        dayFullyBooked = false;
+        break;
+      }
+    }
+
+    if (dayFullyBooked) {
       fullyBookedDates.push(day);
     }
   }
@@ -313,61 +376,189 @@ exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
 });
 
 // Get Available Start Slots
+// Get Available Start Slots
+// exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
+//   const { studioId, date, duration } = req.body;
+
+//   // Validation
+//   if (!studioId || !date || !duration) {
+//     return next(
+//       new AppError(
+//         400,
+//         HTTP_STATUS_TEXT.FAIL,
+//         "studioId, date and duration are required"
+//       )
+//     );
+//   }
+
+//   const studio = await StudioModel.findById(studioId);
+//   if (!studio) {
+//     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+//   }
+
+//   const startOfDayMinutes = timeToMinutes(studio.startTime || "12:00");
+//   const endOfDayMinutes = timeToMinutes(studio.endTime || "20:00");
+//   const requiredDurationMinutes = parseFloat(duration) * 60;
+
+//   // Parse input date
+//   const requestedDate = new Date(date);
+//   const today = new Date();
+//   const isToday = requestedDate.toDateString() === today.toDateString();
+
+//   // Calculate minimum start time
+//   let minStartTimeMinutes = startOfDayMinutes;
+
+//   if (isToday) {
+//     // For today, start from next available 30-minute slot
+//     const currentMinutes = today.getHours() * 60 + today.getMinutes();
+//     const nextSlotMinutes = Math.ceil(currentMinutes / 30) * 30;
+//     minStartTimeMinutes = Math.max(startOfDayMinutes, nextSlotMinutes);
+//   }
+
+//   // Get date range for database query
+//   const inputDate = getAllDay(date);
+
+//   // Get all bookings for the requested date
+//   const bookings = await BookingModel.find({
+//     studio: studioId,
+//     date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
+//   }).select("startSlot endSlot startSlotMinutes endSlotMinutes");
+
+//   const availableSlots = [];
+
+//   // Check each possible start time
+//   for (
+//     let time = minStartTimeMinutes;
+//     time <= endOfDayMinutes - requiredDurationMinutes;
+//     time += 30
+//   ) {
+//     const slotStart = time;
+//     const slotEnd = time + requiredDurationMinutes;
+
+//     // Check for conflicts with existing bookings
+//     const hasConflict = bookings.some((booking) => {
+//       // Handle both field naming conventions
+//       const bookingStart = booking.startSlotMinutes || booking.startSlot;
+//       const bookingEnd = booking.endSlotMinutes || booking.endSlot;
+
+//       // Check if slots overlap
+//       return bookingStart < slotEnd && bookingEnd > slotStart;
+//     });
+
+//     if (!hasConflict) {
+//       availableSlots.push({
+//         startTime: minutesToTime(slotStart),
+//         startTimeMinutes: slotStart,
+//         endTime: minutesToTime(slotEnd),
+//         endTimeMinutes: slotEnd,
+//       });
+//     }
+//   }
+
+//   res.status(200).json({
+//     status: HTTP_STATUS_TEXT.SUCCESS,
+//     data: availableSlots,
+//     meta: {
+//       requestedDate: date,
+//       duration: duration,
+//       studioWorkingHours: {
+//         start: studio.startTime,
+//         end: studio.endTime,
+//       },
+//       totalAvailableSlots: availableSlots.length,
+//     },
+//   });
+// });
+
 exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   const { studioId, date, duration } = req.body;
 
+  // ✅ Validation
   if (!studioId || !date || !duration) {
     return next(
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "studioId, date and duration are required"
+        "date and duration are required"
       )
     );
   }
 
+  // ✅ Check if studio exists
   const studio = await StudioModel.findById(studioId);
   if (!studio) {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
   }
 
+  // ✅ Working hours (fallback 12:00 - 20:00)
   const startOfDayMinutes = timeToMinutes(studio.startTime || "12:00");
   const endOfDayMinutes = timeToMinutes(studio.endTime || "20:00");
-  console.log("Start of Day:", studio.startTime);
-  console.log("End of Day:", studio.endTime);
-  const inputDate = getAllDay(date);
-  const now = new Date();
-
   const requiredDurationMinutes = parseFloat(duration) * 60;
+
+  // ✅ Parse input date
+  const requestedDate = new Date(date);
+  const today = new Date();
+  const isToday = requestedDate.toDateString() === today.toDateString();
+
+  // ✅ Minimum start time
+  let minStartTimeMinutes = startOfDayMinutes;
+  if (isToday) {
+    // For today, start from next available 30-minute slot
+    const currentMinutes = today.getHours() * 60 + today.getMinutes();
+    const nextSlotMinutes = Math.ceil(currentMinutes / 30) * 30;
+    minStartTimeMinutes = Math.max(startOfDayMinutes, nextSlotMinutes);
+  }
+
+  // ✅ Date range for query
+  const inputDate = getAllDay(date);
+
+  // ✅ Global bookings: get all bookings across ALL studios for that date
+  const bookings = await BookingModel.find({
+    date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
+  }).select("startSlot endSlot startSlotMinutes endSlotMinutes studio");
+
   const availableSlots = [];
 
+  // ✅ Loop through all possible 30-min intervals
   for (
-    let time = startOfDayMinutes;
+    let time = minStartTimeMinutes;
     time <= endOfDayMinutes - requiredDurationMinutes;
-    time += 60
+    time += 30
   ) {
     const slotStart = time;
     const slotEnd = time + requiredDurationMinutes;
 
-    const slotDateTime = new Date(date);
-    slotDateTime.setHours(Math.floor(slotStart / 60), slotStart % 60, 0, 0);
-    if (slotDateTime < now) continue;
+    // ✅ Check if slot overlaps with ANY booking from ANY studio
+    const hasConflict = bookings.some((booking) => {
+      const bookingStart = booking.startSlotMinutes || booking.startSlot;
+      const bookingEnd = booking.endSlotMinutes || booking.endSlot;
 
-    const hasConflict = await BookingModel.exists({
-      studio: studioId,
-      date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
-      startSlotMinutes: { $lt: slotEnd },
-      endSlotMinutes: { $gt: slotStart },
+      return bookingStart < slotEnd && bookingEnd > slotStart;
     });
 
     if (!hasConflict) {
-      availableSlots.push({ startTime: minutesToTime(slotStart) });
+      availableSlots.push({
+        startTime: minutesToTime(slotStart),
+        startTimeMinutes: slotStart,
+        endTime: minutesToTime(slotEnd),
+        endTimeMinutes: slotEnd,
+      });
     }
   }
 
+  // ✅ Response
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: availableSlots,
+    meta: {
+      requestedDate: date,
+      duration: duration,
+      studioWorkingHours: {
+        start: studio.startTime,
+        end: studio.endTime,
+      },
+      totalAvailableSlots: availableSlots.length,
+    },
   });
 });
 
@@ -759,8 +950,10 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
 
 // Change booking status
 exports.changeBookingStatus = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id || req.body.id;
+
   const { status } = req.body;
+
   if (!status) {
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Status is required");
   }
@@ -782,7 +975,10 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
     throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
   }
 
+  const opportunityID = booking.opportunityID;
+
   if (status === "approved") {
+    changeOpportunityStatus(opportunityID, "won");
     // Send email to user
     const mailOptions = {
       to: booking.personalInfo.email,
@@ -793,6 +989,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   }
 
   if (status === "rejected") {
+    changeOpportunityStatus(opportunityID, "lost");
     // Send email to user
     const mailOptions = {
       to: booking.personalInfo.email,
@@ -951,7 +1148,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   //             booking
   //         });
   //     } catch (error) {
-  //         console.log(error);
+//
   //         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
   //     }
   // });
@@ -1136,7 +1333,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       tempBooking,
       studio,
       pkg,
-      addOns,
+      selectedAddOns,
       bookingDate,
       personalInfo,
       addOnsTotalPriceFromDb,
@@ -1146,44 +1343,65 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration,
     } = await createBookingLogic(req.body, user_id);
 
+    const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name} | ${pkg.session_type}`;
+    const emailBookingData = {
+      studio: {
+        name: studio.name,
+        image: studio.thumbnail,
+      },
+      personalInfo: {
+        fullName: personalInfo.fullName,
+        email: personalInfo.email,
+        phone: personalInfo.phone,
+      },
+      selectedAddOns: {
+        totalPrice: addOnsTotalPriceFromDb,
+        items: selectedAddOns,
+      },
+      selectedPackage: pkg.name,
+      date: bookingDate,
+      startSlot: startSlot,
+      endSlot: endSlot,
+      duration: duration,
+      totalPrice: tempBooking.totalPrice,
+      totalPriceAfterDiscount: totalPriceAfterDiscount,
+      bookingId: tempBooking._id,
+    };
+
     const emailOptions = {
       to: personalInfo.email,
-      subject: "Booking Confirmation",
-      message: bookingConfirmationEmailBody({
-        ...req.body,
-        bookingId: tempBooking._id,
-        studio: { name: studio.name, image: studio.thumbnail },
-        selectedAddOns: {
-          items: addOns,
-          totalPrice: addOnsTotalPriceFromDb,
-        },
-        selectedPackage: pkg.name,
-      }),
+      subject: bookingTitle,
+      message: bookingConfirmationEmailBody(emailBookingData),
     };
 
     const userData = {
-      name: personalInfo.name,
+      name: personalInfo.fullName,
       email: personalInfo.email,
       phone: personalInfo.phone,
     };
 
     const opportunityData = {
-      name: `${personalInfo.fullName} - ${pkg.name} , ${pkg.session_type} - ${new Date(bookingDate).toISOString().split("T")[0]}`,
+      name: bookingTitle,
+      // Goocast | Full Name | Service Name | Session
       price: totalPriceAfterDiscount,
       sessionType: pkg.session_type,
       duration: duration,
       studioName: studio.name,
+      bookingId: tempBooking._id,
     };
-    
+
     const appointmentData = {
       startTime: combineDateAndTime(bookingDate, startSlot),
       endTime: combineDateAndTime(bookingDate, endSlot),
-      title: `${studio.name} - Booking`,
+      title: bookingTitle,
       notes: personalInfo.fullName || personalInfo.name,
+      studioId: studio._id,
     };
 
+    let opportunityID;
+// return
     try {
-      await saveOpportunityInGoHighLevel(
+      opportunityID = await saveOpportunityInGoHighLevel(
         userData,
         opportunityData,
         appointmentData
@@ -1197,6 +1415,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       );
     }
 
+    tempBooking.opportunityID = opportunityID;
     const booking = await tempBooking.save();
 
     res.status(201).json({
@@ -1215,14 +1434,43 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
 // Create Booking With GHL
 exports.ghlCreateBooking = asyncHandler(async (req, res) => {
-  const { tempBooking } = await createBookingLogic(req.body);
+  // const {
+  //   customData: { startSlot, endSlot, date, studio_name, session_type },
+  //   full_name,
+  //   email,
+  //   phone,
+  //   lead_value,
+  // } = req.body;
 
-  const booking = await tempBooking.save();
+  // // Find the studio ID
+  // const studio = await StudioModel.findOne({ name: studio_name });
+
+  // // Find Package ID
+  // const pkg = await PackageModel.findOne({ session_type: session_type });
+
+  // // Create Personal Information
+  // const personalInfo = {
+  //   fullName: full_name,
+  //   email,
+  //   phone,
+  // };
+
+  // const bookingData = {
+  //   studio,
+  //   package: pkg,
+  //   personalInfo,
+  //   totalPrice: lead_value,
+  // };
+
+  // const { tempBooking } = await createBookingLogic(bookingData);
+
+  // const booking = await tempBooking.save();
 
   res.status(201).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     message: "Booking created successfully",
-    data: booking,
+    id: 954348598340034598034,
+    // data: booking,
   });
 });
 

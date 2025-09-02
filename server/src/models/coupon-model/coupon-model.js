@@ -27,6 +27,11 @@ const CouponSchema = new mongoose.Schema(
       required: [true, "Please provide a maximum number of uses"],
       min: [0, "Max uses must be a positive number"],
     },
+    times_used: {
+      type: Number,
+      default: 0,
+      min: [0, "Times used must be a positive number"],
+    },
     user_id_used: [
       {
         type: mongoose.Schema.Types.ObjectId,

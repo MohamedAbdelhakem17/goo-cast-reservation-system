@@ -6,7 +6,7 @@ import { Pencil, Trash2, Plus, X, Tag, Calendar, Hash, Percent, RefreshCw } from
 import Table from "../../../../components/shared/Table/Table"
 import Loading from "../../../../components/shared/Loading/Loading"
 
-const TABLE_HEADERS = ["NAME", "CODE", "DISCOUNT", "EXPIRES AT", "MAX USES", "ACTIONS"]
+const TABLE_HEADERS = ["NAME", "CODE", "DISCOUNT", "EXPIRES AT", "MAX USES", "COUNT USED", "ACTIONS"]
 
 export default function CouponManagement() {
     const { slideIn } = useAnimationVariants()
@@ -364,6 +364,7 @@ export default function CouponManagement() {
                                         )}
                                     </td>
                                     <td >{coupon.max_uses}</td>
+                                    <td >{coupon.times_used}</td>
                                     <td>
                                         <div className="flex justify-end gap-2">
                                             <button

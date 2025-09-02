@@ -10,7 +10,6 @@ export const GetDashboardStats = () => {
                 const { data } = await axios.get(`${API_BASE_URL}/analytics/dashboard-stats`, {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
                 return data;
@@ -30,7 +29,6 @@ export const GetPageAnalytics = () => {
                 const response = await axios.get(API_BASE_URL + "/analytics", {
                     headers: {
                         "Content-Type": "application/json",
-                        authorization: "Bearer " + localStorage.getItem("token"),
                     },
                 });
                 return response.data.data;

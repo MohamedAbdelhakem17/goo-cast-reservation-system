@@ -1,11 +1,11 @@
 import { useState, useMemo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
-import { useBooking } from "@/context/Booking-Context/BookingContext"
-import { Loading } from '@/components/common';
-import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots"
-import SlotButton from './slot-button';
-import { tracking } from '@/utils/gtm';
+import { useBooking } from "../../../../context/Booking-Context/BookingContext"
+import Loading from "../../../shared/Loading/Loading"
+import { calculateEndTime, calculateTotalPrice } from "../../../../hooks/useManageSlots"
+import SlotButton from "./SlotButton/SlotButton"
+import { tracking } from "../../../../GTM/gtm"
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
     const [selectedTime, setSelectedTime] = useState(null)

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import useQuickBooking from "../../../../../hooks/useQuickBooking";
-import { trackEvent } from "@/utils/gtm";
+import useQuickBooking from "../../../hooks/useQuickBooking";
+import { trackEvent } from "../../../GTM/gtm";
 
 export default function Hero() {
   // Animation variants for text elements

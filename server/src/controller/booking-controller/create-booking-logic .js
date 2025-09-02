@@ -29,7 +29,6 @@ const createBookingLogic = async (body, user_id) => {
     paymentMethod,
   } = body;
 
-
   const bookingDate = new Date(date);
   const startSlotMinutes = timeToMinutes(startSlot);
   const endSlotMinutes = timeToMinutes(endSlot);
@@ -110,11 +109,7 @@ const createBookingLogic = async (body, user_id) => {
       "The add-on price is incorrect"
     );
 
-  const totalPrice = Math.round(
-    packagePrice +
-    totalAddOnsPriceFromDb +
-    (packagePrice + totalAddOnsPriceFromDb) * 0.14
-  );
+  const totalPrice = Math.round(packagePrice + totalAddOnsPriceFromDb);
   if (totalPrice !== totalPriceFromClient)
     throw new AppError(
       400,
@@ -126,8 +121,13 @@ const createBookingLogic = async (body, user_id) => {
   if (!coupon && coupon_code)
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Coupon not found");
 
+  // Apply discount on package only
   const totalPriceAfterDiscount = coupon?.discount
-    ? Math.round(totalPrice - totalPrice * (coupon.discount / 100))
+    ? Math.round(
+        packagePrice -
+          packagePrice * (coupon.discount / 100) +
+          totalAddOnsPriceFromDb
+      )
     : totalPrice;
 
   if (totalPriceAfterDiscount !== totalPriceAfterDiscountFromClient)
@@ -177,7 +177,7 @@ const createBookingLogic = async (body, user_id) => {
     totalPriceAfterDiscount,
     startSlotMinutes,
     endSlotMinutes,
-    duration
+    duration,
   };
 };
 

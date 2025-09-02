@@ -25,22 +25,19 @@ async function getPlaceReviews() {
     return { data: cached.data, new: false };
   }
 
-  
   try {
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${PLACE_ID}&fields=reviews,rating,user_ratings_total&key=${GOOGLE_API_KEY}`;
     const response = await axios.get(url);
     const result = response.data.result;
 
-    console.log(response.result)
-
-    const filteredReviews = (result.reviews || []).filter(
+    const filteredReviews = (result?.reviews || []).filter(
       (review) => review.text && review.text.trim() !== ""
     );
 
-    result.reviews = filteredReviews;
+    result?.reviews ? (result.reviews = filteredReviews) : "";
 
     let isNew = false;
-    if (!cached || result.user_ratings_total > (cached.userRatingsTotal || 0)) {
+    if (!cached || result?.user_ratings_total > (cached.userRatingsTotal || 0)) {
       isNew = true;
     }
 
@@ -62,6 +59,7 @@ async function getPlaceReviews() {
 
 exports.getPlaceReviews = asyncHandler(async (req, res, next) => {
   const { data, new: isNew } = await getPlaceReviews();
+
   res.status(200).json({
     status: "success",
     data,
@@ -69,4 +67,4 @@ exports.getPlaceReviews = asyncHandler(async (req, res, next) => {
   });
 });
 
-getPlaceReviews()
+getPlaceReviews();
