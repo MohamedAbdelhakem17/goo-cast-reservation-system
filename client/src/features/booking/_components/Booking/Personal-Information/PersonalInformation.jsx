@@ -1,10 +1,10 @@
 import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import BookingInput from "../../shared/Booking-Input/BookingInput";
-import { useBooking } from "../../../context/Booking-Context/BookingContext";
+import BookingInput from "../../booking-input";
+import { useBooking } from "@/context/Booking-Context/BookingContext";
 import Cart from "../Cart/Cart";
 import PaymentOptions from "./Payment-Way/PaymentWay";
-import BookingHeader from "../../shared/Booking-Header/BookingHeader";
+// import BookingHeader from "../../booking-header";
 import { Loader } from "lucide-react";
 import { trackEvent } from "@/utils/gtm";
 
@@ -37,10 +37,10 @@ export default function PersonalInformation() {
   return (
     <div className="space-y-4 py-6 px-4 sm:px-6 lg:px-8 duration-300 mx-auto">
       {/* Header */}
-      <BookingHeader
+      {/* <BookingHeader
         title="Payment Information"
         desc="Complete your booking with your contact details"
-      />
+      /> */}
 
       {/* Responsive Content */}
       <div className="flex flex-col lg:flex-row items-start gap-6 w-full">

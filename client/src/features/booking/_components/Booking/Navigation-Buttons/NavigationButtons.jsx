@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { useBooking } from "../../../../../context/Booking-Context/BookingContext";
+import { useBooking } from "@/context/Booking-Context/BookingContext";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 function NavButton({ children, ...props }) {
     return (
@@ -13,39 +14,38 @@ function NavButton({ children, ...props }) {
     );
 }
 
-export default function NavigationButtons({ handleGoToConfirmation }) {
+export default function NavigationButtons() {
     const { TOTAL_STEPS, currentStep, handleNextStep, handlePrevStep, hasError } = useBooking();
 
-    const handlePaymentButton = () => {
-        if (currentStep === TOTAL_STEPS) {
-            handleGoToConfirmation();
-        } else {
-            handleNextStep();
-        }
-    };
+
 
     return (
-        <div className="px-6 py-4  flex justify-between">
+        <>
+            <div className="lg:hidden pb-24" />
+            <div className="lg:hidden fixed flex items-center justify-between bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
 
-            <NavButton
-                className={`px-4 py-2 rounded-md ${currentStep === 1
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
-                disabled={currentStep === 1}
-                onClick={handlePrevStep}
-            >
-                Previous
-            </NavButton>
-            <NavButton
-                className={`px-4 py-2 rounded-md cursor-pointer ${currentStep === TOTAL_STEPS
-                    ? "bg-green-500 text-white hover:bg-green-600"
-                    : "bg-main/90 text-white hover:bg-main"} disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
-                disabled={hasError()}
-                onClick={handlePaymentButton}
-                type={currentStep === TOTAL_STEPS ? "submit" : "button"}
-            >
-                Next
-            </NavButton>
-        </div>
+                <NavButton
+                    className={`px-6 py-2 rounded-md ${currentStep === 1
+                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                    disabled={currentStep === 1}
+                    onClick={handlePrevStep}
+                >
+                    <ArrowLeft className="me-1 inline-block" />
+                    Previous
+                </NavButton>
+                <NavButton
+                    className={`px-4 py-2  rounded-md cursor-pointer ${currentStep === TOTAL_STEPS
+                        ? "bg-green-500 text-white hover:bg-green-600"
+                        : "bg-main/90 text-white hover:bg-main"} disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
+                    disabled={hasError() || currentStep === TOTAL_STEPS}
+                    onClick={handleNextStep}
+                    type="button"
+                >
+                    Next
+                    <ArrowRight className="ms-1 inline-block" />
+                </NavButton>
+            </div>
+        </>
     );
 }

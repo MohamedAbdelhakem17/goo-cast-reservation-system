@@ -15,3 +15,22 @@ export function trackEvent(eventName, params) {
     });
   }
 }
+
+export function trackBookingStep(step, params) {
+  if (window.dataLayer) {
+    window.dataLayer.push({
+      event: "bookingStep",
+      step: step,
+      ...params,
+    });
+  }
+}
+
+export function tracking(event, params) {
+  if (window.dataLayer) {
+    window.dataLayer.push({
+      event: event,
+      ...params,
+    });
+  }
+}

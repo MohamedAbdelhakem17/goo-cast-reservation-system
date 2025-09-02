@@ -1,6 +1,6 @@
 import { useState } from "react";
-import {CreditCard, Banknote } from 'lucide-react';
-import { useBooking } from "../../../../context/Booking-Context/BookingContext";
+import { Banknote } from 'lucide-react';
+import { useBooking } from "@/context/Booking-Context/BookingContext";
 
 const paymentMethods = [
     // {

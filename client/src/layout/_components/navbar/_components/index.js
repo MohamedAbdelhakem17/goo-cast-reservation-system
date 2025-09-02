@@ -1,4 +1,4 @@
-export { default as navLinkClasses } from "./nav-link-classes";
+export { default as navLinkClasses } from "../_assets/nav-link-classes";
 export * from "./auth-buttons";
 export { default as AuthModel } from "./auth-model";
 export { default as MobileMenu } from "./mobile-menu";

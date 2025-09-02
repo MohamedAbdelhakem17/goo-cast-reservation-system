@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { useBooking } from "../../../context/Booking-Context/BookingContext"
+import { useBooking } from "@/context/Booking-Context/BookingContext"
 import CartContent from "./Cart-content/CartContent"
-import usePriceFormat from "../../../hooks/usePriceFormat"
+import usePriceFormat from "@/hooks/usePriceFormat"
 import Sticky from 'react-sticky-el';
 import { ArrowLeft, ArrowRight, ShoppingCart, X } from "lucide-react"
 

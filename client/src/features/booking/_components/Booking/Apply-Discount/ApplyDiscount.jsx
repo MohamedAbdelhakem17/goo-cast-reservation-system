@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { ApplyCoupon } from '../../../apis/coupon/coupon'
-import { useToast } from '../../../context/Toaster-Context/ToasterContext'
-import { useBooking } from '../../../context/Booking-Context/BookingContext'
+import { ApplyCoupon } from '@/apis/coupon/coupon'
+import { useToast } from '@/context/Toaster-Context/ToasterContext'
+import { useBooking } from '@/context/Booking-Context/BookingContext'
 import { Check } from 'lucide-react'
-import usePriceFormat from '../../../hooks/usePriceFormat'
+import usePriceFormat from '@/hooks/usePriceFormat'
 
 function CouponInput({ coupon, setCoupon, onApply, disabled }) {
     return (
