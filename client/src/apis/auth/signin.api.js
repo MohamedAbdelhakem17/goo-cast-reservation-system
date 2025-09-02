@@ -10,20 +10,21 @@ const useSigninForm = (onSuccessCallback) => {
   const [serverError, setServerError] = useState("");
   const { dispatch } = useAuth();
 
-  const { mutate: signin, isLoading } = useMutation({
-    mutationFn: async (data) => {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, data);
-      return response.data.data;
-    },
-    onSuccess: (data) => {
-      dispatch({ type: "LOGIN", payload: data });
-      setServerError("");
-      if (onSuccessCallback) onSuccessCallback();
-    },
-    onError: (error) => {
-      setServerError(error.response?.data?.message || "Something went wrong");
-    },
-  });
+    const { mutate: signin, isLoading } = useMutation({
+        mutationFn: async (data) => {
+            const response = await axios.post(`${BASE_URL}/auth/login`, data);
+            return response.data.data;
+        },
+        onSuccess: (data) => {
+            dispatch({ type: "LOGIN", payload: data });
+            setServerError("");
+            location.href = "/"; 
+            if (onSuccessCallback) onSuccessCallback();
+        },
+        onError: (error) => {
+            setServerError(error.response?.data?.message || "Something went wrong");
+        },
+    });
 
   const formik = useFormik({
     initialValues: {

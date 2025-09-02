@@ -8,10 +8,10 @@ require("dotenv").config({
 // ====== Imports ======
 const express = require("express");
 const passport = require("passport");
-const session = require("express-session")
+const expressSession = require("express-session");
 const morgan = require("morgan");
 const cors = require("cors");
-const helmet = require("helmet");
+// const helmet = require("helmet");
 
 const databaseConnect = require("./config/database-connection");
 const errorMiddlewareHandler = require("./middleware/error-middleware-handler");
@@ -19,7 +19,6 @@ const amountRoutes = require("./routes/index");
 const AppError = require("./utils/app-error");
 const { HTTP_STATUS_TEXT } = require("./config/system-variables");
 
-// ====== App Initialization ======
 const app = express();
 
 // ====== Database Connection ======
@@ -31,32 +30,53 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 }
 
 // Security headers
-app.use(helmet());
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       useDefaults: true,
+//       directives: {
+//         "default-src": ["'self'"],
+//         "script-src": [
+//           "'self'",
+//           "https://www.googletagmanager.com",
+//           "https://www.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "img-src": [
+//           "'self'",
+//           "data:",
+//           "https://*.googleusercontent.com",
+//           "https://www.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "connect-src": [
+//           "'self'",
+//           "https://www.google-analytics.com",
+//           "https://region1.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "frame-src": [
+//           "'self'",
+//           "https://www.googletagmanager.com",
+//           "https://*.clarity.ms",
+//         ],
+//       },
+//     },
+//   })
+// );
 
 // Body parser
 app.use(express.json());
 
 // CORS configuration
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "*",
-    credentials: true,
-  })
-);
+app.use(cors("*"));
 
 // Session configuration
 app.use(
-  session({
+  expressSession({
     secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-      secure: process.env.ENVIRONMENT_MODE !== "development",
-      sameSite:
-        process.env.ENVIRONMENT_MODE === "development" ? "lax" : "strict",
-    },
   })
 );
 

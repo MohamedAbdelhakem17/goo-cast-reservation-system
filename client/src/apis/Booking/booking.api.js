@@ -7,24 +7,40 @@ import { useGetData, usePostData, useUpdateData } from "../../hooks/useApi";
 const sortedStudioId = JSON.parse(localStorage.getItem("bookingData"))?.studio
   ?.id;
 
-const fetchFullyBookedDates = async ({ studioId, duration }) => {
-  if (!studioId || !duration) return []; // ✅ fallback آمن
+// const fetchFullyBookedDates = async ({ studioId, duration }) => {
+//   if (!studioId || !duration) return [];
+
+//   const res = await axios.get(
+//     `${BASE_URL}/booking/fully-booked/${studioId}?duration=${duration}`
+//   );
+
+//   return res?.data?.data || [];
+// };
+
+const fetchFullyBookedDates = async ({ duration }) => {
+  if (!duration) return [];
 
   const res = await axios.get(
-    `${API_BASE_URL}/booking/fully-booked/${studioId}`,
-    {
-      params: { duration },
-    }
+    `${BASE_URL}/bookings/fully-booked?duration=${duration}`
   );
 
-  return res?.data?.data || [];
+  return res?.data || [];
 };
 
-const GetFullBookedStudios = (studioId, duration) => {
+// const GetFullBookedStudios = (studioId, duration) => {
+//   return useQuery({
+//     queryKey: ["fullyBookedDates", studioId, duration],
+//     queryFn: () => fetchFullyBookedDates({ studioId, duration }),
+//     enabled: !!studioId && !!duration,
+//     staleTime: 5 * 60 * 1000,
+//   });
+// };
+
+const GetFullyBookedDates = (duration) => {
   return useQuery({
-    queryKey: ["fullyBookedDates", studioId, duration],
-    queryFn: () => fetchFullyBookedDates({ studioId, duration }),
-    enabled: !!studioId && !!duration,
+    queryKey: ["fullyBookedDates", duration],
+    queryFn: () => fetchFullyBookedDates({ duration }),
+    enabled: !!duration,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -55,7 +71,7 @@ const GetAvailableSlots = () => {
       const res = await axios.post(`${BASE_URL}/bookings/available-slots`, {
         studioId: studioId,
         date: date,
-        duration: duration || 1,
+        duration: duration || 2,
       });
       return res.data;
     },
@@ -101,7 +117,7 @@ const GetFullyBookedDates = (duration) => {
 };
 
 export {
-  GetFullBookedStudios,
+  GetFullyBookedDates,
   GetAvailableSlots,
   GetBookings,
   ChangeBookingStatus,

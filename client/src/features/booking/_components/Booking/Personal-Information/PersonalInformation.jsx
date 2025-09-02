@@ -6,7 +6,7 @@ import Cart from "../Cart/Cart";
 import PaymentOptions from "./Payment-Way/PaymentWay";
 // import BookingHeader from "../../booking-header";
 import { Loader } from "lucide-react";
-import { trackEvent } from "@/utils/gtm";
+import { tracking } from "../../../GTM/gtm";
 
 export default function PersonalInformation() {
   const inputRef = useRef(null);
@@ -23,6 +23,7 @@ export default function PersonalInformation() {
   const { firstName, lastName, phone, email, brand } = bookingData.personalInfo;
 
   useEffect(() => {
+    tracking("add_Payment_info")
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -35,7 +36,7 @@ export default function PersonalInformation() {
   };
 
   return (
-    <div className="space-y-4 py-6 px-4 sm:px-6 lg:px-8 duration-300 mx-auto">
+    <div className="space-y-4   duration-300 mx-auto">
       {/* Header */}
       {/* <BookingHeader
         title="Payment Information"
@@ -44,7 +45,7 @@ export default function PersonalInformation() {
 
       {/* Responsive Content */}
       <div className="flex flex-col lg:flex-row items-start gap-6 w-full">
-        <div className="border-1 border-gray-100 shadow-sm px-2 py-5 rounded-md lg:w-2/3 w-full">
+        <div className="border-1 border-gray-100 shadow-sm py-5 rounded-md lg:w-2/3 w-full">
           {/* Form section */}
           <form className="w-full space-y-2 px-5 ">
             <motion.div
@@ -58,10 +59,14 @@ export default function PersonalInformation() {
                 label="First Name"
                 placeholder="Enter your First Name"
                 errors={getBookingError("personalInfo.firstName")}
-                onBlur={formik.handleBlur}
-                onChange={(e) =>
-                  setBookingField("personalInfo.firstName", e.target.value)
-                }
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("user_data", { firstName });
+                }}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.firstName", e.target.value);
+                }}
                 touched={formik.touched.firstName}
                 value={firstName}
                 inputRef={inputRef}
@@ -74,10 +79,14 @@ export default function PersonalInformation() {
                 label="Last Name"
                 placeholder="Enter your Last Name"
                 errors={getBookingError("personalInfo.lastName")}
-                onBlur={formik.handleBlur}
-                onChange={(e) =>
-                  setBookingField("personalInfo.lastName", e.target.value)
-                }
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("user_data", { lastName });
+                }}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.lastName", e.target.value);
+                }}
                 touched={formik.touched.lastName}
                 value={lastName}
               />
@@ -90,10 +99,14 @@ export default function PersonalInformation() {
                 label="Email"
                 placeholder="Enter your Email"
                 errors={getBookingError("personalInfo.email")}
-                onBlur={formik.handleBlur}
-                onChange={(e) =>
-                  setBookingField("personalInfo.email", e.target.value)
-                }
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("user_data", { email });
+                }}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.email", e.target.value);
+                }}
                 touched={formik.touched.email}
                 value={email}
               />
@@ -107,15 +120,19 @@ export default function PersonalInformation() {
                 label="Phone Number"
                 placeholder="Enter your Phone Number"
                 errors={getBookingError("personalInfo.phone")}
-                onBlur={formik.handleBlur}
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("user_data", { phone });
+                }}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.phone", e.target.value);
+                }}
                 touched={formik.touched.phoneNumber}
-                onChange={(e) =>
-                  setBookingField("personalInfo.phone", e.target.value)
-                }
               />
             </motion.div>
 
-            <motion.div {...motionProps}>
+            <motion.div {...motionProps}>``
               <BookingInput
                 type="text"
                 id="brandName"
@@ -123,40 +140,47 @@ export default function PersonalInformation() {
                 value={brand}
                 placeholder="Any special requirements, equipment needs, or additional information..."
                 errors={getBookingError("personalInfo.brand")}
-                onChange={(e) =>
-                  setBookingField("personalInfo.brand", e.target.value)
-                }
-                onBlur={formik.handleBlur}
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  tracking("user_data", { notes: brand });
+                }}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setBookingField("personalInfo.brand", e.target.value);
+                }}
                 touched={formik.touched.brandName}
               />
             </motion.div>
           </form>
+
+          {/* Payment Section */}
           <div className="px-5 py-4 border-t border-gray-200">
             <h3 className="font-semibold text-gray-700 flex items-center gap-2">
               <i className="fa-solid fa-credit-card mr-3"></i>
               Payment Method
             </h3>
             <PaymentOptions />
-            <div className="mt-3 flex items-center gap-4 px-5 ">
+
+            {/* Action Buttons */}
+            <div className="mt-3 flex items-center flex-col md:flex-row gap-4 px-5 ">
               <button
                 type="button"
                 disabled={hasError() || formik.isSubmitting}
                 onClick={
                   !formik.isSubmitting
                     ? () => {
-                        handleSubmit();
-                        trackEvent("create_booking", {
-                          totalPrice: bookingData.totalPrice,
-                        });
-                      }
+                      handleSubmit();
+                      tracking("create_booking", {
+                        totalPrice: bookingData.totalPrice,
+                      });
+                    }
                     : undefined
                 }
                 className={`w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center md:flex-row flex-col justify-center my-2 transition-all duration-200 
-    ${
-      hasError() || formik.isSubmitting
-        ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-        : "bg-main text-white hover:opacity-90"
-    }`}
+            ${hasError() || formik.isSubmitting
+                    ? "bg-gray-100 text-gray-300 cursor-not-allowed"
+                    : "bg-main text-white hover:opacity-90"
+                  }`}
               >
                 {formik.isSubmitting ? (
                   <div className="flex items-center gap-2">
@@ -177,11 +201,13 @@ export default function PersonalInformation() {
             </div>
           </div>
         </div>
+
         {/* Cart section */}
         <div className="w-full lg:w-1/3">
           <Cart />
         </div>
       </div>
+
     </div>
   );
 }

@@ -29,7 +29,7 @@ exports.addonsImageManipulation = asyncHandler(async (req, res, next) => {
 
 // get all add-ons
 exports.getAllAddOns = asyncHandler(async (req, res, next) => {
-    const addOns = await AddOnModel.find();
+    const addOns = await AddOnModel.find().sort({name: 1});
     if (addOns.length === 0) {
         return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No add-ons found"));
     }

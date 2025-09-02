@@ -6,7 +6,7 @@ import Sticky from 'react-sticky-el';
 import { ArrowLeft, ArrowRight, ShoppingCart, X } from "lucide-react"
 
 export default function Cart() {
-    const { bookingData, currentStep, handleNextStep, handlePrevStep, hasError } = useBooking()
+    const { bookingData, handleNextStep, handlePrevStep, hasError } = useBooking()
     const priceFormat = usePriceFormat()
     const [isCartOpen, setIsCartOpen] = useState(false)
 
@@ -20,14 +20,14 @@ export default function Cart() {
     return (
         <>
             {/* Desktop Cart - Hidden on mobile */}
-            <div className="hidden lg:block ">
+            <div className="block ">
                 <Sticky
-                        topOffset={-100}
-                        stickyStyle={{ top: '95px', zIndex: 40, transition: 'top 0.3s ease-in-out' }}
-                        boundaryElement="#cart-wrapper"
-                    // hideOnBoundaryHit={false}
-                    >
-                <CartContent />
+                    topOffset={-100}
+                    stickyStyle={{ top: '95px', zIndex: 40, transition: 'top 0.3s ease-in-out' }}
+                    boundaryElement="#cart-wrapper"
+                // hideOnBoundaryHit={false}
+                >
+                    <CartContent />
                 </Sticky>
             </div>
 
@@ -56,9 +56,8 @@ export default function Cart() {
             </div>
 
             {/* Mobile Bottom Navigation - Fixed */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+            {/* <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
                 <div className="flex items-center justify-between max-w-md mx-auto">
-                    {/* Cart Summary Button */}
                     <button
                         onClick={openCart}
                         className="flex items-center space-x-3 hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors"
@@ -74,10 +73,10 @@ export default function Cart() {
                             </p>
                             <p className="text-xs text-gray-500">Total</p>
                         </div>
-                    </button>
+                    </button> */}
 
-                    {/* Navigation Buttons */}
-                    <div className="flex items-center space-x-2">
+            {/* Navigation Buttons */}
+            {/* <div className="flex items-center space-x-2">
                         {currentStep > 1 && (
                             <button
                                 onClick={handlePrevStep}
@@ -106,12 +105,12 @@ export default function Cart() {
                                 </div>
                             </div>
                         )}
-                    </div>
-                </div>
-            </div>
+                    </div> */}
+            {/* </div> */}
+            {/* </div> */}
 
             {/* Padding for fixed bottom nav on mobile */}
-            <div className="lg:hidden pb-24" />
+            {/* <div className="lg:hidden pb-24" /> */}
         </>
     )
 }

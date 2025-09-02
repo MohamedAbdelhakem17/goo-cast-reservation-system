@@ -65,10 +65,9 @@ function getAllDay(inputDate) {
 //   return dt.toISO({ suppressMilliseconds: true });
 // };
 
-const combineDateAndTime = (dateISO, timeStr, zone = "Africa/Cairo") => {
-  const [hour, minute] = timeStr.split(":").map(Number);
-
+function combineDateAndTime(dateISO, time) {
   let dateOnly;
+
   if (typeof dateISO === "string") {
     dateOnly = dateISO.split("T")[0];
   } else if (dateISO instanceof Date) {
@@ -79,18 +78,16 @@ const combineDateAndTime = (dateISO, timeStr, zone = "Africa/Cairo") => {
     throw new Error("Unsupported date format");
   }
 
-  const dt = DateTime.fromISO(dateOnly, { zone }).set({
-    hour,
-    minute,
-    second: 0,
-    millisecond: 0,
-  });
+  const dateTimeWithOffset = DateTime.fromISO(`${dateOnly}T${time}`, {
+    zone: "Africa/Cairo",
+  }).toISO(); 
 
-  return dt.toISO({ suppressMilliseconds: true });
-};
+  return dateTimeWithOffset;
+}
 
 module.exports = {
   timeToMinutes,
+
   minutesToTime,
   getAllDay,
   combineDateAndTime,
