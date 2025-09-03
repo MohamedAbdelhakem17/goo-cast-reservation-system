@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBooking } from "../../../context/Booking-Context/BookingContext";
 import Loading from "../../shared/Loading/Loading";
@@ -9,7 +9,7 @@ import { tracking } from "../../../GTM/gtm";
 import useGetAllStudios from "../../../apis/studios/studios.api";
 
 export default function SelectStudio() {
-  const { setBookingField, bookingData, handleNextStep, currentStep, stepLabels } = useBooking();
+  const { setBookingField, bookingData, handleNextStep } = useBooking();
   const [selectedStudio, setSelectedStudio] = useState(
     bookingData?.studio?.id || null
   );
@@ -60,6 +60,10 @@ export default function SelectStudio() {
     );
   };
 
+  useEffect(() => {
+    tracking("view_content")
+  }, [])
+
   if (isLoading) return <Loading />;
 
   return (
@@ -89,7 +93,6 @@ export default function SelectStudio() {
                   name: studio.name,
                   image: studio.thumbnail,
                 });
-                tracking("add_to_cart", { studio_name: studio.name });
               }}
             >
               {/* Image with Click Indicator */}
