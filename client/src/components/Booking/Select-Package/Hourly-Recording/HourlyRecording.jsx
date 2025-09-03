@@ -69,7 +69,7 @@ export default function HourlyRecording() {
 
       {/* Packages */}
       <motion.div
-        className="flex flex-wrap justify-center gap-2 px-8 lg:px-0  lg:justify-around scale-90"
+        className="flex flex-wrap justify-center gap-4 px-8 lg:px-0  lg:justify-around scale-90"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
