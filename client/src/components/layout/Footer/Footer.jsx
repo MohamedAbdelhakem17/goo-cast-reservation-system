@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { logo } from "../../../assets/images";
 import useQuickBooking from "../../../hooks/useQuickBooking";
+import WhatsAppButton from "./whats-app-button";
 
 export default function Footer() {
     const NAV_LINKS = [
@@ -43,6 +44,7 @@ export default function Footer() {
 
     return (
         <footer className="relative bg-gradient-to-b from-main/5 to-gray-100 pt-12 pb-6 overflow-hidden w-full">
+            <WhatsAppButton />
             {/* Background elements */}
             <div className="absolute inset-0 -z-10 overflow-hidden">
                 <motion.div
