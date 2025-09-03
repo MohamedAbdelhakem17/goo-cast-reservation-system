@@ -3,12 +3,11 @@ import { motion } from "framer-motion";
 import { useBooking } from "../../../../context/Booking-Context/BookingContext";
 import { GetPackagesByCategory } from "../../../../apis/services/services.api";
 import BookingHeader from "../../../shared/Booking-Header/BookingHeader";
-import { tracking } from "../../../../GTM/gtm";
 import usePriceFormat from "./../../../../hooks/usePriceFormat";
 import { Check } from "lucide-react";
 
 export default function HourlyRecording() {
-  const { setBookingField, handleNextStep, bookingData, currentStep, stepLabels } = useBooking();
+  const { setBookingField, handleNextStep, bookingData } = useBooking();
   const { mutate: getPackages, data: packages } = GetPackagesByCategory();
   const priceFormat = usePriceFormat();
 
@@ -29,10 +28,6 @@ export default function HourlyRecording() {
       slug: pkg.category.slug,
       price: pkg.price,
     });
-
-    tracking("add_to_cart", { package_name: pkg.name, price: pkg.price });
-
-
     setBookingField("startSlot", null);
     setBookingField("endSlot", null);
     setBookingField("studio", null);
