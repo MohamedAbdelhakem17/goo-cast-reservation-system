@@ -11,14 +11,15 @@ import {
   CreditCard,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import usePriceFormat from "../../hooks/usePriceFormat";
+import usePriceFormat from "@/hooks/usePriceFormat";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import BookingReceiptPDF from "../../components/shared/Booking-Receipt-PDF/BookingReceiptPDF";
-import useDateFormat from "../../hooks/useDateFormat";
+
+import useDateFormat from "@/hooks/useDateFormat";
 import { useMemo } from "react";
 import { useEffect } from "react";
-import { tracking } from "../../GTM/gtm";
-import useTimeConvert from "../../hooks/useTimeConvert";
+import { tracking } from "@/utils/gtm";
+import useTimeConvert from "@/hooks/useTimeConvert";
+import BookingReceiptPDF from './../../_components/booking-receipt-pdf';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },

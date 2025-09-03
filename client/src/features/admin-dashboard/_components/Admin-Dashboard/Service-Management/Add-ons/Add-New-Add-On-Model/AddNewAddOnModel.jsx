@@ -3,9 +3,9 @@ import { useFormik } from 'formik';
 // import { produce } from 'immer';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
-import Input from '../../../../shared/Input/Input';
-import { AddNewAddOn } from '../../../../../apis/services/services.api';
-import { useToast } from '../../../../../context/Toaster-Context/ToasterContext';
+import {Input} from '@/components/common';
+import { AddNewAddOn } from '@/apis/services/services.api';
+import { useToast } from '@/context/Toaster-Context/ToasterContext';
 
 const validationSchema = Yup.object({
     name: Yup.string()

@@ -1,5 +1,5 @@
 import React from 'react';
-import {  GetPackagesByCategory } from '../../../../../apis/services/services.api';
+import {  GetPackagesByCategory } from '@/apis/services/services.api';
 import { useEffect } from 'react';
 import { Check, Video, Mic, Clock, Users } from 'lucide-react'
 import { motion } from 'framer-motion'

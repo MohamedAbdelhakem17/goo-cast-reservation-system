@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import useDateFormat from '../../../../hooks/useDateFormat'
-import usePriceFormat from '../../../../hooks/usePriceFormat'
+import useDateFormat from '@/hooks/useDateFormat'
+import usePriceFormat from '@/hooks/usePriceFormat'
 
 export default function BookingDetailsModal({ booking, closeModel }) {
     const formatDate = useDateFormat()

@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 // import { useToast } from '../../../context/Toaster-Context/ToasterContext';
 // import { useAuth } from '../../../context/Auth-Context/AuthContext';
-import { GetUserData, GetUserStats } from '../../../../apis/user/user.api';
-import Loading from '../../../../components/shared/Loading/Loading';
-import Header from '../../../../components/User-Dashboard/Profile/Header/Header';
-import UserData from '../../../../components/User-Dashboard/Profile/User-Data/UserData';
-import UpcomingBooking from '../../../../components/User-Dashboard/Profile/Upcoming-Booking/UpcomingBooking';
-import FavoriteStudio from '../../../../components/User-Dashboard/Profile/Favorite-Studio/FavoriteStudio';
+import { GetUserData, GetUserStats } from '@/apis/user/user.api';
+import Header from '../../_components/User-Dashboard/Profile/Header/Header';
+import UserData from '../../_components/User-Dashboard/Profile/User-Data/UserData';
+import UpcomingBooking from '../../_components/User-Dashboard/Profile/Upcoming-Booking/UpcomingBooking';
+import FavoriteStudio from '../../_components/User-Dashboard/Profile/Favorite-Studio/FavoriteStudio';
+import { Loading } from '@/components/common';
 
 const UserProfile = () => {
     const { data: user, isLoading } = GetUserData();

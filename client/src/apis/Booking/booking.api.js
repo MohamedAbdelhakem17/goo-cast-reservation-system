@@ -107,14 +107,7 @@ const CreateBooking = () => usePostData("bookings", `${API_BASE_URL}/bookings`);
 const GetUserBookings = () =>
   useGetData("userBookings", `${API_BASE_URL}/bookings/user-bookings`);
 
-const GetFullyBookedDates = (duration) => {
-  return useQuery({
-    queryKey: ["fullyBookedDates", duration],
-    queryFn: () => fetchFullyBookedDates({ duration }),
-    enabled: !!duration,
-    staleTime: 5 * 60 * 1000,
-  });
-};
+
 
 export {
   GetFullyBookedDates,
@@ -124,6 +117,5 @@ export {
   GetAvailableEndSlots,
   CreateBooking,
   GetUserBookings,
-  GetFullyBookedDates ,
   useGetAvailableStudio,
 };

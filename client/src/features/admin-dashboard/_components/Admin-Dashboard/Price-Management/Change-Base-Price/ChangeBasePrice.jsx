@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import { ChangePriceBase } from '../../../../apis/price/price.api'
-import { useToast } from '../../../../context/Toaster-Context/ToasterContext'
-import Input from '../../../shared/Input/Input'
+import { ChangePriceBase } from '@/apis/price/price.api'
+import { useToast } from '@/context/Toaster-Context/ToasterContext'
+import {Input ,  Loading} from '@/components/common'
 import { motion } from 'framer-motion'
-import { GetStudioByID } from '../../../../apis/studios/studios.api'
-import Loading from '../../../shared/Loading/Loading'
+import { GetStudioByID } from '@/apis/studios/studios.api'
 
 export default function ChangeBasePrice({ selectedStudio, closeTab }) {
     const { data: studio, isLoading } = GetStudioByID(selectedStudio);

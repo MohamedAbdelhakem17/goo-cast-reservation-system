@@ -8,10 +8,10 @@ import {
     StyleSheet,
     Image
 } from '@react-pdf/renderer';
-import usePriceFormat from '../../../hooks/usePriceFormat';
-import useDateFormat from '../../../hooks/useDateFormat';
+import usePriceFormat from '@/hooks/usePriceFormat';
+import useDateFormat from '@/hooks/useDateFormat';
 import logo from './logo.png';
-import useTimeConvert from '../../../hooks/useTimeConvert';
+import useTimeConvert from '@/hooks/useTimeConvert';
 
 // Styles
 const styles = StyleSheet.create({

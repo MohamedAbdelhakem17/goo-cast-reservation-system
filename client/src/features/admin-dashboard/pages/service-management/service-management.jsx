@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import Tabs from '../../../../components/Admin-Dashboard/Service-Management/Tabs/Tabs';
-import Packages from '../../../../components/Admin-Dashboard/Service-Management/Packages/Packages';
-import Addons from '../../../../components/Admin-Dashboard/Service-Management/Add-ons/Addons';
+import {Taps} from '@/components/common/';
+import Packages from '@/features/admin-dashboard/_components/Admin-Dashboard/Service-Management/Packages/Packages';
+import Addons from '@/features/admin-dashboard/_components/Admin-Dashboard/Service-Management/Add-ons/Addons';
 
 const ServiceManagement = () => {
     const [activeTab, setActiveTab] = useState('packages');
@@ -11,7 +11,7 @@ const ServiceManagement = () => {
         <div className="w-full">
 
             {/* Tabs */}
-            <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Taps activeTab={activeTab} setActiveTab={setActiveTab} />
 
             <motion.div
                 key={activeTab}

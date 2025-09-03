@@ -1,18 +1,18 @@
 // /* eslint-disable no-case-declarations */
 import { useReducer, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Input from "../../../shared/Input/Input";
 import {
     UpdatedPriceRules,
     AddPriceRule,
     GetPriceRules,
     DeletePriceRule,
-} from "../../../../apis/price/price.api";
-import { useToast } from "../../../../context/Toaster-Context/ToasterContext";
+} from "@/apis/price/price.api";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { produce } from "immer";
 import DiscountList from "../Discount-List/DiscountList";
 import PriceRuleCard from "../Price-Rule-Card/PriceRuleCard";
 import EditRuleForm from "../Edit-Rule-Form/EditRuleForm";
+import { Input } from '@/components/common';
 
 export default function PackagePrice({ selectedPackage }) {
     const packageData = selectedPackage;

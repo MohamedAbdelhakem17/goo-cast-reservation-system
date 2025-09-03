@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
-import { UpdateUserData } from '../../../../apis/user/user.api'
-import Input from '../../../shared/Input/Input'
-import { useToast } from '../../../../context/Toaster-Context/ToasterContext'
+import { UpdateUserData } from '@/apis/user/user.api'
+import {Input} from '@/components/common'
+import { useToast } from '@/context/Toaster-Context/ToasterContext'
 
 export default function EditUserData({ user }) {
     const [isOpen, setIsOpen] = useState(false)

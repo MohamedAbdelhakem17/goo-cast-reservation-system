@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import useQuickBooking from '../../../../../hooks/useQuickBooking'
+import useQuickBooking from '@/hooks/useQuickBooking'
 // import usePriceFormat from '../../../hooks/usePriceFormat'
 export default function BookingButton({ studio }) {
 

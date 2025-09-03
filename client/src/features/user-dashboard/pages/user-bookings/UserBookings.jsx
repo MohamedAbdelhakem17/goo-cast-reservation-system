@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import useDateFormat from '../../../../hooks/useDateFormat';
-import usePriceFormat from '../../../../hooks/usePriceFormat';
-import { GetUserBookings } from '../../../../apis/Booking/booking.api';
-import BookingInfoModel from '../../../../components/shared/Booking-Info-Model/BookingInfoModel';
+import useDateFormat from '@/hooks/useDateFormat';
+import usePriceFormat from '@/hooks/usePriceFormat';
+import { GetUserBookings } from '@/apis/Booking/booking.api';
+import BookingInfoModel from '@/features/booking/_components/booking-info-model';
 
 const statusClasses = {
   approved: "bg-gradient-to-r from-green-500 to-green-600 text-white",

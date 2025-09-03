@@ -1,8 +1,8 @@
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import AnalyticsCard from "../../../../components/Admin-Dashboard/Page-Analytics/Analytics-Card/AnalyticsCard";
-import Chart from "../../../../components/Admin-Dashboard/Page-Analytics/Chart/Chart";
-import { GetPageAnalytics } from "../../../../apis/analytics/analytics.api";
+import AnalyticsCard from "@/components/Admin-Dashboard/Page-Analytics/Analytics-Card/AnalyticsCard";
+import Chart from "@/components/Admin-Dashboard/Page-Analytics/Chart/Chart";
+import { GetPageAnalytics } from "@/apis/analytics/analytics.api";
 
 const getPageName = (path) => {
   if (path === "/") return "Home";

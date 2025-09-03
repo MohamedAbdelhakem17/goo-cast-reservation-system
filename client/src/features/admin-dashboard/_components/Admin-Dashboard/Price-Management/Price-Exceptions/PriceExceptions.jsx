@@ -3,17 +3,16 @@
 import { useReducer, useState } from "react"
 import { motion } from "framer-motion"
 import { produce } from "immer"
-import Input from "../../../shared/Input/Input"
-import { useToast } from "../../../../context/Toaster-Context/ToasterContext"
+import { useToast } from "@/context/Toaster-Context/ToasterContext"
 import {
     AddPriceExceptions,
     GetPriceExceptions,
     UpdatedPriceExceptions,
     DeletePriceExceptions,
-} from "../../../../apis/price/price.api"
-import Loading from "../../../shared/Loading/Loading"
-import usePriceFormat from "../../../../hooks/usePriceFormat"
-import Popup from "../../../shared/Popup/Popup"
+} from "@/apis/price/price.api"
+import usePriceFormat from "@/hooks/usePriceFormat"
+import { Popup, Loading, Input } from "@/components/common"
+
 
 const initialState = {
     newException: {

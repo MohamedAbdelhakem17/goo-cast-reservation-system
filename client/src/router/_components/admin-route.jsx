@@ -16,9 +16,9 @@ const PriceManagement = lazy(() =>
 const ServiceManagement = lazy(() =>
     import("@/features/admin-dashboard/pages/service-management/service-management")
 );
-const PageAnalytics = lazy(() =>
-    import("@/features/admin-dashboard/pages/page-analytics/page-analytics")
-);
+// const PageAnalytics = lazy(() =>
+//     import("@/features/admin-dashboard/pages/page-analytics/page-analytics")
+// );
 const BookingManagement = lazy(() =>
     import("@/features/admin-dashboard/pages/booking-management/booking-management")
 );
@@ -57,7 +57,7 @@ export default function AdminRoute() {
             <Route path="booking-management" element={<BookingManagement />} />
             <Route path="user-management" element={<UserManagement />} />
             <Route path="coupon-management" element={<CouponManagement />} />
-            <Route path="analytics" element={<PageAnalytics />} />
+            {/* <Route path="analytics" element={<PageAnalytics />} /> */}
         </Route>
     );
 }

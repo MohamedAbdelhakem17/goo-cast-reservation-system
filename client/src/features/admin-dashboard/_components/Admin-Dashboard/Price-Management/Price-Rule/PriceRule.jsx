@@ -1,20 +1,21 @@
-import React, { useReducer, useState } from "react";
+import  { useReducer, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
     AddPriceRule,
     DeletePriceRule,
     GetPriceRules,
     UpdatedPriceRules,
-} from "../../../../apis/price/price.api";
-import Loading from "../../../shared/Loading/Loading";
-import usePriceFormat from "../../../../hooks/usePriceFormat";
-import { useToast } from "../../../../context/Toaster-Context/ToasterContext";
-import Popup from "../../../shared/Popup/Popup";
+} from "@/apis/price/price.api";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { produce } from "immer";
+import { Popup, Loading } from '@/components/common';
 import {
+
     NewPriceRuleForm,
     PriceRuleList,
 } from "../Price-Mange/PriceComponents";
+
 
 // Initial state and reducer (unchanged)
 const initialState = {

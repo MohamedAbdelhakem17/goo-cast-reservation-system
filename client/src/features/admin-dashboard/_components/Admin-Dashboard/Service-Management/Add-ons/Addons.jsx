@@ -1,12 +1,11 @@
 import { useReducer } from 'react'
 import { produce } from 'immer'
 import { AnimatePresence, motion } from 'framer-motion'
-import { DeleteAddOn, GetAllAddOns, UpdateAddOn } from '../../../../apis/services/services.api'
+import { DeleteAddOn, GetAllAddOns, UpdateAddOn } from '@/apis/services/services.api'
 import AddNewAddOnModel from './Add-New-Add-On-Model/AddNewAddOnModel'
-import usePriceFormat from '../../../../hooks/usePriceFormat'
-import Input from '../../../shared/Input/Input'
-import Popup from '../../../shared/Popup/Popup'
-import { useToast } from '../../../../context/Toaster-Context/ToasterContext'
+import usePriceFormat from '@/hooks/usePriceFormat'
+import {Input ,Popup} from '@/components/common'
+import { useToast } from '@/context/Toaster-Context/ToasterContext'
 
 // Initial State
 const initialState = {

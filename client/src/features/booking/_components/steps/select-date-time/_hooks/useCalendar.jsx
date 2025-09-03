@@ -136,7 +136,7 @@
 // }
 
 import { useState, useEffect } from "react";
-import { GetFullyBookedDates } from "../apis/Booking/booking.api";
+import { GetFullyBookedDates } from "@/apis/Booking/booking.api";
 
 export function useCalendar(studioId, selectedBookingDate, duration) {
     const today = new Date();

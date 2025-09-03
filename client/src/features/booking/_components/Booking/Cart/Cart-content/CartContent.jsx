@@ -4,7 +4,6 @@ import usePriceFormat from '@/hooks/usePriceFormat'
 import useTimeConvert from '@/hooks/useTimeConvert'
 import { useBooking } from '@/context/Booking-Context/BookingContext'
 import ApplyDiscount from "../../Apply-Discount/ApplyDiscount"
-import { trackBookingStep } from '../../../../GTM/gtm'
 
 export default function CartContent() {
     const formatDate = (dateString) => {

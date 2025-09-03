@@ -1,10 +1,9 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import BookingReceiptPDF from '../Booking-Receipt-PDF/BookingReceiptPDF';
-import useDateFormat from '../../../hooks/useDateFormat'
-import usePriceFormat from '../../../hooks/usePriceFormat'
-import useTimeConvert from '../../../hooks/useTimeConvert'
+import BookingReceiptPDF from '@/features/booking/_components/booking-receipt-pdf';
+import useDateFormat from '@/hooks/useDateFormat'
+import usePriceFormat from '@/hooks/usePriceFormat'
+import useTimeConvert from '@/hooks/useTimeConvert'
 
 
 const statusClasses = {

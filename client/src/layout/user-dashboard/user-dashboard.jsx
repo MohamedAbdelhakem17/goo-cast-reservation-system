@@ -1,6 +1,5 @@
-import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import Signout from '../../apis/auth/signout.api';
+import Signout from '@/apis/auth/signout.api';
 const UserDashboardLayout = () => {
   const { handelLogout } = Signout();
 

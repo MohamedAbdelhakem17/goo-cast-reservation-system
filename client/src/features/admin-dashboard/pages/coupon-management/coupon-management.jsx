@@ -1,15 +1,12 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { GetAllCoupons, CreateNewCoupon, UpdateCoupon, DeleteCoupon } from "../../../../apis/coupon/coupon"
-import { useAnimationVariants } from "../../../../hooks/useAnimationVariants"
+import { GetAllCoupons, CreateNewCoupon, UpdateCoupon, DeleteCoupon } from "@/apis/coupon/coupon"
 import { Pencil, Trash2, Plus, X, Tag, Calendar, Hash, Percent, RefreshCw } from "lucide-react"
-import Table from "../../../../components/shared/Table/Table"
-import Loading from "../../../../components/shared/Loading/Loading"
+import {Table ,  Loading} from "@/components/common"
 
 const TABLE_HEADERS = ["NAME", "CODE", "DISCOUNT", "EXPIRES AT", "MAX USES", "COUNT USED", "ACTIONS"]
 
 export default function CouponManagement() {
-    const { slideIn } = useAnimationVariants()
     const { data, isLoading, error } = GetAllCoupons()
     const { mutate: createCoupon, isLoading: isCreating } = CreateNewCoupon()
     const { mutate: updateCoupon, isLoading: isUpdating } = UpdateCoupon()
@@ -128,6 +125,29 @@ export default function CouponManagement() {
         const expiryDate = new Date(dateString)
         return expiryDate < new Date()
     }
+
+    const slideIn = {
+        hidden: {
+            opacity: 0,
+            x: 100,
+        },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: 0.3,
+                ease: 'easeOut',
+            },
+        },
+        exit: {
+            opacity: 0,
+            x: 100,
+            transition: {
+                duration: 0.2,
+                ease: 'easeIn',
+            },
+        },
+    };
 
     return (
         <motion.div

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import useQuickBooking from '../../../../hooks/useQuickBooking';
+import useQuickBooking from '@/hooks/useQuickBooking';
 export default function FavoriteStudio({ favoriteStudio, favoritePackage }) {
     const { handleQuickBooking } = useQuickBooking()
     return (

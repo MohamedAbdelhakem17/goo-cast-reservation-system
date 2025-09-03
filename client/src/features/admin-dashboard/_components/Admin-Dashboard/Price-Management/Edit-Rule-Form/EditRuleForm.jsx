@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import Input from "../../../shared/Input/Input"
+import {Input} from "@/components/common"
 import DiscountList from "../Discount-List/DiscountList"
 
 const EditRuleForm = ({ rule, onSave, onCancel }) => {

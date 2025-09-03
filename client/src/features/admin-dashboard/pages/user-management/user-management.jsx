@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { GetAllUser, MangeWorkSpace } from '../../../../apis/user/user.api'
-import Loading from '../../../../components/shared/Loading/Loading'
-import { useToast } from '../../../../context/Toaster-Context/ToasterContext'
-import useDateFormat from '../../../../hooks/useDateFormat'
-import Popup from '../../../../components/shared/Popup/Popup'
-import Input from '../../../../components/shared/Input/Input'
+import { GetAllUser, MangeWorkSpace } from '@/apis/user/user.api'
+import { useToast } from '@/context/Toaster-Context/ToasterContext'
+import useDateFormat from '@/hooks/useDateFormat'
 import * as Yup from "yup"
 import { useFormik } from 'formik'
+import { Loading } from '@/components/common';
+import { Popup , Input } from '@/components/common';
 
 const initialValue = {
     name: "",
@@ -86,7 +85,7 @@ export default function UserManagement() {
                     <h2 className="text-2xl font-bold mb-4">User Management</h2>
 
                     <div className="relative mb-6 w-full max-w-xs">
-                        <input type="text" placeholder="Search users..." className="pl-10 pr-4 py-2 border border-main rounded-md w-full focus:outline-none focus:border-main-500 focus:ring-2-main"
+                        <Input type="text" placeholder="Search users..." className="pl-10 pr-4 py-2 border border-main rounded-md w-full focus:outline-none focus:border-main-500 focus:ring-2-main"
                             value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                         />
                         <i className="fas fa-search absolute left-3 top-3 text-gray-400"></i>

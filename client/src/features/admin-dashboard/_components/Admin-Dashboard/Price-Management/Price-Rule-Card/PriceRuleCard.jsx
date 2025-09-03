@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import usePriceFormat from "../../../../hooks/usePriceFormat"
+import usePriceFormat from "@/hooks/usePriceFormat"
 import DiscountList from "../Discount-List/DiscountList"
 
 const PriceRuleCard = ({ rule, onEdit  , onDelete}) => {

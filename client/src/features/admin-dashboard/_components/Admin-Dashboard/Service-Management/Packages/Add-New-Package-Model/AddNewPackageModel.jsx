@@ -2,13 +2,10 @@ import React, { useReducer } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
-import Input from '../../../../shared/Input/Input';
-import Alert from '../../../../shared/Alert/Alert';
-import { AddNewPackage, GetAllCategories } from '../../../../../apis/services/services.api';
+import { Input, Alert , TextArea , SelectInput } from '@/components/common';
+import { AddNewPackage, GetAllCategories } from '@/apis/services/services.api';
 import { produce } from 'immer';
-import Textarea from '../../../../shared/Textarea/Textarea';
-import SelectInput from '../../../../shared/Select-Input/SelectInput';
-import { useToast } from '../../../../../context/Toaster-Context/ToasterContext';
+import { useToast } from '@/context/Toaster-Context/ToasterContext';
 
 // Reducer actions
 const ACTIONS = {
@@ -115,8 +112,8 @@ export default function AddNewPackageModel({ closeModel }) {
             target_audience: [],
         },
         validationSchema,
-        onSubmit:  (values) => {
-             addPackage({
+        onSubmit: (values) => {
+            addPackage({
                 ...values,
             }, {
                 onSuccess: (response) => {
@@ -219,7 +216,7 @@ export default function AddNewPackageModel({ closeModel }) {
 
                     />
 
-                    <Textarea
+                    <TextArea
                         label="Description"
                         id="description"
                         value={formik.values.description}
