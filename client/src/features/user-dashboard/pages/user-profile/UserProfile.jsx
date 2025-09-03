@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 // import { useToast } from '../../../context/Toaster-Context/ToasterContext';
 // import { useAuth } from '../../../context/Auth-Context/AuthContext';
-import { GetUserData, GetUserStats } from '@/apis/user/user.api';
+import { GetUserData, GetUserStats } from '@/apis/users/user.api';
 import Header from '../../_components/User-Dashboard/Profile/Header/Header';
 import UserData from '../../_components/User-Dashboard/Profile/User-Data/UserData';
 import UpcomingBooking from '../../_components/User-Dashboard/Profile/Upcoming-Booking/UpcomingBooking';

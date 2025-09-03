@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Signout = () => {
   const { mutate: signout } = usePostData(
     "signout",
-    `${BASE_URL}/auth/signout`
+    `${API_BASE_URL}/auth/signout`
   );
   const { dispatch } = useAuth();
   const navigate = useNavigate();
