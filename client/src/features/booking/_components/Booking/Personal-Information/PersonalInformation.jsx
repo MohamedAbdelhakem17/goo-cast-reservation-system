@@ -6,7 +6,7 @@ import Cart from "../Cart/Cart";
 import PaymentOptions from "./Payment-Way/PaymentWay";
 // import BookingHeader from "../../booking-header";
 import { Loader } from "lucide-react";
-import { tracking } from "../../../GTM/gtm";
+import { tracking } from "@/utils/gtm";
 
 export default function PersonalInformation() {
   const inputRef = useRef(null);

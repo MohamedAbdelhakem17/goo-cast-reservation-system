@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import Input from "../../../shared/Input/Input";
-import SelectInput from "../../../shared/Select-Input/SelectInput";
+import {Input , SelectInput} from "@/components/common";
 
 const PriceRuleList = ({ priceRulesData, state, dispatch, setSelectedRule, handleEditRule, handleSaveEdit, handleCancelEdit, getDayName, formatPrice, handleAddDiscountToEditedRule, handleRemoveDiscountFromEditedRule }) => {
   return (
@@ -10,7 +9,7 @@ const PriceRuleList = ({ priceRulesData, state, dispatch, setSelectedRule, handl
           {priceRulesData?.data?.map((rule) => (
             <PriceRuleCard
               key={rule._id}
-              rule={rule}
+              rule={rule}SelectInput
               state={state}
               dispatch={dispatch}
               setSelectedRule={setSelectedRule}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight, AlertCircle, MessageCircle } from "lucide-react"
-import StarRating from "../../../../../hooks/useRate"
+import StarRating from "@/hooks/useRate"
 import { useQuery } from "@tanstack/react-query"
 import {API_BASE_URL} from "@/constants/config"
 

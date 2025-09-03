@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { GetAllAddOns } from "@/apis/services/services.api";
 import { useCallback } from "react";
-import usePriceFormat from "../../../../hooks/usePriceFormat";
-import { tracking } from "../../../../GTM/gtm";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import { tracking } from "@/utils/gtm";
 
 
 export default function AddOns() {

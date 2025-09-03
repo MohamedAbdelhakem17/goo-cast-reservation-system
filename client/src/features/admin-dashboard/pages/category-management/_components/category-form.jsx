@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import * as Yup from "yup";
 import { useFormik } from "formik"
-import Input from "../../../shared/Input/Input"
+import {Input} from "@/components/common"
 
 const initialValues = {
     name: "",

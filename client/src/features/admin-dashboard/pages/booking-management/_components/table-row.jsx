@@ -1,9 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-import { ChangeBookingStatus } from '../../../../apis/Booking/booking.api';
-import Popup from '../../../shared/Popup/Popup';
-import useDataFormat from '../../../../hooks/useDateFormat';
-import { useToast } from '../../../../context/Toaster-Context/ToasterContext';
+import { ChangeBookingStatus } from '@/apis/Booking/booking.api';
+import {Popup} from '@/components/common';
+import useDataFormat from '@/hooks/useDateFormat';
+import { useToast } from '@/context/Toaster-Context/ToasterContext';
 
 export default function TableRow({ booking, setSelectedBooking }) {
     const formatDate = useDataFormat()

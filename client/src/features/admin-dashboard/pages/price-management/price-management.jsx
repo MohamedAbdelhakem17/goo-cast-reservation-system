@@ -2,14 +2,13 @@ import React, { useReducer } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { produce } from "immer";
 
-import PriceRule from "../../../../components/Admin-Dashboard/Price-Management/Price-Rule/PriceRule";
-import SelectStudio from "../../../../components/Admin-Dashboard/Price-Management/Select-Studio/SelectStudio";
-import SelectInput from "../../../../components/shared/Select-Input/SelectInput";
-import Tabs from "../../../../components/shared/Tabs/Tabs";
-import ChangeBasePrice from "../../../../components/Admin-Dashboard/Price-Management/Change-Base-Price/ChangeBasePrice";
-import PriceExceptions from "../../../../components/Admin-Dashboard/Price-Management/Price-Exceptions/PriceExceptions";
-import { GetAllPackages } from "../../../../apis/services/services.api";
-import PackagePrice from "../../../../components/Admin-Dashboard/Price-Management/Package-Price/PackagePrice";
+import PriceRule from "@/features/admin-dashboard/_components/Admin-Dashboard/Price-Management/Price-Rule/PriceRule";
+import SelectStudio from "@/features/admin-dashboard/_components/Admin-Dashboard/Price-Management/Select-Studio/SelectStudio";
+import ChangeBasePrice from "@/features/admin-dashboard/_components/Admin-Dashboard/Price-Management/Change-Base-Price/ChangeBasePrice";
+import PriceExceptions from "@/features/admin-dashboard/_components/Admin-Dashboard/Price-Management/Price-Exceptions/PriceExceptions";
+import { GetAllPackages } from "@/apis/services/services.api";
+import PackagePrice from "@/features/admin-dashboard/_components/Admin-Dashboard/Price-Management/Package-Price/PackagePrice";
+import {Taps , SelectInput} from '@/components/common';
 
 const fadeVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -92,7 +91,7 @@ const PriceManagement = () => {
                             {selectedOption && (
                                 <>
                                     {/* Tab For Type of Price */}
-                                    <Tabs
+                                    <Taps
                                         tabs={[
                                             { id: 1, label: "Basic Pricing" },
                                             { id: 2, label: "Price Rules" },

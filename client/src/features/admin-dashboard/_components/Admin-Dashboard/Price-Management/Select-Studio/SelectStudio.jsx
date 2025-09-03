@@ -1,5 +1,5 @@
-import useGetAllStudios from '../../../../apis/studios/studios.api'
-import SelectInput from '../../../shared/Select-Input/SelectInput'
+import useGetAllStudios from '@/apis/studios/studios.api'
+import {SelectInput} from '@/components/common'
 
 export default function SelectStudio({ selectedStudio, setSelectedStudio }) {
     const { data: studiosData } = useGetAllStudios()

@@ -4,17 +4,12 @@ import {
     GetAllCategories,
     GetAllPackages,
     UpdatePackage,
-} from "../../../../apis/services/services.api";
+} from "@/apis/services/services.api";
 import AddNewPackageModel from "./Add-New-Package-Model/AddNewPackageModel";
 import { motion, AnimatePresence } from "framer-motion";
-import Alert from "../../../shared/Alert/Alert";
-import Loading from "../../../shared/Loading/Loading";
-import Popup from "../../../shared/Popup/Popup";
-import Input from "../../../shared/Input/Input";
 import { produce } from "immer";
-import Textarea from "../../../shared/Textarea/Textarea";
-import SelectInput from "../../../shared/Select-Input/SelectInput";
-import usePriceFormat from './../../../../hooks/usePriceFormat';
+import usePriceFormat from '@/hooks/usePriceFormat';
+import { Loading, Alert, SelectInput, Input, Popup } from '@/components/common';
 
 const initialState = {
     showAddModal: false,

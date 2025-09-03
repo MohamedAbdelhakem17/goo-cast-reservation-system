@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import useDateFormat from "../../../../../../hooks/useDateFormat";
-import usePriceFormat from "../../../../../../hooks/usePriceFormat";
-import useTimeConvert from "../../../../../../hooks/useTimeConvert";
+import useDateFormat from "@/hooks/useDateFormat";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import useTimeConvert from "@/hooks/useTimeConvert";
 export default function UpcomingBooking({ data , label }) {
     const formatDate = useDateFormat()
     const formatPrice = usePriceFormat()

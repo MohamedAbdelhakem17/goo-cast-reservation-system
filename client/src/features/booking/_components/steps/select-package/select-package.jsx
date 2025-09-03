@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { GetPackagesByCategory } from "@/apis/services/services.api";
 import { tracking } from "@/utils/gtm";
-import usePriceFormat from "@/hooks/usePriceFormat";
 import BookingLabel from "../../booking-label";
+import usePriceFormat from "@/hooks/usePriceFormat";
 import { Check } from "lucide-react";
 
 // Animation

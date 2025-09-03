@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useReducer, useEffect, useMemo, useState, useRef } from "react";
 import { Editor } from "primereact/editor";
-import Input from "../../../../components/shared/Input/Input";
+import {Input} from "@/components/common";
 import { motion } from "framer-motion";
-import AddNewStudio from "../../../../apis/studios/add.studio.api";
+import AddNewStudio from "@/apis/studios/add.studio.api";
 import { produce } from "immer";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
     GetStudioByID,
     UpdateStudio,
-} from "../../../../apis/studios/studios.api";
-import { useToast } from "../../../../context/Toaster-Context/ToasterContext";
+} from "@/apis/studios/studios.api";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 
 const initialState = {
     facilities: [],

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useGetAllStudios from "../../../../apis/studios/studios.api";
+import useGetAllStudios from "@/apis/studios/studios.api";
 
 export default function HeaderAndFilter({ onFilterChange }) {
     const [filterStatus, setFilterStatus] = useState("all");
