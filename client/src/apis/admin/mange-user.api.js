@@ -22,8 +22,8 @@ export function useGetAllUser() {
 
 // Add, Delete and Update User Workspace
 const manageWorkspace = async (payload) => {
-  const response = await axiosInstance.post("user/workspace-mange", payload);
-  return response.data;
+  const {data} = await axiosInstance.post("user/workspace-mange", payload);
+  return data;
 };
 
 export function useMangeWorkSpace() {
