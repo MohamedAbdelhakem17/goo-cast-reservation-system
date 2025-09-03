@@ -4,7 +4,7 @@ import usePriceFormat from '../../../../hooks/usePriceFormat'
 import useTimeConvert from '../../../../hooks/useTimeConvert'
 import { useBooking } from '../../../../context/Booking-Context/BookingContext'
 import ApplyDiscount from "../../Apply-Discount/ApplyDiscount"
-import { trackBookingStep } from '../../../../GTM/gtm'
+import { tracking } from '../../../../GTM/gtm'
 
 export default function CartContent() {
     const formatDate = (dateString) => {
@@ -143,7 +143,10 @@ export default function CartContent() {
                 <div className="mt-4">
                     <button
                         disabled={hasError()}
-                        onClick={handleNextStep}
+                        onClick={()=>{
+                            tracking("add_to_cart")
+                            handleNextStep()
+                        }}
                         className="disabled:bg-gray-100 disabled:text-gray-300 w-full py-[8px] px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center bg-main text-white my-2"
                     >
                         <span className="m-0">Proceed to payment</span>
