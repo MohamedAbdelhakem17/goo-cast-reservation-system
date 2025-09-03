@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import {Input} from "@/components/common";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { EditPassword } from "@/apis/user/user.api";
+import { EditPassword } from "@/apis/users/user.api";
 
 const initialValues = {
     currentPassword: "",
