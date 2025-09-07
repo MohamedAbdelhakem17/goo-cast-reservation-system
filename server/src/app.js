@@ -69,7 +69,12 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 app.use(express.json());
 
 // CORS configuration
-app.use(cors("*"));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // Session configuration
 app.use(

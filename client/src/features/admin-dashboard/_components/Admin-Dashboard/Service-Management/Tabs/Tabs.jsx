@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-export default function Tabs({ activeTab, setActiveTab }) {
+export default function ServiceTaps({ activeTab, setActiveTab }) {
     const TAPS = ["packages", "addons"];
 
     return (

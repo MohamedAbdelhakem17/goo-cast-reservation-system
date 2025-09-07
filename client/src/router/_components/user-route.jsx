@@ -6,11 +6,11 @@ import ProtectedRoute from "./protected-route";
 
 // Authentication user
 const UserProfile = lazy(() =>
-    import("@/features/user-dashboard/pages/User-Profile/UserProfile")
+    import("@/features/user-dashboard/pages/user-profile/user-profile")
 );
 
 const UserBookings = lazy(() =>
-    import("@/features/user-dashboard/pages/User-Bookings/UserBookings")
+    import("@/features/user-dashboard/pages/user-bookings/user-bookings")
 );
 
 

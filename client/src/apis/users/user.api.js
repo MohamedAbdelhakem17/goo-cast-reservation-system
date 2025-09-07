@@ -5,8 +5,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 export function useGetUserData() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["userData"],
+
     queryFn: async () => {
       const { data } = await axiosInstance("/user");
+
       return data;
     },
   });
@@ -18,8 +20,10 @@ export function useGetUserData() {
 export function useGetUserStats() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["userDataStats"],
+
     queryFn: async () => {
       const { data } = await axiosInstance("/user/user-stats");
+
       return data;
     },
   });
@@ -29,10 +33,12 @@ export function useGetUserStats() {
 
 // Update User Data
 export function useUpdateUserData() {
-  const { mutate, error, isPending, isSuccess } = useMutation({
+  const { mutate, error, isPending } = useMutation({
     mutationKey: ["updateUserData"],
+
     mutationFn: async (payload) => {
       const { data } = await axiosInstance.put("/user", payload);
+
       return data;
     },
   });
@@ -41,15 +47,17 @@ export function useUpdateUserData() {
     updateUserData: mutate,
     error,
     isPending,
-    isSuccess,
   };
 }
 
+//Edit user password
 export function useEditPassword() {
-  const { mutate, error, isPending, isSuccess } = useMutation({
+  const { mutate, error, isPending } = useMutation({
     mutationKey: ["editUserPassword"],
+
     mutationFn: async (payload) => {
       const { data } = await axiosInstance.put("/user/edit-password", payload);
+
       return data;
     },
   });
@@ -58,8 +66,5 @@ export function useEditPassword() {
     editUserPassword: mutate,
     error,
     isPending,
-    isSuccess,
   };
 }
-
-export { useGetUserData, useGetUserStats, useUpdateUserData, useEditPassword };
