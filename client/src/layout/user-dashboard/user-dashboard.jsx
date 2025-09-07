@@ -1,46 +1,50 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import Signout from '@/apis/auth/signout.api';
+import {
+  User,
+  CalendarDays,
+  Home,
+  LogOut,
+} from "lucide-react";
+import DashboardSidebar from '../_components/dashboard-sidebar/dashboard-sidebar';
+
 const UserDashboardLayout = () => {
+  // hooks
   const { handelLogout } = Signout();
+
+  // Variables
+  const navLinks = [
+    { name: "Profile", path: "/user-dashboard/profile", icon: User },
+    { name: "My Bookings", path: "/user-dashboard/bookings", icon: CalendarDays },
+    { name: "Back to Website", path: "/", icon: Home },
+  ];
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white flex flex-col">
-        <div className="p-4 text-center font-bold text-lg border-b border-gray-700">
-          User Dashboard
-        </div>
-        <nav className="flex-1 p-4 space-y-2">
-          <NavLink
-            to="/user-dashboard/profile"
-            className={({ isActive }) =>
-              `block px-4 py-2 rounded ${isActive ? 'bg-gray-700' : 'hover:bg-gray-600'}`
-            }
+      <DashboardSidebar>
+        {/* Links */}
+        {navLinks.map(({ name, path, icon: Icon }) => (
+          // Link
+          <NavLink key={name} to={path} className={({ isActive }) =>
+            `flex items-center gap-2 px-4 py-2 rounded-md transition-colors font-normal text-sm
+      ${isActive
+              ? "bg-red-100 text-red-600"
+              : "text-gray-700 hover:bg-gray-100"
+            }`
+          }
           >
-            Profile
+            <Icon className="w-4 h-4" />
+            {name}
           </NavLink>
-          <NavLink
-            to="/user-dashboard/bookings"
-            className={({ isActive }) =>
-              `block px-4 py-2 rounded ${isActive ? 'bg-gray-700' : 'hover:bg-gray-600'}`
-            }
-          >
-            My Bookings
-          </NavLink>
-          <NavLink
-            to="/"
-            className="block px-4 py-2 rounded hover:bg-gray-600"
-          >
-            Back to Website
-          </NavLink>
-          <button
-            onClick={handelLogout}
-            className="block w-full text-left px-4 py-2 rounded hover:bg-gray-600 text-white"
-          >
-            Logout
-          </button>
-        </nav>
-      </aside>
+        ))}
+
+        {/* Logout button */}
+        <button onClick={handelLogout}
+          className="flex items-center gap-2 w-full text-sm text-left px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+          <LogOut className="w-4 h-4 rotate-180" />
+          Logout
+        </button>
+      </DashboardSidebar>
 
       {/* Main Content */}
       <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">

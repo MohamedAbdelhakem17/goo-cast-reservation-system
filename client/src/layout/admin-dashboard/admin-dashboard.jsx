@@ -1,56 +1,97 @@
-import React from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import Signout from '@/apis/auth/signout.api';
+import { NavLink, Outlet } from "react-router-dom";
+import Signout from "@/apis/auth/signout.api";
+import {
+  Home,
+  BarChart,
+  LayoutList,
+  Wrench,
+  Building,
+  DollarSign,
+  CalendarDays,
+  Ticket,
+  Users,
+  LogOut,
+} from "lucide-react";
+import DashboardSidebar from "../_components/dashboard-sidebar/dashboard-sidebar";
 
 const AdminDashboardLayout = () => {
-  const navigate = useNavigate()
-  // const { signout } = Signout()
-  const { handelLogout } = Signout()
+  // hooks
+  const { handelLogout } = Signout();
 
-  const navigationLinks = [
-    { path: '/admin-dashboard/welcome', name: 'Home' },
-    { path: '/admin-dashboard/analytics', name: 'Analytics' },
-    { path: '/admin-dashboard/category-management', name: 'Category Management' },
-    { path: '/admin-dashboard/service-management', name: 'Service Management' },
-    { path: '/admin-dashboard/studio-management', name: 'Studio Management' },
-    { path: '/admin-dashboard/price-management', name: 'Price Management' },
-    { path: '/admin-dashboard/booking-management', name: 'Booking Management' },
-    { path: '/admin-dashboard/coupon-management', name: 'Coupon Management' },
-    { path: '/admin-dashboard/user-management', name: 'User Management' },
-    { path: '/', name: 'Back to Website' },
+  // Variables
+  const navLinks = [
+    { name: "Home", path: "/admin-dashboard/welcome", icon: Home },
+    { name: "Analytics", path: "/admin-dashboard/analytics", icon: BarChart },
+    {
+      name: "Category Management",
+      path: "/admin-dashboard/category-management",
+      icon: LayoutList,
+    },
+    {
+      name: "Service Management",
+      path: "/admin-dashboard/service-management",
+      icon: Wrench,
+    },
+    {
+      name: "Studio Management",
+      path: "/admin-dashboard/studio-management",
+      icon: Building,
+    },
+    {
+      name: "Price Management",
+      path: "/admin-dashboard/price-management",
+      icon: DollarSign,
+    },
+    {
+      name: "Booking Management",
+      path: "/admin-dashboard/booking-management",
+      icon: CalendarDays,
+    },
+    {
+      name: "Coupon Management",
+      path: "/admin-dashboard/coupon-management",
+      icon: Ticket,
+    },
+    {
+      name: "User Management",
+      path: "/admin-dashboard/user-management",
+      icon: Users,
+    },
+    { name: "Back to Website", path: "/", icon: Home },
   ];
 
   return (
     <div className="flex h-screen">
-      <aside className="w-64 bg-gray-800 text-white flex flex-col">
-        <div className="p-4 text-center font-bold text-lg border-b border-gray-700">
-          Admin Dashboard
-        </div>
-
-        {/* Navigation links */}
-        <nav className="flex-1 p-4 space-y-2">
-          {navigationLinks.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              className={({ isActive }) =>
-                `block px-4 py-2 rounded ${isActive ? 'bg-gray-700' : 'hover:bg-gray-600'}`
-              }
-            >
-              {link.name}
-            </NavLink>
-          ))}
-
-          {/* Logout button */}
-          <button
-            onClick={handelLogout}
-            className="block w-full text-left px-4 py-2 rounded hover:bg-gray-600 text-white"
+      <DashboardSidebar>
+        {/* Links */}
+        {navLinks.map(({ name, path, icon: Icon }) => (
+          <NavLink
+            key={name}
+            to={path}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-4 py-2 rounded-md transition-colors font-normal text-sm
+              ${isActive
+                ? "bg-red-100 text-red-600"
+                : "text-gray-700 hover:bg-gray-100"
+              }`
+            }
           >
-            Logout
-          </button>
-        </nav>
-      </aside>
+            <Icon className="w-4 h-4" />
+            {name}
+          </NavLink>
+        ))}
 
+        {/* Logout */}
+        <button
+          onClick={handelLogout}
+          className="flex items-center gap-2 w-full text-sm text-left px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100"
+        >
+          <LogOut className="w-4 h-4 rotate-180" />
+          Logout
+        </button>
+      </DashboardSidebar>
+
+      {/* Main Content */}
       <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
         <Outlet />
       </main>

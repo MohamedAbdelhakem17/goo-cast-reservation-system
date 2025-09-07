@@ -54,10 +54,11 @@ export default function AuthProvider({ children }) {
         dispatch({ type: "LOGIN", payload: JSON.parse(storedUser) });
       }
 
-      // const valid = await isValidSession();
-      // if (!valid) {
-      //   dispatch({ type: "LOGOUT" });
-      // }
+      const valid = await isValidSession();
+      // const valid = true
+      if (!valid) {
+        dispatch({ type: "LOGOUT" });
+      }
     };
 
     checkAuth();
