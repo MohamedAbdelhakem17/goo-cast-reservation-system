@@ -2,7 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import PageTracker from "../../PageTracker/PageTracker";
-import WhatsAppButton from "./../Footer/whats-app-button";
+// import WhatsAppButton from "./../Footer/whats-app-button";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -30,7 +30,7 @@ const MainLayout = () => {
         {/* Footer */}
         {location.pathname !== "/booking" && <Footer />}
 
-        <WhatsAppButton />
+        {/* <WhatsAppButton /> */}
       </div>
     </>
   );
