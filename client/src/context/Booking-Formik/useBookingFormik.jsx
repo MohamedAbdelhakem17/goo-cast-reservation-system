@@ -4,7 +4,7 @@ import { useToast } from "../../context/Toaster-Context/ToasterContext";
 import { CreateBooking } from "../../apis/Booking/booking.api";
 import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { DateTime } from 'luxon';
+import { DateTime } from "luxon";
 export default function useBookingFormik() {
   const parsedData = useMemo(() => {
     const localStorageData = localStorage.getItem("bookingData");
@@ -139,11 +139,11 @@ export default function useBookingFormik() {
             "success",
             1000
           );
-          formik.resetForm()
+          formik.resetForm();
+          localStorage.removeItem("bookingData");
+          localStorage.removeItem("maxStepReached");
+          localStorage.removeItem("bookingStep");
           setTimeout(() => {
-            localStorage.removeItem("bookingData");
-            localStorage.removeItem("maxStepReached");
-            localStorage.removeItem("bookingStep");
             navigate("/booking/confirmation");
           }, 1200);
         },
@@ -193,8 +193,3 @@ export default function useBookingFormik() {
     getBookingError,
   };
 }
-
-
-
-
-

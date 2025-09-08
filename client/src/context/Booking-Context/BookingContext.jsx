@@ -175,7 +175,6 @@ export default function BookingProvider({ children }) {
     setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
   }, []);
 
-
   // Reset all data
   const resetBooking = () => {
     localStorage.removeItem("bookingData");
@@ -199,7 +198,6 @@ export default function BookingProvider({ children }) {
   const handleBookingSubmit = async (...args) => {
     await formik.handleSubmit(...args);
   };
-
 
   // Context value
   const bookingContextValue = {
