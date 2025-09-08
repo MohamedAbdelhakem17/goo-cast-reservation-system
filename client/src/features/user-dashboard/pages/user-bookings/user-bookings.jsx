@@ -7,6 +7,7 @@ import BookingInfoModel from "@/features/booking/_components/booking-info-model"
 import { Clock, CheckCircle, XCircle } from "lucide-react";
 import useTimeConvert from "@/hooks/useTimeConvert";
 import { UserBookingHeader } from "./_components";
+import { useGetUserData } from "@/apis/users/user.api";
 
 const statusClasses = {
   approved: "bg-gradient-to-r from-green-500 to-green-600 text-white",
@@ -21,7 +22,8 @@ const statusIcons = {
 };
 // Using the provided data structure
 const UserBookings = () => {
-  const { data: userBooking, isLoading } = GetUserBookings();
+  // const { data: userBooking, isLoading } = GetUserBookings();
+  const { userBooking, error, isLoading } = useGetUserData();
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filterStatus, setFilterStatus] = useState("all");
@@ -59,6 +61,11 @@ const UserBookings = () => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
+
+  if (error)
+    return (
+      <p className="text-center font-semibold text-red-600">{error.message}</p>
+    );
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6">
