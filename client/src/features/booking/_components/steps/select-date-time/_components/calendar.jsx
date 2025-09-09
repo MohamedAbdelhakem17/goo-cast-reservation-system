@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { useState } from "react";
-import { Loading } from '@/components/common';
+import { Loading } from "@/components/common";
 import Duration from "./duration";
 import { DateTime } from "luxon";
 import { useCalendar } from "../_hooks/useCalendar";
@@ -21,7 +21,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
             day: day.date,
             hour: 12,
           },
-          { zone: "Africa/Cairo" }
+          { zone: "Africa/Cairo" },
         ).toJSDate();
 
         setSelectedDate(selected);
@@ -32,13 +32,15 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
         getAvailableSlots({
           studioId: bookingData?.studio?.id,
           date: selected,
-          duration: bookingData.duration || 2,
+          duration: bookingData.duration || 1,
         });
       }
     }
   };
 
-  const [isOpen, setIsOpen] = useState(!bookingData.duration || bookingData.duration === 1);
+  const [isOpen, setIsOpen] = useState(
+    !bookingData.duration || bookingData.duration === 1,
+  );
 
   const {
     calendarDays,
@@ -51,29 +53,26 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     isToday,
     daysOfWeek,
     monthNames,
-    isLoading
-  } = useCalendar(bookingData?.studio?.id, bookingData.date, bookingData.duration);
+    isLoading,
+  } = useCalendar(bookingData.date, bookingData.duration);
 
   return (
-    <div className="w-full  mx-auto bg-white">
+    <div className="mx-auto w-full bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
-            className="w-8 h-8 disabled:opacity-40"
+            className="h-8 w-8 disabled:opacity-40"
             onClick={() => navigateMonth("prev")}
             disabled={isPrevDisabled}
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="h-4 w-4" />
           </button>
-          <h1 className="text-xl font-medium lg:min-w-[140px] text-center">
+          <h1 className="text-center text-xl font-medium lg:min-w-[140px]">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h1>
-          <button
-            className="w-8 h-8"
-            onClick={() => navigateMonth("next")}
-          >
-            <ChevronRight className="w-4 h-4" />
+          <button className="h-8 w-8" onClick={() => navigateMonth("next")}>
+            <ChevronRight className="h-4 w-4" />
           </button>
         </div>
 
@@ -84,12 +83,12 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="overflow-hidden border border-gray-200 rounded-lg">
+        <div className="overflow-hidden rounded-lg border border-gray-200">
           <div className="grid grid-cols-7 bg-gray-50">
             {daysOfWeek.map((day) => (
               <div
                 key={day}
-                className="p-4 text-sm font-medium text-center text-gray-700 border-r border-gray-200 last:border-r-0"
+                className="border-r border-gray-200 p-4 text-center text-sm font-medium text-gray-700 last:border-r-0"
               >
                 {day}
               </div>
@@ -98,20 +97,19 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
 
           <div className="grid grid-cols-7">
             {calendarDays.map((day, index) => (
-
               <div
                 key={index}
-                className={`relative lg:h-20 border-r border-b border-gray-200 last:border-r-0 h-15
-    ${day.blocked
-                    ? "bg-gray-50 cursor-not-allowed"
-                    : "bg-white hover:bg-blue-50 cursor-pointer transition-colors"}
-    ${(selectedDate ? isSelected(day.date) : isToday(day.date))
-                    ? "bg-blue-100 ring-2 ring-main ring-inset"
-                    : ""}
-  `}
+                className={`relative h-15 border-r border-b border-gray-200 last:border-r-0 lg:h-20 ${
+                  day.blocked
+                    ? "cursor-not-allowed bg-gray-50"
+                    : "cursor-pointer bg-white transition-colors hover:bg-blue-50"
+                } ${
+                  (selectedDate ? isSelected(day.date) : isToday(day.date))
+                    ? "ring-main bg-blue-100 ring-2 ring-inset"
+                    : ""
+                } `}
                 onClick={() => handleDayClick(day, currentDate, day.blocked)}
               >
-
                 {/* Blocked */}
                 {day.blocked && !day.isEmpty && (
                   <div
@@ -131,13 +129,13 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
                 {/* Date number */}
                 {day.date && (
                   <div
-                    className={`absolute top-2 left-2 text-sm font-medium
-                      ${day.blocked
+                    className={`absolute top-2 left-2 text-sm font-medium ${
+                      day.blocked
                         ? "text-gray-400"
                         : (selectedDate ? isSelected(day.date) : isToday(day.date))
                           ? "text-main font-bold"
-                          : "text-gray-900"}
-                    `}
+                          : "text-gray-900"
+                    } `}
                   >
                     {day.date}
                   </div>
@@ -145,7 +143,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
 
                 {/* Dot */}
                 {(selectedDate ? isSelected(day.date) : day.isToday) && (
-                  <div className="absolute w-2 h-2 rounded-full bottom-2 right-2 bg-main"></div>
+                  <div className="bg-main absolute right-2 bottom-2 h-2 w-2 rounded-full"></div>
                 )}
               </div>
             ))}

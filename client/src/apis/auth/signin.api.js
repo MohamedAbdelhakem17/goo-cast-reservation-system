@@ -2,29 +2,31 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
 import { API_BASE_URL } from "@/constants/config";
 import { useAuth } from "../../context/Auth-Context/AuthContext";
 
 const useSigninForm = (onSuccessCallback) => {
-  const [serverError, setServerError] = useState("");
   const { dispatch } = useAuth();
 
-    const { mutate: signin, isLoading } = useMutation({
-        mutationFn: async (data) => {
-            const response = await axios.post(`${API_BASE_URL}/auth/login`, data);
-            return response.data.data;
-        },
-        onSuccess: (data) => {
-            dispatch({ type: "LOGIN", payload: data });
-            setServerError("");
-            location.href = "/"; 
-            if (onSuccessCallback) onSuccessCallback();
-        },
-        onError: (error) => {
-            setServerError(error.response?.data?.message || "Something went wrong");
-        },
-    });
+  const {
+    mutate: signin,
+    isPending,
+    error,
+  } = useMutation({
+    mutationFn: async (data) => {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, data);
+
+      return response.data.data;
+    },
+
+    onSuccess: (data) => {
+      dispatch({ type: "LOGIN", payload: data });
+
+      location.href = "/";
+
+      if (onSuccessCallback) onSuccessCallback();
+    },
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -46,8 +48,8 @@ const useSigninForm = (onSuccessCallback) => {
 
   return {
     formik,
-    isLoading,
-    serverError,
+    isPending,
+    error,
   };
 };
 

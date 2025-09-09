@@ -13,13 +13,15 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-
 import useDateFormat from "@/hooks/useDateFormat";
-import { useMemo } from "react";
+import { lazy, useMemo } from "react";
 import { useEffect } from "react";
 import { tracking } from "@/utils/gtm";
 import useTimeConvert from "@/hooks/useTimeConvert";
-import BookingReceiptPDF from './../../_components/booking-receipt-pdf';
+
+const BookingReceiptPDF = lazy(() =>
+  import("./../../_components/booking-receipt-pdf")
+);
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -54,8 +56,9 @@ function DetailRow({ icon: Icon, label, value }) {
 const PriceRow = ({ label, value, bold = false }) => (
   <div className="flex justify-between py-2 items-center">
     <span
-      className={`text-gray-600 ${bold ? "text-lg font-semibold text-gray-900" : ""
-        }`}
+      className={`text-gray-600 ${
+        bold ? "text-lg font-semibold text-gray-900" : ""
+      }`}
     >
       {label}
     </span>
@@ -68,7 +71,7 @@ const PriceRow = ({ label, value, bold = false }) => (
 );
 
 export default function BookingConfirmation() {
-  const location = useLocation()
+  const location = useLocation();
   const navigate = useNavigate();
   const bookingData = JSON.parse(
     localStorage.getItem("bookingConfirmation")
@@ -76,33 +79,33 @@ export default function BookingConfirmation() {
 
   const priceFormat = usePriceFormat();
   const dateFormat = useDateFormat();
-  const formatTime = useTimeConvert()
+  const formatTime = useTimeConvert();
 
   const subtotal = useMemo(() => {
     return bookingData.totalPackagePrice + bookingData.totalAddOnsPrice;
   }, [bookingData.totalPackagePrice, bookingData.totalAddOnsPrice]);
-
-
 
   useEffect(() => {
     return () => {
       localStorage.removeItem("bookingConfirmation");
       localStorage.removeItem("bookingStep");
       localStorage.removeItem("bookingData");
-    }
+    };
   }, [
     location.pathname,
     bookingData.totalPrice,
     bookingData.totalAddOnsPrice,
     bookingData.totalPackagePrice,
-    bookingData.totalPriceAfterDiscount
+    bookingData.totalPriceAfterDiscount,
   ]);
 
-
   useEffect(() => {
-    if (bookingData?.totalPrice ) {
+    if (bookingData?.totalPrice) {
       tracking("purchase", {
-        value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
+        value:
+          Number(
+            bookingData.totalPriceAfterDiscount || bookingData.totalPrice
+          ) || 0,
         currency: "EGP",
         transaction_id: bookingData._id,
         contents: [
@@ -111,18 +114,16 @@ export default function BookingConfirmation() {
             quantity: 1,
             item_price: bookingData.totalPackagePrice,
           },
-          ...bookingData.addOns.map(addOn => ({
+          ...bookingData.addOns.map((addOn) => ({
             id: addOn.item,
             quantity: addOn.quantity,
             item_price: addOn.price,
-          }))
+          })),
         ],
-        content_type: "product"
+        content_type: "product",
       });
-
     }
   }, []);
-
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 my-4">
@@ -205,7 +206,9 @@ export default function BookingConfirmation() {
                 <DetailRow
                   icon={Clock}
                   label="Time & Duration"
-                  value={`${formatTime(bookingData?.startSlot)} (${bookingData?.duration}h)`}
+                  value={`${formatTime(bookingData?.startSlot)} (${
+                    bookingData?.duration
+                  }h)`}
                 />
               </div>
             </motion.div>
@@ -293,24 +296,28 @@ export default function BookingConfirmation() {
                   value={priceFormat(bookingData?.totalPackagePrice)}
                 />
                 <div>
-                  <PriceRow
-                    label="Subtotal"
-                    value={priceFormat(subtotal)}
-                  />
+                  <PriceRow label="Subtotal" value={priceFormat(subtotal)} />
                   {/* If discount  */}
-                  {
-                    bookingData.totalPriceAfterDiscount !== bookingData.totalPrice && <PriceRow
+                  {bookingData.totalPriceAfterDiscount !==
+                    bookingData.totalPrice && (
+                    <PriceRow
                       label="discount"
-                      value={priceFormat(+bookingData.totalPrice - bookingData.totalPriceAfterDiscount)}
+                      value={priceFormat(
+                        +bookingData.totalPrice -
+                          bookingData.totalPriceAfterDiscount
+                      )}
                     />
-                  }
+                  )}
 
                   <div className="flex justify-between text-gray-600 text-md"></div>
                 </div>
                 <div className="pt-3">
                   <PriceRow
                     label="Total"
-                    value={priceFormat(bookingData.totalPriceAfterDiscount || bookingData.totalPrice)}
+                    value={priceFormat(
+                      bookingData.totalPriceAfterDiscount ||
+                        bookingData.totalPrice
+                    )}
                     bold={true}
                   />
                 </div>

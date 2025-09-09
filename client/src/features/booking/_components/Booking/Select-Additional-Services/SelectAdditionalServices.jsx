@@ -1,43 +1,43 @@
-import Sticky from 'react-sticky-el';
-import AddOns from './Add-Ons/AddOns';
-import Cart from '../Cart/Cart';
-import Faq from './Faq/Faq';
-import { useEffect } from 'react';
+import Sticky from "react-sticky-el";
+import AddOns from "./Add-Ons/AddOns";
+import Cart from "../Cart/Cart";
+import Faq from "./Faq/Faq";
+import { useEffect } from "react";
 import { tracking } from "@/utils/gtm";
 import BookingLabel from "../../booking-label";
 
 export default function SelectAdditionalServices() {
-    useEffect(() => {
-        tracking("initiate_checkout")
-    }, [])
-    return (
-        <div className="space-y-4 duration-300" >
-            {/* Header */}
-            <BookingLabel title="Additional Services" desc="Enhance your session with our professional add-ons" />
+  useEffect(() => {
+    tracking("initiate_checkout");
+  }, []);
+  return (
+    <div className="space-y-4 duration-300">
+      {/* Header */}
+      <BookingLabel
+        title="Additional Services"
+        desc="Enhance your session with our professional add-ons"
+      />
 
+      {/* Responsive Content */}
+      <div className="mb-[10px] flex flex-col gap-6 lg:flex-row" id="cart-wrapper">
+        {/* AddOns takes full width on mobile, 2/3 on large screens */}
+        <div className="w-full lg:w-2/3">
+          <AddOns />
+          <Faq />
+        </div>
 
-            {/* Responsive Content */}
-            <div className="flex flex-col lg:flex-row gap-6 mb-[10px]" id='cart-wrapper'>
-                {/* AddOns takes full width on mobile, 2/3 on large screens */}
-                <div className="w-full lg:w-2/3">
-                    <AddOns />
-                    <Faq />
-                </div>
-
-                {/* Cart Sticky */}
-                <div className="w-full lg:w-1/3 " >
-                    {/* <Sticky
+        {/* Cart Sticky */}
+        <div className="w-full lg:w-1/3">
+          {/* <Sticky
                         topOffset={-100}
                         stickyStyle={{ top: '95px', zIndex: 40, transition: 'top 0.3s ease-in-out' }}
                         boundaryElement="#cart-wrapper"
                     // hideOnBoundaryHit={false}
                     > */}
-                    <Cart />
-                    {/* </Sticky> */}
-                </div>
-            </div>
-        </div >
-    );
+          <Cart />
+          {/* </Sticky> */}
+        </div>
+      </div>
+    </div>
+  );
 }
-
-
