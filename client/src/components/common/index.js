@@ -8,3 +8,5 @@ export { default as Taps } from "./taps";
 export { default as TextArea } from "./text-area";
 export { default as Input } from "./input";
 export { default as ErrorBoundary } from "./error-boundary";
+export { default as ErrorFeedback } from "./error-feedback";
+export { default as Button } from "./button";

@@ -1,12 +1,17 @@
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight, AlertCircle, MessageCircle } from "lucide-react"
-import StarRating from "@/hooks/useRate"
-import { useQuery } from "@tanstack/react-query"
-import {API_BASE_URL} from "@/constants/config"
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ChevronLeft,
+  ChevronRight,
+  AlertCircle,
+  MessageCircle,
+} from "lucide-react";
+import StarRating from "@/hooks/useRate";
+import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "@/constants/config";
 
 export default function Reviews() {
-  const [current, setCurrent] = useState(0)
+  const [current, setCurrent] = useState(0);
 
   const {
     data: reviewsData,
@@ -15,49 +20,62 @@ export default function Reviews() {
   } = useQuery({
     queryKey: ["reviews"],
     queryFn: async () => {
-      const res = await fetch(API_BASE_URL + "/reviews")
-      return res.json()
+      const res = await fetch(API_BASE_URL + "/reviews");
+      return res.json();
     },
-  })
+  });
 
   // Reset current index when reviews length changes
   useEffect(() => {
     if (reviewsData?.data?.reviews.length > 0) {
-      setCurrent(0)
+      setCurrent(0);
     }
-  }, [reviewsData?.data?.reviews.length])
+  }, [reviewsData?.data?.reviews.length]);
 
   const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "short", day: "numeric" }
-    return new Date(dateString).toLocaleDateString(undefined, options)
-  }
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
   const handleNext = () => {
-    if (reviewsData?.data?.reviews.length <= 1) return
-    setCurrent((prev) => (prev + 1) % reviewsData?.data?.reviews.length)
-  }
+    if (reviewsData?.data?.reviews.length <= 1) return;
+    setCurrent((prev) => (prev + 1) % reviewsData?.data?.reviews.length);
+  };
 
   const handlePrev = () => {
-    if (reviewsData?.data?.reviews.length <= 1) return
-    setCurrent((prev) => (prev - 1 + reviewsData?.data?.reviews.length) % reviewsData?.data?.reviews.length)
-  }
+    if (reviewsData?.data?.reviews.length <= 1) return;
+    setCurrent(
+      (prev) =>
+        (prev - 1 + reviewsData?.data?.reviews.length) %
+        reviewsData?.data?.reviews.length
+    );
+  };
 
   // Get displayed reviews based on total count
   const getDisplayedReviews = () => {
-    if (reviewsData?.data?.reviews.length === 0) return []
-    if (reviewsData?.data?.reviews.length === 1) return [reviewsData?.data?.reviews[0]]
+    if (reviewsData?.data?.reviews.length === 0) return [];
+    if (reviewsData?.data?.reviews.length === 1)
+      return [reviewsData?.data?.reviews[0]];
     if (reviewsData?.data?.reviews.length === 2) {
-      return [reviewsData?.data?.reviews[current], reviewsData?.data?.reviews[(current + 1) % 2]]
+      return [
+        reviewsData?.data?.reviews[current],
+        reviewsData?.data?.reviews[(current + 1) % 2],
+      ];
     }
     // For 3 or more reviews, show previous, current, and next
     return [
-      reviewsData?.data?.reviews[(current - 1 + reviewsData?.data?.reviews.length) % reviewsData?.data?.reviews.length],
+      reviewsData?.data?.reviews[
+        (current - 1 + reviewsData?.data?.reviews.length) %
+          reviewsData?.data?.reviews.length
+      ],
       reviewsData?.data?.reviews[current],
-      reviewsData?.data?.reviews[(current + 1) % reviewsData?.data?.reviews.length],
-    ]
-  }
+      reviewsData?.data?.reviews[
+        (current + 1) % reviewsData?.data?.reviews.length
+      ],
+    ];
+  };
 
-  const displayedReviews = getDisplayedReviews()
+  const displayedReviews = getDisplayedReviews();
 
   // Subtle animation variants
   const reviewVariants = {
@@ -67,7 +85,8 @@ export default function Reviews() {
       y: 10,
     }),
     animate: (index) => ({
-      opacity: reviewsData?.data?.reviews.length <= 2 ? 1 : index === 1 ? 1 : 0.6,
+      opacity:
+        reviewsData?.data?.reviews.length <= 2 ? 1 : index === 1 ? 1 : 0.6,
       scale: reviewsData?.data?.reviews.length <= 2 ? 1 : index === 1 ? 1 : 0.9,
       y: 0,
       transition: {
@@ -84,7 +103,7 @@ export default function Reviews() {
         ease: "easeIn",
       },
     }),
-  }
+  };
 
   // Container animation variants
   const containerVariants = {
@@ -96,7 +115,7 @@ export default function Reviews() {
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   // Loading state
   if (isLoading) {
@@ -114,7 +133,7 @@ export default function Reviews() {
         />
         <p className="text-rose-600 font-medium">Loading reviews...</p>
       </motion.div>
-    )
+    );
   }
 
   // Error state
@@ -128,8 +147,12 @@ export default function Reviews() {
       >
         <div className="rounded-lg bg-rose-50 border border-rose-200 p-6 max-w-md text-center">
           <AlertCircle className="h-12 w-12 text-rose-400 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-rose-700 mb-2">Failed to Load Reviews</h3>
-          <p className="text-rose-600 mb-4">We couldn't load the reviews at this time. Please try again later.</p>
+          <h3 className="text-lg font-bold text-rose-700 mb-2">
+            Failed to Load Reviews
+          </h3>
+          <p className="text-rose-600 mb-4">
+            We couldn't load the reviews at this time. Please try again later.
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium"
@@ -138,7 +161,7 @@ export default function Reviews() {
           </button>
         </div>
       </motion.div>
-    )
+    );
   }
 
   // Empty state
@@ -188,14 +211,18 @@ export default function Reviews() {
           transition={{ delay: 0.4 }}
         >
           <MessageCircle className="h-16 w-16 text-rose-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-800 mb-2">No Reviews Yet</h3>
-          <p className="text-gray-600 mb-6">Be the first to share your experience with our studio!</p>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
+            No Reviews Yet
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Be the first to share your experience with our studio!
+          </p>
           <button className="px-6 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium">
             Write a Review
           </button>
         </motion.div>
       </motion.div>
-    )
+    );
   }
 
   return (
@@ -231,7 +258,12 @@ export default function Reviews() {
         <motion.div
           className="w-16 sm:w-24 h-1 bg-rose-500 rounded-full mb-4"
           initial={{ width: 0 }}
-          animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 64 : 96 }}
+          animate={{
+            width:
+              typeof window !== "undefined" && window.innerWidth < 640
+                ? 64
+                : 96,
+          }}
           transition={{ delay: 0.3, duration: 0.5 }}
         />
         <motion.p
@@ -240,7 +272,8 @@ export default function Reviews() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          Discover why our clients love working with us and how our studio has helped them create stunning photography.
+          Discover why our clients love working with us and how our studio has
+          helped them create stunning photography.
         </motion.p>
       </motion.div>
 
@@ -252,24 +285,26 @@ export default function Reviews() {
         animate="animate"
       >
         <div className="flex justify-center items-center gap-2 sm:gap-4 md:gap-6 w-full max-w-7xl mx-auto px-2">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {displayedReviews?.map((review, index) => {
-              let containerClasses = ""
-              let contentClasses = ""
+              let containerClasses = "";
+              let contentClasses = "";
 
               if (reviewsData?.data?.reviews.length === 1) {
-                containerClasses = "w-full max-w-2xl mx-auto"
-                contentClasses = "p-6 sm:p-8"
+                containerClasses = "w-full max-w-2xl mx-auto";
+                contentClasses = "p-6 sm:p-8";
               } else if (reviewsData?.data?.reviews.length === 2) {
-                containerClasses = "w-full max-w-md flex-1"
-                contentClasses = "p-4 sm:p-6"
+                containerClasses = "w-full max-w-md flex-1";
+                contentClasses = "p-4 sm:p-6";
               } else {
                 if (index === 1) {
-                  containerClasses = "w-full sm:w-3/5 md:w-2/5 lg:w-2/5 max-w-lg z-20 mx-2"
-                  contentClasses = "p-4 sm:p-6 md:p-8 border-2 border-rose-200"
+                  containerClasses =
+                    "w-full sm:w-3/5 md:w-2/5 lg:w-2/5 max-w-lg z-20 mx-2";
+                  contentClasses = "p-4 sm:p-6 md:p-8 border-2 border-rose-200";
                 } else {
-                  containerClasses = "hidden sm:block w-1/5 md:w-1/4 lg:w-1/5 max-w-xs z-10"
-                  contentClasses = "p-3 sm:p-4 border border-rose-100"
+                  containerClasses =
+                    "hidden sm:block w-1/5 md:w-1/4 lg:w-1/5 max-w-xs z-10";
+                  contentClasses = "p-3 sm:p-4 border border-rose-100";
                 }
               }
 
@@ -340,7 +375,7 @@ export default function Reviews() {
                     </div>
                   )}
                 </motion.div>
-              )
+              );
             })}
           </AnimatePresence>
         </div>
@@ -386,8 +421,11 @@ export default function Reviews() {
                 {reviewsData?.data?.reviews.map((_, index) => (
                   <button
                     key={index}
-                    className={`h-2 rounded-full cursor-pointer transition-all duration-200 ${index === current ? "w-6 sm:w-8 bg-rose-500" : "w-2 bg-rose-200 hover:bg-rose-300"
-                      }`}
+                    className={`h-2 rounded-full cursor-pointer transition-all duration-200 ${
+                      index === current
+                        ? "w-6 sm:w-8 bg-rose-500"
+                        : "w-2 bg-rose-200 hover:bg-rose-300"
+                    }`}
                     onClick={() => setCurrent(index)}
                   />
                 ))}
@@ -397,5 +435,5 @@ export default function Reviews() {
         </motion.div>
       )}
     </motion.div>
-  )
+  );
 }

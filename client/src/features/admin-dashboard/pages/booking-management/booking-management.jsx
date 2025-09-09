@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { GetBookings } from "@/apis/Booking/booking.api";
-import { Loading } from '@/components/common';
-import { BookingDetailsModal, HeaderAndFilter, Pagination, TableRow } from "./_components"
+import { Loading, ErrorFeedback } from "@/components/common";
+import { useGetBookings } from "@/apis/admin/mange-booking.api";
+import {
+  BookingDetailsModal,
+  HeaderAndFilter,
+  Pagination,
+  TableRow,
+} from "./_components";
 
 export default function BookingManagement() {
-  // Const variables
   const TABLE_HEADERS = [
     "PERSONAL INFO",
     "STUDIO",
@@ -15,43 +20,54 @@ export default function BookingManagement() {
     "STATUS",
     "ACTIONS",
   ];
-  const ITEMS_PER_PAGE = 10;
 
-  // State variables
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [filters, setFilters] = useState({
-    status: "",
-    studioId: "",
-    date: "",
-    page: currentPage,
+  const ITEMS_PER_PAGE = 10;
+  const currentPageRef = useRef(1);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const initialFilters = {
+    status: searchParams.get("status") || "",
+    studioId: searchParams.get("studioId") || "",
+    date: searchParams.get("date") || "",
+    page: Number(searchParams.get("page")) || 1,
     limit: ITEMS_PER_PAGE,
-  });
+  };
+
+  const [filters, setFilters] = useState(initialFilters);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  useEffect(() => {
+    const params = {};
+    if (filters.status) params.status = filters.status;
+    if (filters.studioId) params.studioId = filters.studioId;
+    if (filters.date) params.date = filters.date;
+    if (filters.page > 1) params.page = filters.page;
+
+    setSearchParams(params);
+  }, [filters, setSearchParams]);
 
   // get all bookings
-  const { data: bookingsData, isLoading } = GetBookings(filters);
-
+  const { data: bookingsData, isLoading, error } = useGetBookings(filters);
   const bookings = bookingsData?.data?.bookings || [];
-  const totalPages = Math.ceil(
-    (bookingsData?.data?.total || 0) / ITEMS_PER_PAGE
-  );
+  const totalPages = Math.ceil((bookingsData?.data?.total || 0) / ITEMS_PER_PAGE);
 
   const handleFilterChange = (newFilters) => {
-    setCurrentPage(1); // Reset to first page when filters change
+    currentPageRef.current = 1;
     setFilters({
       ...filters,
       status: newFilters.status === "all" ? "" : newFilters.status,
       studioId: newFilters.studioId,
       date: newFilters.date,
-      page: 1,
+      page: currentPageRef.current,
     });
   };
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+    currentPageRef.current = newPage;
     setFilters({
       ...filters,
-      page: newPage,
+      page: currentPageRef.current,
     });
   };
 
@@ -59,19 +75,17 @@ export default function BookingManagement() {
 
   return (
     <div className="p-6">
-      {/* Header and Filter */}
-      <HeaderAndFilter onFilterChange={handleFilterChange} />
+      <HeaderAndFilter filters={filters} onFilterChange={handleFilterChange} />
 
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="overflow-hidden rounded-xl bg-white shadow-lg">
         <div className="overflow-x-auto">
           <table className="w-full">
-            {/* Table headers */}
             <thead className="bg-gray-50">
               <tr>
                 {TABLE_HEADERS.map((header, index) => (
                   <th
                     key={index}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                   >
                     {header}
                   </th>
@@ -79,11 +93,10 @@ export default function BookingManagement() {
               </tr>
             </thead>
 
-            {/* Table rows */}
             {bookings.length > 0 ? (
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 bg-white">
                 <AnimatePresence>
-                  {bookings?.map((booking) => (
+                  {bookings.map((booking) => (
                     <TableRow
                       booking={booking}
                       setSelectedBooking={setSelectedBooking}
@@ -93,13 +106,21 @@ export default function BookingManagement() {
                 </AnimatePresence>
               </tbody>
             ) : (
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-6 py-8 text-center text-gray-600 text-xl font-semibold"
+                    className="px-6 py-8 text-center text-xl font-semibold text-gray-600"
                   >
-                    No bookings found
+                    {error ? (
+                      <ErrorFeedback>
+                        {error.response?.data?.message ||
+                          error.message ||
+                          "Something went wrong"}
+                      </ErrorFeedback>
+                    ) : (
+                      "No bookings found"
+                    )}
                   </td>
                 </tr>
               </tbody>
@@ -107,11 +128,17 @@ export default function BookingManagement() {
           </table>
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && <Pagination />}
+        {totalPages > 1 && (
+          <Pagination
+            ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+            currentPage={currentPageRef.current}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
+            bookingsData={bookingsData}
+          />
+        )}
       </div>
 
-      {/* Booking Details Modal */}
       {selectedBooking && (
         <BookingDetailsModal
           selectedBooking={selectedBooking}

@@ -50,7 +50,7 @@ export default function EditUserData({ user }) {
       {/* Edit button  */}
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm hover:shadow transition-all duration-200 font-medium px-4 py-2 rounded-lg flex items-center gap-2"
+        className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 font-medium text-slate-700 shadow-sm transition-all duration-200 hover:bg-slate-100 hover:text-slate-900 hover:shadow"
       >
         <i className="fa-solid fa-user"></i>
         Edit Profile
@@ -58,15 +58,15 @@ export default function EditUserData({ user }) {
 
       {isOpen && (
         // Modal
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="bg-white rounded-xl overflow-hidden shadow-2xl max-w-md w-full mx-4"
+            className="mx-4 w-full max-w-md overflow-hidden rounded-xl bg-white shadow-2xl"
           >
             {/* Modal header */}
-            <div className="bg-gradient-to-r from-slate-100 to-slate-50 p-6 border-b border-slate-200">
+            <div className="border-b border-slate-200 bg-gradient-to-r from-slate-100 to-slate-50 p-6">
               <h3 className="text-xl font-bold text-slate-800">
                 Edit Personal Information
               </h3>
@@ -90,7 +90,7 @@ export default function EditUserData({ user }) {
                 />
                 {/* User email input */}
                 <Input
-                  className=" text-slate-500 cursor-not-allowed"
+                  className="cursor-not-allowed text-slate-500"
                   disabled={true}
                   label="Email"
                   id="email"
@@ -98,7 +98,7 @@ export default function EditUserData({ user }) {
                   value={user.email}
                 />
                 {/* email feedback */}
-                <p className="text-xs text-slate-500 -mt-8 py-3">
+                <p className="-mt-8 py-3 text-xs text-slate-500">
                   Contact support to change your email address
                 </p>
 
@@ -148,7 +148,7 @@ export default function EditUserData({ user }) {
                     setIsOpen(false);
                     formik.resetForm();
                   }}
-                  className="px-4 py-2 bg-white border border-slate-200 rounded-md text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="rounded-md border border-slate-200 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                 >
                   Cancel
                 </button>
@@ -157,7 +157,7 @@ export default function EditUserData({ user }) {
                 <button
                   disabled={isPending}
                   type="submit"
-                  className="px-4 py-2 bg-main/90 border border-transparent rounded-md text-white hover:bg-main focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="bg-main/90 hover:bg-main rounded-md border border-transparent px-4 py-2 text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                 >
                   {isPending ? "updating .. " : " Save Changes"}
                 </button>

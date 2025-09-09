@@ -4,7 +4,7 @@ import { GetAllAddOns } from "@/apis/services/services.api";
 import { useCallback } from "react";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { tracking } from "@/utils/gtm";
-
+import { Loading } from "@/components/common";
 
 export default function AddOns() {
   const { data: addOns, isLoading } = GetAllAddOns();
@@ -37,7 +37,7 @@ export default function AddOns() {
 
       setBookingField("selectedAddOns", updatedAddOns);
     },
-    [bookingData.selectedAddOns, setBookingField]
+    [bookingData.selectedAddOns, setBookingField],
   );
 
   const getQuantity = (id) => {
@@ -47,13 +47,21 @@ export default function AddOns() {
 
   const handleIncrement = (id, name, price) => {
     const currentQty = getQuantity(id);
-    tracking("add_to_cart ", { addon_name: name, addon_price: price, addon_quantity: currentQty + 1 });
+    tracking("add_to_cart ", {
+      addon_name: name,
+      addon_price: price,
+      addon_quantity: currentQty + 1,
+    });
     handleAddOnChange(id, name, currentQty + 1, price);
   };
 
   const handleDecrement = (id, name, price) => {
     const currentQty = getQuantity(id);
-    tracking("remove_from_cart ", { addon_name: name, addon_price: price, addon_quantity: 1 });
+    tracking("remove_from_cart ", {
+      addon_name: name,
+      addon_price: price,
+      addon_quantity: 1,
+    });
     if (currentQty > 0) {
       handleAddOnChange(id, name, currentQty - 1, price);
     }
@@ -64,7 +72,6 @@ export default function AddOns() {
     if (addon) {
       handleAddOnChange(id, addon.name, 0, addon.price);
       tracking("remove_from_cart ", { addon_name: addon.name, addon_price: addon.price });
-
     }
   };
 
@@ -93,7 +100,7 @@ export default function AddOns() {
   return (
     <>
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        className="grid grid-cols-1 gap-6 md:grid-cols-2"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -106,49 +113,43 @@ export default function AddOns() {
             <motion.div
               key={addon._id}
               variants={cardVariants}
-              className={`bg-white rounded-xl overflow-hidden shadow-sm border flex flex-col justify-between transition-transform hover:scale-[1.02] duration-300 ${isSelected ? "border-main" : "border-gray-300"
-                }`}
+              className={`flex flex-col justify-between overflow-hidden rounded-xl border bg-white shadow-sm transition-transform duration-300 hover:scale-[1.02] ${
+                isSelected ? "border-main" : "border-gray-300"
+              }`}
             >
-              <div className="w-full h-80 overflow-hidden p-4 relative">
-
+              <div className="relative h-80 w-full overflow-hidden p-4">
                 <img
                   src={addon.image}
                   alt={addon.name}
-                  className="w-full  h-full object-cover  transition-transform duration-300 rounded-md"
+                  className="h-full w-full rounded-md object-cover transition-transform duration-300"
                 />
               </div>
 
-              <div className="flex flex-col flex-grow py-1 px-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                  {addon.name}
-                </h3>
+              <div className="flex flex-grow flex-col px-4 py-1">
+                <h3 className="mb-1 text-lg font-semibold text-gray-900">{addon.name}</h3>
 
-                <p className="text-sm text-gray-600 flex-grow">
-                  {addon.description}
-                </p>
+                <p className="flex-grow text-sm text-gray-600">{addon.description}</p>
 
-                <div className="p-1 w-fit  rounded-lg text-md font-bold flex items-center justify-center top-6 right-4 ">
+                <div className="text-md top-6 right-4 flex w-fit items-center justify-center rounded-lg p-1 font-bold">
                   {priceFormat(addon.price)}
                 </div>
 
                 <div>
                   {quantity === 0 && (
                     <button
-                      className="w-full py-2 px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center bg-main text-white my-2"
-                      onClick={() =>
-                        handleIncrement(addon._id, addon.name, addon.price)
-                      }
+                      className="text-md bg-main mx-auto my-2 flex w-full items-center justify-center rounded-lg px-4 py-2 font-semibold text-white"
+                      onClick={() => handleIncrement(addon._id, addon.name, addon.price)}
                     >
                       Add to cart
                     </button>
                   )}
 
                   {quantity > 0 && (
-                    <div className="py-2 flex items-center justify-between">
+                    <div className="flex items-center justify-between py-2">
                       <div className="flex items-center gap-2">
                         <motion.button
                           whileTap={{ scale: 0.9 }}
-                          className="w-8 h-8 border border-gray-200 text-black rounded-md flex items-center justify-center"
+                          className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-black"
                           onClick={() =>
                             handleDecrement(addon._id, addon.name, addon.price)
                           }
@@ -157,13 +158,11 @@ export default function AddOns() {
                           <i className="fa-solid fa-minus text-sm"></i>
                         </motion.button>
 
-                        <span className="w-8 text-center font-medium">
-                          {quantity}
-                        </span>
+                        <span className="w-8 text-center font-medium">{quantity}</span>
 
                         <motion.button
                           whileTap={{ scale: 0.9 }}
-                          className="w-8 h-8 border border-gray-200 text-black rounded-md flex items-center justify-center"
+                          className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-black"
                           onClick={() =>
                             handleIncrement(addon._id, addon.name, addon.price)
                           }
@@ -173,7 +172,7 @@ export default function AddOns() {
                       </div>
 
                       <button
-                        className="text-sm  rounded border border-gray-300 px-2 py-1"
+                        className="rounded border border-gray-300 px-2 py-1 text-sm"
                         onClick={() => handleRemove(addon._id)}
                       >
                         Remove

@@ -32,11 +32,11 @@ export default function EditUserPassword() {
       .required("New password is required")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_]).{8,}$/,
-        "Password must be at least 8 characters and include uppercase, lowercase, number, and underscore"
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and underscore",
       )
       .notOneOf(
         [Yup.ref("currentPassword")],
-        "New password must be different from current password"
+        "New password must be different from current password",
       ),
 
     confirmPassword: Yup.string()
@@ -50,10 +50,7 @@ export default function EditUserPassword() {
     onSubmit: (values) => {
       editUserPassword(values, {
         onSuccess: (response) => {
-          addToast(
-            response.message || "Password changed successfully",
-            "success"
-          );
+          addToast(response.message || "Password changed successfully", "success");
           setTimeout(() => {
             setIsOpen(false);
           }, 2000);
@@ -68,7 +65,7 @@ export default function EditUserPassword() {
       {/* Edit password button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-main/90 hover:bg-main text-white shadow-md hover:shadow-lg transition-all duration-200 px-4 py-2 rounded-lg flex items-center gap-2"
+        className="bg-main/90 hover:bg-main flex items-center gap-2 rounded-lg px-4 py-2 text-white shadow-md transition-all duration-200 hover:shadow-lg"
       >
         <i className="fa-solid fa-lock"></i>
         Change Password
@@ -76,15 +73,15 @@ export default function EditUserPassword() {
 
       {/* Modal */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="bg-white rounded-xl overflow-hidden shadow-2xl max-w-md w-full mx-4"
+            className="mx-4 w-full max-w-md overflow-hidden rounded-xl bg-white shadow-2xl"
           >
             {/* Modal header */}
-            <div className="bg-gradient-to-r from-main/90 to-main/80 p-6">
+            <div className="from-main/90 to-main/80 bg-gradient-to-r p-6">
               <h3 className="text-xl font-bold text-white">Change Password</h3>
               <p className="text-indigo-100">
                 Enter your current password and a new password.
@@ -165,8 +162,7 @@ export default function EditUserPassword() {
                     setIsOpen(false);
                     formik.resetForm();
                   }}
-                  className="px-4 py-2 bg-white border border-slate-200 rounded-md text-slate-700
-                                    hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="rounded-md border border-slate-200 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                 >
                   Cancel
                 </button>
@@ -175,7 +171,7 @@ export default function EditUserPassword() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="px-4 py-2 bg-main/90 border border-transparent rounded-md text-white hover:bg-main  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="bg-main/90 hover:bg-main rounded-md border border-transparent px-4 py-2 text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                 >
                   {isPending ? "Changing .." : " Change Password"}
                 </button>
