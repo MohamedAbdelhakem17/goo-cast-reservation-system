@@ -61,38 +61,39 @@ const AdminDashboardLayout = () => {
   ];
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen flex-col md:flex-row">
       <DashboardSidebar>
         {/* Links */}
-        {navLinks.map(({ name, path, icon: Icon }) => (
+        {navLinks.map(({ name, path, icon: Icon }, index) => (
           <NavLink
             key={name}
             to={path}
             className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-md transition-colors font-normal text-sm
-              ${isActive
-                ? "bg-red-100 text-red-600"
-                : "text-gray-700 hover:bg-gray-100"
+              `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 md:px-4 md:py-3 ${
+                isActive
+                  ? "border-l-4 border-red-600 bg-red-50 font-bold text-red-600"
+                  : "font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
               }`
             }
+            style={{ animationDelay: `${index * 50}ms` }}
           >
-            <Icon className="w-4 h-4" />
-            {name}
+            <Icon className="h-4 w-4 flex-shrink-0 md:h-5 md:w-5" />
+            <span className="truncate text-xs md:text-sm">{name}</span>
           </NavLink>
         ))}
 
         {/* Logout */}
         <button
           onClick={handelLogout}
-          className="flex items-center gap-2 w-full text-sm text-left px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100"
+          className="mt-4 flex w-full cursor-pointer items-center gap-3 rounded-lg border-t border-gray-200 px-3 py-2.5 pt-4 text-left text-xs font-medium text-gray-700 transition-all duration-200 hover:bg-red-50 hover:text-red-600 md:px-4 md:py-3 md:text-sm"
         >
-          <LogOut className="w-4 h-4 rotate-180" />
-          Logout
+          <LogOut className="h-4 w-4 flex-shrink-0 rotate-180 md:h-5 md:w-5" />
+          <span>Logout</span>
         </button>
       </DashboardSidebar>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
+      <main className="flex-1 bg-gray-50 p-3 md:p-6 lg:p-8">
         <Outlet />
       </main>
     </div>

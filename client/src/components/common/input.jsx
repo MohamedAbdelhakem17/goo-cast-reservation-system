@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ErrorFeedback } from "@/components/common";
+import { Calendar } from "lucide-react";
 
 const Input = ({
   label,
@@ -20,6 +21,7 @@ const Input = ({
   disabled,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const isDateType = type === "date";
 
   return (
     <div className={`relative mb-8 ${className}`}>
@@ -34,10 +36,17 @@ const Input = ({
                 opacity: 1,
                 scale: 0.85,
               }
-            : { x: 12, y: 0, opacity: value ? 0 : 0.7, scale: 1 }
+            : {
+                x: isDateType ? 0 : 12,
+                y: isDateType ? -24 : 0,
+                opacity: isDateType ? 1 : value ? 0 : 0.7,
+                scale: isDateType ? 0.85 : 1,
+              }
         }
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="absolute left-0 text-base font-medium tracking-wide text-gray-600 dark:text-gray-500 pointer-events-none"
+        className={`pointer-events-none absolute left-0 text-base font-medium tracking-wide text-gray-600 dark:text-gray-500 ${
+          isDateType ? "text-xs" : ""
+        }`}
         htmlFor={id}
       >
         {label}
@@ -52,29 +61,31 @@ const Input = ({
               ? { height: "100%", opacity: 0.05 }
               : { height: "2px", opacity: errors && touched ? 0.2 : 0.1 }
           }
-          className={`absolute bottom-0 left-0 w-full
-            bg-gradient-to-r ${
-              errors && touched
-                ? "from-red-400 to-red-600"
-                : "from-[#ed1e26] to-[#ff5b60]"
-            }
-            rounded-b-md transition-all duration-300`}
+          className={`absolute bottom-0 left-0 w-full bg-gradient-to-r ${
+            errors && touched ? "from-red-400 to-red-600" : "from-[#ed1e26] to-[#ff5b60]"
+          } rounded-b-md transition-all duration-300`}
         />
+
+        {/* Date input container with icon */}
+        {isDateType && (
+          <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
+            <Calendar className="h-5 w-5 text-gray-400" />
+          </div>
+        )}
 
         {/* Actual input field */}
         <input
           ref={inputRef}
           type={isPasswordField && showPasswordToggle ? "text" : type}
-          className={`w-full py-3 px-3
-            bg-transparent border-0 border-b-2 text-gray-800 text-base focus:ring-0 focus:outline-none ${
-              errors && touched
-                ? "border-b-red-500"
-                : isFocused
+          className={`w-full px-3 py-3 ${isDateType ? "pr-12" : ""} border-0 border-b-2 bg-transparent text-base text-gray-800 focus:ring-0 focus:outline-none ${
+            errors && touched
+              ? "border-b-red-500"
+              : isFocused
                 ? "border-b-[#ed1e26]"
                 : "border-b-gray-300"
-            }`}
+          } ${isDateType ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0" : ""} `}
           id={id}
-          placeholder={isFocused || !label ? placeholder : ""}
+          placeholder={isFocused || !label || isDateType ? placeholder : ""}
           value={value}
           onChange={onChange}
           onBlur={(e) => {
