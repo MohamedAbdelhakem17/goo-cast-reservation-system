@@ -22,12 +22,11 @@ export default function Button({
         stiffness: 400,
         damping: 25,
       }}
-      className={`mt-6 py-3 px-4 rounded-lg font-medium transition-all duration-200 shadow-md
-              focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                isPending
-                  ? "bg-gray-200 text-gray-700 cursor-not-allowed"
-                  : "text-white bg-gradient-to-r from-[#ed1e26] to-[#ff5b60] hover:from-[#d91c23] hover:to-[#e64b50]"
-              } ${className}`}
+      className={`mt-6 rounded-lg px-4 py-3 font-medium shadow-md transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none ${
+        isPending
+          ? "cursor-not-allowed bg-gray-200 text-gray-700"
+          : "bg-gradient-to-r from-[#ed1e26] to-[#ff5b60] text-white hover:from-[#d91c23] hover:to-[#e64b50]"
+      } ${className}`}
     >
       {isPending ? fallback : children}
     </motion.button>

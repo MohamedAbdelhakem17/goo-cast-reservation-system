@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Get All User API
 const fetchAllUsers = async () => {
-  const { data } = await axiosInstance.get("/users");
+  const { data } = await axiosInstance.get("/user/all");
   return data;
 };
 
@@ -11,18 +11,18 @@ export function useGetAllUser() {
   const {
     data: users,
     isLoading,
-    error
+    error,
   } = useQuery({
     queryKey: ["users"],
     queryFn: fetchAllUsers,
   });
 
-  return { data: users, isLoading, error };
+  return { users, isLoading, error };
 }
 
 // Add, Delete and Update User Workspace
 const manageWorkspace = async (payload) => {
-  const {data} = await axiosInstance.post("user/workspace-mange", payload);
+  const { data } = await axiosInstance.post("user/workspace-mange", payload);
   return data;
 };
 
