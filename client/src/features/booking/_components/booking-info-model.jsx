@@ -3,11 +3,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import useDateFormat from "@/hooks/useDateFormat";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
-import { lazy } from "react";
-
-const BookingReceiptPDF = lazy(
-  () => "@/features/booking/_components/booking-receipt-pdf"
-);
+import BookingReceiptPDF from "@/features/booking/_components/booking-receipt-pdf";
 
 const statusClasses = {
   approved: "bg-gradient-to-r from-green-500 to-green-600 text-white",
@@ -21,10 +17,7 @@ const statusIcons = {
   rejected: "fa-solid fa-circle-xmark",
 };
 
-export default function BookingInfoModel({
-  selectedBooking,
-  setSelectedBooking,
-}) {
+export default function BookingInfoModel({ selectedBooking, setSelectedBooking }) {
   const priceFormat = usePriceFormat();
   const convertTo12HourFormat = useTimeConvert();
   const formatDate = useDateFormat();
@@ -33,51 +26,44 @@ export default function BookingInfoModel({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
       onClick={() => setSelectedBooking(null)}
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-2xl shadow-xl max-w-[60%] w-full max-h-[90vh] overflow-y-auto"
+        className="max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-white shadow-xl md:max-w-[60%]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header with Studio Image */}
         <div className="relative h-48">
           <img
             src={
-              selectedBooking.studio.thumbnail ||
-              "/placeholder.svg?height=192&width=672"
+              selectedBooking.studio.thumbnail || "/placeholder.svg?height=192&width=672"
             }
             alt={selectedBooking.studio.name}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <div className="flex justify-between items-center">
+          <div className="absolute right-0 bottom-0 left-0 p-6 text-white">
+            <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold">
-                  {selectedBooking.studio.name}
-                </h2>
-                <div className="flex items-center mt-1">
+                <h2 className="text-3xl font-bold">{selectedBooking.studio.name}</h2>
+                <div className="mt-1 flex items-center">
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium capitalize flex items-center gap-1 ${
+                    className={`flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium capitalize ${
                       statusClasses[selectedBooking.status]
                     }`}
                   >
-                    <i
-                      className={`${
-                        statusIcons[selectedBooking.status]
-                      } text-xs`}
-                    ></i>
+                    <i className={`${statusIcons[selectedBooking.status]} text-xs`}></i>
                     {selectedBooking.status}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedBooking(null)}
-                className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 backdrop-blur-sm transition"
+                className="h-8 w-8 rounded-full bg-white/20 p-2 text-white backdrop-blur-sm transition hover:bg-white/30"
               >
                 <i className="fa-solid fa-xmark text-xl"></i>
               </button>
@@ -88,64 +74,56 @@ export default function BookingInfoModel({
         <div className="p-6">
           <div className="space-y-6">
             {/* Booking Summary */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gray-50 p-4 rounded-xl text-center">
-                <i className="fa-solid fa-calendar-days text-main text-xl mb-2"></i>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div className="rounded-xl bg-gray-50 p-4 text-center">
+                <i className="fa-solid fa-calendar-days text-main mb-2 text-xl"></i>
                 <p className="text-xs text-gray-500">Date</p>
-                <p className="font-medium">
-                  {formatDate(selectedBooking.date, "short")}
-                </p>
+                <p className="font-medium">{formatDate(selectedBooking.date, "short")}</p>
               </div>
-              <div className="bg-gray-50 p-4 rounded-xl text-center">
-                <i className="fa-solid fa-clock text-main text-xl mb-2"></i>
+              <div className="rounded-xl bg-gray-50 p-4 text-center">
+                <i className="fa-solid fa-clock text-main mb-2 text-xl"></i>
                 <p className="text-xs text-gray-500">Time</p>
                 <p className="font-medium">
                   {convertTo12HourFormat(selectedBooking.startSlot)}
                 </p>
               </div>
-              <div className="bg-gray-50 p-4 rounded-xl text-center">
-                <i className="fa-solid fa-hourglass-half text-main text-xl mb-2"></i>
+              <div className="rounded-xl bg-gray-50 p-4 text-center">
+                <i className="fa-solid fa-hourglass-half text-main mb-2 text-xl"></i>
                 <p className="text-xs text-gray-500">Duration</p>
                 <p className="font-medium">{selectedBooking.duration} hours</p>
               </div>
-              <div className="bg-gray-50 p-4 rounded-xl text-center">
-                <i className="fa-solid fa-users text-main text-xl mb-2"></i>
+              <div className="rounded-xl bg-gray-50 p-4 text-center">
+                <i className="fa-solid fa-users text-main mb-2 text-xl"></i>
                 <p className="text-xs text-gray-500">Persons</p>
                 <p className="font-medium">{selectedBooking.persons}</p>
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <i className="fa-solid fa-user-circle mr-2 text-main"></i>
+              <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
+                <i className="fa-solid fa-user-circle text-main mr-2"></i>
                 Personal Information
               </h3>
-              <div className="bg-gray-50 p-4 rounded-xl">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-xl bg-gray-50 p-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
                     <p className="text-xs text-gray-500">Full Name</p>
-                    <p className="font-medium">
-                      {selectedBooking.personalInfo.fullName}
-                    </p>
+                    <p className="font-medium">{selectedBooking.personalInfo.fullName}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Email</p>
-                    <p className="font-medium">
+                    <p className="leading-snug font-medium break-words">
                       {selectedBooking.personalInfo.email}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Phone</p>
-                    <p className="font-medium">
-                      {selectedBooking.personalInfo.phone}
-                    </p>
+                    <p className="font-medium">{selectedBooking.personalInfo.phone}</p>
                   </div>
                   {selectedBooking.personalInfo.brand && (
                     <div>
                       <p className="text-xs text-gray-500">Brand</p>
-                      <p className="font-medium">
-                        {selectedBooking.personalInfo.brand}
-                      </p>
+                      <p className="font-medium">{selectedBooking.personalInfo.brand}</p>
                     </div>
                   )}
                 </div>
@@ -154,20 +132,20 @@ export default function BookingInfoModel({
 
             {selectedBooking.package && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                  <i className="fa-solid fa-box mr-2 text-main"></i>
+                <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
+                  <i className="fa-solid fa-box text-main mr-2"></i>
                   Package Details
                 </h3>
-                <div className="bg-gray-50 p-4 rounded-xl">
-                  <div className="flex items-center justify-between mb-3">
+                <div className="rounded-xl bg-gray-50 p-4">
+                  <div className="mb-3 flex items-center justify-between">
                     <div>
                       <p className="text-lg font-medium">
                         {selectedBooking.package.name}
                       </p>
                     </div>
                   </div>
-                  <div className="pt-2 border-t border-gray-200">
-                    <div className="flex justify-between items-center">
+                  <div className="border-t border-gray-200 pt-2">
+                    <div className="flex items-center justify-between">
                       <span className="font-medium">Total Package Price:</span>
                       <span className="font-medium">
                         {priceFormat(selectedBooking?.totalPackagePrice || 0)}
@@ -180,15 +158,15 @@ export default function BookingInfoModel({
 
             {selectedBooking.addOns && selectedBooking.addOns.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                  <i className="fa-solid fa-puzzle-piece mr-2 text-main"></i>
+                <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
+                  <i className="fa-solid fa-puzzle-piece text-main mr-2"></i>
                   Add-ons
                 </h3>
-                <div className="bg-gray-50 p-4 rounded-xl">
+                <div className="rounded-xl bg-gray-50 p-4">
                   {selectedBooking.addOns.map((addon, index) => (
                     <div
                       key={index}
-                      className={`flex justify-between items-center py-2 ${
+                      className={`flex items-center justify-between py-2 ${
                         index !== selectedBooking.addOns.length - 1
                           ? "border-b border-gray-200"
                           : ""
@@ -202,14 +180,12 @@ export default function BookingInfoModel({
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-gray-500">Price</p>
-                        <p className="font-medium">
-                          {priceFormat(addon?.price)}
-                        </p>
+                        <p className="font-medium">{priceFormat(addon?.price)}</p>
                       </div>
                     </div>
                   ))}
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <div className="flex justify-between items-center">
+                  <div className="mt-3 border-t border-gray-200 pt-3">
+                    <div className="flex items-center justify-between">
                       <span className="font-medium">Total Add-ons:</span>
                       <span className="font-medium">
                         {priceFormat(selectedBooking?.totalAddOnsPrice)}
@@ -221,13 +197,13 @@ export default function BookingInfoModel({
             )}
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                <i className="fa-solid fa-receipt mr-2 text-main"></i>
+              <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
+                <i className="fa-solid fa-receipt text-main mr-2"></i>
                 Payment Summary
               </h3>
-              <div className="bg-gray-50 p-4 rounded-xl space-y-2">
+              <div className="space-y-2 rounded-xl bg-gray-50 p-4">
                 {selectedBooking.package && (
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-600">Package Price:</span>
                     <span className="text-gray-600">
                       {priceFormat(selectedBooking.totalPackagePrice || 0)}
@@ -235,19 +211,17 @@ export default function BookingInfoModel({
                   </div>
                 )}
                 {selectedBooking.totalAddOnsPrice > 0 && (
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-gray-600">Add-ons Price:</span>
                     <span className="text-gray-600">
                       {priceFormat(selectedBooking.totalAddOnsPrice)}
                     </span>
                   </div>
                 )}
-                <div className="pt-3 mt-1 border-t border-gray-200">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-800 font-semibold">
-                      Total Price:
-                    </span>
-                    <span className="text-xl font-bold text-main">
+                <div className="mt-1 border-t border-gray-200 pt-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-800">Total Price:</span>
+                    <span className="text-main text-xl font-bold">
                       {priceFormat(selectedBooking.totalPrice)}
                     </span>
                   </div>
@@ -256,10 +230,10 @@ export default function BookingInfoModel({
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-end">
+          <div className="mt-8 flex flex-col justify-end gap-3 sm:flex-row">
             <button
               onClick={() => setSelectedBooking(null)}
-              className="px-6 py-3 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition"
+              className="rounded-xl bg-gray-200 px-6 py-3 text-gray-800 transition hover:bg-gray-300"
             >
               Close
             </button>
@@ -268,7 +242,7 @@ export default function BookingInfoModel({
               fileName="booking-receipt.pdf"
             >
               {({ loading }) => (
-                <button className="px-6 py-3 bg-main text-white rounded-xl hover:bg-main/90 transition flex items-center justify-center gap-2">
+                <button className="bg-main hover:bg-main/90 flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-white transition">
                   <i className="fa-solid fa-download"></i>
                   {loading ? "Preparing..." : "Download Receipt"}
                 </button>

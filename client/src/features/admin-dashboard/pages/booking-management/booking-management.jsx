@@ -1,26 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { Loading, ErrorFeedback } from "@/components/common";
+import { Loading } from "@/components/common";
 import { useGetBookings } from "@/apis/admin/mange-booking.api";
-import {
-  BookingDetailsModal,
-  HeaderAndFilter,
-  Pagination,
-  TableRow,
-} from "./_components";
+import { HeaderAndFilter, Pagination } from "./_components";
+
+import DisplayBookingData from "./_components/display-booking-data";
+import BookingInfoModel from "@/features/booking/_components/booking-info-model";
 
 export default function BookingManagement() {
-  const TABLE_HEADERS = [
-    "PERSONAL INFO",
-    "STUDIO",
-    "DATE",
-    "DURATION",
-    "TOTAL PRICE",
-    "STATUS",
-    "ACTIONS",
-  ];
-
   const ITEMS_PER_PAGE = 10;
   const currentPageRef = useRef(1);
 
@@ -74,59 +61,16 @@ export default function BookingManagement() {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="p-6">
+    <div className="py-6">
       <HeaderAndFilter filters={filters} onFilterChange={handleFilterChange} />
 
-      <div className="overflow-hidden rounded-xl bg-white shadow-lg">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                {TABLE_HEADERS.map((header, index) => (
-                  <th
-                    key={index}
-                    className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                  >
-                    {header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            {bookings.length > 0 ? (
-              <tbody className="divide-y divide-gray-200 bg-white">
-                <AnimatePresence>
-                  {bookings.map((booking) => (
-                    <TableRow
-                      booking={booking}
-                      setSelectedBooking={setSelectedBooking}
-                      key={booking._id}
-                    />
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            ) : (
-              <tbody>
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-6 py-8 text-center text-xl font-semibold text-gray-600"
-                  >
-                    {error ? (
-                      <ErrorFeedback>
-                        {error.response?.data?.message ||
-                          error.message ||
-                          "Something went wrong"}
-                      </ErrorFeedback>
-                    ) : (
-                      "No bookings found"
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            )}
-          </table>
-        </div>
+      <div className="p-3">
+        <DisplayBookingData
+          bookingsData={bookings}
+          isLoading={isLoading}
+          error={error}
+          setSelectedBooking={setSelectedBooking}
+        />
 
         {totalPages > 1 && (
           <Pagination
@@ -134,13 +78,13 @@ export default function BookingManagement() {
             currentPage={currentPageRef.current}
             totalPages={totalPages}
             handlePageChange={handlePageChange}
-            bookingsData={bookingsData}
+            bookingsData={bookings}
           />
         )}
       </div>
 
       {selectedBooking && (
-        <BookingDetailsModal
+        <BookingInfoModel
           selectedBooking={selectedBooking}
           setSelectedBooking={setSelectedBooking}
         />
