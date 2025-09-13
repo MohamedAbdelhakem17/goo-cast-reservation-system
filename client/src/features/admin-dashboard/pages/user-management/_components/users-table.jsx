@@ -1,11 +1,15 @@
 import { Table } from "@/components/common";
 import useDateFormat from "@/hooks/useDateFormat";
 
-const TABLE_HEAD = ["Name", "Email", "Created At", "Status", "Workspace", "Action"];
+const TABLE_HEAD = ["Name", "Email", "Status", "Created At", "Workspace", "Action"];
 
-export default function UsersTables({ users, deleteWorkspace, setSelectedUser }) {
+export default function UsersTables({
+  users,
+  deleteWorkspace,
+  setSelectedUser,
+  setIsAddWorkSpaceOpen,
+}) {
   const dateFormat = useDateFormat();
-  console.log("userTable", users);
 
   return (
     <>
@@ -66,7 +70,7 @@ export default function UsersTables({ users, deleteWorkspace, setSelectedUser })
                 <button
                   onClick={() => {
                     setSelectedUser(user);
-                    setIsAddOpen(true);
+                    setIsAddWorkSpaceOpen(true);
                     formik.resetForm();
                   }}
                   className="bg-main/90 border-main rounded border px-2 py-1 text-sm text-white"

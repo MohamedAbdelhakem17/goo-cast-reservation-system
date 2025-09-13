@@ -10,3 +10,5 @@ export { default as Input } from "./input";
 export { default as ErrorBoundary } from "./error-boundary";
 export { default as ErrorFeedback } from "./error-feedback";
 export { default as Button } from "./button";
+export { default as ResponsiveTable } from "./responsive-table";
+export { default as ImageLoader } from "./image";

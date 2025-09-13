@@ -1,29 +1,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  GetAllCoupons,
-  CreateNewCoupon,
+import {  CreateNewCoupon,
   UpdateCoupon,
   DeleteCoupon,
 } from "@/apis/coupon/coupon";
-import { Pencil, Trash2, Plus, X, RefreshCw } from "lucide-react";
-import { Loading, Input, Table, Button } from "@/components/common";
+import { Pencil, Trash2, Plus, X } from "lucide-react";
+import {Input, Button , Popup } from "@/components/common";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import useDataFormat from "@/hooks/useDateFormat";
-import Popup from "@/components/common/popup";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const TABLE_HEADERS = [
-  "NAME",
-  "CODE",
-  "DISCOUNT",
-  "EXPIRES AT",
-  "MAX USES",
-  "COUNT USED",
-  "ACTIONS",
-];
+import DisplayData from "./_components/display-data";
+
+
 
 export default function CouponManagement() {
   // state
@@ -31,8 +20,6 @@ export default function CouponManagement() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [couponToDelete, setCouponToDelete] = useState(null);
 
-  // query
-  const { data, isLoading, error } = GetAllCoupons();
 
   // mutation
   const { mutate: createCoupon, isLoading: isCreating } = CreateNewCoupon();
@@ -41,7 +28,6 @@ export default function CouponManagement() {
 
   // hooks
   const { addToast } = useToast();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   // Handle edit
   const handleEdit = (coupon) => {
@@ -84,15 +70,7 @@ export default function CouponManagement() {
     );
   };
 
-  // Format date for display
-  const formatDate = useDataFormat();
 
-  // Check if coupon is expired
-  const isExpired = (dateString) => {
-    if (!dateString) return false;
-    const expiryDate = new Date(dateString);
-    return expiryDate < new Date();
-  };
 
   const slideIn = {
     hidden: {
@@ -337,156 +315,8 @@ export default function CouponManagement() {
             Manage your existing discount coupons
           </p>
         </div>
-        {isLoading ? (
-          // loading state
-          <Loading />
-        ) : error ? (
-          // error state
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700">
-            <p className="text-sm">
-              Error loading coupons. Please try refreshing the page.
-            </p>
-          </div>
-        ) : (
-          <div>
-            {/* case: no data */}
-            {data?.data?.length === 0 ? (
-              <>
-                {/* Desktop no data */}
-                <div className="hidden md:block">
-                  <div className="px-6 py-10 text-center text-gray-400">
-                    No coupons found. Create your first coupon above.
-                  </div>
-                </div>
-                {/* Mobile no data */}
-                <div className="py-8 text-center text-gray-400 md:hidden">
-                  <p>No coupons found. Create your first coupon above.</p>
-                </div>
-              </>
-            ) : isDesktop ? (
-              // ================= DESKTOP TABLE =================
-              <Table headers={TABLE_HEADERS}>
-                {data?.data?.map((coupon) => (
-                  <tr
-                    key={coupon._id}
-                    className="hover:bg-gray-50 [&_td]:px-6 [&_td]:py-4 [&_td]:whitespace-nowrap"
-                  >
-                    <td className="font-medium">{coupon.name}</td>
-                    <td>
-                      <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-100 px-2 py-1 font-mono text-xs font-medium text-gray-800 uppercase">
-                        {coupon.code}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
-                        {coupon.discount}%
-                      </span>
-                    </td>
-                    <td>
-                      {isExpired(coupon.expires_at) ? (
-                        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700">
-                          Expired
-                        </span>
-                      ) : (
-                        <span>{formatDate(coupon.expires_at)}</span>
-                      )}
-                    </td>
-                    <td>{coupon.max_uses}</td>
-                    <td>{coupon.times_used}</td>
-                    <td>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(coupon)}
-                          className="rounded-full p-2 text-amber-600 hover:bg-amber-50 hover:text-amber-900"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteConfirm(coupon)}
-                          className="rounded-full p-2 text-red-600 hover:bg-red-50 hover:text-red-900"
-                          disabled={couponToDelete?._id === coupon._id}
-                        >
-                          {couponToDelete?._id === coupon._id ? (
-                            <RefreshCw className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </Table>
-            ) : (
-              // ================= MOBILE CARDS =================
-              <div>
-                {data?.data?.map((coupon) => (
-                  <div
-                    key={coupon._id}
-                    className="my-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
-                  >
-                    <div className="mb-3 flex items-start justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{coupon.name}</h4>
-                        <span className="mt-1 inline-flex items-center rounded-md border border-gray-200 bg-gray-100 px-2 py-1 font-mono text-xs font-medium text-gray-800 uppercase">
-                          {coupon.code}
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(coupon)}
-                          className="rounded-full p-2 text-amber-600 hover:bg-amber-50 hover:text-amber-900"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteConfirm(coupon)}
-                          className="rounded-full p-2 text-red-600 hover:bg-red-50 hover:text-red-900"
-                          disabled={couponToDelete?._id === coupon._id}
-                        >
-                          {couponToDelete?._id === coupon._id ? (
-                            <RefreshCw className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <span className="block text-gray-500">Discount</span>
-                        <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
-                          {coupon.discount}%
-                        </span>
-                      </div>
-                      <div>
-                        <span className="block text-gray-500">Expires</span>
-                        {isExpired(coupon.expires_at) ? (
-                          <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700">
-                            Expired
-                          </span>
-                        ) : (
-                          <span className="text-gray-900">
-                            {formatDate(coupon.expires_at)}
-                          </span>
-                        )}
-                      </div>
-                      <div>
-                        <span className="block text-gray-500">Max Uses</span>
-                        <span className="text-gray-900">{coupon.max_uses}</span>
-                      </div>
-                      <div>
-                        <span className="block text-gray-500">Used</span>
-                        <span className="text-gray-900">{coupon.times_used}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+<DisplayData handleDeleteConfirm={handleDeleteConfirm} handleEdit={handleEdit} couponToDelete ={couponToDelete}/>
       </div>
 
       {/* Delete Confirmation Dialog */}

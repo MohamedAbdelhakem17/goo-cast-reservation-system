@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronLeft,
-  ChevronRight,
-  AlertCircle,
-  MessageCircle,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, AlertCircle, MessageCircle } from "lucide-react";
 import StarRating from "@/hooks/useRate";
 import { useQuery } from "@tanstack/react-query";
 import { API_BASE_URL } from "@/constants/config";
@@ -47,15 +42,14 @@ export default function Reviews() {
     setCurrent(
       (prev) =>
         (prev - 1 + reviewsData?.data?.reviews.length) %
-        reviewsData?.data?.reviews.length
+        reviewsData?.data?.reviews.length,
     );
   };
 
   // Get displayed reviews based on total count
   const getDisplayedReviews = () => {
     if (reviewsData?.data?.reviews.length === 0) return [];
-    if (reviewsData?.data?.reviews.length === 1)
-      return [reviewsData?.data?.reviews[0]];
+    if (reviewsData?.data?.reviews.length === 1) return [reviewsData?.data?.reviews[0]];
     if (reviewsData?.data?.reviews.length === 2) {
       return [
         reviewsData?.data?.reviews[current],
@@ -69,9 +63,7 @@ export default function Reviews() {
           reviewsData?.data?.reviews.length
       ],
       reviewsData?.data?.reviews[current],
-      reviewsData?.data?.reviews[
-        (current + 1) % reviewsData?.data?.reviews.length
-      ],
+      reviewsData?.data?.reviews[(current + 1) % reviewsData?.data?.reviews.length],
     ];
   };
 
@@ -85,8 +77,7 @@ export default function Reviews() {
       y: 10,
     }),
     animate: (index) => ({
-      opacity:
-        reviewsData?.data?.reviews.length <= 2 ? 1 : index === 1 ? 1 : 0.6,
+      opacity: reviewsData?.data?.reviews.length <= 2 ? 1 : index === 1 ? 1 : 0.6,
       scale: reviewsData?.data?.reviews.length <= 2 ? 1 : index === 1 ? 1 : 0.9,
       y: 0,
       transition: {
@@ -121,17 +112,17 @@ export default function Reviews() {
   if (isLoading) {
     return (
       <motion.div
-        className="mx-auto py-12 px-4 flex flex-col items-center justify-center min-h-[400px]"
+        className="mx-auto flex min-h-[400px] flex-col items-center justify-center px-4 py-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
         <motion.div
-          className="w-8 h-8 rounded-full border-2 border-rose-200 border-t-rose-500 mb-4"
+          className="mb-4 h-8 w-8 rounded-full border-2 border-rose-200 border-t-rose-500"
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
         />
-        <p className="text-rose-600 font-medium">Loading reviews...</p>
+        <p className="font-medium text-rose-600">Loading reviews...</p>
       </motion.div>
     );
   }
@@ -140,22 +131,20 @@ export default function Reviews() {
   if (error) {
     return (
       <motion.div
-        className="mx-auto py-12 px-4 flex flex-col items-center justify-center min-h-[400px]"
+        className="mx-auto flex min-h-[400px] flex-col items-center justify-center px-4 py-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="rounded-lg bg-rose-50 border border-rose-200 p-6 max-w-md text-center">
-          <AlertCircle className="h-12 w-12 text-rose-400 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-rose-700 mb-2">
-            Failed to Load Reviews
-          </h3>
-          <p className="text-rose-600 mb-4">
+        <div className="max-w-md rounded-lg border border-rose-200 bg-rose-50 p-6 text-center">
+          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-rose-400" />
+          <h3 className="mb-2 text-lg font-bold text-rose-700">Failed to Load Reviews</h3>
+          <p className="mb-4 text-rose-600">
             We couldn't load the reviews at this time. Please try again later.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium"
+            className="rounded-lg bg-rose-500 px-4 py-2 font-medium text-white transition-colors hover:bg-rose-600"
           >
             Try Again
           </button>
@@ -168,20 +157,20 @@ export default function Reviews() {
   if (reviewsData?.data?.reviews.length === 0) {
     return (
       <motion.div
-        className="mx-auto py-12 px-4 relative"
+        className="relative mx-auto px-4 py-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
         {/* Header */}
         <motion.div
-          className="flex flex-col items-center mb-12 relative"
+          className="relative mb-12 flex flex-col items-center"
           variants={containerVariants}
           initial="initial"
           animate="animate"
         >
           <motion.span
-            className="text-rose-500 text-sm font-medium tracking-wide uppercase mb-2"
+            className="mb-2 text-sm font-medium tracking-wide text-rose-500 uppercase"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -189,7 +178,7 @@ export default function Reviews() {
             Testimonials
           </motion.span>
           <motion.h2
-            className="text-3xl md:text-4xl font-bold text-rose-600 mb-3 text-center"
+            className="mb-3 text-center text-3xl font-bold text-rose-600 md:text-4xl"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -197,7 +186,7 @@ export default function Reviews() {
             What Our Clients Say
           </motion.h2>
           <motion.div
-            className="w-24 h-1 bg-rose-500 rounded-full mb-4"
+            className="mb-4 h-1 w-24 rounded-full bg-rose-500"
             initial={{ width: 0 }}
             animate={{ width: 96 }}
             transition={{ delay: 0.3, duration: 0.5 }}
@@ -205,19 +194,17 @@ export default function Reviews() {
         </motion.div>
 
         <motion.div
-          className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-sm border border-rose-100 text-center"
+          className="mx-auto max-w-md rounded-xl border border-rose-100 bg-white p-8 text-center shadow-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <MessageCircle className="h-16 w-16 text-rose-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-800 mb-2">
-            No Reviews Yet
-          </h3>
-          <p className="text-gray-600 mb-6">
+          <MessageCircle className="mx-auto mb-4 h-16 w-16 text-rose-300" />
+          <h3 className="mb-2 text-xl font-bold text-gray-800">No Reviews Yet</h3>
+          <p className="mb-6 text-gray-600">
             Be the first to share your experience with our studio!
           </p>
-          <button className="px-6 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium">
+          <button className="rounded-lg bg-rose-500 px-6 py-3 font-medium text-white transition-colors hover:bg-rose-600">
             Write a Review
           </button>
         </motion.div>
@@ -227,20 +214,20 @@ export default function Reviews() {
 
   return (
     <motion.div
-      className="mx-auto py-8 sm:py-12 px-4 relative"
+      className="relative mx-auto px-4 py-8 sm:py-12"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
       {/* Header */}
       <motion.div
-        className="flex flex-col items-center mb-8 sm:mb-12 relative"
+        className="relative mb-8 flex flex-col items-center sm:mb-12"
         variants={containerVariants}
         initial="initial"
         animate="animate"
       >
         <motion.span
-          className="text-rose-500 text-sm font-medium tracking-wide uppercase mb-2"
+          className="mb-2 text-sm font-medium tracking-wide text-rose-500 uppercase"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -248,7 +235,7 @@ export default function Reviews() {
           Testimonials
         </motion.span>
         <motion.h2
-          className="text-2xl sm:text-3xl md:text-4xl font-bold text-rose-600 mb-3 text-center px-4"
+          className="mb-3 px-4 text-center text-2xl font-bold text-rose-600 sm:text-3xl md:text-4xl"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -256,35 +243,32 @@ export default function Reviews() {
           What Our Clients Say
         </motion.h2>
         <motion.div
-          className="w-16 sm:w-24 h-1 bg-rose-500 rounded-full mb-4"
+          className="mb-4 h-1 w-16 rounded-full bg-rose-500 sm:w-24"
           initial={{ width: 0 }}
           animate={{
-            width:
-              typeof window !== "undefined" && window.innerWidth < 640
-                ? 64
-                : 96,
+            width: typeof window !== "undefined" && window.innerWidth < 640 ? 64 : 96,
           }}
           transition={{ delay: 0.3, duration: 0.5 }}
         />
         <motion.p
-          className="text-gray-600 text-center max-w-lg text-sm md:text-base px-4"
+          className="max-w-lg px-4 text-center text-sm text-gray-600 md:text-base"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          Discover why our clients love working with us and how our studio has
-          helped them create stunning photography.
+          Discover why our clients love working with us and how our studio has helped them
+          create stunning photography.
         </motion.p>
       </motion.div>
 
       {/* Reviews carousel */}
       <motion.div
-        className="flex justify-center items-center w-full py-4 sm:py-8 relative"
+        className="relative flex w-full items-center justify-center py-4 sm:py-8"
         variants={containerVariants}
         initial="initial"
         animate="animate"
       >
-        <div className="flex justify-center items-center gap-2 sm:gap-4 md:gap-6 w-full max-w-7xl mx-auto px-2">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-center gap-2 px-2 sm:gap-4 md:gap-6">
           <AnimatePresence>
             {displayedReviews?.map((review, index) => {
               let containerClasses = "";
@@ -310,16 +294,16 @@ export default function Reviews() {
 
               return (
                 <motion.div
-                  key={`${review.author_name}-${index}-${current}`}
+                  key={`${review?.author_name}-${index}-${current}`}
                   custom={index}
                   variants={reviewVariants}
                   initial="initial"
                   animate="animate"
                   exit="exit"
-                  className={`${containerClasses} relative flex flex-col gap-3 sm:gap-5 bg-white rounded-xl shadow-md hover:shadow-lg min-h-[240px] sm:min-h-[280px] flex-shrink-0 overflow-hidden transition-shadow duration-200 ${contentClasses}`}
+                  className={`${containerClasses} relative flex min-h-[240px] flex-shrink-0 flex-col gap-3 overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-200 hover:shadow-lg sm:min-h-[280px] sm:gap-5 ${contentClasses}`}
                 >
                   {/* Quote icon */}
-                  <div className="absolute top-2 left-2 text-rose-500 text-4xl sm:text-6xl opacity-20 font-serif">
+                  <div className="absolute top-2 left-2 font-serif text-4xl text-rose-500 opacity-20 sm:text-6xl">
                     "
                   </div>
 
@@ -330,47 +314,47 @@ export default function Reviews() {
                     transition={{ delay: 0.2 }}
                   >
                     {index === 1 || reviewsData?.data?.reviews.length <= 2 ? (
-                      <p className="text-gray-700 leading-relaxed italic font-medium text-sm sm:text-base relative z-10 pt-6 sm:pt-8 line-clamp-4 sm:line-clamp-none">
-                        {review.text}
+                      <p className="relative z-10 line-clamp-4 pt-6 text-sm leading-relaxed font-medium text-gray-700 italic sm:line-clamp-none sm:pt-8 sm:text-base">
+                        {review?.text}
                       </p>
                     ) : (
-                      <p className="text-gray-700 leading-relaxed italic font-medium text-xs sm:text-sm relative z-10 pt-6 sm:pt-8 line-clamp-3">
-                        {review.text}
+                      <p className="relative z-10 line-clamp-3 pt-6 text-xs leading-relaxed font-medium text-gray-700 italic sm:pt-8 sm:text-sm">
+                        {review?.text}
                       </p>
                     )}
                   </motion.div>
 
                   {/* Divider */}
-                  <div className="w-12 sm:w-16 h-0.5 bg-rose-200 my-1" />
+                  <div className="my-1 h-0.5 w-12 bg-rose-200 sm:w-16" />
 
                   {/* Reviewer info */}
                   <motion.div
-                    className="flex items-center gap-x-3 sm:gap-x-4 mt-auto"
+                    className="mt-auto flex items-center gap-x-3 sm:gap-x-4"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
                   >
                     <img
-                      src={review.profile_photo_url || "/placeholder.svg"}
-                      alt={review.author_name}
-                      className="h-12 w-12 sm:h-16 sm:w-16 rounded-full object-cover border-2 border-rose-200 shadow-sm bg-white flex-shrink-0"
+                      src={review?.profile_photo_url || "/placeholder.svg"}
+                      alt={review?.author_name}
+                      className="h-12 w-12 flex-shrink-0 rounded-full border-2 border-rose-200 bg-white object-cover shadow-sm sm:h-16 sm:w-16"
                     />
-                    <div className="flex flex-col min-w-0 flex-1">
-                      <h3 className="text-sm sm:text-lg font-bold text-gray-800 truncate">
-                        {review.author_name}
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <h3 className="truncate text-sm font-bold text-gray-800 sm:text-lg">
+                        {review?.author_name}
                       </h3>
                       <div className="mb-1">
-                        <StarRating rating={review.rating} />
+                        <StarRating rating={review?.rating} />
                       </div>
-                      <span className="text-xs text-gray-400 font-medium truncate">
-                        {formatDate(new Date(review.time * 1000).toISOString())}
+                      <span className="truncate text-xs font-medium text-gray-400">
+                        {formatDate(new Date(review?.time * 1000)?.toISOString())}
                       </span>
                     </div>
                   </motion.div>
 
                   {/* Badge for featured review */}
                   {reviewsData?.data?.reviews.length >= 3 && index === 1 && (
-                    <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-rose-500 text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-full shadow-sm">
+                    <div className="absolute top-2 right-2 rounded-full bg-rose-500 px-2 py-1 text-xs font-bold text-white shadow-sm sm:top-3 sm:right-3 sm:px-3">
                       Featured
                     </div>
                   )}
@@ -389,30 +373,30 @@ export default function Reviews() {
           transition={{ delay: 0.5 }}
         >
           {/* Navigation buttons */}
-          <div className="flex justify-center mt-6 sm:mt-10 gap-3 sm:gap-4 px-4">
+          <div className="mt-6 flex justify-center gap-3 px-4 sm:mt-10 sm:gap-4">
             <button
               onClick={handlePrev}
-              className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-white border border-rose-200 text-rose-600 font-medium text-sm rounded-lg shadow-sm hover:bg-rose-50 hover:border-rose-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-opacity-50"
+              className="focus:ring-opacity-50 flex items-center gap-2 rounded-lg border border-rose-200 bg-white px-4 py-2 text-sm font-medium text-rose-600 shadow-sm transition-all duration-200 hover:border-rose-300 hover:bg-rose-50 focus:ring-2 focus:ring-rose-400 focus:outline-none sm:px-6 sm:py-3"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden">Prev</span>
             </button>
 
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-rose-500 border border-rose-500 text-white font-medium text-sm rounded-lg shadow-sm hover:bg-rose-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-opacity-50"
+              className="focus:ring-opacity-50 flex items-center gap-2 rounded-lg border border-rose-500 bg-rose-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-rose-600 focus:ring-2 focus:ring-rose-400 focus:outline-none sm:px-6 sm:py-3"
             >
               <span className="hidden sm:inline">Next</span>
               <span className="sm:hidden">Next</span>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
           {/* Dots indicator - only if there are multiple reviews */}
           {reviewsData?.data?.reviews.length > 2 && (
             <motion.div
-              className="flex justify-center mt-4 sm:mt-6"
+              className="mt-4 flex justify-center sm:mt-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
@@ -421,9 +405,9 @@ export default function Reviews() {
                 {reviewsData?.data?.reviews.map((_, index) => (
                   <button
                     key={index}
-                    className={`h-2 rounded-full cursor-pointer transition-all duration-200 ${
+                    className={`h-2 cursor-pointer rounded-full transition-all duration-200 ${
                       index === current
-                        ? "w-6 sm:w-8 bg-rose-500"
+                        ? "w-6 bg-rose-500 sm:w-8"
                         : "w-2 bg-rose-200 hover:bg-rose-300"
                     }`}
                     onClick={() => setCurrent(index)}
