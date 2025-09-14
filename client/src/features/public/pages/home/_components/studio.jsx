@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import StarRating from "@/hooks/useRate";
 import useGetAllStudios from "@/apis/studios/studios.api";
 // import usePriceFormat from "../../../hooks/usePriceFormat";
-import { ImageLoader } from "@/components/common";
+import { OptimizedImage } from "@/components/common";
 export default function Studio() {
   // const priceFormat = usePriceFormat()
   // Animation variants for staggered animations
@@ -142,7 +142,7 @@ export default function Studio() {
                 transition: { duration: 0.3 },
               }}
             >
-              <ImageLoader
+              <OptimizedImage
                 src={studio.thumbnail || "/placeholder.svg"}
                 alt={studio.name}
                 className="h-full w-full object-cover"

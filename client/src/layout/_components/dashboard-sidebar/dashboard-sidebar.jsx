@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Mic, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logo } from "@/assets/images";
+import { OptimizedImage } from "@/components/common";
 
 export default function DashboardSidebar({ children }) {
   // State
@@ -14,7 +15,7 @@ export default function DashboardSidebar({ children }) {
         <div className="flex items-center justify-between px-4 py-3">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <img src={logo} alt="goocast" className="w-36 object-fill" />
+            <OptimizedImage src={logo} alt="goocast" className="w-36 object-fill" />
           </div>
 
           {/* Menu Button */}

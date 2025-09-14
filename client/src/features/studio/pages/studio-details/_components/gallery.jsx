@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { OptimizedImage } from "@/components/common";
 
 export default function Gallery({ images }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -24,7 +25,7 @@ export default function Gallery({ images }) {
     <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-3">
       {/* Main Image */}
       <div className="md:col-span-1">
-        <motion.img
+        <OptimizedImage
           src={images[0]}
           initial={{ opacity: 0, y: 30, x: -30 }}
           animate={{ opacity: 1, y: 0, x: 0 }}
@@ -38,7 +39,7 @@ export default function Gallery({ images }) {
       {/* Thumbnails */}
       <div className="grid grid-cols-2 gap-4 md:col-span-2">
         {images.slice(1).map((img, index) => (
-          <motion.img
+          <OptimizedImage
             key={index}
             src={img}
             alt={`Thumbnail ${index + 1}`}
