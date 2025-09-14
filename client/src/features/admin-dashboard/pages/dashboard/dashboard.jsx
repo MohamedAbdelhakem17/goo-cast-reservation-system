@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import MostUserActive from "@/features/admin-dashboard/_components/Admin-Dashboard/Wellcome/Most-User-Active/MostUserActive";
 
-const Welcome = () => {
+const Dashboard = () => {
   const { data: statsData, isLoading } = GetDashboardStats();
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("en-EG", {
@@ -458,4 +458,4 @@ function GoogleCalendarConnect() {
   );
 }
 
-export default Welcome;
+export default Dashboard;

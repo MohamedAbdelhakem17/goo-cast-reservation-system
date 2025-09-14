@@ -37,7 +37,7 @@ const HourlyPackageSchema = new mongoose.Schema(
       required: [true, "Please provide details"],
       set: (arr) => arr.map((s) => s.trim()),
     },
-    
+
     icon: String,
 
     price: {
@@ -64,6 +64,12 @@ const HourlyPackageSchema = new mongoose.Schema(
 
     session_type: {
       type: String,
+    },
+
+    is_active: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }

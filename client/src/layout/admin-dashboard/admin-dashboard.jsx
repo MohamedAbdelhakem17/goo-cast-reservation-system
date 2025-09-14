@@ -9,6 +9,7 @@ import {
   DollarSign,
   CalendarDays,
   Ticket,
+  Blocks,
   Users,
   LogOut,
 } from "lucide-react";
@@ -20,41 +21,46 @@ const AdminDashboardLayout = () => {
 
   // Variables
   const navLinks = [
-    { name: "Home", path: "/admin-dashboard/welcome", icon: Home },
-    { name: "Analytics", path: "/admin-dashboard/analytics", icon: BarChart },
+    { name: "Dashboard", path: "/admin-dashboard", icon: Home },
+    // { name: "Analytics", path: "/admin-dashboard/analytics", icon: BarChart },
     {
-      name: "Category Management",
-      path: "/admin-dashboard/category-management",
+      name: "Category",
+      path: "/admin-dashboard/category",
       icon: LayoutList,
     },
     {
-      name: "Service Management",
-      path: "/admin-dashboard/service-management",
+      name: "Service",
+      path: "/admin-dashboard/service",
       icon: Wrench,
     },
     {
-      name: "Studio Management",
-      path: "/admin-dashboard/studio-management",
+      name: "Addons",
+      path: "/admin-dashboard/addons",
+      icon: Blocks,
+    },
+    {
+      name: "Studio",
+      path: "/admin-dashboard/studio",
       icon: Building,
     },
     {
-      name: "Price Management",
-      path: "/admin-dashboard/price-management",
+      name: "Price",
+      path: "/admin-dashboard/price",
       icon: DollarSign,
     },
     {
-      name: "Booking Management",
-      path: "/admin-dashboard/booking-management",
+      name: "Booking",
+      path: "/admin-dashboard/booking",
       icon: CalendarDays,
     },
     {
-      name: "Coupon Management",
-      path: "/admin-dashboard/coupon-management",
+      name: "Coupon",
+      path: "/admin-dashboard/coupon",
       icon: Ticket,
     },
     {
-      name: "User Management",
-      path: "/admin-dashboard/user-management",
+      name: "Customers",
+      path: "/admin-dashboard/users",
       icon: Users,
     },
     { name: "Back to Website", path: "/", icon: Home },
@@ -67,6 +73,7 @@ const AdminDashboardLayout = () => {
         {navLinks.map(({ name, path, icon: Icon }, index) => (
           <NavLink
             key={name}
+            end={path === "/admin-dashboard"}
             to={path}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 md:px-4 md:py-3 ${
@@ -93,7 +100,7 @@ const AdminDashboardLayout = () => {
       </DashboardSidebar>
 
       {/* Main Content */}
-      <main className="flex-1 bg-gray-50 p-3 md:p-6 lg:p-8">
+      <main className="ml-0 flex-1 bg-gray-50 p-3 md:ml-72 md:p-6 lg:p-8">
         <Outlet />
       </main>
     </div>
