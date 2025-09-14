@@ -1,11 +1,9 @@
+import Addons from "@/features/admin-dashboard/_components/Admin-Dashboard/Service-Management/Add-ons/Addons";
 import { motion } from "framer-motion";
-import Packages from "@/features/admin-dashboard/_components/Admin-Dashboard/Service-Management/Packages/Packages";
 
-const ServiceManagement = () => {
+export default function AddonsManagement() {
   return (
     <div className="w-full">
-      {/* Tabs */}
-
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -14,11 +12,9 @@ const ServiceManagement = () => {
         className="p-6"
       >
         <div className="min-h-[400px] rounded-lg bg-gray-50/50 p-4">
-          <Packages />
+          <Addons />
         </div>
       </motion.div>
     </div>
   );
-};
-
-export default ServiceManagement;
+}

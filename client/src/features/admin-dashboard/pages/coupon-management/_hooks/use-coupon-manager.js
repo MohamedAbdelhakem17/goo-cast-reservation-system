@@ -1,8 +1,4 @@
-// hooks/useCouponManager.js
-
 import { useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { CreateNewCoupon, UpdateCoupon, DeleteCoupon } from "@/apis/coupon/coupon";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 
@@ -20,53 +16,22 @@ export function useCouponManager() {
   // hooks
   const { addToast } = useToast();
 
-  //  Form and validation
-  const initialValues = {
-    name: editingCoupon?.name || "",
-    code: editingCoupon?.code?.toUpperCase() || "",
-    discount: editingCoupon?.discount || "",
-    expires_at: editingCoupon?.expires_at?.slice(0, 10) || "",
-    max_uses: editingCoupon?.max_uses || "",
-  };
-
-  const validationSchema = Yup.object({
-    name: Yup.string()
-      .required("Code name can not be blank")
-      .min(3, "Code name must be at least 3 characters"),
-    code: Yup.string().required("Code cannot be blank"),
-    discount: Yup.number()
-      .required("Discount can not be blank")
-      .min(1, "Discount must be greater than 0")
-      .max(100, "Discount must be at most 100"),
-    expires_at: Yup.date().required("Expires at can not be blank"),
-    max_uses: Yup.number()
-      .required("Max uses can not be blank")
-      .min(1, "Max uses must be at least 1"),
-  });
-
-  const onSubmit = (values) => {
+  const onSubmit = (values, callback) => {
     if (editingCoupon) {
-      handelUpdate(values);
+      handelUpdate(values, callback);
     } else {
-      handleAdd(values);
+      handleAdd(values, callback);
     }
   };
-
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit,
-    enableReinitialize: true,
-  });
 
   // Functions
   const handleEdit = (coupon) => {
     setEditingCoupon(coupon);
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = (callback) => {
     setEditingCoupon(null);
-    formik.resetForm();
+    callback();
   };
 
   const handleDeleteConfirm = (coupon) => {
@@ -74,11 +39,11 @@ export function useCouponManager() {
     setDeleteDialogOpen(true);
   };
 
-  const handleAdd = (values) => {
+  const handleAdd = (values, callback) => {
     createCoupon(values, {
       onSuccess: () => {
         addToast(`Coupon ${values.name} has been created successfully.`, "success");
-        formik.resetForm();
+        callback();
       },
       onError: () => {
         addToast("Failed to create coupon. Please try again.", "error");
@@ -86,14 +51,14 @@ export function useCouponManager() {
     });
   };
 
-  const handelUpdate = (values) => {
+  const handelUpdate = (values, callback) => {
     updateCoupon(
       { id: editingCoupon._id, payload: values },
       {
         onSuccess: () => {
           setEditingCoupon(null);
           addToast(`Coupon ${values.name} has been updated successfully.`, "success");
-          formik.resetForm();
+          callback();
         },
         onError: () => {
           addToast("Failed to update coupon. Please try again.", "error");
@@ -125,7 +90,7 @@ export function useCouponManager() {
   };
 
   return {
-    formik,
+    onSubmit,
     editingCoupon,
     handleEdit,
     handleCancelEdit,

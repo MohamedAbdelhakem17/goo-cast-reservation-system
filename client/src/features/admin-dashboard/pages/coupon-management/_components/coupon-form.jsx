@@ -1,15 +1,22 @@
-import React from "react";
-import { useCouponManager } from "../_hooks/use-coupon-manager";
 import { Pencil, X, Plus } from "lucide-react";
 import { Button, Input } from "@/components/common";
+import { useFormik } from "formik";
+import { couponValidationSchema, getInitialValues } from "@/utils/schemas/coupon.schema";
 
 export default function CouponForm({
   editingCoupon,
-  formik,
   isCreating,
   isUpdating,
   handleCancelEdit,
+  onSubmit,
 }) {
+  const formik = useFormik({
+    initialValues: getInitialValues(editingCoupon),
+    validationSchema: couponValidationSchema,
+    onSubmit: (value) => onSubmit(value, () => formik.resetForm()),
+    enableReinitialize: true,
+  });
+
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-lg md:p-6">
       {/* Form Header */}
