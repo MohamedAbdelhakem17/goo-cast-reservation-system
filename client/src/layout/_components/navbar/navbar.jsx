@@ -1,13 +1,20 @@
 import { NavLink, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {logo} from "@/assets/images";
+import { logo } from "@/assets/images";
 import AuthModelProvider from "@/context/Auth-Model-Context/AuthModelContext";
 import { useAuth } from "@/context/Auth-Context/AuthContext";
 
-import { AuthButtons, AuthModel, MobileToggle, MobileMenu, UserProfile } from "./_components";
+import {
+  AuthButtons,
+  AuthModel,
+  MobileToggle,
+  MobileMenu,
+  UserProfile,
+} from "./_components";
 import { PUBLIC_ROUTES } from "@/constants/routes";
-import navLinkClasses from './_assets/nav-link-classes';
+import navLinkClasses from "./_assets/nav-link-classes";
+import { OptimizedImage } from "@/components/common";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -28,18 +35,19 @@ export default function Navbar() {
     <AuthModelProvider>
       {/* Navbar */}
       <nav
-        className={`w-full fixed top-0 left-0 z-50 bg-white transition-all duration-300 ${scrolled ? "shadow-lg py-2" : "shadow-md py-4"
-          }`}
+        className={`fixed top-0 left-0 z-50 w-full bg-white transition-all duration-300 ${
+          scrolled ? "py-2 shadow-lg" : "py-4 shadow-md"
+        }`}
       >
         <motion.div
           variants={navbarVariants}
           initial="initial"
           animate="animate"
-          className="container mx-auto px-5 flex justify-between items-center"
+          className="container mx-auto flex items-center justify-between px-5"
         >
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <motion.img
+            <OptimizedImage
               src={logo}
               alt="Logo"
               className="w-36"
@@ -49,7 +57,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <ul className="hidden md:flex items-center space-x-8">
+          <ul className="hidden items-center space-x-8 md:flex">
             {PUBLIC_ROUTES.map((page, i) => (
               <motion.li
                 key={i}

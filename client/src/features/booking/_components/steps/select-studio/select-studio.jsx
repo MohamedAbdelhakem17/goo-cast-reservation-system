@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import BookingLabel from "../../booking-label";
 import { tracking } from "@/utils/gtm";
-import { Loading, ErrorFeedback } from "@/components/common";
+import { Loading, ErrorFeedback, OptimizedImage } from "@/components/common";
 import ImagePreviewModal from "./_components/image-preview-modal";
 import { useGetStudio } from "@/apis/public/studio.api";
 
@@ -102,7 +102,7 @@ export default function SelectStudio() {
                 )}
 
                 <div className="relative h-full w-full overflow-hidden rounded-lg">
-                  <img
+                  <OptimizedImage
                     src={studio.thumbnail || "/placeholder.svg"}
                     alt={studio.name}
                     className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-110"
