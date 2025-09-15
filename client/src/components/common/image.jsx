@@ -11,6 +11,7 @@ const OptimizedImage = ({
   style = {},
   effect = "blur",
   isFullWidth = true,
+  whileHover,
   ...props
 }) => {
   return (
