@@ -39,7 +39,8 @@ const CouponManagement = lazy(
   () => import("@/features/admin-dashboard/pages/coupon-management/coupon-management"),
 );
 const AddStudio = lazy(
-  () => import("@/features/admin-dashboard/pages/add-studio/add-studio"),
+  () =>
+    import("@/features/admin-dashboard/pages/studio-management/add-studio/add-studio"),
 );
 
 export default function AdminRoute() {

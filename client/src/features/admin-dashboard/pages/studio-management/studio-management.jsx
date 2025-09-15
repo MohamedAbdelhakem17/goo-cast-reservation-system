@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import useGetAllStudios, { DeleteStudio } from "@/apis/studios/studios.api";
 import { AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Alert, Popup, Loading, OptimizedImage } from "@/components/common";
+import { Alert, Popup, Loading } from "@/components/common";
 import { PlusCircle } from "lucide-react";
-import StudioTable from "./studio-table";
+import StudioTable from "./_components/studio-table";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import ResponsiveStudioData from "./responsive-studio-data";
+import ResponsiveStudioData from "./_components/responsive-studio-data";
 
 const StudioManagement = () => {
   const { data: studiosData, isLoading } = useGetAllStudios();
@@ -36,7 +36,7 @@ const StudioManagement = () => {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-lg font-bold text-gray-800 md:text-2xl">Studio Management</h1>
         <Link
-          to="/admin-dashboard/studio-management/add"
+          to="/admin-dashboard/studio/add"
           className="bg-main/80 hover:bg-main rounded-lg px-2 py-1 text-white transition-colors"
         >
           <PlusCircle className="mr-2 inline-block" />

@@ -127,7 +127,6 @@ export default function AddOns() {
 
               <div className="flex flex-grow flex-col px-4 py-1">
                 <h3 className="mb-1 text-lg font-semibold text-gray-900">{addon.name}</h3>
-
                 <p className="flex-grow text-sm text-gray-600">{addon.description}</p>
 
                 <div className="text-md top-6 right-4 flex w-fit items-center justify-center rounded-lg p-1 font-bold">

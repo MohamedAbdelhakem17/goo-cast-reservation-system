@@ -2,7 +2,7 @@ import { useReducer } from "react";
 import { produce } from "immer";
 import { AnimatePresence, motion } from "framer-motion";
 import { DeleteAddOn, GetAllAddOns, UpdateAddOn } from "@/apis/services/services.api";
-import AddNewAddOnModel from "./Add-New-Add-On-Model/AddNewAddOnModel";
+import AddNewAddOnModel from "./add-addons/AddNewAddOnModel";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { Input, Popup, OptimizedImage } from "@/components/common";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
@@ -142,17 +142,7 @@ export default function Addons() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Service Add-ons</h2>
-        <button
-          onClick={handleAdd}
-          className="bg-main hover:bg-opacity-90 rounded-lg px-4 py-2 text-white transition-colors"
-        >
-          Add New Add-on
-        </button>
-      </div>
-
+    <>
       <div className="overflow-x-auto rounded-lg bg-white shadow">
         <table className="min-w-full table-auto">
           <thead className="bg-gray-50">
@@ -336,6 +326,6 @@ export default function Addons() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
