@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useGetSingleAddon } from "@/apis/admin/mange-addons.api";
 import { useEditAddons, useAddNewAddon } from "@/apis/admin/mange-addons.api";
 import { useFormik } from "formik";
-import { addonsValidationSchema, initialAddonValues } from "@/utils/schemas/addon-schema";
+import { addonsValidationSchema, initialAddonValues } from "@/utils/schemas/addon.schema";
 import { motion } from "framer-motion";
 import { TextArea, Input, Button, ErrorFeedback } from "@/components/common";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";

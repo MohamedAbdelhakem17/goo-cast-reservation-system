@@ -25,6 +25,11 @@ const ServiceManagement = lazy(
   () => import("@/features/admin-dashboard/pages/service-management/service-management"),
 );
 
+const AddService = lazy(
+  () =>
+    import("@/features/admin-dashboard/pages/service-management/add-service/add-service"),
+);
+
 const AddonsManagement = lazy(
   () => import("@/features/admin-dashboard/pages/addons-management/addons-management"),
 );
@@ -66,6 +71,7 @@ export default function AdminRoute() {
       <Route path="studio/add" element={<AddStudio />} />
       <Route path="price" element={<PriceManagement />} />
       <Route path="service" element={<ServiceManagement />} />
+      <Route path="service/add" element={<AddService />} />
       <Route path="addons" element={<AddonsManagement />} />
       <Route path="addons/add" element={<AddAddons />} />
       <Route path="booking" element={<BookingManagement />} />
