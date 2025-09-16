@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Popup, Loading, Table, ResponsiveTable } from "@/components/common";
 import useDataFormat from "@/hooks/useDateFormat";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { useChangeBookingStatus } from "@/apis/admin/mange-booking.api";
+import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { CheckCheck, Expand, X } from "lucide-react";

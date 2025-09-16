@@ -1,5 +1,5 @@
 import { Button, Popup } from "@/components/common";
-import { useDeleteAddon } from "@/apis/admin/mange-addons.api";
+import { useDeleteAddon } from "@/apis/admin/manage-addons.api";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useQueryClient } from "@tanstack/react-query";
 

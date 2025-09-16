@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useMangeWorkSpace } from "@/apis/admin/mange-user.api";
+import { useMangeWorkSpace } from "@/apis/admin/manage-user.api";
 
 export default function useUserManageWorkspace(selectedUser) {
   const { mangeWorkSpace, error, isPending, isSuccess } = useMangeWorkSpace();
@@ -19,7 +19,7 @@ export default function useUserManageWorkspace(selectedUser) {
           link: values.link,
           action: selectedUser?.workspace ? "update" : "add",
         },
-        formikHelpers
+        formikHelpers,
       );
     },
   });

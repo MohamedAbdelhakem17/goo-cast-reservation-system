@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Loading } from "@/components/common";
-import { useGetBookings } from "@/apis/admin/mange-booking.api";
+import { useGetBookings } from "@/apis/admin/manage-booking.api";
 import { HeaderAndFilter, Pagination } from "./_components";
 
 import DisplayBookingData from "./_components/display-booking-data";

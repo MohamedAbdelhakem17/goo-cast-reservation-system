@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import ErrorFeedback from "./error-feedback";
+import { Calendar } from "lucide-react";
 
 const Input = ({
   label,
@@ -79,7 +80,7 @@ const Input = ({
             isDateType
               ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
               : ""
-          }`}
+          } ${isArabic && "font-arabic"}`}
           id={id}
           placeholder={isFocused || !label || isDateType ? placeholder : ""}
           value={value}

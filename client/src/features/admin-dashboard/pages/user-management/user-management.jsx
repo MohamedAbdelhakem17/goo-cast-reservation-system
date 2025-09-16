@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Loading, ResponsiveTable } from "@/components/common";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import useUserManageWorkspace from "./_hooks/use-manage-workspace";
-import { useGetAllUser } from "@/apis/admin/mange-user.api";
+import { useGetAllUser } from "@/apis/admin/manage-user.api";
 import { UsersTables, UsersFormModal, UserSearch } from "./_components";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import useDateFormat from "@/hooks/useDateFormat";

@@ -173,10 +173,10 @@ export default function Packages() {
                     />
                     <SelectInput
                       label="Category"
-                      value={current.category.name}
+                      value={current.category?.name?.ar}
                       options={packagesCategories?.data.map((c) => ({
                         value: c._id,
-                        label: c.name,
+                        label: c.name?.ar,
                       }))}
                       onChange={(e) => updateField("category.name", e.target.value)}
                     />
@@ -236,7 +236,7 @@ export default function Packages() {
                     <p className="mb-4 text-sm text-gray-600">{pkg.description}</p>
                     <div className="mb-5 flex flex-wrap items-center justify-evenly gap-4">
                       <span className="bg-main/10 text-main rounded-full px-3 py-1 text-xs font-medium">
-                        {pkg.category.name}
+                        {pkg.category?.name?.ar}
                       </span>
                       <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
                         {formatPrice(pkg.price)}

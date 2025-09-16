@@ -1,7 +1,7 @@
 import { Edit2, Trash } from "lucide-react";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { OptimizedImage, RadioButton } from "@/components/common";
-import { useChangeAddonsStatus } from "@/apis/admin/mange-addons.api";
+import { useChangeAddonsStatus } from "@/apis/admin/manage-addons.api";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";

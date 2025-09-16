@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import FormStepper from "@/features/admin-dashboard/_components/form-steeper";
 import FormNavigationButtons from "@/features/admin-dashboard/_components/form-navigation-buttons";
 import { useState } from "react";
@@ -42,6 +42,30 @@ const STEP_FIELDS = {
   ],
 };
 
+// Container fade animation
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.05,
+    },
+  },
+  exit: { opacity: 0 },
+};
+
+// Child items fade
+const itemVariants = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.2 },
+  },
+  exit: { opacity: 0, y: -5, transition: { duration: 0.15 } },
+};
+
 const FORM_STEPS = ["Add English", "Add Arabic", "Shared"];
 export default function AddService() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -68,8 +92,8 @@ export default function AddService() {
     },
   });
 
-  // const isHasError = hasError(STEP_FIELDS, currentStep, formik);
-  const isHasError = false;
+  const isHasError = hasError(STEP_FIELDS, currentStep, formik);
+  // const isHasError = false;
   const activeStep = {
     0: <EnglishFields formik={formik} />,
     1: <ArabicFields formik={formik} />,
@@ -91,9 +115,31 @@ export default function AddService() {
       <FormStepper steps={FORM_STEPS} currentStep={currentStep} />
 
       {/* Form */}
-      <form onSubmit={formik.handleSubmit}>
-        {/* Current Fields */}
-        {activeStep[currentStep]}
+      <form
+        onSubmit={formik.handleSubmit}
+        className="my-4 rounded-md bg-white px-4 py-10 shadow"
+      >
+        <AnimatePresence mode="wait" custom={currentStep}>
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <motion.div variants={itemVariants} className="rounded-lg">
+                {/* Current Fields */}
+                {activeStep[currentStep]}
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
       </form>
 
       {/* Navigation buttons */}
