@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import Packages from "@/features/admin-dashboard/_components/Admin-Dashboard/Service-Management/Packages/Packages";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -45,7 +44,7 @@ const ServiceManagement = () => {
         {/* Filter and add new addons */}
         <div className="flex w-full flex-col gap-4 md:w-auto md:flex-row md:items-center">
           <Link
-            to="/admin-dashboard/addons/add"
+            to="/admin-dashboard/service/add"
             className="bg-main/80 hover:bg-main mb-6 rounded-lg px-4 py-3 text-white transition-colors"
           >
             <PlusCircle className="mr-2 inline-block" />
