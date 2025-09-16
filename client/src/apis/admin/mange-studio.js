@@ -1,39 +1,74 @@
 import axiosInstance from "@/utils/axios-instance";
 import { useMutation } from "@tanstack/react-query";
 
-const handelAddStudio = async (payload) => {
+function buildStudioFormData(payload, options = {}) {
   const formData = new FormData();
+
+  const {
+    imageFields = ["thumbnail"],
+    galleryField = "imagesGallery",
+    existingGalleryField = "existingImages",
+  } = options;
 
   Object.entries(payload).forEach(([key, value]) => {
     if (value === null || value === undefined) return;
 
-    if (key === "imagesGallery" && Array.isArray(value)) {
-      value.forEach((file) => formData.append("imagesGallery", file));
+    // Handle Gallery
+    if (key === galleryField && Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item instanceof File) {
+          formData.append(galleryField, item);
+        } else if (typeof item === "string") {
+          const imageName = item.split("/").pop();
+          formData.append(`${existingGalleryField}[]`, imageName);
+        }
+      });
       return;
     }
 
-    if (key === "thumbnail" && value) {
-      formData.append("thumbnail", value);
+    // Handle Image Fields (e.g. thumbnail)
+    if (imageFields.includes(key)) {
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else if (typeof value === "string") {
+        const imageName = value.split("/").pop();
+        formData.append(`${key}Url`, imageName);
+      }
       return;
     }
 
+    // Arrays (e.g. equipment[], facilities[])
     if (Array.isArray(value)) {
       value.forEach((item) => formData.append(`${key}[]`, item));
       return;
     }
 
-    if (typeof value === "object" && value !== null) {
+    // Nested Objects
+    if (typeof value === "object") {
       Object.entries(value).forEach(([subKey, subValue]) => {
         formData.append(`${key}[${subKey}]`, subValue);
       });
       return;
     }
 
+    // Default: normal fields
     formData.append(key, value);
   });
 
-  const { data } = await axiosInstance.post(`/studio`, formData);
+  return formData;
+}
 
+const handelAddStudio = async (payload) => {
+  const formData = buildStudioFormData(payload, {
+    imageFields: ["thumbnail"],
+    galleryField: "imagesGallery",
+  });
+
+  const { data } = await axiosInstance.post(`/studio`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return data;
 };
 
@@ -68,59 +103,17 @@ export const useDeleteStudio = () => {
 };
 
 const handelUpdateStudio = async ({ id, payload }) => {
-  const formData = new FormData();
-
-  const basicFields = [
-    "name",
-    "address",
-    "basePricePerSlot",
-    "isFixedHourly",
-    "description",
-    "startTime",
-    "endTime",
-  ];
-
-  basicFields.forEach((key) => {
-    if (data[key] !== undefined) {
-      formData.append(key, payload[key]);
-    }
+  const formData = buildStudioFormData(payload, {
+    imageFields: ["thumbnail"],
+    galleryField: "imagesGallery",
+    existingGalleryField: "existingImages",
   });
 
-  // Thumbnail
-  if (payload.thumbnail instanceof File) {
-    formData.append("thumbnail", payload.thumbnail);
-  } else if (typeof payload.thumbnail === "string") {
-    const thumbnailName = payload.thumbnail.split("/").pop();
-    formData.append("thumbnailUrl", thumbnailName);
-  }
-
-  // Images Gallery
-  if (Array.isArray(payload.imagesGallery)) {
-    payload.imagesGallery.forEach((img) => {
-      if (img instanceof File) {
-        formData.append("imagesGallery", img);
-      } else if (typeof img === "string") {
-        const imageName = img.split("/").pop();
-        formData.append("existingImages[]", imageName);
-      }
-    });
-  }
-
-  // Facilities
-  if (Array.isArray(payload.facilities)) {
-    payload.facilities.forEach((facility) => {
-      formData.append("facilities[]", facility);
-    });
-  }
-
-  // Equipment
-  if (Array.isArray(payload.equipment)) {
-    payload.equipment.forEach((item) => {
-      formData.append("equipment[]", item);
-    });
-  }
-
-  const { data } = await axiosInstance.put(`/studio/${id}`, formData);
+  const { data } = await axiosInstance.put(`/studio/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
   return data;
 };

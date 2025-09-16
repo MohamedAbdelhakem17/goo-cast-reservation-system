@@ -8,7 +8,6 @@ import {
   Reviews,
   EmailSuccessfully,
 } from "./_components";
-import RadioButton from "../../../../components/common/radio-button";
 
 const Home = () => {
   const [showMessage, setShowMessage] = useState(false);
@@ -27,21 +26,6 @@ const Home = () => {
   return (
     <main className="container mx-auto my-5 py-5">
       <Hero />
-      <RadioButton
-        label={"active "}
-        initialValue={true}
-        callback={(value) => {
-          console.log(`status is ${value ? "" : "not "}active now`);
-        }}
-      />
-
-      <RadioButton
-        label={"not active "}
-        initialValue={false}
-        callback={(value) => {
-          console.log(`status is ${value ? "" : "not "}active now`);
-        }}
-      />
       <Packages />
       <BookNow />
       <Studio />

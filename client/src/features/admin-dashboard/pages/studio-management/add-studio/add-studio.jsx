@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect } from "react";
 import { useFormik } from "formik";
 import { Input, TextArea } from "@/components/common";
 import { motion } from "framer-motion";
@@ -20,7 +20,7 @@ export default function AddStudio() {
     onSuccess: (response) => {
       addToast(response.message || "Studio added successfully", "success");
       setTimeout(() => {
-        navigate("/admin-dashboard/studio-management");
+        navigate("/admin-dashboard/studio");
       }, 2000);
     },
     onError: (error) => {

@@ -12,6 +12,12 @@ const Dashboard = lazy(
 const StudioManagement = lazy(
   () => import("@/features/admin-dashboard/pages/studio-management/studio-management"),
 );
+
+const AddStudio = lazy(
+  () =>
+    import("@/features/admin-dashboard/pages/studio-management/add-studio/add-studio"),
+);
+
 const PriceManagement = lazy(
   () => import("@/features/admin-dashboard/pages/price-management/price-management"),
 );
@@ -21,6 +27,11 @@ const ServiceManagement = lazy(
 
 const AddonsManagement = lazy(
   () => import("@/features/admin-dashboard/pages/addons-management/addons-management"),
+);
+
+const AddAddons = lazy(
+  () =>
+    import("@/features/admin-dashboard/pages/addons-management/add-addons/add-addons"),
 );
 // const PageAnalytics = lazy(() =>
 //     import("@/features/admin-dashboard/pages/page-analytics/page-analytics")
@@ -37,10 +48,6 @@ const UserManagement = lazy(
 );
 const CouponManagement = lazy(
   () => import("@/features/admin-dashboard/pages/coupon-management/coupon-management"),
-);
-const AddStudio = lazy(
-  () =>
-    import("@/features/admin-dashboard/pages/studio-management/add-studio/add-studio"),
 );
 
 export default function AdminRoute() {
@@ -60,6 +67,7 @@ export default function AdminRoute() {
       <Route path="price" element={<PriceManagement />} />
       <Route path="service" element={<ServiceManagement />} />
       <Route path="addons" element={<AddonsManagement />} />
+      <Route path="addons/add" element={<AddAddons />} />
       <Route path="booking" element={<BookingManagement />} />
       <Route path="users" element={<UserManagement />} />
       <Route path="coupon" element={<CouponManagement />} />

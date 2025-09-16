@@ -53,6 +53,25 @@ exports.getAllAddOns = asyncHandler(async (req, res, next) => {
   });
 });
 
+// get single addon
+exports.getAddOnById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const addOn = await AddOnModel.findById(id);
+
+  if (!addOn) {
+    return res.status(404).json({
+      status: HTTP_STATUS_TEXT.FAIL,
+      message: "Add-on not found",
+    });
+  }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: addOn,
+  });
+});
+
 exports.createAddOn = asyncHandler(async (req, res, next) => {
   const { name, description, price, image, perHourDiscounts, isFixed } =
     req.body;
