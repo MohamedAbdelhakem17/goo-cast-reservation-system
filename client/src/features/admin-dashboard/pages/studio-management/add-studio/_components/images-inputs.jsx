@@ -40,6 +40,7 @@ export default function ImagesInputs({ form }) {
     const arr = form.values.imagesGallery.filter((_, i) => i !== idx);
     form.setFieldValue("imagesGallery", arr);
   };
+
   useEffect(() => {
     return () => {
       imageUrls.forEach((url) => URL.revokeObjectURL(url));

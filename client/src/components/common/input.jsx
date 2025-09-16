@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ErrorFeedback } from "@/components/common";
-import { Calendar } from "lucide-react";
+import ErrorFeedback from "./error-feedback";
 
 const Input = ({
   label,
@@ -13,7 +12,6 @@ const Input = ({
   errors,
   touched,
   showPasswordToggle,
-  // togglePasswordVisibility,
   isPasswordField = false,
   inputRef,
   onBlur,
@@ -23,19 +21,16 @@ const Input = ({
   const [isFocused, setIsFocused] = useState(false);
   const isDateType = type === "date";
 
+  // ✅ Detect if the value is Arabic
+  const isArabic = /^[\u0600-\u06FF]/.test(value);
+
   return (
     <div className={`relative mb-8 ${className}`}>
-      {/* Floating label */}
       <motion.label
         initial={{ x: 0, opacity: 0.9 }}
         animate={
           isFocused || value
-            ? {
-                x: 0,
-                y: -24,
-                opacity: 1,
-                scale: 0.85,
-              }
+            ? { x: 0, y: -24, opacity: 1, scale: 0.85 }
             : {
                 x: isDateType ? 0 : 12,
                 y: isDateType ? -24 : 0,
@@ -53,7 +48,6 @@ const Input = ({
       </motion.label>
 
       <div className="relative">
-        {/* Background decoration element */}
         <motion.div
           initial={{ height: "2px", opacity: 0.5 }}
           animate={
@@ -66,14 +60,12 @@ const Input = ({
           } rounded-b-md transition-all duration-300`}
         />
 
-        {/* Date input container with icon */}
         {isDateType && (
           <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
             <Calendar className="h-5 w-5 text-gray-400" />
           </div>
         )}
 
-        {/* Actual input field */}
         <input
           ref={inputRef}
           type={isPasswordField && showPasswordToggle ? "text" : type}
@@ -83,7 +75,11 @@ const Input = ({
               : isFocused
                 ? "border-b-[#ed1e26]"
                 : "border-b-gray-300"
-          } ${isDateType ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0" : ""} `}
+          } ${
+            isDateType
+              ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
+              : ""
+          }`}
           id={id}
           placeholder={isFocused || !label || isDateType ? placeholder : ""}
           value={value}
@@ -94,15 +90,10 @@ const Input = ({
           }}
           onFocus={() => setIsFocused(true)}
           disabled={disabled}
+          dir={isArabic ? "rtl" : "ltr"}
         />
-
-        {/* Password toggle button with custom styling */}
-        {/* {isPasswordField && (
-        "password"
-        )} */}
       </div>
 
-      {/* Error message with animation */}
       {errors && touched && <ErrorFeedback>{errors}</ErrorFeedback>}
     </div>
   );

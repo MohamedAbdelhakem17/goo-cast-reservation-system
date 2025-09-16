@@ -3,15 +3,29 @@ const mongoose = require("mongoose");
 
 const AddOnSchema = new mongoose.Schema({
   name: {
-    type: String,
-    required: [true, "Please provide a name"],
-    trim: true,
+    ar: {
+      type: String,
+      required: [true, "Please provide the Arabic name"],
+      trim: true,
+    },
+    en: {
+      type: String,
+      required: [true, "Please provide the English name"],
+      trim: true,
+    },
   },
 
   description: {
-    type: String,
-    required: [true, "Please provide a description"],
-    trim: true,
+    ar: {
+      type: String,
+      required: [true, "Please provide the Arabic description"],
+      trim: true,
+    },
+    en: {
+      type: String,
+      required: [true, "Please provide the English description"],
+      trim: true,
+    },
   },
 
   price: {
@@ -31,8 +45,6 @@ const AddOnSchema = new mongoose.Schema({
     required: true,
     default: true,
   },
-
-  // icon: String,
 });
 
 function setImage(doc) {

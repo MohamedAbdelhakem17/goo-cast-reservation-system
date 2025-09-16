@@ -20,6 +20,7 @@ router
 
 router
   .route("/:id")
+  .get(addOnController.getAddOnById)
   .put(
     addOnController.addonsImageUpload,
     addOnController.addonsImageManipulation,

@@ -13,3 +13,4 @@ export { default as Button } from "./button";
 export { default as ResponsiveTable } from "./responsive-table";
 export { default as OptimizedImage } from "./image";
 export { default as RadioButton } from "./radio-button";
+export { default as EmptyState } from "./empty-state";
