@@ -4,9 +4,16 @@ const slugify = require("slugify");
 const categorySchema = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: [true, "Please provide a name"],
-      trim: true,
+      ar: {
+        type: String,
+        required: [true, "Please provide a name"],
+        trim: true,
+      },
+      en: {
+        type: String,
+        required: [true, "Please provide a name"],
+        trim: true,
+      },
     },
     slug: {
       type: String,
@@ -29,7 +36,7 @@ const categorySchema = new mongoose.Schema(
 
 categorySchema.pre("save", function (next) {
   if (this.isModified("name")) {
-    this.slug = slugify(this.name, { lower: true });
+    this.slug = slugify(this.name?.en, { lower: true });
   }
 
   next();

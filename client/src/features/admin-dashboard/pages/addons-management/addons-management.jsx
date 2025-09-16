@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { PlusCircle } from "lucide-react";
 import { SelectInput, Loading, ErrorFeedback, EmptyState } from "@/components/common";
 import { lazy, useEffect, useState } from "react";
-import { useGetAddons } from "@/apis/admin/mange-addons.api";
+import { useGetAddons } from "@/apis/admin/manage-addons.api";
 
 import { AnimatePresence } from "framer-motion";
 import AddonCart from "./_components/addon-card";

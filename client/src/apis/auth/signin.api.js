@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { API_BASE_URL } from "@/constants/config";
 import { useAuth } from "../../context/Auth-Context/AuthContext";
+import axiosInstance from "../../utils/axios-instance";
 
 const useSigninForm = (onSuccessCallback) => {
   const { dispatch } = useAuth();
@@ -14,7 +15,7 @@ const useSigninForm = (onSuccessCallback) => {
     error,
   } = useMutation({
     mutationFn: async (data) => {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, data);
+      const response = await axiosInstance.post(`/auth/login`, data);
 
       return response.data.data;
     },
@@ -38,7 +39,7 @@ const useSigninForm = (onSuccessCallback) => {
         .email("Please enter a valid email address")
         .required("Email is required to sign in"),
       password: Yup.string().required(
-        "Password cannot be empty. Please enter your password"
+        "Password cannot be empty. Please enter your password",
       ),
     }),
     onSubmit: (values) => {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useGetSingleAddon } from "@/apis/admin/mange-addons.api";
-import { useEditAddons, useAddNewAddon } from "@/apis/admin/mange-addons.api";
+import { useGetSingleAddon } from "@/apis/admin/manage-addons.api";
+import { useEditAddons, useAddNewAddon } from "@/apis/admin/manage-addons.api";
 import { useFormik } from "formik";
 import { addonsValidationSchema, initialAddonValues } from "@/utils/schemas/addon.schema";
 import { motion } from "framer-motion";
