@@ -63,7 +63,7 @@ export default function FormStepper({ steps, currentStep }) {
           <div className="h-1.5 w-full rounded-full bg-gray-200">
             <div
               className="h-1.5 rounded-full bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] transition-all duration-500 ease-out"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              style={{ width: `${(currentStep / (totalSteps - 1)) * 100}%` }}
             />
           </div>
         </div>
