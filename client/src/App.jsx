@@ -5,6 +5,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import AppRouter from "@/router/router";
 import AuthProvider from "./context/Auth-Context/AuthContext";
 import { ToastProvider } from "./context/Toaster-Context/ToasterContext";
+import { LocalizationProvider } from "./context/localization-provider/localization-provider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,18 +32,19 @@ const queryClient = new QueryClient({
 });
 
 export default function App() {
-
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
-          {/* <TrackPageView /> */}
-          <ToastProvider>
-            <AppRouter />
-          </ToastProvider>
-        </Router>
-      </AuthProvider>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <LocalizationProvider>
+        <AuthProvider>
+          <Router>
+            {/* <TrackPageView /> */}
+            <ToastProvider>
+              <AppRouter />
+            </ToastProvider>
+          </Router>
+        </AuthProvider>
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      </LocalizationProvider>
     </QueryClientProvider>
   );
 }

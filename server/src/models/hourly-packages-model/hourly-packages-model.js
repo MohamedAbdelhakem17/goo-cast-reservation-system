@@ -3,21 +3,42 @@ const mongoose = require("mongoose");
 const HourlyPackageSchema = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: [true, "Please provide a name"],
-      trim: true,
+      ar: {
+        type: String,
+        required: [true, "Please provide a name"],
+        trim: true,
+      },
+      en: {
+        type: String,
+        required: [true, "Please provide a name"],
+        trim: true,
+      },
     },
 
     target_audience: {
-      type: [String],
-      required: [true, "Please provide details"],
-      set: (arr) => arr.map((s) => s.trim()),
+      ar: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+      en: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
     },
 
     description: {
-      type: String,
-      required: [true, "Please provide a description"],
-      trim: true,
+      ar: {
+        type: String,
+        required: [true, "Please provide a description"],
+        trim: true,
+      },
+      en: {
+        type: String,
+        required: [true, "Please provide a description"],
+        trim: true,
+      },
     },
 
     category: {
@@ -27,15 +48,29 @@ const HourlyPackageSchema = new mongoose.Schema(
     },
 
     details: {
-      type: [String],
-      required: [true, "Please provide details"],
-      set: (arr) => arr.map((s) => s.trim()),
+      ar: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+      en: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
     },
 
     post_session_benefits: {
-      type: [String],
-      required: [true, "Please provide details"],
-      set: (arr) => arr.map((s) => s.trim()),
+      ar: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+      en: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
     },
 
     icon: String,

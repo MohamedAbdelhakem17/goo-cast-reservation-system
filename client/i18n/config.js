@@ -1,16 +1,18 @@
-import il8n from "i18next";
+import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import en from "./messages/en.json";
+import ar from "./messages/ar.json";
 
-il8n.use(initReactI18next).init({
-  fallback: "en",
-  lang: "en",
+i18n.use(initReactI18next).init({
+  fallbackLng: "en",
+  lng: "en",
 
   resources: {
     en: {
-      translations: requestAnimationFrame("./messages/en.json"),
+      translations: en,
     },
     ar: {
-      translations: requestAnimationFrame("./messages/ar.json"),
+      translations: ar,
     },
   },
 
@@ -18,6 +20,4 @@ il8n.use(initReactI18next).init({
   defaultNS: "translations",
 });
 
-il8n.languages = ["en", "ar"];
-
-export default il8n;
+export default i18n;

@@ -4,10 +4,18 @@ const slugify = require("slugify");
 const studioSchema = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: [true, "Please provide a name"],
-      trim: true,
-      maxLength: [50, "Name must be less than 50 characters"],
+      ar: {
+        type: String,
+        required: [true, "Please provide a name"],
+        trim: true,
+        maxLength: [50, "Name must be less than 50 characters"],
+      },
+      en: {
+        type: String,
+        required: [true, "Please provide a name"],
+        trim: true,
+        maxLength: [50, "Name must be less than 50 characters"],
+      },
     },
 
     slug: {
@@ -21,10 +29,18 @@ const studioSchema = new mongoose.Schema(
     },
 
     address: {
-      type: String,
-      required: [true, "Please provide an address"],
-      trim: true,
-      maxLength: [100, "Address must be less than 100 characters"],
+      ar: {
+        type: String,
+        required: [true, "Please provide an address"],
+        trim: true,
+        maxLength: [100, "Address must be less than 100 characters"],
+      },
+      en: {
+        type: String,
+        required: [true, "Please provide an address"],
+        trim: true,
+        maxLength: [100, "Address must be less than 100 characters"],
+      },
     },
 
     basePricePerSlot: {

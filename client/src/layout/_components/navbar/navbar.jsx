@@ -12,11 +12,18 @@ import {
   MobileMenu,
   UserProfile,
 } from "./_components";
-import { PUBLIC_ROUTES } from "@/constants/routes";
 import navLinkClasses from "./_assets/nav-link-classes";
 import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { LanguageSwitcher } from "@/components/common";
+import { usePublicRoutes } from "@/constants/routes";
 
 export default function Navbar() {
+  // Localization
+  const { changeLanguage, lng } = useLocalization();
+
+  const PUBLIC_ROUTES = usePublicRoutes();
+
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated } = useAuth();
 
@@ -76,10 +83,13 @@ export default function Navbar() {
           </ul>
 
           {/* Buttons or Profile */}
-          {!isAuthenticated ? <AuthButtons /> : <UserProfile />}
-
-          {/* Mobile Toggle */}
-          <MobileToggle />
+          <div className="flex items-center gap-2">
+            {!isAuthenticated ? <AuthButtons /> : <UserProfile />}
+            {/* Language Switcher */}
+            <LanguageSwitcher lng={lng} changeLanguage={changeLanguage} />
+            {/* Mobile Toggle */}
+            <MobileToggle />
+          </div>
         </motion.div>
 
         {/* Mobile Menu */}

@@ -1,16 +1,12 @@
-import React from "react";
-import { GetPackagesByCategory } from "@/apis/services/services.api";
-import { useEffect } from "react";
+import { GetAllPackages } from "@/apis/services/services.api";
 import { Check, Video, Mic, Clock, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function PackagesSection() {
-  const { mutate: getPackages, data: packages } = GetPackagesByCategory();
-
-  useEffect(() => {
-    getPackages({ category: "681c913473e625151f4f075d" });
-  }, [getPackages]);
+  const { t, lng } = useLocalization();
+  const { data: packages } = GetAllPackages();
 
   const getIcon = (iconType) => {
     switch (iconType) {
@@ -76,20 +72,23 @@ export default function PackagesSection() {
       {/* Header */}
       <div className="relative mb-12 flex flex-col items-center text-center">
         <span className="text-main mb-2 text-sm font-medium tracking-widest uppercase">
-          Packages
+          {t("packages")}
         </span>
         <h2 className="text-main mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-          Our Packages
+          {t("our-packages")}
         </h2>
         <div className="mb-4 h-1.5 w-24 rounded-full bg-gradient-to-r from-rose-300 to-rose-500"></div>
         <p className="max-w-lg text-sm text-gray-600 md:text-base">
-          Choose from a variety of packages tailored to fit your creative needs and
-          budget.
+          {t(
+            "choose-from-a-variety-of-packages-tailored-to-fit-your-creative-needs-and-budget",
+          )}
         </p>
       </div>
 
       {packages?.data?.length === 0 ? (
-        <p className="text-center text-gray-500">No packages available at the moment.</p>
+        <p className="text-center text-gray-500">
+          {t("no-packages-available-at-the-moment")}
+        </p>
       ) : (
         <div className="container mx-auto px-4 py-8">
           <motion.div
@@ -117,8 +116,8 @@ export default function PackagesSection() {
                   >
                     <OptimizedImage
                       src={packageItem.image || "/placeholder.svg"}
-                      alt={packageItem.name}
-                      className="h-full w-full object-contain"
+                      alt={packageItem.name?.[lng]}
+                      className="h-full w-full object-cover"
                     />
                   </motion.div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -141,7 +140,7 @@ export default function PackagesSection() {
                   >
                     <div className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
                       <Clock className="mr-1 h-3 w-3" />
-                      {packageItem.session_type}
+                      {packageItem.session_type?.[lng]}
                     </div>
                   </motion.div>
                 </div>
@@ -156,15 +155,16 @@ export default function PackagesSection() {
                     transition={{ delay: 0.4 + index * 0.1 }}
                   >
                     <h3 className="mb-2 line-clamp-2 text-xl font-bold text-gray-900">
-                      {packageItem.name}
+                      {packageItem.name?.[lng]}
                     </h3>
                     <p className="mb-3 line-clamp-2 text-sm text-gray-600">
-                      {packageItem.description}
+                      {packageItem.description?.[lng]}
+                      {packageItem.category?.name?.[lng]}
                     </p>
 
                     {/* Target Audience */}
                     <div className="flex flex-wrap gap-2">
-                      {packageItem.target_audience.map((audience, idx) => (
+                      {packageItem.target_audience?.[lng].map((audience, idx) => (
                         <motion.span
                           key={idx}
                           initial={{ opacity: 0, scale: 0.8 }}
@@ -173,7 +173,7 @@ export default function PackagesSection() {
                           whileHover={{ scale: 1.05 }}
                           className="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700"
                         >
-                          <Users className="mr-1 h-3 w-3" />
+                          <Users className="me-1 h-3 w-3" />
                           {audience}
                         </motion.span>
                       ))}
@@ -188,10 +188,10 @@ export default function PackagesSection() {
                     transition={{ delay: 0.6 + index * 0.1 }}
                   >
                     <h4 className="mb-2 text-sm font-semibold text-gray-900">
-                      {"What's Included:"}
+                      {t("whats-included")}:
                     </h4>
                     <ul className="space-y-2">
-                      {packageItem.details.map((detail, idx) => (
+                      {packageItem.details?.[lng].map((detail, idx) => (
                         <motion.li
                           key={idx}
                           initial={{ opacity: 0, x: -20 }}
@@ -213,10 +213,10 @@ export default function PackagesSection() {
                     transition={{ delay: 0.8 + index * 0.1 }}
                   >
                     <h4 className="mb-2 text-sm font-semibold text-gray-900">
-                      After Your Session:
+                      {t("after-your-session")}:
                     </h4>
                     <ul className="space-y-2">
-                      {packageItem.post_session_benefits.map((benefit, idx) => (
+                      {packageItem.post_session_benefits?.[lng].map((benefit, idx) => (
                         <motion.li
                           key={idx}
                           initial={{ opacity: 0, x: -20 }}

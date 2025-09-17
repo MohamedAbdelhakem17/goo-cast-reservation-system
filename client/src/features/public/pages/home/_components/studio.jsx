@@ -5,6 +5,7 @@ import StarRating from "@/hooks/useRate";
 import useGetAllStudios from "@/apis/studios/studios.api";
 // import usePriceFormat from "../../../hooks/usePriceFormat";
 import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 export default function Studio() {
   // const priceFormat = usePriceFormat()
   // Animation variants for staggered animations
@@ -57,6 +58,7 @@ export default function Studio() {
 
   // Sample studio data
   const { data: studiosData, isLoading } = useGetAllStudios();
+  const { t, lng } = useLocalization();
 
   const textVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -105,15 +107,16 @@ export default function Studio() {
 
       <div className="relative mb-12 flex flex-col items-center">
         <span className="text-main mb-2 text-sm font-medium tracking-widest uppercase">
-          Setups
+          {t("setups")}
         </span>
         <h2 className="text-main mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-          Our Setups
+          {t("our-setups")}
         </h2>
         <div className="mb-4 h-1.5 w-24 rounded-full bg-gradient-to-r from-rose-300 to-rose-500"></div>
         <p className="max-w-lg text-center text-sm text-gray-600 md:text-base">
-          Explore our beautifully designed setups equipped with the latest gear to make
-          your shoot perfect.
+          {t(
+            "explore-our-beautifully-designed-setups-equipped-with-the-latest-gear-to-make-your-shoot-perfect",
+          )}
         </p>
       </div>
 
@@ -144,7 +147,7 @@ export default function Studio() {
             >
               <OptimizedImage
                 src={studio.thumbnail || "/placeholder.svg"}
-                alt={studio.name}
+                alt={studio.name?.[lng]}
                 className="h-full w-full object-cover"
               />
 
@@ -155,7 +158,7 @@ export default function Studio() {
               >
                 <div className="px-8 py-4 text-white">
                   <Link to={`/setups/${studio.slug}`} className="font-bold">
-                    View Details
+                    {t("view-details")}
                   </Link>
                 </div>
               </motion.div>
@@ -165,12 +168,14 @@ export default function Studio() {
             <div className="flex flex-grow flex-col justify-between p-4">
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-gray-800">{studio.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {studio.name?.[lng]}
+                  </h3>
                 </div>
 
                 <p className="mt-2 flex items-center gap-2 text-gray-600">
                   <i className="fa-solid fa-location-dot text-main"></i>
-                  <span className="text-lg">{studio.address}</span>
+                  <span className="text-lg">{studio.address?.[lng]}</span>
                 </p>
               </div>
 
