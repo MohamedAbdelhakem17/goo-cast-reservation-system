@@ -6,8 +6,10 @@ import { tracking } from "@/utils/gtm";
 import { Loading, ErrorFeedback, OptimizedImage } from "@/components/common";
 import ImagePreviewModal from "./_components/image-preview-modal";
 import { useGetStudio } from "@/apis/public/studio.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function SelectStudio() {
+  const { t, lng } = useLocalization();
   const { setBookingField, bookingData, handleNextStep } = useBooking();
   const [selectedStudio, setSelectedStudio] = useState(bookingData?.studio?.id || null);
 
@@ -64,8 +66,8 @@ export default function SelectStudio() {
     <div className="space-y-6">
       <>
         <BookingLabel
-          title="Choose Your Studio"
-          desc="Select the studio that best fits your needs"
+          title={t("choose-your-studio")}
+          desc={t("select-the-studio-that-best-fits-your-needs")}
         />
 
         <div className="flex scale-90 flex-wrap justify-around gap-3">
@@ -83,10 +85,10 @@ export default function SelectStudio() {
               onClick={() => {
                 selectStudio({
                   id: studio._id,
-                  name: studio.name,
+                  name: studio.name?.en,
                   image: studio.thumbnail,
                 });
-                tracking("add_to_cart", { studio_name: studio.name });
+                tracking("add_to_cart", { studio_name: studio.name?.en });
               }}
             >
               {/* Image with Click Indicator */}
@@ -104,7 +106,7 @@ export default function SelectStudio() {
                 <div className="relative h-full w-full overflow-hidden rounded-lg">
                   <OptimizedImage
                     src={studio.thumbnail || "/placeholder.svg"}
-                    alt={studio.name}
+                    alt={studio.name?.[lng]}
                     className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-110"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -153,7 +155,7 @@ export default function SelectStudio() {
                               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
                             />
                           </svg>
-                          <span className="text-sm font-medium">View Gallery</span>
+                          <span className="text-sm font-medium">{t("view-gallery")}</span>
                         </motion.div>
                       </motion.div>
                     )}
@@ -180,7 +182,7 @@ export default function SelectStudio() {
 
               {/* Info */}
               <div className="p-5">
-                <h3 className="text-xl font-bold text-gray-800">{studio.name}</h3>
+                <h3 className="text-xl font-bold text-gray-800">{studio.name?.[lng]}</h3>
                 <ul className="mt-3 text-gray-600">
                   <li className="flex items-start text-sm">
                     <span
@@ -190,7 +192,7 @@ export default function SelectStudio() {
                     >
                       •
                     </span>
-                    {studio.recording_seats} Recording Seats
+                    {studio.recording_seats} {t("recording-seats")}
                   </li>
                   <li className="flex items-start text-sm">
                     <span
@@ -200,7 +202,7 @@ export default function SelectStudio() {
                     >
                       •
                     </span>
-                    {studio.address}
+                    {studio.address?.[lng]}
                   </li>
                 </ul>
                 <ul className="mb-4 space-y-2">
@@ -228,7 +230,7 @@ export default function SelectStudio() {
                     onClick={() => {
                       selectStudio({
                         id: studio._id,
-                        name: studio.name,
+                        name: studio.name?.[lng],
                         image: studio.thumbnail,
                       });
                       handleNextStep();
@@ -239,7 +241,7 @@ export default function SelectStudio() {
                         : "border-2 border-gray-200 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
-                    {selectedStudio === studio._id ? "Selected" : "Select"}
+                    {selectedStudio === studio._id ? t("selected-0") : t("select")}
                   </motion.button>
                 </div>
               </div>

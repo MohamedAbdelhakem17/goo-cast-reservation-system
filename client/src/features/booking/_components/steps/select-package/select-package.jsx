@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { GetPackagesByCategory } from "@/apis/services/services.api";
+import { GetAllPackages } from "@/apis/services/services.api";
 import { tracking } from "@/utils/gtm";
 import BookingLabel from "../../booking-label";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { Check } from "lucide-react";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 // Animation
 const containerVariants = {
@@ -26,37 +27,30 @@ const cardVariants = {
 };
 
 export default function SelectPackage() {
+  const { t, lng } = useLocalization();
   // Hooks
   const priceFormat = usePriceFormat();
-  const {
-    setBookingField,
-    handleNextStep,
-    bookingData,
-  } = useBooking();
-  
-  //  State 
+  const { setBookingField, handleNextStep, bookingData } = useBooking();
+
+  //  State
   const [selectedPackage, setSelectedPackage] = useState(
-    bookingData.selectedPackage?.id || null
+    bookingData.selectedPackage?.id || null,
   );
 
   // Mutation
-  const { mutate: getPackages, data: packages } = GetPackagesByCategory();
-
-  useEffect(() => {
-    getPackages({ category: "681c913473e625151f4f075d" });
-  }, [getPackages]);
+  const { data: packages } = GetAllPackages();
 
   const handlePackageSelect = (pkg) => {
     setSelectedPackage(pkg._id);
     setBookingField("selectedPackage", {
       id: pkg._id,
-      name: pkg.name,
+      name: pkg.name?.en,
       category: pkg.category._id,
       slug: pkg.category.slug,
       price: pkg.price,
     });
 
-    tracking("add_to_cart", { package_name: pkg.name, price: pkg.price });
+    tracking("add_to_cart", { package_name: pkg.name?.[lng], price: pkg.price });
     setBookingField("startSlot", null);
     setBookingField("endSlot", null);
     setBookingField("studio", null);
@@ -66,13 +60,13 @@ export default function SelectPackage() {
     <>
       {/* Header */}
       <BookingLabel
-        title="Choose Your Service"
-        desc="Select the type of recording session you need"
+        title={t("choose-your-service")}
+        desc={t("select-the-type-of-recording-session-you-need")}
       />
 
       {/* Packages */}
       <motion.div
-        className="flex flex-wrap justify-center gap-2 px-8 lg:px-0  lg:justify-around scale-90"
+        className="flex scale-90 flex-wrap justify-center gap-2 px-8 lg:justify-around lg:px-0"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -85,36 +79,36 @@ export default function SelectPackage() {
               variants={cardVariants}
               whileHover={{ y: -5 }}
               onClick={() => handlePackageSelect(pkg)}
-              className="cursor-pointer w-full md:w-[40%]"
+              className="w-full cursor-pointer md:w-[40%]"
             >
               <div
-                className={`flex flex-col rounded-xl h-full py-3 border-1 overflow-hidden transition-colors duration-300
-            ${isActive
-                    ? "border-main border-2 shadow-sm shadow-main/20"
-                    : "border-gray-100  border-1 shadow-sm  "
-                  }`}
+                className={`flex h-full flex-col overflow-hidden rounded-xl border-1 py-3 transition-colors duration-300 ${
+                  isActive
+                    ? "border-main shadow-main/20 border-2 shadow-sm"
+                    : "border-1 border-gray-100 shadow-sm"
+                }`}
               >
                 {/* Card Header */}
                 <div className="flex flex-col items-center gap-2">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${isActive
-                      ? "bg-[#FF3B30] text-white"
-                      : "bg-gray-100 text-gray-600"
-                      }`}
+                    className={`mb-2 flex h-12 w-12 items-center justify-center rounded-full ${
+                      isActive ? "bg-[#FF3B30] text-white" : "bg-gray-100 text-gray-600"
+                    }`}
                   >
                     <i className={`fa-solid fa-${pkg.icon}`}></i>
                   </div>
-                  <h5 className="text-2xl font-bold text-center">
-                    {pkg.session_type}
+                  <h5 className="text-center text-2xl font-bold">
+                    {pkg.session_type?.[lng]}
                   </h5>
                 </div>
 
                 <div
-                  className={`text-3xl font-bold text-center ${isActive ? "text-main" : "text-gray-900"
-                    } p-2`}
+                  className={`text-center text-3xl font-bold ${
+                    isActive ? "text-main" : "text-gray-900"
+                  } p-2`}
                 >
                   {priceFormat(pkg.price)}
-                  <span className="inline-block my-1 text-sm font-normal text-gray-600">
+                  <span className="my-1 inline-block text-sm font-normal text-gray-600">
                     /hour
                   </span>
                 </div>
@@ -128,8 +122,8 @@ export default function SelectPackage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 + index * 0.1 }}
                   >
-                    <p className="text-gray-600 text-sm line-clamp-2 mb-3 text-center">
-                      {pkg.description}
+                    <p className="mb-3 line-clamp-2 text-center text-sm text-gray-600">
+                      {pkg.description?.[lng]}
                     </p>
                   </motion.div>
 
@@ -140,11 +134,11 @@ export default function SelectPackage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 + index * 0.1 }}
                   >
-                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">
+                    <h4 className="mb-2 text-sm font-semibold text-gray-900">
                       {"What's Included:"}
                     </h4>
                     <ul className="space-y-2">
-                      {pkg.details.map((detail, idx) => (
+                      {pkg.details?.[lng].map((detail, idx) => (
                         <motion.li
                           key={idx}
                           initial={{ opacity: 0, x: -20 }}
@@ -152,7 +146,7 @@ export default function SelectPackage() {
                           transition={{ delay: 0.7 + idx * 0.1 }}
                           className="flex items-start gap-2 text-sm text-gray-600"
                         >
-                          <Check className="w-4 h-4 text-main mt-0.5 flex-shrink-0" />
+                          <Check className="text-main mt-0.5 h-4 w-4 flex-shrink-0" />
                           <span>{detail}</span>
                         </motion.li>
                       ))}
@@ -165,11 +159,11 @@ export default function SelectPackage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 + index * 0.1 }}
                   >
-                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">
+                    <h4 className="mb-2 text-sm font-semibold text-gray-900">
                       After Your Session:
                     </h4>
                     <ul className="space-y-2">
-                      {pkg.post_session_benefits.map((benefit, idx) => (
+                      {pkg.post_session_benefits?.[lng].map((benefit, idx) => (
                         <motion.li
                           key={idx}
                           initial={{ opacity: 0, x: -20 }}
@@ -177,7 +171,7 @@ export default function SelectPackage() {
                           transition={{ delay: 0.9 + idx * 0.1 }}
                           className="flex items-start gap-2 text-sm text-gray-600"
                         >
-                          <Check className="w-4 h-4 text-main mt-0.5 flex-shrink-0" />
+                          <Check className="text-main mt-0.5 h-4 w-4 flex-shrink-0" />
                           <span>{benefit}</span>
                         </motion.li>
                       ))}
@@ -190,19 +184,19 @@ export default function SelectPackage() {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className={`w-full py-2 px-4
-                rounded-lg mx-auto text-md font-semibold flex items-center justify-center ${isActive
+                    className={`text-md mx-auto flex w-full items-center justify-center rounded-lg px-4 py-2 font-semibold ${
+                      isActive
                         ? "bg-main text-white"
-                        : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
-                      }`}
+                        : "border-2 border-gray-200 text-gray-700 hover:bg-gray-200"
+                    }`}
                     onClick={() => {
                       handlePackageSelect(pkg);
                       handleNextStep();
                     }}
                   >
                     {selectedPackage === pkg._id
-                      ? "Selected"
-                      : "Select & Continue"}
+                      ? t("selected")
+                      : t("select-and-continue")}
                   </motion.button>
                 </div>
               </div>
