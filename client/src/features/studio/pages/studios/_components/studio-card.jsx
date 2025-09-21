@@ -2,8 +2,10 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 
-export default function StudioCard({ studio }) {
+export default function StudioCard({ studio, key }) {
+  const { t, lng } = useLocalization();
   const [scrollDir, setScrollDir] = useState("down");
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export default function StudioCard({ studio }) {
 
   return (
     <motion.div
-      key={studio._id}
+      key={key}
       className="overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-xl"
       whileHover={{
         y: -5,
@@ -58,7 +60,7 @@ export default function StudioCard({ studio }) {
           >
             <OptimizedImage
               src={studio.thumbnail}
-              alt={studio.name}
+              alt={studio.name?.[lng]}
               className="h-full w-full object-cover"
             />
           </motion.div>
@@ -73,7 +75,7 @@ export default function StudioCard({ studio }) {
                 to={`/setups/${studio.slug}`}
                 className="flex items-center gap-2 text-xl font-semibold"
               >
-                <span>View Details</span>
+                <span>{t("view-details-0")}</span>
               </Link>
             </div>
           </motion.div>
@@ -83,10 +85,12 @@ export default function StudioCard({ studio }) {
         <div className="flex-1 p-6">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="mb-2 text-2xl font-semibold text-gray-800">{studio.name}</h3>
+              <h3 className="mb-2 text-2xl font-semibold text-gray-800">
+                {studio.name?.[lng]}
+              </h3>
               <p className="mb-3 flex items-center gap-2 text-gray-600">
                 <i className="fa-solid fa-location-dot text-rose-500"></i>
-                <span>{studio.address}</span>
+                <span>{studio.address?.[lng]}</span>
               </p>
             </div>
           </div>

@@ -10,19 +10,21 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useBookingFormik from "../Booking-Formik/useBookingFormik";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 const BookingContext = createContext();
 
 export const useBooking = () => useContext(BookingContext);
 
 export default function BookingProvider({ children }) {
+  const { t } = useLocalization();
   // Constants
   const STEP_LABELS = [
-    "Select Service",
-    "Select Studio",
-    "Date & Time",
-    "Additional Services",
-    "Payment Info",
+    t("select-service"),
+    t("select-studio"),
+    t("date-and-time"),
+    t("additional-services"),
+    t("payment-info"),
   ];
   const TOTAL_STEPS = STEP_LABELS.length;
   const STEP_FIELDS = {
@@ -51,11 +53,7 @@ export default function BookingProvider({ children }) {
   const [currentStep, setCurrentStep] = useState(() => {
     const storedStep = localStorage.getItem("bookingStep");
     const parsedStep = parseInt(storedStep);
-    if (
-      Number.isInteger(parsedStep) &&
-      parsedStep >= 1 &&
-      parsedStep <= TOTAL_STEPS
-    ) {
+    if (Number.isInteger(parsedStep) && parsedStep >= 1 && parsedStep <= TOTAL_STEPS) {
       return parsedStep;
     }
     return step;
@@ -175,7 +173,6 @@ export default function BookingProvider({ children }) {
     setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
   }, []);
 
-
   // Reset all data
   const resetBooking = () => {
     localStorage.removeItem("bookingData");
@@ -199,7 +196,6 @@ export default function BookingProvider({ children }) {
   const handleBookingSubmit = async (...args) => {
     await formik.handleSubmit(...args);
   };
-
 
   // Context value
   const bookingContextValue = {

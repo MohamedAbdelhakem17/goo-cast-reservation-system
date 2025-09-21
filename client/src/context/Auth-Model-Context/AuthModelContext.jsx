@@ -12,13 +12,10 @@ export default function AuthModelProvider({ children }) {
   const toggleSignin = () => setIsSigninOpen((prev) => !prev);
   const toggleSignup = () => setIsSignupOpen((prev) => !prev);
 
-  const BUTTON_ACTIONS = useMemo(
-    () => [
-      { name: t("login"), action: toggleSignin },
-      { name: t("sign-up"), action: toggleSignup },
-    ],
-    [],
-  );
+  const BUTTON_ACTIONS = [
+    { name: t("login"), action: toggleSignin },
+    { name: t("sign-up"), action: toggleSignup },
+  ];
 
   const value = useMemo(
     () => ({

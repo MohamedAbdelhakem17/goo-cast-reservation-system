@@ -2,8 +2,10 @@ import { Shield, Star, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { logo } from "@/assets/images";
 import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function BookingHeader() {
+  const { t } = useLocalization();
   return (
     <div className="sticky top-0 z-[500] border-b border-gray-200 bg-white">
       <div className="mx-auto w-full px-4 py-4 lg:max-w-6xl lg:px-8">
@@ -15,23 +17,23 @@ export default function BookingHeader() {
               </Link>
             </h1>
             <p className="mt-1 text-sm text-gray-600 md:text-base">
-              Easy podcasting for everyone
+              {t("easy-podcasting-for-everyone")}
             </p>
           </div>
 
           {/* Trust Indicators */}
           <div className="hidden items-center space-x-6 text-sm text-gray-600 md:flex">
             <div className="flex items-center">
-              <Users className="mr-1 h-4 w-4" />
-              <span>500+ Sessions</span>
+              <Users className="me-1 h-4 w-4" />
+              <span>{t("500-sessions")}</span>
             </div>
             <div className="flex items-center">
-              <Star className="mr-1 h-4 w-4 text-yellow-500" />
-              <span>4.9 Rating</span>
+              <Star className="me-1 h-4 w-4 text-yellow-500" />
+              <span>{t("4-9-rating")}</span>
             </div>
             <div className="flex items-center">
-              <Shield className="mr-1 h-4 w-4 text-green-600" />
-              <span>Secure</span>
+              <Shield className="me-1 h-4 w-4 text-green-600" />
+              <span>{t("secure")}</span>
             </div>
           </div>
         </div>
