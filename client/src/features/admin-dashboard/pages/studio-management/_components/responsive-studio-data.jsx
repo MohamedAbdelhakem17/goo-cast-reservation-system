@@ -11,11 +11,11 @@ export default function ResponsiveStudioData({ studiosData, setSelectedStudio })
       {studiosData?.data.map((studio) => (
         <ResponsiveTable
           key={studio._id}
-          title={studio.name}
+          title={studio.name?.ar}
           subtitle={
             <OptimizedImage
               src={studio.thumbnail}
-              alt={studio.name}
+              alt={studio.name?.ar}
               className="size-24 rounded-lg object-cover"
             />
           }

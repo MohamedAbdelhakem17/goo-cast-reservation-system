@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Input, Button, ErrorFeedback } from "@/components/common";
 import signinForm from "@/apis/auth/signin.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 const Signin = ({ closeModal, changeForm }) => {
+  const { t } = useLocalization();
   const inputRef = useRef(null);
   const { formik, error, isPending } = signinForm(closeModal);
   const [showPassword, setShowPassword] = useState(false);
@@ -27,12 +29,12 @@ const Signin = ({ closeModal, changeForm }) => {
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Close Modal */}
-      <div className="p-2 my-2 w-full bg-white/80 rounded-t-2xl flex justify-center">
+      <div className="my-2 flex w-full justify-center rounded-t-2xl bg-white/80 p-2">
         <motion.i
           onClick={closeModal}
           whileTap={{ scale: 0.9, shadow: "0px 0px 15px rgba(0,0,0,0.3)" }}
           whileHover={{ scale: 1.1 }}
-          className="fa-solid fa-circle-xmark text-main text-3xl cursor-pointer"
+          className="fa-solid fa-circle-xmark text-main cursor-pointer text-3xl"
         />
       </div>
 
@@ -44,8 +46,8 @@ const Signin = ({ closeModal, changeForm }) => {
         transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* Decorative Background */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-[#ed1e26]/20 to-[#ff5b60]/20 dark:from-[#ed1e26]/10 dark:to-[#ff5b60]/10 blur-3xl opacity-70"></div>
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-gradient-to-br from-[#ff5b60]/20 to-[#ff8a8e]/20 dark:from-[#ff5b60]/10 dark:to-[#ff8a8e]/10 blur-3xl opacity-70"></div>
+        <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-gradient-to-br from-[#ed1e26]/20 to-[#ff5b60]/20 opacity-70 blur-3xl dark:from-[#ed1e26]/10 dark:to-[#ff5b60]/10"></div>
+        <div className="absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-gradient-to-br from-[#ff5b60]/20 to-[#ff8a8e]/20 opacity-70 blur-3xl dark:from-[#ff5b60]/10 dark:to-[#ff8a8e]/10"></div>
 
         {/* Form Content */}
         <div className="relative p-8">
@@ -54,13 +56,11 @@ const Signin = ({ closeModal, changeForm }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-center mb-6"
+            className="mb-6 text-center"
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Welcome back!
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Enter your Email and password to access your account.
+            <h2 className="mb-2 text-2xl font-bold text-gray-800">{t("welcome-back")}</h2>
+            <p className="text-sm text-gray-600">
+              {t("enter-your-email-and-password-to-access-your-account")}
             </p>
           </motion.div>
 
@@ -75,9 +75,9 @@ const Signin = ({ closeModal, changeForm }) => {
               <Input
                 type="email"
                 id="email"
-                label="Email"
+                label={t("email")}
                 inputRef={inputRef}
-                placeholder="Enter your Email"
+                placeholder={t("enter-your-email")}
                 value={formik.values.email}
                 errors={formik.errors.email}
                 touched={formik.touched.email}
@@ -95,9 +95,9 @@ const Signin = ({ closeModal, changeForm }) => {
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                label="Password"
+                label={t("password")}
                 isPasswordField={true}
-                placeholder="Enter your password"
+                placeholder={t("enter-your-password")}
                 value={formik.values.password}
                 errors={formik.errors.password}
                 touched={formik.touched.password}
@@ -110,7 +110,7 @@ const Signin = ({ closeModal, changeForm }) => {
 
             {/* Submit Button */}
             <Button isPending={isPending} className="w-full">
-              Sing in
+              {t("sing-in")}
             </Button>
 
             {/* Server Error */}
@@ -128,12 +128,12 @@ const Signin = ({ closeModal, changeForm }) => {
             transition={{ delay: 0.9, duration: 0.5 }}
             className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400"
           >
-            Don't have an account ?
+            {t("dont-have-an-account")}
             <button
               onClick={changeForm}
-              className="font-medium text-[#ed1e26] hover:text-[#ff5b60] px-1"
+              className="px-1 font-medium text-[#ed1e26] hover:text-[#ff5b60]"
             >
-              Sign up now
+              {t("sign-up-now")}
             </button>
           </motion.div>
         </div>

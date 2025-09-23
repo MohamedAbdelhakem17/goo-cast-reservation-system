@@ -15,13 +15,13 @@ export default function StudioTable({ studiosData, setSelectedStudio }) {
             <td className="px-6 py-4 whitespace-nowrap">
               <OptimizedImage
                 src={studio.thumbnail}
-                alt={studio.name}
+                alt={studio.name?.en}
                 className="h-10 w-10 rounded-lg object-cover"
               />
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm font-medium text-gray-900">{studio.name}</div>
-              <div className="text-sm text-gray-500">{studio.address}</div>
+              <div className="text-sm font-medium text-gray-900">{studio.name?.en}</div>
+              <div className="text-sm text-gray-500">{studio.address?.en}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
               <div className="text-sm text-gray-900">

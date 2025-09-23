@@ -3,8 +3,14 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { SelectInput } from "@/components/common";
 import { PlusCircle } from "lucide-react";
+import PackageCard from "./_components/package-card";
+import { Loading, ErrorFeedback, EmptyState } from "@/components/common";
+import { useGetAllPackages } from "@/apis/admin/manage-package.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 const ServiceManagement = () => {
+  // Localization
+  const { t } = useLocalization();
   // hooks
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -13,11 +19,14 @@ const ServiceManagement = () => {
   // state
   const [status, setStatus] = useState(initialStatus);
 
+  // Query
+  const { packages, isLoading, error } = useGetAllPackages(initialStatus);
+
   // Variables
-  const ADDONS_STATUS = [
-    { label: "All", value: "all" },
-    { label: "Active", value: "true" },
-    { label: "In active", value: "false" },
+  const PACKAGE_STATUS = [
+    { label: t("all"), value: "all" },
+    { label: t("active-0"), value: "true" },
+    { label: t("in-active"), value: "false" },
   ];
 
   // Effects
@@ -33,34 +42,61 @@ const ServiceManagement = () => {
     setStatus(selectedValue);
     setSearchParams({ status: selectedValue });
   };
+
+  // Loading state
+  if (isLoading) return <Loading />;
+
+  // Error State
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-5">
+        <ErrorFeedback>{error.message}</ErrorFeedback>
+      </div>
+    );
+  }
+
   return (
     <div className="py-6 md:p-6">
       {/* Header */}
       <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+        {/* Title */}
         <h1 className="text-lg font-bold text-gray-800 md:text-2xl">
-          Package Management
+          {t("package-management")}
         </h1>
 
         {/* Filter and add new addons */}
         <div className="flex w-full flex-col gap-4 md:w-auto md:flex-row md:items-center">
+          {/* Link  */}
           <Link
             to="/admin-dashboard/service/add"
             className="bg-main/80 hover:bg-main mb-6 rounded-lg px-4 py-3 text-white transition-colors"
           >
-            <PlusCircle className="mr-2 inline-block" />
-            Add New Package
+            <PlusCircle className="me-2 inline-block" />
+            {t("add-new-package")}
           </Link>
 
+          {/* Select Filter */}
           <SelectInput
             value={status}
-            options={ADDONS_STATUS}
+            options={PACKAGE_STATUS}
             onChange={handleStatusChange}
           />
         </div>
       </div>
 
+      {/* Display Data */}
       <div className="overflow-x-auto rounded-lg p-2.5">
-        <Packages />
+        {/* Empty State  */}
+        {packages?.data?.length === 0 ? (
+          <EmptyState message="No Package found." subMessage="Add new Package Now" />
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {/* include Data */}
+            {packages?.data?.map((pkg) => (
+              <PackageCard key={pkg?._id} pkg={pkg} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
