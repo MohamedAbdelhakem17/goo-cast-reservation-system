@@ -5,9 +5,13 @@ import { OptimizedImage } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function StudioCard({ studio, key }) {
+  // Localization
   const { t, lng } = useLocalization();
+
+  // State
   const [scrollDir, setScrollDir] = useState("down");
 
+  // Effects
   useEffect(() => {
     let lastScrollY = window.scrollY;
 
@@ -82,19 +86,21 @@ export default function StudioCard({ studio, key }) {
         </div>
 
         {/* Studio Details */}
-        <div className="flex-1 p-6">
+        <div className="border-main flex-1 border-b-3 p-6">
           <div className="flex items-start justify-between">
-            <div>
-              <h3 className="mb-2 text-2xl font-semibold text-gray-800">
-                {studio.name?.[lng]}
-              </h3>
-              <p className="mb-3 flex items-center gap-2 text-gray-600">
-                <i className="fa-solid fa-location-dot text-rose-500"></i>
-                <span>{studio.address?.[lng]}</span>
-              </p>
-            </div>
+            {/* studio Name */}
+            <h3 className="mb-2 text-2xl font-semibold text-gray-800">
+              {studio.name?.[lng]}
+            </h3>
+
+            {/* Studio Location */}
+            <p className="mb-3 flex items-center gap-2 text-gray-600">
+              <i className="fa-solid fa-location-dot text-rose-500"></i>
+              <span>{studio.address?.[lng]}</span>
+            </p>
           </div>
 
+          {/* Facilities */}
           <div className="my-4 grid grid-cols-2 gap-4">
             {studio.facilities.map(
               (facility, index) =>
@@ -106,38 +112,6 @@ export default function StudioCard({ studio, key }) {
                 ),
             )}
           </div>
-
-          <div className="mt-4 flex flex-col justify-between border-t border-gray-100 pt-4 sm:flex-row sm:items-center">
-            <p className="mb-4 text-2xl font-bold text-rose-500 sm:mb-0">
-              {/* {priceFormat(studio.pricePerHour || studio.basePricePerSlot)}  per hour */}
-            </p>
-
-            <div className="flex gap-3">
-              {/* <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                        <i className="fa-solid fa-bookmark mr-2"></i>
-                        Save
-                      </button> */}
-              {/* <button
-                        onClick={() => handleQuickBooking(2, {
-                          image: studio.thumbnail,
-                          name: studio.name,
-                          price: studio.basePricePerSlot,
-                          id: studio._id,
-                        })}
-                        className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors cursor-pointer"
-                      >
-                        Book Now
-                      </button> */}
-            </div>
-          </div>
-
-          <motion.div
-            className="bg-main mt-4 h-1 rounded-full"
-            initial={{ width: 0 }}
-            whileInView={{ width: "100%" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            viewport={{ once: true }}
-          />
         </div>
       </div>
     </motion.div>

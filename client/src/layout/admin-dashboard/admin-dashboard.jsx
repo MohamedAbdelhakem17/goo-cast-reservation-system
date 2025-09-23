@@ -100,7 +100,7 @@ const AdminDashboardLayout = () => {
       </DashboardSidebar>
 
       {/* Main Content */}
-      <main className="ml-0 flex-1 bg-gray-50 p-3 md:ml-72 md:p-6 lg:p-8">
+      <main className="ml-0 flex-1 bg-gray-50 p-3 md:ms-72 md:p-6 lg:p-8">
         <Outlet />
       </main>
     </div>

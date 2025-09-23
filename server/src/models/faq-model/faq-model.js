@@ -3,14 +3,29 @@ const mongoose = require("mongoose");
 const faqSchema = mongoose.Schema(
   {
     question: {
-      type: String,
-      required: [true, "Please provide a question"],
-      trim: true,
+      en: {
+        type: String,
+        required: [true, "Please provide a question in english"],
+        trim: true,
+      },
+      ar: {
+        type: String,
+        required: [true, "Please provide a question in arabic"],
+        trim: true,
+      },
     },
+
     answer: {
-      type: String,
-      required: [true, "Please provide a answer"],
-      trim: true,
+      en: {
+        type: String,
+        required: [true, "Please provide a answer in english"],
+        trim: true,
+      },
+      ar: {
+        type: String,
+        required: [true, "Please provide a answer arabic"],
+        trim: true,
+      },
     },
   },
   { timestamps: true }

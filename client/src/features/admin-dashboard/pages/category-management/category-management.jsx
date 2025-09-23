@@ -2,22 +2,22 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { Popup, Loading, ResponsiveTable } from "@/components/common";
-import { CategoryList, CategoryForm } from "./_components";
+import { Loading, ResponsiveTable } from "@/components/common";
+import { CategoryList, CategoryForm, CategoryDeleteModel } from "./_components";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Edit, Trash2 } from "lucide-react";
 import {
   useGetAllCategories,
   useCreateCategory,
-  useDeleteCategory,
   useUpdateCategory,
 } from "@/apis/admin/manage-category.api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function CategoryManagement() {
+  const queryClient = useQueryClient();
   const { addToast } = useToast();
   const { categories, isLoading } = useGetAllCategories();
   const { createCategory } = useCreateCategory();
-  const { deleteCategory } = useDeleteCategory();
   const { editCategory } = useUpdateCategory();
 
   const [editingCategory, setEditingCategory] = useState(null);
@@ -31,6 +31,7 @@ export default function CategoryManagement() {
       onSuccess: (res) => {
         addToast(res?.message || "Category added successfully", "success");
         setIsFormOpen(false);
+        queryClient.refetchQueries("categories");
       },
       onError: (err) =>
         addToast(err?.response?.data?.message || "Failed to add category", "error"),
@@ -44,22 +45,12 @@ export default function CategoryManagement() {
         onSuccess: ({ message }) => {
           (addToast(message || "Category updated successfully", "success"),
             setEditingCategory(null));
+          queryClient.refetchQueries("categories");
         },
         onError: ({ response }) =>
           addToast(response?.data?.message || "Something went wrong", "error"),
       },
     );
-  };
-
-  const handelDeleteCategory = (id) => {
-    deleteCategory(id, {
-      onSuccess: ({ message }) => {
-        addToast(message || "Category deleted successfully", "success");
-        setDeleteCategory(null);
-      },
-      onError: ({ response }) =>
-        addToast(response?.data?.message || "Something went wrong", "error"),
-    });
   };
 
   const handleEdit = (category) => {
@@ -179,27 +170,10 @@ export default function CategoryManagement() {
       </div>
 
       {deletedCategory && (
-        <Popup>
-          <h2 className="mb-4 text-lg font-semibold">Delete Category</h2>
-          <p className="mb-4">Are you sure you want to delete this category?</p>
-          <span className="bg-main/70 mx-auto my-4 block w-fit rounded-full px-4 py-1 font-semibold text-white">
-            {deletedCategory?.name?.en}
-          </span>
-          <div className="flex justify-end">
-            <button
-              onClick={() => setDeleteCategory(null)}
-              className="mr-2 rounded-md bg-gray-200 px-4 py-2 hover:bg-gray-300"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => handelDeleteCategory(deletedCategory._id)}
-              className="rounded-md bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-            >
-              Delete
-            </button>
-          </div>
-        </Popup>
+        <CategoryDeleteModel
+          setDeleteCategory={setDeleteCategory}
+          deletedCategory={deletedCategory}
+        />
       )}
     </div>
   );

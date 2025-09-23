@@ -40,7 +40,7 @@ const Input = ({
               }
         }
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className={`pointer-events-none absolute left-0 text-base font-medium tracking-wide text-gray-600 dark:text-gray-500 ${
+        className={`pointer-events-none absolute start-0 text-base font-medium tracking-wide text-gray-600 dark:text-gray-500 ${
           isDateType ? "text-xs" : ""
         }`}
         htmlFor={id}
@@ -70,7 +70,7 @@ const Input = ({
         <input
           ref={inputRef}
           type={isPasswordField && showPasswordToggle ? "text" : type}
-          className={`w-full px-3 py-3 ${isDateType ? "pr-12" : ""} border-0 border-b-2 bg-transparent text-base text-gray-800 focus:ring-0 focus:outline-none ${
+          className={`w-full px-3 py-3 ${isDateType ? "pr-12" : ""} border-0 border-b-2 bg-transparent text-base text-gray-800 placeholder:text-start focus:ring-0 focus:outline-none ${
             errors && touched
               ? "border-b-red-500"
               : isFocused

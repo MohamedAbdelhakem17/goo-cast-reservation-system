@@ -4,68 +4,88 @@ import { motion } from "framer-motion";
 import { OptimizedImage } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 
+const getIcon = (iconType) => {
+  switch (iconType) {
+    case "video":
+      return <Video className="h-6 w-6" />;
+    case "microphone":
+      return <Mic className="h-6 w-6" />;
+    default:
+      return <Video className="h-6 w-6" />;
+  }
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: {
+    opacity: 0,
+    y: 50,
+    scale: 0.9,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  },
+};
+
+const imageVariants = {
+  hover: {
+    scale: 1.05,
+    transition: {
+      duration: 0.3,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const iconVariants = {
+  hover: {
+    rotate: 360,
+    scale: 1.1,
+    transition: {
+      duration: 0.5,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const AnimatedList = ({ items, delay }) => (
+  <ul className="space-y-2">
+    {items?.map((item, idx) => (
+      <motion.li
+        key={idx}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: delay + idx * 0.1 }}
+        className="flex items-start gap-2 text-sm text-gray-600"
+      >
+        <Check className="text-main mt-0.5 h-4 w-4 flex-shrink-0" />
+        <span>{item}</span>
+      </motion.li>
+    ))}
+  </ul>
+);
+
 export default function PackagesSection() {
+  // Localization
   const { t, lng } = useLocalization();
+
+  // Query
   const { data: packages } = GetAllPackages();
-
-  const getIcon = (iconType) => {
-    switch (iconType) {
-      case "video":
-        return <Video className="h-6 w-6" />;
-      case "microphone":
-        return <Mic className="h-6 w-6" />;
-      default:
-        return <Video className="h-6 w-6" />;
-    }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 50,
-      scale: 0.9,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  const imageVariants = {
-    hover: {
-      scale: 1.05,
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const iconVariants = {
-    hover: {
-      rotate: 360,
-      scale: 1.1,
-      transition: {
-        duration: 0.5,
-        ease: "easeInOut",
-      },
-    },
-  };
 
   return (
     <section className="flex min-h-screen flex-col items-center justify-center py-8">
@@ -86,6 +106,7 @@ export default function PackagesSection() {
       </div>
 
       {packages?.data?.length === 0 ? (
+        // Empty state
         <p className="text-center text-gray-500">
           {t("no-packages-available-at-the-moment")}
         </p>
@@ -97,6 +118,7 @@ export default function PackagesSection() {
             initial="hidden"
             animate="visible"
           >
+            {/* Display data */}
             {packages?.data?.map((packageItem, index) => (
               <motion.div
                 key={packageItem._id}
@@ -127,6 +149,7 @@ export default function PackagesSection() {
                     variants={iconVariants}
                     whileHover="hover"
                   >
+                    {/* Icon */}
                     <div className="border-main flex h-12 w-12 items-center justify-center rounded-full border backdrop-blur-sm">
                       <div className="text-main">{getIcon(packageItem.icon)}</div>
                     </div>
@@ -138,6 +161,7 @@ export default function PackagesSection() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + index * 0.1 }}
                   >
+                    {/* Session type  */}
                     <div className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
                       <Clock className="mr-1 h-3 w-3" />
                       {packageItem.session_type?.[lng]}
@@ -154,6 +178,7 @@ export default function PackagesSection() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 + index * 0.1 }}
                   >
+                    {/* Package */}
                     <h3 className="mb-2 line-clamp-2 text-xl font-bold text-gray-900">
                       {packageItem.name?.[lng]}
                     </h3>
@@ -190,20 +215,7 @@ export default function PackagesSection() {
                     <h4 className="mb-2 text-sm font-semibold text-gray-900">
                       {t("whats-included")}:
                     </h4>
-                    <ul className="space-y-2">
-                      {packageItem.details?.[lng].map((detail, idx) => (
-                        <motion.li
-                          key={idx}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.7 + idx * 0.1 }}
-                          className="flex items-start gap-2 text-sm text-gray-600"
-                        >
-                          <Check className="text-main mt-0.5 h-4 w-4 flex-shrink-0" />
-                          <span>{detail}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
+                    <AnimatedList items={packageItem.details?.[lng]} delay={0.7} />
                   </motion.div>
 
                   {/* Post Session Benefits */}
@@ -216,18 +228,10 @@ export default function PackagesSection() {
                       {t("after-your-session")}:
                     </h4>
                     <ul className="space-y-2">
-                      {packageItem.post_session_benefits?.[lng].map((benefit, idx) => (
-                        <motion.li
-                          key={idx}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.9 + idx * 0.1 }}
-                          className="flex items-start gap-2 text-sm text-gray-600"
-                        >
-                          <Check className="text-main mt-0.5 h-4 w-4 flex-shrink-0" />
-                          <span>{benefit}</span>
-                        </motion.li>
-                      ))}
+                      <AnimatedList
+                        items={packageItem.post_session_benefits?.[lng]}
+                        delay={0.9}
+                      />
                     </ul>
                   </motion.div>
                 </div>

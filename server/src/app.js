@@ -65,32 +65,31 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 // );
 
 // Body parser
+
 app.use(express.json());
 
-// CORS - تحديث الإعدادات لدعم الكوكيز
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"], // إضافة عناوين أكثر
-    credentials: true, // مهم جداً لإرسال الكوكيز
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
-// Session - الإعدادات المحدثة للعمل محلياً
 app.use(
   expressSession({
-    secret: process.env.JWT_SECRET || "fallback-secret-key", // إضافة fallback
+    secret: process.env.JWT_SECRET || "fallback-secret-key",
     resave: false,
-    saveUninitialized: false, // أو true إذا كنت تريد حفظ sessions فارغة
-    name: "sessionId", // اسم مخصص للكوكي
+    saveUninitialized: false,
+    name: "sessionId",
     cookie: {
-      httpOnly: true, // منع الوصول من JavaScript في المتصفح (أمان)
-      secure: false, // يجب أن يكون false في localhost
-      sameSite: "lax", // يسمح بإرسال الكوكيز مع cross-site requests
-      maxAge: 24 * 60 * 60 * 1000, // انتهاء صلاحية بعد 24 ساعة (اختياري)
-      domain: undefined, // لا تحدد domain في localhost
-      path: "/", // متاح في جميع المسارات
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+      domain: undefined,
+      path: "/",
     },
   })
 );
@@ -98,16 +97,6 @@ app.use(
 // Passport initialization
 app.use(passport.initialize());
 app.use(passport.session());
-
-// ====== تسجيل معلومات الكوكيز (للتطوير فقط) ======
-if (process.env.ENVIRONMENT_MODE === "development") {
-  app.use((req, res, next) => {
-    console.log("Session ID:", req.sessionID);
-    console.log("Session Data:", req.session);
-    console.log("Cookies:", req.headers.cookie);
-    next();
-  });
-}
 
 // ====== API Routes ======
 amountRoutes(app);

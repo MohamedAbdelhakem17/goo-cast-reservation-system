@@ -29,7 +29,7 @@ export default function DashboardSidebar({ children }) {
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden h-full w-72 flex-col border-r border-gray-200 bg-white md:fixed md:top-0 md:bottom-0 md:left-0 md:flex">
+      <aside className="hidden h-full w-72 flex-col border-r border-gray-200 bg-white md:fixed md:start-0 md:top-0 md:bottom-0 md:flex">
         {/* Header */}
         <div className="flex items-center gap-x-3 border-b border-gray-200 bg-white p-4 lg:gap-x-4 lg:p-6">
           {/* Icon */}

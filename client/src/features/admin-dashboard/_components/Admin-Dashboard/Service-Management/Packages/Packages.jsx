@@ -159,7 +159,7 @@ export default function Packages() {
                 />
               ) : (
                 <div className="from-main/10 to-main/5 bg-gradient-to-r px-6 py-4">
-                  <h3 className="text-xl font-semibold text-gray-800">{pkg.name}</h3>
+                  <h3 className="text-xl font-semibold text-gray-800">{pkg.name?.en}</h3>
                 </div>
               )}
 
@@ -233,10 +233,10 @@ export default function Packages() {
                   </div>
                 ) : (
                   <>
-                    <p className="mb-4 text-sm text-gray-600">{pkg.description}</p>
+                    <p className="mb-4 text-sm text-gray-600">{pkg.description?.en}</p>
                     <div className="mb-5 flex flex-wrap items-center justify-evenly gap-4">
                       <span className="bg-main/10 text-main rounded-full px-3 py-1 text-xs font-medium">
-                        {pkg.category?.name?.ar}
+                        {pkg.category?.name?.en}
                       </span>
                       <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
                         {formatPrice(pkg.price)}
@@ -255,7 +255,7 @@ export default function Packages() {
                           Audience
                         </h4>
                         <ul className="list-inside list-disc space-y-1 pl-1 text-sm text-gray-700">
-                          {pkg.target_audience.map((a, i) => (
+                          {pkg.target_audience.en.map((a, i) => (
                             <li key={i}>{a}</li>
                           ))}
                         </ul>
@@ -269,21 +269,21 @@ export default function Packages() {
                           Package Details
                         </h4>
                         <ul className="list-inside list-disc space-y-1 pl-1 text-sm text-gray-700">
-                          {pkg.details.map((d, i) => (
+                          {pkg.details.en.map((d, i) => (
                             <li key={i}>{d}</li>
                           ))}
                         </ul>
                       </div>
                     )}
 
-                    {pkg.post_session_benefits.length > 0 && (
+                    {pkg.post_session_benefits.en.length > 0 && (
                       <div>
                         <h4 className="mb-2 flex items-center text-sm font-semibold text-gray-700">
                           <i className="fa-solid fa-gift text-main/70 mr-2"></i>{" "}
                           Post-session Benefits
                         </h4>
                         <ul className="list-inside list-disc space-y-1 pl-1 text-sm text-gray-700">
-                          {pkg.post_session_benefits.map((b, i) => (
+                          {pkg.post_session_benefits.en.map((b, i) => (
                             <li key={i}>{b}</li>
                           ))}
                         </ul>

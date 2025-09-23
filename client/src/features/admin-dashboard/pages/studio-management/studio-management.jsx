@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import useGetAllStudios, { DeleteStudio } from "@/apis/studios/studios.api";
 import { AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Alert, Popup, Loading } from "@/components/common";
@@ -7,10 +6,12 @@ import { PlusCircle } from "lucide-react";
 import StudioTable from "./_components/studio-table";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import ResponsiveStudioData from "./_components/responsive-studio-data";
+import { useGetStudio } from "@/apis/public/studio.api";
+import { useDeleteStudio } from "@/apis/admin/manage-studio.api";
 
 const StudioManagement = () => {
-  const { data: studiosData, isLoading } = useGetAllStudios();
-  const { mutate: deleteStudio } = DeleteStudio();
+  const { data: studiosData, isLoading } = useGetStudio();
+  const { deleteStudio } = useDeleteStudio();
 
   const [selectedStudio, setSelectedStudio] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);

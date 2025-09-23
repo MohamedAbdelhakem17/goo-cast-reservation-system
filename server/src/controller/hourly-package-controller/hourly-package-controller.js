@@ -43,25 +43,21 @@ exports.serviceImageManipulation = async (req, res, next) => {
 
 // get all hourly packages
 exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
-  const hourlyPackages = await HourlyPackageModel.find();
+  const { status } = req.query;
 
-  if (hourlyPackages.length === 0) {
-    return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No hourly packages found")
-    );
+  let filter = {};
+  if (status !== undefined) {
+    filter.is_active = status === "true";
   }
 
-  // const maxHours = 9;
+  const hourlyPackages = await HourlyPackageModel.find(filter);
 
-  // const packagesWithPrices = await Promise.all(
-  //     hourlyPackages.map(async (pkg) => {
-  //         const prices = await calculatePackagePrices({ package: pkg, hours: maxHours });
-  //         return {
-  //             ...pkg._doc,
-  //             hourlyPrices: prices
-  //         };
-  //     })
-  // );
+  if (hourlyPackages.length === 0) {
+    res.status(200).json({
+      status: HTTP_STATUS_TEXT.SUCCESS,
+      data: hourlyPackages,
+    });
+  }
 
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
@@ -185,20 +181,55 @@ exports.packagePriceMange = asyncHandler(async (req, res, next) => {
 });
 
 exports.getHourlyPackagesByCategory = asyncHandler(async (req, res, next) => {
-  const { category } = req.body;
+  const { category } = req.params;
+
   const hourlyPackage = await HourlyPackageModel.find({ category });
-  if (!hourlyPackage) {
+
+  if (!hourlyPackage.length) {
     return next(
       new AppError(
         404,
         HTTP_STATUS_TEXT.FAIL,
-        "No hourly package found with this ID"
+        "No hourly package found for this category"
       )
     );
   }
+
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: hourlyPackage,
-    message: "hourly package found successfully",
+    message: "Hourly packages found successfully",
+  });
+});
+
+exports.toggleHourlyPackagesStatus = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { is_active } = req.body;
+
+  if (typeof is_active !== "boolean") {
+    return next(
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "`is_active` must be a boolean.")
+    );
+  }
+
+  const updatedAddOn = await AddOnModel.findByIdAndUpdate(
+    id,
+    { is_active },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!updatedAddOn) {
+    return next(
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No package found with this ID")
+    );
+  }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: updatedAddOn,
+    message: `package status updated to ${is_active ? "Active" : "Inactive"}`,
   });
 });
