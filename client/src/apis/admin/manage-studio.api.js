@@ -118,7 +118,7 @@ const handelUpdateStudio = async ({ id, payload }) => {
   return data;
 };
 
-export const UpdateStudio = () => {
+export const useUpdateStudio = () => {
   const {
     mutate: updateStudio,
     isPending,

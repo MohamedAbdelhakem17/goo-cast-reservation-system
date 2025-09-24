@@ -1,52 +1,73 @@
 import * as Yup from "yup";
 
-const initialValues = {
-  name: "",
-  address: "",
-  basePricePerSlot: "",
-  isFixedHourly: true,
-  description: "",
-  facilities: [],
-  equipment: [],
-  startTime: "12:00",
-  endTime: "20:00",
-  thumbnail: null,
-  imagesGallery: [],
-  dayOff: [],
-  minSlotsPerDay: {
-    sunday: 1,
-    monday: 1,
-    tuesday: 1,
-    wednesday: 1,
-    thursday: 1,
-    friday: 1,
-    saturday: 1,
-  },
-  currentFacility: "",
-  currentEquipment: "",
+export const getStudioInitialValues = (studio) => {
+  return {
+    name: {
+      ar: studio?.name?.ar || "",
+      en: studio?.name?.en || "",
+    },
+    address: {
+      ar: studio?.address?.ar || "",
+      en: studio?.address?.en || "",
+    },
+    basePricePerSlot: studio?.basePricePerSlot ?? "",
+    isFixedHourly: studio?.isFixedHourly ?? true,
+    description: {
+      ar: studio?.description?.ar || "",
+      en: studio?.description?.en || "",
+    },
+    facilities: studio?.facilities?.length > 0 ? studio.facilities : [{ ar: "", en: "" }],
+    equipment: studio?.equipment?.length > 0 ? studio.equipment : [{ ar: "", en: "" }],
+    startTime: studio?.startTime || "12:00",
+    endTime: studio?.endTime || "20:00",
+    thumbnail: studio?.thumbnail || null,
+    imagesGallery: studio?.imagesGallery || [],
+    dayOff: studio?.dayOff || [],
+    minSlotsPerDay: studio?.minSlotsPerDay || {
+      sunday: 1,
+      monday: 1,
+      tuesday: 1,
+      wednesday: 1,
+      thursday: 1,
+      friday: 1,
+      saturday: 1,
+    },
+    currentFacility: "",
+    currentEquipment: "",
+  };
 };
 
-const validationSchema = Yup.object({
-  name: Yup.string()
-    .required("Name is required")
-    .max(50, "Name must be less than 50 characters"),
-  address: Yup.string()
-    .required("Address is required")
-    .max(100, "Address must be less than 100 characters"),
+export const validationSchema = Yup.object({
+  name: Yup.object({
+    ar: Yup.string()
+      .required("Arabic name is required")
+      .max(50, "Name must be less than 50 characters"),
+    en: Yup.string()
+      .required("English name is required")
+      .max(50, "Name must be less than 50 characters"),
+  }),
+  address: Yup.object({
+    ar: Yup.string()
+      .required("Arabic address is required")
+      .max(100, "Address must be less than 100 characters"),
+    en: Yup.string()
+      .required("English address is required")
+      .max(100, "Address must be less than 100 characters"),
+  }),
   basePricePerSlot: Yup.number()
     .typeError("Price must be a number")
     .min(0, "Base price must be greater than or equal to 0")
     .required("Base price is required"),
   isFixedHourly: Yup.boolean(),
-  description: Yup.string()
-    .required("Description is required")
-    .min(50, "Description must be at least 50 characters"),
-  facilities: Yup.array()
-    .min(1, "At least one facility is required")
-    .of(Yup.string().required()),
-  equipment: Yup.array()
-    .min(1, "At least one equipment item is required")
-    .of(Yup.string().required()),
+  description: Yup.object({
+    ar: Yup.string()
+      .required("Arabic description is required")
+      .min(50, "Description must be at least 50 characters"),
+    en: Yup.string()
+      .required("English description is required")
+      .min(50, "Description must be at least 50 characters"),
+  }),
+
   startTime: Yup.string()
     .required("Start time is required")
     .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),
@@ -101,7 +122,3 @@ const validationSchema = Yup.object({
     saturday: Yup.number().min(0, "Minimum slots must be at least 0"),
   }),
 });
-
-export { validationSchema, initialValues };
-
-// import * as Yup from "yup";

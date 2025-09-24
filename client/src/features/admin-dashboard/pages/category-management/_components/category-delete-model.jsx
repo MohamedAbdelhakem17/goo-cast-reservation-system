@@ -1,12 +1,20 @@
 import { useDeleteCategory } from "@/apis/admin/manage-category.api";
 import { Popup } from "@/components/common";
-import { useQueries } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function CategoryDeleteModel({ setDeleteCategory, deletedCategory }) {
-  const queryClient = useQueries();
+  // Localization
+  const { t, lng } = useLocalization();
+
+  // Hooks
+  const queryClient = useQueryClient();
+
+  // Mutation
   const { deleteCategory, isPending } = useDeleteCategory();
 
+  // Function
   const handelDeleteCategory = (id) => {
     deleteCategory(id, {
       onSuccess: ({ message }) => {
@@ -23,24 +31,24 @@ export default function CategoryDeleteModel({ setDeleteCategory, deletedCategory
   return (
     <>
       <Popup>
-        <h2 className="mb-4 text-lg font-semibold">Delete Category</h2>
-        <p className="mb-4">Are you sure you want to delete this category?</p>
+        <h2 className="mb-4 text-lg font-semibold">{t("delete-category")}</h2>
+        <p className="mb-4">{t("are-you-sure-you-want-to-delete-this-category")}</p>
         <span className="bg-main/70 mx-auto my-4 block w-fit rounded-full px-4 py-1 font-semibold text-white">
-          {deletedCategory?.name?.en}
+          {deletedCategory?.name?.[lng]}
         </span>
         <div className="flex justify-end">
           <button
             onClick={() => setDeleteCategory(null)}
-            className="mr-2 rounded-md bg-gray-200 px-4 py-2 hover:bg-gray-300"
+            className="me-2 rounded-md bg-gray-200 px-4 py-2 hover:bg-gray-300"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             disabled={isPending}
             onClick={() => handelDeleteCategory(deletedCategory._id)}
             className="rounded-md bg-red-500 px-4 py-2 text-white hover:bg-red-600 disabled:bg-gray-200 disabled:text-gray-400"
           >
-            {isPending ? <Loader className="animate-spin" /> : "Delete"}
+            {isPending ? <Loader className="animate-spin" /> : t("delete")}
           </button>
         </div>
       </Popup>

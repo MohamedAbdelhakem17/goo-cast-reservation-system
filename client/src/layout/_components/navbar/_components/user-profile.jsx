@@ -3,8 +3,10 @@ import { useAuth } from "@/context/Auth-Context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import Signout from "@/apis/auth/signout.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function UserProfile() {
+  const { t } = useLocalization();
   const { handelLogout } = Signout();
   const { isAuthenticated, user } = useAuth();
 
@@ -46,15 +48,15 @@ export default function UserProfile() {
                     to={isAdmin ? "/admin-dashboard/" : "/user-dashboard/profile"}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    Dashboard
+                    {t("dashboard")}
                   </NavLink>
                 </li>
                 <li>
                   <button
                     onClick={handelLogout}
-                    className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                    className="block w-full px-4 py-2 text-start text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    Logout
+                    {t("logout")}
                   </button>
                 </li>
               </ul>

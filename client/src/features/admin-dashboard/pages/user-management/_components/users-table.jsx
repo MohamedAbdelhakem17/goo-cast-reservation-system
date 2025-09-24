@@ -1,7 +1,6 @@
 import { Table } from "@/components/common";
 import useDateFormat from "@/hooks/useDateFormat";
-
-const TABLE_HEAD = ["Name", "Email", "Status", "Created At", "Workspace", "Action"];
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function UsersTables({
   users,
@@ -9,6 +8,15 @@ export default function UsersTables({
   setSelectedUser,
   setIsAddWorkSpaceOpen,
 }) {
+  const { t } = useLocalization();
+  const TABLE_HEAD = [
+    t("name-0"),
+    t("email"),
+    t("status-0"),
+    t("created-at"),
+    t("workspace"),
+    t("actions"),
+  ];
   const dateFormat = useDateFormat();
 
   return (
@@ -26,7 +34,7 @@ export default function UsersTables({
                     : "bg-gray-100 text-gray-600"
                 }`}
               >
-                {user.active ? "Active" : "Inactive"}
+                {user.active ? t("active-0") : t("inactive")}
               </span>
             </td>
             <td className="px-6 py-4 whitespace-nowrap">{dateFormat(user.createdAt)}</td>
@@ -41,7 +49,7 @@ export default function UsersTables({
                   {user.workspace.name}
                 </a>
               ) : (
-                <span className="text-sm text-gray-400">No workspace</span>
+                <span className="text-sm text-gray-400">{t("no-workspace")}</span>
               )}
             </td>
             <td className="flex items-center justify-center gap-4 p-2">
@@ -75,7 +83,7 @@ export default function UsersTables({
                   }}
                   className="bg-main/90 border-main rounded border px-2 py-1 text-sm text-white"
                 >
-                  <i className="fas fa-plus mr-1" /> Add Workspace
+                  <i className="fas fa-plus me-1" /> {t("add-workspace")}
                 </button>
               )}
             </td>
@@ -83,7 +91,7 @@ export default function UsersTables({
         ))}
       </Table>
       {users?.length === 0 && (
-        <div className="py-6 text-center text-gray-500">No users found</div>
+        <div className="py-6 text-center text-gray-500">{t("no-users-found")}</div>
       )}
     </>
   );

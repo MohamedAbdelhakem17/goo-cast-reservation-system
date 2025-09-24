@@ -2,7 +2,8 @@ import { Loading, Table, ResponsiveTable } from "@/components/common";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Pencil, RefreshCw, Trash2 } from "lucide-react";
 import useDataFormat from "@/hooks/useDateFormat";
-import { GetAllCoupons } from "@/apis/coupon/coupon";
+import { useGetAllCoupons } from "@/apis/admin/manage-coupon.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 function CouponActions({ coupon, handleEdit, handleDeleteConfirm, couponToDelete }) {
   const isDeleting = couponToDelete?._id === coupon._id;
@@ -31,8 +32,10 @@ function CouponActions({ coupon, handleEdit, handleDeleteConfirm, couponToDelete
 }
 
 export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToDelete }) {
+  // Localization
+  const { t } = useLocalization();
   // query
-  const { data, isLoading, error } = GetAllCoupons();
+  const { data, isLoading, error } = useGetAllCoupons();
 
   // hooks
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -42,13 +45,13 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
 
   // constants
   const TABLE_HEADERS = [
-    "NAME",
-    "CODE",
-    "DISCOUNT",
-    "EXPIRES AT",
-    "MAX USES",
-    "COUNT USED",
-    "ACTIONS",
+    t("name"),
+    t("code"),
+    t("discount-0"),
+    t("expires-at"),
+    t("max-uses"),
+    t("count-used"),
+    t("actions"),
   ];
 
   // Format date
@@ -68,7 +71,9 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
   if (error) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700">
-        <p className="text-sm">Error loading coupons. Please try refreshing the page.</p>
+        <p className="text-sm">
+          {t("error-loading-coupons-please-try-refreshing-the-page")}
+        </p>
       </div>
     );
   }
@@ -80,12 +85,12 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
         {/* Desktop no data */}
         <div className="hidden md:block">
           <div className="px-6 py-10 text-center text-gray-400">
-            No coupons found. Create your first coupon above.
+            {t("no-coupons-found-create-your-first-coupon-above")}
           </div>
         </div>
         {/* Mobile no data */}
         <div className="py-8 text-center text-gray-400 md:hidden">
-          <p>No coupons found. Create your first coupon above.</p>
+          <p>{t("no-coupons-found-create-your-first-coupon-above")}</p>
         </div>
       </>
     );
@@ -113,7 +118,7 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
           <td>
             {isExpired(coupon.expires_at) ? (
               <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700">
-                Expired
+                {t("expired")}
               </span>
             ) : (
               <span>{formatDate(coupon.expires_at)}</span>
@@ -141,10 +146,10 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
           title={coupon.name}
           subtitle={coupon.code}
           fields={[
-            { label: "Discount", value: coupon.discount + "%" },
-            { label: "Expires", value: formatDate(coupon.expires_at) },
-            { label: "Max Uses", value: coupon.max_uses },
-            { label: "Used", value: coupon.times_used },
+            { label: t("discount"), value: coupon.discount + "%" },
+            { label: t("expires"), value: formatDate(coupon.expires_at) },
+            { label: t("max-uses"), value: coupon.max_uses },
+            { label: t("used"), value: coupon.times_used },
           ]}
           actions={
             <CouponActions

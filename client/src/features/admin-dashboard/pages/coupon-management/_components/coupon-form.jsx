@@ -2,6 +2,7 @@ import { Pencil, X, Plus } from "lucide-react";
 import { Button, Input } from "@/components/common";
 import { useFormik } from "formik";
 import { couponValidationSchema, getInitialValues } from "@/utils/schemas/coupon.schema";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function CouponForm({
   editingCoupon,
@@ -10,6 +11,7 @@ export default function CouponForm({
   handleCancelEdit,
   onSubmit,
 }) {
+  const { t } = useLocalization();
   const formik = useFormik({
     initialValues: getInitialValues(editingCoupon),
     validationSchema: couponValidationSchema,
@@ -26,12 +28,12 @@ export default function CouponForm({
           {editingCoupon ? (
             <>
               <Pencil className="h-4 w-4 text-amber-500 md:h-5 md:w-5" />
-              Edit Coupon
+              {t("edit-coupon")}
             </>
           ) : (
             <>
               <Plus className="h-4 w-4 text-emerald-500 md:h-5 md:w-5" />
-              Create New Coupon
+              {t("create-new-coupon")}
             </>
           )}
         </h3>
@@ -39,8 +41,8 @@ export default function CouponForm({
         {/* description */}
         <p className="mt-1 text-xs text-gray-500 md:text-sm">
           {editingCoupon
-            ? `Editing coupon: ${editingCoupon.name}`
-            : "Fill in the details to create a new discount coupon"}
+            ? `${t("editing-coupon")} ${editingCoupon.name}`
+            : t("fill-in-the-details-to-create-a-new-discount-coupon")}
         </p>
       </div>
 
@@ -55,7 +57,7 @@ export default function CouponForm({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               placeholder="Summer Sale"
-              label="Coupon Name"
+              label={t("coupon-name")}
               errors={formik.errors.name}
               touched={formik.touched.name}
             />
@@ -70,7 +72,7 @@ export default function CouponForm({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               placeholder="SUMMER20"
-              label="Coupon Code"
+              label={t("coupon-code")}
               errors={formik.errors.code}
               touched={formik.touched.code}
             />
@@ -86,7 +88,7 @@ export default function CouponForm({
               onBlur={formik.handleBlur}
               placeholder="20"
               type="number"
-              label="Discount (%)"
+              label={t("discount")}
               errors={formik.errors.discount}
               touched={formik.touched.discount}
             />
@@ -101,7 +103,7 @@ export default function CouponForm({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               type="date"
-              label="Expiry Date"
+              label={t("expiry-date")}
               errors={formik.errors.expires_at}
               touched={formik.touched.expires_at}
             />
@@ -117,7 +119,7 @@ export default function CouponForm({
               onBlur={formik.handleBlur}
               placeholder="100"
               type="number"
-              label="Max Uses"
+              label={t("max-uses")}
               errors={formik.errors.max_uses}
               touched={formik.touched.max_uses}
             />
@@ -129,9 +131,9 @@ export default function CouponForm({
             type="submit"
             disabled={isCreating || isUpdating}
             isPending={isCreating || isUpdating}
-            fallback="processing..."
+            fallback={t("processing")}
           >
-            {editingCoupon ? "Update Coupon" : "Create Coupon"}
+            {editingCoupon ? t("update-coupon") : t("create-coupon")}
           </Button>
 
           {editingCoupon && (
@@ -140,8 +142,8 @@ export default function CouponForm({
               className="mt-6 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2.5 text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
               onClick={handleCancelEdit}
             >
-              <X className="mr-2 h-4 w-4" />
-              Cancel
+              <X className="me-2 h-4 w-4" />
+              {t("cancel")}
             </button>
           )}
         </div>

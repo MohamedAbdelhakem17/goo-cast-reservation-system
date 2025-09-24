@@ -3,8 +3,11 @@ import { Mic, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logo } from "@/assets/images";
 import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function DashboardSidebar({ children }) {
+  // Localization
+  const { t } = useLocalization();
   // State
   const [isOpen, setIsOpen] = useState(false);
 
@@ -43,7 +46,7 @@ export default function DashboardSidebar({ children }) {
               Goocast.
             </h1>
             <span className="text-xs text-gray-600 lg:text-sm">
-              Easy podcasting for everyone
+              {t("easy-podcasting-for-everyone")}
             </span>
           </div>
         </div>
