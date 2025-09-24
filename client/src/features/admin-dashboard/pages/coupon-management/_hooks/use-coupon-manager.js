@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { CreateNewCoupon, UpdateCoupon, DeleteCoupon } from "@/apis/coupon/coupon";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import {
+  useCreateNewCoupon,
+  useDeleteCoupon,
+  useUpdateCoupon,
+} from "@/apis/admin/manage-coupon.api";
 
 export function useCouponManager() {
   // state
@@ -9,9 +13,9 @@ export function useCouponManager() {
   const [couponToDelete, setCouponToDelete] = useState(null);
 
   //  mutation
-  const { mutate: createCoupon, isLoading: isCreating } = CreateNewCoupon();
-  const { mutate: updateCoupon, isLoading: isUpdating } = UpdateCoupon();
-  const { mutate: deleteCoupon, isLoading: isDeleting } = DeleteCoupon();
+  const { createCoupon, isLoading: isCreating } = useCreateNewCoupon();
+  const { editCoupon: updateCoupon, isLoading: isUpdating } = useUpdateCoupon();
+  const { deleteCoupon, isLoading: isDeleting } = useDeleteCoupon();
 
   // hooks
   const { addToast } = useToast();

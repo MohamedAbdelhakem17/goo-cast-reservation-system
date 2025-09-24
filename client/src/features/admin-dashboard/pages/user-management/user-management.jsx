@@ -8,8 +8,11 @@ import { UsersTables, UsersFormModal, UserSearch } from "./_components";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import useDateFormat from "@/hooks/useDateFormat";
 import { Edit, Trash2, TvMinimalPlay } from "lucide-react";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function UserManagement() {
+  // localization
+  const { t } = useLocalization();
   const { users, isLoading, error: getDataError } = useGetAllUser();
   const { addToast } = useToast();
   const dateFormat = useDateFormat();
@@ -40,9 +43,9 @@ export default function UserManagement() {
       onSuccess: () => {
         setIsAddWorkSpaceOpen(false);
         setSelectedUser(null);
-        addToast("Workspace deleted successfully", "success");
+        addToast(t("workspace-deleted-successfully"), "success");
       },
-      onError: () => addToast("Failed to delete workspace", "error"),
+      onError: () => addToast(t("failed-to-delete-workspace"), "error"),
     });
   };
 
@@ -77,7 +80,7 @@ export default function UserManagement() {
         transition={{ duration: 0.3 }}
       >
         <div className="p-6">
-          <h2 className="mb-4 text-2xl font-bold">User Management</h2>
+          <h2 className="mb-4 text-2xl font-bold">{t("user-management")}</h2>
 
           {/* Search */}
           <UserSearch setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
@@ -96,8 +99,8 @@ export default function UserManagement() {
                 filteredUsers.map((user) => (
                   <div key={user._id || user.email}>
                     <ResponsiveTable
-                      title={user.name || "Unknown User"}
-                      subtitle={user.active ? "Active" : "Inactive"}
+                      title={user.name || t("unknown-user")}
+                      subtitle={user.active ? t("active-0") : t("inactive")}
                       actions={
                         <>
                           {user.workspace ? (
@@ -137,23 +140,27 @@ export default function UserManagement() {
                       }
                       fields={[
                         {
-                          label: "Workspace",
-                          value: user.workspace?.name || "No workspace",
+                          label: t("workspace"),
+                          value: user.workspace?.name || t("no-workspace"),
                         },
                         {
-                          label: "Email",
-                          value: user.email || "No email",
+                          label: t("email"),
+                          value: user.email || t("no-email"),
                         },
                         {
-                          label: "Created At",
-                          value: user.createdAt ? dateFormat(user.createdAt) : "Unknown",
+                          label: t("created-at"),
+                          value: user.createdAt
+                            ? dateFormat(user.createdAt)
+                            : t("unknown"),
                         },
                       ]}
                     />
                   </div>
                 ))
               ) : (
-                <div className="py-8 text-center text-gray-500">No users found</div>
+                <div className="py-8 text-center text-gray-500">
+                  {t("no-users-found")}
+                </div>
               )}
             </div>
           )}

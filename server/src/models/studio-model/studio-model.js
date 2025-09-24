@@ -55,22 +55,50 @@ const studioSchema = new mongoose.Schema(
     },
 
     description: {
-      type: String,
-      required: [true, "Please provide a description"],
-      trim: true,
+      ar: {
+        type: String,
+        required: [true, "Please provide a description"],
+        trim: true,
+      },
+      en: {
+        type: String,
+        required: [true, "Please provide a description"],
+        trim: true,
+      },
     },
 
     facilities: {
-      type: [String],
-      validate: [(arr) => arr.length > 0, "At least one facility is required"],
+      ar: {
+        type: [String],
+        validate: [
+          (arr) => arr.length > 0,
+          "At least one facility is required",
+        ],
+      },
+      en: {
+        type: [String],
+        validate: [
+          (arr) => arr.length > 0,
+          "At least one facility is required",
+        ],
+      },
     },
 
     equipment: {
-      type: [String],
-      validate: [
-        (arr) => arr.length > 0,
-        "At least one equipment item is required",
-      ],
+      ar: {
+        type: [String],
+        validate: [
+          (arr) => arr.length > 0,
+          "At least one equipment item is required",
+        ],
+        en: {
+          type: [String],
+          validate: [
+            (arr) => arr.length > 0,
+            "At least one equipment item is required",
+          ],
+        },
+      },
     },
 
     thumbnail: {
@@ -163,7 +191,7 @@ const studioSchema = new mongoose.Schema(
 // Auto-generate slug from name before saving
 studioSchema.pre("save", function (next) {
   if (this.isModified("name")) {
-    this.slug = slugify(this.name, { lower: true });
+    this.slug = slugify(this.name.en, { lower: true });
   }
 
   validateTimeRange(this.startTime, this.endTime);

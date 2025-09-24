@@ -1,19 +1,10 @@
 import { GetAllPackages } from "@/apis/services/services.api";
-import { Check, Video, Mic, Clock, Users } from "lucide-react";
+import { Check, Clock, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { OptimizedImage } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
-
-const getIcon = (iconType) => {
-  switch (iconType) {
-    case "video":
-      return <Video className="h-6 w-6" />;
-    case "microphone":
-      return <Mic className="h-6 w-6" />;
-    default:
-      return <Video className="h-6 w-6" />;
-  }
-};
+import React from "react";
+import * as LucideIcons from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -119,124 +110,128 @@ export default function PackagesSection() {
             animate="visible"
           >
             {/* Display data */}
-            {packages?.data?.map((packageItem, index) => (
-              <motion.div
-                key={packageItem._id}
-                variants={cardVariants}
-                whileHover={{
-                  y: -10,
-                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-                }}
-                className="group overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
-              >
-                {/* Header with Image */}
-                <div className="relative h-64 overflow-hidden">
-                  <motion.div
-                    variants={imageVariants}
-                    whileHover="hover"
-                    className="h-full w-full"
-                  >
-                    <OptimizedImage
-                      src={packageItem.image || "/placeholder.svg"}
-                      alt={packageItem.name?.[lng]}
-                      className="h-full w-full object-cover"
-                    />
-                  </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            {packages?.data?.map((packageItem, index) => {
+              const IconComponent = LucideIcons[packageItem.icon] || null;
 
-                  <motion.div
-                    className="absolute top-4 left-4"
-                    variants={iconVariants}
-                    whileHover="hover"
-                  >
-                    {/* Icon */}
-                    <div className="border-main flex h-12 w-12 items-center justify-center rounded-full border backdrop-blur-sm">
-                      <div className="text-main">{getIcon(packageItem.icon)}</div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    className="absolute right-4 bottom-4 left-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + index * 0.1 }}
-                  >
-                    {/* Session type  */}
-                    <div className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
-                      <Clock className="mr-1 h-3 w-3" />
-                      {packageItem.session_type?.[lng]}
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  {/* Header */}
-                  <motion.div
-                    className="mb-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
-                  >
-                    {/* Package */}
-                    <h3 className="mb-2 line-clamp-2 text-xl font-bold text-gray-900">
-                      {packageItem.name?.[lng]}
-                    </h3>
-                    <p className="mb-3 line-clamp-2 text-sm text-gray-600">
-                      {packageItem.description?.[lng]}
-                      {packageItem.category?.name?.[lng]}
-                    </p>
-
-                    {/* Target Audience */}
-                    <div className="flex flex-wrap gap-2">
-                      {packageItem.target_audience?.[lng].map((audience, idx) => (
-                        <motion.span
-                          key={idx}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.5 + idx * 0.1 }}
-                          whileHover={{ scale: 1.05 }}
-                          className="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700"
-                        >
-                          <Users className="me-1 h-3 w-3" />
-                          {audience}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </motion.div>
-
-                  {/* Package Details */}
-                  <motion.div
-                    className="mb-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 + index * 0.1 }}
-                  >
-                    <h4 className="mb-2 text-sm font-semibold text-gray-900">
-                      {t("whats-included")}:
-                    </h4>
-                    <AnimatedList items={packageItem.details?.[lng]} delay={0.7} />
-                  </motion.div>
-
-                  {/* Post Session Benefits */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 + index * 0.1 }}
-                  >
-                    <h4 className="mb-2 text-sm font-semibold text-gray-900">
-                      {t("after-your-session")}:
-                    </h4>
-                    <ul className="space-y-2">
-                      <AnimatedList
-                        items={packageItem.post_session_benefits?.[lng]}
-                        delay={0.9}
+              return (
+                <motion.div
+                  key={packageItem._id}
+                  variants={cardVariants}
+                  whileHover={{
+                    y: -10,
+                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                  }}
+                  className="group overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
+                >
+                  {/* Header with Image */}
+                  <div className="relative h-64 overflow-hidden">
+                    <motion.div
+                      variants={imageVariants}
+                      whileHover="hover"
+                      className="h-full w-full"
+                    >
+                      <OptimizedImage
+                        src={packageItem.image || "/placeholder.svg"}
+                        alt={packageItem.name?.[lng]}
+                        className="h-full w-full object-cover"
                       />
-                    </ul>
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
+                    </motion.div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                    <motion.div
+                      className="absolute top-4 left-4"
+                      variants={iconVariants}
+                      whileHover="hover"
+                    >
+                      {/* Icon */}
+                      <div className="border-main text-main flex h-12 w-12 items-center justify-center rounded-full border backdrop-blur-sm">
+                        {React.createElement(IconComponent)}
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      className="absolute right-4 bottom-4 left-4"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + index * 0.1 }}
+                    >
+                      {/* Session type  */}
+                      <div className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                        <Clock className="mr-1 h-3 w-3" />
+                        {packageItem.session_type?.[lng]}
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    {/* Header */}
+                    <motion.div
+                      className="mb-4"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 + index * 0.1 }}
+                    >
+                      {/* Package */}
+                      <h3 className="mb-2 line-clamp-2 text-xl font-bold text-gray-900">
+                        {packageItem.name?.[lng]}
+                      </h3>
+                      <p className="mb-3 line-clamp-2 text-sm text-gray-600">
+                        {packageItem.description?.[lng]}
+                        {packageItem.category?.name?.[lng]}
+                      </p>
+
+                      {/* Target Audience */}
+                      <div className="flex flex-wrap gap-2">
+                        {packageItem.target_audience?.[lng].map((audience, idx) => (
+                          <motion.span
+                            key={idx}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.5 + idx * 0.1 }}
+                            whileHover={{ scale: 1.05 }}
+                            className="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700"
+                          >
+                            <Users className="me-1 h-3 w-3" />
+                            {audience}
+                          </motion.span>
+                        ))}
+                      </div>
+                    </motion.div>
+
+                    {/* Package Details */}
+                    <motion.div
+                      className="mb-4"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 + index * 0.1 }}
+                    >
+                      <h4 className="mb-2 text-sm font-semibold text-gray-900">
+                        {t("whats-included")}:
+                      </h4>
+                      <AnimatedList items={packageItem.details?.[lng]} delay={0.7} />
+                    </motion.div>
+
+                    {/* Post Session Benefits */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 + index * 0.1 }}
+                    >
+                      <h4 className="mb-2 text-sm font-semibold text-gray-900">
+                        {t("after-your-session")}:
+                      </h4>
+                      <ul className="space-y-2">
+                        <AnimatedList
+                          items={packageItem.post_session_benefits?.[lng]}
+                          delay={0.9}
+                        />
+                      </ul>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       )}

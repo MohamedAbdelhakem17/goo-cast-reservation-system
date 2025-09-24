@@ -212,7 +212,7 @@ exports.toggleHourlyPackagesStatus = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const updatedAddOn = await AddOnModel.findByIdAndUpdate(
+  const updatedPackage = await HourlyPackageModel.findByIdAndUpdate(
     id,
     { is_active },
     {
@@ -221,7 +221,7 @@ exports.toggleHourlyPackagesStatus = asyncHandler(async (req, res, next) => {
     }
   );
 
-  if (!updatedAddOn) {
+  if (!updatedPackage) {
     return next(
       new AppError(404, HTTP_STATUS_TEXT.FAIL, "No package found with this ID")
     );
@@ -229,7 +229,7 @@ exports.toggleHourlyPackagesStatus = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
-    data: updatedAddOn,
+    data: updatedPackage,
     message: `package status updated to ${is_active ? "Active" : "Inactive"}`,
   });
 });

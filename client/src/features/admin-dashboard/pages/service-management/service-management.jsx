@@ -7,10 +7,13 @@ import PackageCard from "./_components/package-card";
 import { Loading, ErrorFeedback, EmptyState } from "@/components/common";
 import { useGetAllPackages } from "@/apis/admin/manage-package.api";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { AnimatePresence } from "framer-motion";
+import PackageDeleteModal from "./_components/package-delete-modal";
 
 const ServiceManagement = () => {
   // Localization
   const { t } = useLocalization();
+
   // hooks
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -18,6 +21,7 @@ const ServiceManagement = () => {
 
   // state
   const [status, setStatus] = useState(initialStatus);
+  const [selectedDeletedPackage, setSelectedDeletedPackage] = useState(null);
 
   // Query
   const { packages, isLoading, error } = useGetAllPackages(initialStatus);
@@ -88,16 +92,33 @@ const ServiceManagement = () => {
       <div className="overflow-x-auto rounded-lg p-2.5">
         {/* Empty State  */}
         {packages?.data?.length === 0 ? (
-          <EmptyState message="No Package found." subMessage="Add new Package Now" />
+          <EmptyState
+            message={t("no-package-found")}
+            subMessage={t("add-new-package-now")}
+          />
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* include Data */}
             {packages?.data?.map((pkg) => (
-              <PackageCard key={pkg?._id} pkg={pkg} />
+              <PackageCard
+                key={pkg?._id}
+                pkg={pkg}
+                setSelectedDeletedPackage={setSelectedDeletedPackage}
+              />
             ))}
           </div>
         )}
       </div>
+
+      {/* Delete Modal */}
+      <AnimatePresence>
+        {selectedDeletedPackage && (
+          <PackageDeleteModal
+            selectedDeletedPackage={selectedDeletedPackage}
+            setSelectedDeletedPackage={setSelectedDeletedPackage}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

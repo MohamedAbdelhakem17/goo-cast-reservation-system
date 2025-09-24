@@ -7,6 +7,8 @@ import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { CheckCheck, Expand, X } from "lucide-react";
+import useLocalization from "@/context/localization-provider/localization-context";
+import usePriceFormat from "@/hooks/usePriceFormat";
 
 function BookingAction({
   isPending,
@@ -14,30 +16,33 @@ function BookingAction({
   isDesktop,
   setSelectedBooking,
   booking,
+  t,
 }) {
-  if (!isPending) return null;
-
   return (
     <div className="flex items-center gap-x-2.5">
-      <button
-        onClick={() => setConfirmPopup({ status: "approved", booking })}
-        className="text-sm text-green-600 hover:text-green-900 disabled:opacity-50"
-      >
-        {isDesktop ? "Approve" : <CheckCheck />}
-      </button>
+      {isPending && (
+        <>
+          <button
+            onClick={() => setConfirmPopup({ status: "approved", booking })}
+            className="text-sm text-green-600 hover:text-green-900 disabled:opacity-50"
+          >
+            {isDesktop ? t("approve") : <CheckCheck />}
+          </button>
 
-      <button
-        onClick={() => setConfirmPopup({ status: "rejected", booking })}
-        className="text-sm text-red-600 hover:text-red-900 disabled:opacity-50"
-      >
-        {isDesktop ? "Reject" : <X />}
-      </button>
+          <button
+            onClick={() => setConfirmPopup({ status: "rejected", booking })}
+            className="text-sm text-red-600 hover:text-red-900 disabled:opacity-50"
+          >
+            {isDesktop ? t("reject") : <X />}
+          </button>
+        </>
+      )}
 
       <button
         onClick={() => setSelectedBooking(booking)}
         className="text-sm text-blue-600 hover:text-blue-900 disabled:opacity-50"
       >
-        {isDesktop ? "Show info" : <Expand />}
+        {isDesktop ? t("show-info") : <Expand />}
       </button>
     </div>
   );
@@ -49,7 +54,10 @@ export default function DisplayBookingData({
   error,
   setSelectedBooking,
 }) {
+  const { t, lng } = useLocalization();
+
   const formatDate = useDataFormat();
+  const formatPrice = usePriceFormat();
   const convertTo12HourFormat = (time) => {
     const [hour, minute] = time.split(":");
     const hour12 = hour % 12 || 12;
@@ -67,12 +75,12 @@ export default function DisplayBookingData({
       { id: booking._id, status: confirmPopup.status },
       {
         onSuccess: ({ message }) => {
-          addToast(message || "Status changed successfully", "success");
+          addToast(message || t("status-changed-successfully"), "success");
           queryClient.invalidateQueries({ queryKey: ["get-bookings"] });
         },
 
         onError: ({ response }) =>
-          addToast(response?.data?.message || "Something went wrong", "error"),
+          addToast(response?.data?.message || t("something-went-wrong"), "error"),
 
         onSettled: () => {
           setConfirmPopup(null);
@@ -86,13 +94,13 @@ export default function DisplayBookingData({
 
   // variables
   const TABLE_HEADERS = [
-    "PERSONAL INFO",
-    "STUDIO",
-    "DATE",
-    "DURATION",
-    "TOTAL PRICE",
-    "STATUS",
-    "ACTIONS",
+    t("personal-info"),
+    t("studio-0"),
+    t("date"),
+    t("duration"),
+    t("total-price"),
+    t("status"),
+    t("actions"),
   ];
 
   // loading case
@@ -102,7 +110,9 @@ export default function DisplayBookingData({
   if (error) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700">
-        <p className="text-sm">Error loading Bookings. Please try refreshing the page.</p>
+        <p className="text-sm">
+          {t("error-loading-bookings-please-try-refreshing-the-page")}
+        </p>
       </div>
     );
   }
@@ -114,12 +124,12 @@ export default function DisplayBookingData({
         {/* Desktop no data */}
         <div className="hidden md:block">
           <div className="px-6 py-10 text-center text-gray-400">
-            No Booking found. wait the first booking.
+            {t("no-booking-found-wait-the-first-booking")}
           </div>
         </div>
         {/* Mobile no data */}
         <div className="py-8 text-center text-gray-400 md:hidden">
-          <p>No Booking found. wait the first booking.</p>
+          <p>{t("no-booking-found-wait-the-first-booking")}</p>
         </div>
       </>
     );
@@ -146,12 +156,12 @@ export default function DisplayBookingData({
                 <div
                   className={`text-sm font-bold text-gray-500 ${booking.isGuest ? "text-red-600" : "text-green-600"}`}
                 >
-                  {booking.isGuest ? "Guest" : "Member"}
+                  {booking.isGuest ? t("guest") : t("member")}
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="cursor-pointer text-sm font-medium text-gray-900">
-                  {booking?.studio?.name || "Studio Name"}
+                  {booking?.studio?.name?.[lng] || t("studio-name")}
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -162,11 +172,13 @@ export default function DisplayBookingData({
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-900">{booking.duration} hour(s)</div>
+                <div className="text-sm text-gray-900">
+                  {booking.duration} {t("hour-s")}
+                </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm font-medium text-gray-900">
-                  {booking.totalPrice.toLocaleString()} EGP
+                  {formatPrice(booking.totalPrice)}
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -187,8 +199,9 @@ export default function DisplayBookingData({
                   setSelectedBooking={setSelectedBooking}
                   isDesktop={isDesktop}
                   setConfirmPopup={setConfirmPopup}
-                  isPending={booking.status === "pending"}
+                  isPending={booking.status === t("pending")}
                   booking={booking}
+                  t={t}
                 />
               </td>
             </motion.tr>
@@ -202,16 +215,16 @@ export default function DisplayBookingData({
               title={`${booking?.studio?.name} booking`}
               subtitle={booking.status}
               fields={[
-                { label: "Price", value: booking.totalPrice },
-                { label: "Data", value: formatDate(booking.date) },
+                { label: t("price"), value: booking.totalPrice },
+                { label: t("data"), value: formatDate(booking.date) },
                 {
-                  label: "Time",
+                  label: t("time"),
                   value: `${convertTo12HourFormat(booking?.timeSlot || booking?.startSlot)} -
               ${convertTo12HourFormat(booking?.timeSlot || booking?.endSlot)}`,
                 },
-                { label: "Duration ", value: `${booking.duration} hour(s)` },
-                { label: "User name ", value: booking.personalInfo.fullName },
-                { label: "User email ", value: booking.personalInfo.email },
+                { label: t("duration"), value: `${booking.duration} ${t("hour-s")}` },
+                { label: t("user-name"), value: booking.personalInfo.fullName },
+                { label: t("user-email"), value: booking.personalInfo.email },
               ]}
               actions={
                 <BookingAction
@@ -220,6 +233,7 @@ export default function DisplayBookingData({
                   setConfirmPopup={setConfirmPopup}
                   isPending={booking.status === "pending"}
                   booking={booking}
+                  t={t}
                 />
               }
             />
@@ -231,9 +245,9 @@ export default function DisplayBookingData({
       <AnimatePresence mode="wait">
         {confirmPopup && (
           <Popup>
-            <h3 className="mb-4 text-lg font-semibold">Confirm Change Status</h3>
+            <h3 className="mb-4 text-lg font-semibold">{t("confirm-change-status")}</h3>
             <p className="mb-2">
-              Are you sure you want to
+              {t("are-you-sure-you-want-to")}
               <span
                 className={`font-bold ${
                   confirmPopup.status === "approved" ? "text-green-600" : "text-main"
@@ -241,21 +255,23 @@ export default function DisplayBookingData({
               >
                 {confirmPopup.status}
               </span>
-              this booking?
+              {t("this-booking")}
             </p>
             <ul className="mb-4 list-inside list-disc text-sm text-gray-700">
               <li>
-                <strong>Studio:</strong> {confirmPopup.booking?.studio?.name}
+                <strong>{t("studio")}:</strong>{" "}
+                {confirmPopup.booking?.studio?.name?.[lng]}
               </li>
               <li>
-                <strong>Date:</strong> {formatDate(confirmPopup.booking.date)}
+                <strong>{t("date-0")}:</strong> {formatDate(confirmPopup.booking.date)}
               </li>
               <li>
-                <strong>Time:</strong>{" "}
+                <strong>{t("time")}:</strong>{" "}
                 {convertTo12HourFormat(confirmPopup.booking.startSlot)}
               </li>
               <li>
-                <strong>Duration:</strong> {confirmPopup.booking.duration} hour(s)
+                <strong>t('duration-0'):</strong> {confirmPopup.booking.duration}{" "}
+                {t("hour-s")}
               </li>
             </ul>
             <div className="flex justify-end gap-3">
@@ -263,7 +279,7 @@ export default function DisplayBookingData({
                 onClick={() => setConfirmPopup(null)}
                 className="cursor-pointer rounded-lg bg-gray-200 px-4 py-2 transition-colors hover:bg-gray-300"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={handleStatusChange}
@@ -274,7 +290,7 @@ export default function DisplayBookingData({
                     : "bg-main/90 hover:bg-main"
                 } rounded-lg text-white transition-colors`}
               >
-                {isPending ? "loading .." : "Confirm"}
+                {isPending ? t("loading") : t("confirm")}
               </button>
             </div>
           </Popup>

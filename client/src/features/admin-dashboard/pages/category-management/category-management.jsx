@@ -12,29 +12,39 @@ import {
   useUpdateCategory,
 } from "@/apis/admin/manage-category.api";
 import { useQueryClient } from "@tanstack/react-query";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function CategoryManagement() {
-  const queryClient = useQueryClient();
-  const { addToast } = useToast();
-  const { categories, isLoading } = useGetAllCategories();
-  const { createCategory } = useCreateCategory();
-  const { editCategory } = useUpdateCategory();
+  // Localization
+  const { t, lng } = useLocalization();
 
+  // State
   const [editingCategory, setEditingCategory] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deletedCategory, setDeleteCategory] = useState(false);
 
+  // Query
+  const { categories, isLoading } = useGetAllCategories();
+
+  // Mutation
+  const { createCategory } = useCreateCategory();
+  const { editCategory } = useUpdateCategory();
+
+  // Hooks
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  // Functions
   const addCategory = (category) => {
     createCategory(category, {
       onSuccess: (res) => {
-        addToast(res?.message || "Category added successfully", "success");
+        addToast(res?.message || t("category-added-successfully"), "success");
         setIsFormOpen(false);
         queryClient.refetchQueries("categories");
       },
       onError: (err) =>
-        addToast(err?.response?.data?.message || "Failed to add category", "error"),
+        addToast(err?.response?.data?.message || t("failed-to-add-category"), "error"),
     });
   };
 
@@ -43,12 +53,12 @@ export default function CategoryManagement() {
       { id: updatedCategory._id, payload: updatedCategory },
       {
         onSuccess: ({ message }) => {
-          (addToast(message || "Category updated successfully", "success"),
+          (addToast(message || t("category-updated-successfully"), "success"),
             setEditingCategory(null));
           queryClient.refetchQueries("categories");
         },
         onError: ({ response }) =>
-          addToast(response?.data?.message || "Something went wrong", "error"),
+          addToast(response?.data?.message || t("something-went-wrong"), "error"),
       },
     );
   };
@@ -62,6 +72,7 @@ export default function CategoryManagement() {
     setDeleteCategory(category);
   };
 
+  // Loading state
   if (isLoading) return <Loading />;
 
   return (
@@ -72,8 +83,8 @@ export default function CategoryManagement() {
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <h1 className="mb-2 text-3xl font-bold">Category Management</h1>
-        <p className="text-gray-500">Manage your system categories</p>
+        <h1 className="mb-2 text-3xl font-bold">{t("category-management")}</h1>
+        <p className="text-gray-500">{t("manage-your-system-categories")}</p>
       </motion.div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -86,7 +97,7 @@ export default function CategoryManagement() {
           <div className="overflow-hidden rounded-lg bg-white shadow-md">
             <div className="border-main mb-5 border-b p-4">
               <h2 className="text-xl font-semibold">
-                {editingCategory ? "Edit Category" : "Add New Category"}
+                {editingCategory ? t("edit-category") : t("add-new-category")}
               </h2>
             </div>
             <div className="p-4">
@@ -113,7 +124,7 @@ export default function CategoryManagement() {
                       className="bg-main hover:bg-main/90 flex w-full items-center justify-center rounded-md px-4 py-2 text-white transition-colors"
                     >
                       <i className="fa-solid fa-plus mr-2 text-white"></i>
-                      Add New Category
+                      {t("add-new-category")}
                     </button>
                   </motion.div>
                 )}
@@ -130,7 +141,7 @@ export default function CategoryManagement() {
         >
           <div className="overflow-hidden rounded-lg bg-white shadow-md">
             <div className="border-main border-b p-4">
-              <h2 className="text-xl font-semibold">Categories</h2>
+              <h2 className="text-xl font-semibold">{t("categories")}</h2>
             </div>
             <div className="p-4">
               {isDesktop ? (

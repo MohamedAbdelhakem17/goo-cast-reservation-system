@@ -1,11 +1,16 @@
 import { Input } from "@/components/common";
 import { motion } from "framer-motion";
+import useLocalization from "@/context/localization-provider/localization-context";
 
-export default function EquipmentInput({ form }) {
+export default function EquipmentInput({ form, lang }) {
+  const { t } = useLocalization();
   const handleAddEquipment = () => {
     const ce = form.values.currentEquipment?.trim();
     if (ce) {
-      form.setFieldValue("equipment", [...form.values.equipment, ce]);
+      const equipment = [...form.values.equipment];
+      equipment.push({ ar: "", en: "", [lang]: ce });
+
+      form.setFieldValue("equipment", equipment);
       form.setFieldValue("currentEquipment", "");
     }
   };
@@ -17,16 +22,18 @@ export default function EquipmentInput({ form }) {
 
   return (
     <div className="w-full rounded-lg bg-gray-50 p-4">
-      <label className="mb-4 block text-sm font-medium text-gray-700">Equipment</label>
+      <label className="mb-4 block text-sm font-medium text-gray-700">
+        Equipment ({lang.toUpperCase()})
+      </label>
       <div className="mb-2 flex w-full items-center gap-5">
         <Input
           value={form.values.currentEquipment}
           name="currentEquipment"
           id="currentEquipment"
           onChange={form.handleChange}
-          placeholder="Enter equipment"
+          placeholder={t("enter-equipment")}
           className="w-full"
-          onKeyPress={(e) => {
+          onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
               handleAddEquipment();
@@ -41,6 +48,7 @@ export default function EquipmentInput({ form }) {
           <i className="fa-solid fa-plus"></i>
         </button>
       </div>
+
       <div className="mb-2 flex flex-wrap gap-2">
         {form.values.equipment.map((item, index) => (
           <motion.div
@@ -49,7 +57,7 @@ export default function EquipmentInput({ form }) {
             animate={{ opacity: 1, scale: 1 }}
             className="group flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1"
           >
-            <span className="text-sm">{item}</span>
+            <span className="text-sm">{item[lang]}</span>
             <button
               type="button"
               onClick={() => handleRemoveEquipment(index)}

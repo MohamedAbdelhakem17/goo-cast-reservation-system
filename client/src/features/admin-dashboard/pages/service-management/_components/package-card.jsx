@@ -1,21 +1,51 @@
-"use client";
-
 import React from "react";
 import useLocalization from "@/context/localization-provider/localization-context";
 import * as LucideIcons from "lucide-react";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { Link } from "react-router-dom";
 import { RadioButton } from "@/components/common";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import { useChangePackageStatus } from "@/apis/admin/manage-package.api";
 
-export default function PackageCard({ pkg, key }) {
+export default function PackageCard({ pkg, key, setSelectedDeletedPackage }) {
   // Localization
   const { t, lng } = useLocalization();
 
+  // Mutation
+  const { isPending, changeStatus } = useChangePackageStatus();
+
   // hooks
   const pieceFormate = usePriceFormat();
+  const { addToast } = useToast();
+  const queryClient = useQueryClient();
 
   // variables
   const IconComponent = LucideIcons[pkg.icon] || null;
+
+  // Functions
+  const handelUpdateStatus = (value, id) => {
+    return new Promise((resolve, reject) => {
+      changeStatus(
+        { payload: value, id },
+        {
+          onSuccess: () => {
+            addToast("Change status successfully", "success");
+            queryClient.invalidateQueries("packages");
+            resolve();
+          },
+          onError: (error) => {
+            const errorMessage =
+              error?.response?.data?.message || "Failed to change status";
+
+            addToast(errorMessage, "error");
+
+            reject(error);
+          },
+        },
+      );
+    });
+  };
 
   return (
     <div
@@ -132,7 +162,7 @@ export default function PackageCard({ pkg, key }) {
 
         {/* Delete button */}
         <button
-          onClick={() => console.log()}
+          onClick={() => setSelectedDeletedPackage(pkg)}
           className="group rounded-md p-3 transition-colors hover:bg-slate-50"
         >
           <LucideIcons.Trash className="h-4 w-4 cursor-pointer text-red-500 group-hover:text-red-600" />
@@ -141,8 +171,8 @@ export default function PackageCard({ pkg, key }) {
         {/* Change status button */}
         <RadioButton
           initialValue={pkg.is_active}
-          // isPending={isPending}
-          // callback={(value) => handelUpdateStatus(value, addon._id)}
+          isPending={isPending}
+          callback={(value) => handelUpdateStatus(value, pkg._id)}
         />
       </div>
     </div>

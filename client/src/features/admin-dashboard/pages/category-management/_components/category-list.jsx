@@ -1,6 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function CategoryList({ categories, onEdit, onDelete }) {
+  // Localization
+  const { t, lng } = useLocalization();
+
+  // Empty state
   if (categories?.length === 0) {
     return (
       <motion.div
@@ -8,7 +13,7 @@ export default function CategoryList({ categories, onEdit, onDelete }) {
         animate={{ opacity: 1 }}
         className="py-8 text-center text-gray-500"
       >
-        No categories found. Add your first category!
+        {t("no-categories-found-add-your-first-category")}
       </motion.div>
     );
   }
@@ -20,21 +25,21 @@ export default function CategoryList({ categories, onEdit, onDelete }) {
           <tr>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+              className="px-6 py-3 text-start text-xs font-medium tracking-wider text-gray-500 uppercase"
             >
-              Name English
+              {t("name-english")}
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+              className="px-6 py-3 text-start text-xs font-medium tracking-wider text-gray-500 uppercase"
             >
-              Min. Hours
+              {t("min-hours")}
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase"
+              className="px-6 py-3 text-end text-xs font-medium tracking-wider text-gray-500 uppercase"
             >
-              Actions
+              {t("actions")}
             </th>
           </tr>
         </thead>
@@ -50,14 +55,14 @@ export default function CategoryList({ categories, onEdit, onDelete }) {
                 layout
               >
                 <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-                  {category.name?.en}
+                  {category.name?.[lng]}
                 </td>
 
                 <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                   <div className="flex items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="mr-2 h-4 w-4 text-gray-400"
+                      className="me-2 h-4 w-4 text-gray-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -69,7 +74,7 @@ export default function CategoryList({ categories, onEdit, onDelete }) {
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    {category.minHours} hours
+                    {category.minHours} {t("hours")}
                   </div>
                 </td>
                 <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">

@@ -9,7 +9,7 @@ export default function Table({ children, headers }) {
               {headers?.map((header, index) => (
                 <th
                   key={index}
-                  className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                  className="px-6 py-3 text-start text-xs font-medium tracking-wider text-gray-500 uppercase"
                 >
                   {header}
                 </th>

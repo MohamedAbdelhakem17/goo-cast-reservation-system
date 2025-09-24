@@ -1,8 +1,11 @@
-import useGetAllStudios from "@/apis/studios/studios.api";
 import { SelectInput, Input } from "@/components/common";
+import { useGetStudio } from "@/apis/public/studio.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function HeaderAndFilter({ filters, onFilterChange }) {
-  const { data: studiosData } = useGetAllStudios();
+  // Localization
+  const { t, lng } = useLocalization();
+  const { data: studiosData } = useGetStudio();
 
   const handleFilterChange = (field, value) => {
     const newFilters = {
@@ -13,24 +16,24 @@ export default function HeaderAndFilter({ filters, onFilterChange }) {
   };
 
   const statusOptions = [
-    { value: "all", label: "All Bookings" },
-    { value: "pending", label: "Pending" },
-    { value: "approved", label: "Approved" },
-    { value: "rejected", label: "Rejected" },
+    { value: "all", label: t("all-bookings") },
+    { value: "pending", label: t("pending-0") },
+    { value: "approved", label: t("approved-0") },
+    { value: "rejected", label: t("rejected") },
   ];
 
   const studioOptions = [
-    { value: "all", label: "All Studios" },
+    { value: "all", label: t("all-studios") },
     ...(studiosData?.data?.map((studio) => ({
       value: studio._id,
-      label: studio.name,
+      label: studio.name?.[lng],
     })) || []),
   ];
 
   return (
     <div className="mb-6 space-y-4 lg:flex lg:items-center lg:justify-between lg:space-y-0">
       {/* Title */}
-      <h1 className="text-2xl font-bold text-gray-800">Booking Management</h1>
+      <h1 className="text-2xl font-bold text-gray-800">{t("booking-management")}</h1>
 
       {/* Filters */}
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap lg:items-end lg:gap-4">

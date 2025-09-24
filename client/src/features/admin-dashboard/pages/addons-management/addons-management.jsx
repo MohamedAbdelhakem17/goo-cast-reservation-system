@@ -8,8 +8,12 @@ import { AnimatePresence } from "framer-motion";
 import AddonCart from "./_components/addon-card";
 
 const AddonDeleteModal = lazy(() => import("./_components/addon-delete-modal"));
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function AddonsManagement() {
+  // Localization
+  const { t, lng } = useLocalization();
+
   // hooks
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -31,9 +35,9 @@ export default function AddonsManagement() {
 
   // Variables
   const ADDONS_STATUS = [
-    { label: "All", value: "all" },
-    { label: "Active", value: "true" },
-    { label: "In active", value: "false" },
+    { label: t("all"), value: "all" },
+    { label: t("active-0"), value: "true" },
+    { label: t("in-active"), value: "false" },
   ];
 
   // Effects
@@ -62,7 +66,7 @@ export default function AddonsManagement() {
       <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         {/* Title */}
         <h1 className="text-lg font-bold text-gray-800 md:text-2xl">
-          Add-ons Management
+          {t("add-ons-management")}
         </h1>
 
         {/* Filter and add new addons */}
@@ -72,8 +76,8 @@ export default function AddonsManagement() {
             to="/admin-dashboard/addons/add"
             className="bg-main/80 hover:bg-main mb-6 rounded-lg px-4 py-3 text-white transition-colors"
           >
-            <PlusCircle className="mr-2 inline-block" />
-            Add New Addons
+            <PlusCircle className="me-2 inline-block" />
+            {t("add-new-addons")}
           </Link>
 
           {/* Select Filter */}
@@ -89,12 +93,15 @@ export default function AddonsManagement() {
       <div className="overflow-x-auto rounded-lg p-2.5">
         {/* Empty State  */}
         {addons?.data?.length === 0 ? (
-          <EmptyState message="No addons found." subMessage="Add new addons Now" />
+          <EmptyState
+            message={t("no-addons-found")}
+            subMessage={t("add-new-addons-now")}
+          />
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* include Data */}
             {addons.data.map((addon) => (
-              <AddonCart addon={addon} setSearchParams={setSearchParams} />
+              <AddonCart addon={addon} setDeletedAddon={setSelectedDeletedAddon} />
             ))}
           </div>
         )}
@@ -104,7 +111,7 @@ export default function AddonsManagement() {
       <AnimatePresence>
         {selectedDeletedAddon && (
           <AddonDeleteModal
-            setDeletedAddon={selectedDeletedAddon}
+            selectedDeletedAddon={selectedDeletedAddon}
             setSelectedDeletedAddon={setSelectedDeletedAddon}
           />
         )}
