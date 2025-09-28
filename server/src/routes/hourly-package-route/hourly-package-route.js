@@ -26,6 +26,7 @@ router
 
 router
   .route("/:id")
+  .get(hourlyPackageController.getOneHourlyPackage)
   .put(hourlyPackageController.updateHourlyPackage) // Update hourly packages by ID
   .delete(hourlyPackageController.deleteHourlyPackage); // Delete hourly packages by ID
 

@@ -11,6 +11,9 @@ import { hasError } from "@/utils/formik-helper";
 import EnglishFields from "./_components/english-fields";
 import ArabicFields from "./_components/arabic-fields";
 import ShardFields from "./_components/shard-fields";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useGetSinglePackage } from "@/apis/admin/manage-package.api";
 
 const STEP_FIELDS = {
   0: [
@@ -18,7 +21,6 @@ const STEP_FIELDS = {
     "name.en",
     "target_audience.en",
     "description.en",
-    "category.en",
     "details.en",
     "post_session_benefits.en",
     "session_type.en",
@@ -28,7 +30,6 @@ const STEP_FIELDS = {
     "name.ar",
     "target_audience.ar",
     "description.ar",
-    "category.ar",
     "details.ar",
     "post_session_benefits.ar",
     "session_type.ar",
@@ -38,6 +39,7 @@ const STEP_FIELDS = {
     "price",
     "image",
     "icon",
+    "category",
     "is_active",
   ],
 };
@@ -67,9 +69,30 @@ const itemVariants = {
 };
 
 const FORM_STEPS = ["Add English", "Add Arabic", "Shared"];
-export default function AddService() {
-  const [currentStep, setCurrentStep] = useState(0);
 
+export default function AddService() {
+  // Localization
+  const { t } = useLocalization();
+
+  // Navigation
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isEdit = Boolean(searchParams.get("edit"));
+
+  // Stet
+  const [currentStep, setCurrentStep] = useState(0);
+  const FORM_STEPS = [t("add-english"), t("add-arabic"), t("shared")];
+
+  // Query
+  const {
+    data: editedPackage,
+    isLoading,
+    error,
+  } = useGetSinglePackage(searchParams.get("edit"));
+
+  // Mutation
+
+  // Function
   const handleNextStep = () => {
     if (currentStep < FORM_STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
@@ -82,18 +105,29 @@ export default function AddService() {
     }
   };
 
-  const isEdit = false;
+  const handelEditPackage = ({ id, payload }) => {};
 
+  const handelAddPackage = (values) => {};
+
+  // Form  and  validation
   const formik = useFormik({
     initialValues: initialPackageValues,
     validationSchema: getPackageValidationSchema(isEdit),
     onSubmit: (values) => {
-      console.log(values);
+      if (isEdit) {
+        //  edit case
+        handelEditPackage({ id: "", payload: values });
+      } else {
+        // add case
+        handelAddPackage(values);
+      }
     },
   });
 
+  // variables
+
   const isHasError = hasError(STEP_FIELDS, currentStep, formik);
-  // const isHasError = false;
+
   const activeStep = {
     0: <EnglishFields formik={formik} />,
     1: <ArabicFields formik={formik} />,

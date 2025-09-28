@@ -65,6 +65,25 @@ exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
   });
 });
 
+// get one package
+exports.getOneHourlyPackage = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const hourlyPackage = await HourlyPackageModel.findById(id);
+
+  if (!hourlyPackage) {
+    return res.status(404).json({
+      status: HTTP_STATUS_TEXT.FAIL,
+      message: "Package not found",
+    });
+  }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: hourlyPackage,
+  });
+});
+
 // create hourly package
 exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
   const {
