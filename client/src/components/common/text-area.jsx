@@ -53,7 +53,7 @@ const Textarea = ({
         {/* Actual textarea field */}
         <textarea
           ref={inputRef}
-          className={`w-full resize-none border-0 border-b-2 bg-transparent px-3 py-3 text-base text-gray-800 focus:ring-0 focus:outline-none ${
+          className={`w-full resize-none border-0 border-b-2 bg-transparent px-3 py-3 text-base text-gray-800 focus:ring-0 focus:outline-none ${isArabic && "font-arabic"} ${
             errors && touched
               ? "border-b-red-500"
               : isFocused

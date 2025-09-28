@@ -4,32 +4,39 @@ import useLocalization from "@/context/localization-provider/localization-contex
 
 export default function FacilitiesInput({ form, lang }) {
   const { t } = useLocalization();
+
   const handleAddFacility = () => {
     const cf = form.values.currentFacility?.trim();
     if (cf) {
-      const facilities = [...form.values.facilities];
-
-      facilities.push({ ar: "", en: "", [lang]: cf });
-
+      const facilities = {
+        ar: [...form.values.facilities?.ar],
+        en: [...form.values.facilities?.en],
+      };
+      facilities[lang].push(cf);
       form.setFieldValue("facilities", facilities);
       form.setFieldValue("currentFacility", "");
     }
   };
 
   const handleRemoveFacility = (index) => {
-    const arr = form.values.facilities.filter((_, i) => i !== index);
-    form.setFieldValue("facilities", arr);
+    const facilities = {
+      ar: [...form.values.facilities.ar],
+      en: [...form.values.facilities.en],
+    };
+    facilities[lang] = facilities[lang].filter((_, i) => i !== index);
+    form.setFieldValue("facilities", facilities);
   };
 
+  const facilitiesError =
+    form.touched.facilities?.[lang] && form.errors.facilities?.[lang];
+
   return (
-    <div className="w-full rounded-lg bg-gray-50 p-4">
-      <label className="mb-4 block text-sm font-medium text-gray-700">
-        Facilities ({lang.toUpperCase()})
-      </label>
+    <div className="my-2 w-full rounded-lg bg-gray-50 p-4">
       <div className="mb-2 flex w-full items-center gap-5">
         <Input
           value={form.values.currentFacility}
           id="currentFacility"
+          label={`${t("facilities")} (${lang.toUpperCase()})`}
           name="currentFacility"
           onChange={form.handleChange}
           placeholder={t("enter-facility")}
@@ -41,6 +48,7 @@ export default function FacilitiesInput({ form, lang }) {
             }
           }}
         />
+
         <button
           type="button"
           onClick={handleAddFacility}
@@ -50,19 +58,21 @@ export default function FacilitiesInput({ form, lang }) {
         </button>
       </div>
 
+      {facilitiesError && <p className="text-sm text-red-500">{facilitiesError}</p>}
+
       <div className="mb-2 flex flex-wrap gap-2">
-        {form.values.facilities.map((facility, index) => (
+        {form.values.facilities?.[lang].map((facility, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="group flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1"
+            className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1"
           >
-            <span className="text-sm">{facility[lang]}</span>
+            <span className="text-sm">{facility}</span>
             <button
               type="button"
               onClick={() => handleRemoveFacility(index)}
-              className="text-red-500 opacity-0 transition group-hover:opacity-100"
+              className="text-main"
             >
               ×
             </button>

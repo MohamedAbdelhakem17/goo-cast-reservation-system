@@ -17,17 +17,14 @@ const studioSchema = new mongoose.Schema(
         maxLength: [50, "Name must be less than 50 characters"],
       },
     },
-
     slug: {
       type: String,
       lowercase: true,
     },
-
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-
     address: {
       ar: {
         type: String,
@@ -42,18 +39,15 @@ const studioSchema = new mongoose.Schema(
         maxLength: [100, "Address must be less than 100 characters"],
       },
     },
-
     basePricePerSlot: {
       type: Number,
       default: 0,
       min: [0, "Base price must be greater than or equal to 0"],
     },
-
     isFixedHourly: {
       type: Boolean,
       default: true,
     },
-
     description: {
       ar: {
         type: String,
@@ -66,7 +60,6 @@ const studioSchema = new mongoose.Schema(
         trim: true,
       },
     },
-
     facilities: {
       ar: {
         type: [String],
@@ -83,7 +76,6 @@ const studioSchema = new mongoose.Schema(
         ],
       },
     },
-
     equipment: {
       ar: {
         type: [String],
@@ -91,22 +83,20 @@ const studioSchema = new mongoose.Schema(
           (arr) => arr.length > 0,
           "At least one equipment item is required",
         ],
-        en: {
-          type: [String],
-          validate: [
-            (arr) => arr.length > 0,
-            "At least one equipment item is required",
-          ],
-        },
+      },
+      en: {
+        type: [String],
+        validate: [
+          (arr) => arr.length > 0,
+          "At least one equipment item is required",
+        ],
       },
     },
-
     thumbnail: {
       type: String,
       required: [true, "Please provide a thumbnail"],
       trim: true,
     },
-
     imagesGallery: {
       type: [String],
       validate: [
@@ -125,17 +115,14 @@ const studioSchema = new mongoose.Schema(
       ],
       required: true,
     },
-
     startTime: {
       type: String,
       default: "09:00",
     },
-
     endTime: {
       type: String,
       default: "18:00",
     },
-
     minSlotsPerDay: {
       type: Object,
       default: {
@@ -148,7 +135,6 @@ const studioSchema = new mongoose.Schema(
         saturday: 1,
       },
     },
-
     dayOff: {
       type: [String],
       default: [],
@@ -168,17 +154,14 @@ const studioSchema = new mongoose.Schema(
         message: "Invalid day in dayOff array",
       },
     },
-
     recording_seats: {
       type: Number,
       min: [1, "Recording Seats must be at least 1"],
       required: true,
     },
-
     calendarId: {
       type: String,
     },
-
     is_active: {
       type: Boolean,
       required: true,
@@ -188,27 +171,19 @@ const studioSchema = new mongoose.Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-// Auto-generate slug from name before saving
 studioSchema.pre("save", function (next) {
   if (this.isModified("name")) {
     this.slug = slugify(this.name.en, { lower: true });
   }
-
   validateTimeRange(this.startTime, this.endTime);
-
   next();
 });
 
 studioSchema.pre("findOneAndUpdate", function (next) {
   const update = this.getUpdate();
-
   const startTime = update.startTime || this.get("startTime");
   const endTime = update.endTime || this.get("endTime");
-  const dayOff = update.dayOff || this.get("dayOff");
-  const minSlotsPerDay = update.minSlotsPerDay || this.get("minSlotsPerDay");
-
   validateTimeRange(startTime, endTime);
-
   next();
 });
 
@@ -220,7 +195,6 @@ studioSchema.post("init", (doc) => {
   setImage(doc);
 });
 
-// Helper: Validate startTime < endTime
 function validateTimeRange(start, end) {
   if (start && end) {
     const [sh, sm] = start.split(":").map(Number);
@@ -231,12 +205,10 @@ function validateTimeRange(start, end) {
   }
 }
 
-// Set full image URLs
 function setImage(doc) {
   if (doc.thumbnail) {
     doc.thumbnail = `${process.env.BASE_URL}/uploads/studio/${doc.thumbnail}`;
   }
-
   if (doc.imagesGallery) {
     doc.imagesGallery = doc.imagesGallery.map(
       (img) => `${process.env.BASE_URL}/uploads/studio/${img}`

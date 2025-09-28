@@ -259,5 +259,7 @@
   "previous": "Previous",
   "next": "Next",
   "remove": "Remove",
-  "add-to-cart": "Add to cart"
+  "add-to-cart": "Add to cart",
+  "studio-updated-successfully": "Studio updated successfully",
+  "studio-added-successfully": "Studio added successfully"
 }
