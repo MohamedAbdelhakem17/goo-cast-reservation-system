@@ -9,10 +9,10 @@ export default function StudioArabicFields({ formik }) {
         label="Studio Name"
         id="name"
         name="name"
-        value={formik.values.name.ar}
+        value={formik.values.name?.ar}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        errors={formik.touched.name.ar && formik.errors.name.ar}
+        errors={formik.touched.name?.ar && formik.errors.name?.ar}
         placeholder="Enter studio name"
       />
 
@@ -20,22 +20,22 @@ export default function StudioArabicFields({ formik }) {
         label="Address"
         id="address"
         name="address"
-        value={formik.values.address.ar}
+        value={formik.values.address?.ar}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        errors={formik.touched.address.ar && formik.errors.address.ar}
+        errors={formik.touched.address?.ar && formik.errors.address?.ar}
         placeholder="Enter studio address"
       />
 
       {/* Description */}
       <TextArea
         label="Description"
-        value={form.values.description.ar}
-        onChange={form.handleChange}
-        onBlur={form.handleBlur}
+        value={formik.values.description.ar}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
         id="description"
         name="description"
-        errors={form.touched.description.ar && form.errors.description.ar}
+        errors={formik.touched.description?.ar && formik.errors.description?.ar}
         placeholder="Enter studio Description"
         rows={4}
       />

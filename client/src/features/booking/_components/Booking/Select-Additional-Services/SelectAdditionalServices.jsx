@@ -23,7 +23,7 @@ export default function SelectAdditionalServices() {
         {/* AddOns takes full width on mobile, 2/3 on large screens */}
         <div className="w-full lg:w-2/3">
           <AddOns />
-          <Faq />
+          {/* <Faq /> */}
         </div>
 
         {/* Cart Sticky */}

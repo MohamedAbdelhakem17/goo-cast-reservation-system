@@ -173,8 +173,8 @@ export default function AddStudio() {
             TOTAL_STEPS={FORM_STEPS.length}
             handleNextStep={handleNextStep}
             handlePrevStep={handlePrevStep}
-            hasError={isHasError}
-            finalStepText={isEdit ? "Edit Studio" : "Add Studio"}
+            hasError={false}
+            finalStepText={isEdit ? t("edit-studio") : t("add-studio")}
           />
         </form>
       </div>

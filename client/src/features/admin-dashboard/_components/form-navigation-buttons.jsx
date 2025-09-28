@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 function NavButton({ children, ...props }) {
   return (
@@ -17,6 +18,7 @@ export default function FormNavigationButtons({
   hasError,
   finalStepText = "Submit",
 }) {
+  const { t, lng } = useLocalization();
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === TOTAL_STEPS - 1;
 
@@ -26,7 +28,9 @@ export default function FormNavigationButtons({
       <div className="pb-24 lg:hidden" />
 
       {/* Navigation Buttons Wrapper */}
-      <div className="fixed right-0 bottom-0 left-0 z-40 container mx-auto flex items-center justify-between border-t border-gray-200 px-4 py-3 lg:static lg:border-0 lg:bg-transparent">
+      <div
+        className={`fixed right-0 bottom-0 left-0 z-40 container mx-auto flex items-center justify-between border-t border-gray-200 px-4 py-3 lg:static lg:border-0 lg:bg-transparent ${lng === "en" && "flex-row-reverse"}`}
+      >
         {/* Previous Button Container to preserve spacing */}
         <div className="w-fit">
           {!isFirstStep && (
@@ -35,7 +39,7 @@ export default function FormNavigationButtons({
               onClick={handlePrevStep}
             >
               <ArrowLeft className="me-1 inline-block" />
-              Previous
+              {t("previous")}
             </NavButton>
           )}
         </div>
@@ -51,7 +55,7 @@ export default function FormNavigationButtons({
           onClick={handleNextStep}
           type="button"
         >
-          {isLastStep ? finalStepText : "Next"}
+          {isLastStep ? finalStepText : t("next")}
           <ArrowRight className="ms-1 inline-block" />
         </NavButton>
       </div>
