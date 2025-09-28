@@ -13,6 +13,7 @@ export default function StudioEnglishFields({ formik }) {
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         errors={formik.touched.name?.en && formik.errors.name?.en}
+        touched={formik.touched.name?.en}
         placeholder="Enter studio name"
       />
 
@@ -23,6 +24,7 @@ export default function StudioEnglishFields({ formik }) {
         value={formik.values.address.en}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
+        touched={formik.touched.address?.en}
         errors={formik.touched.address?.en && formik.errors.address?.en}
         placeholder="Enter studio address"
       />
@@ -37,6 +39,7 @@ export default function StudioEnglishFields({ formik }) {
         onBlur={formik.handleBlur}
         errors={formik.touched.description?.en && formik.errors.description?.en}
         placeholder="Enter studio description"
+        touched={formik.touched.description?.en}
         rows={4}
       />
 

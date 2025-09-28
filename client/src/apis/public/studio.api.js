@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axios-instance";
 
-export const useGetStudio = () => {
+export const useGetStudio = (status) => {
+  const url =
+    status === "all" ? "/studio" : `/studio?status=${encodeURIComponent(status)}`;
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ["studio"],
+    queryKey: ["studio", status],
 
     queryFn: async () => {
-      const { data } = await axiosInstance("/studio");
+      const { data } = await axiosInstance(url);
 
       return data;
     },

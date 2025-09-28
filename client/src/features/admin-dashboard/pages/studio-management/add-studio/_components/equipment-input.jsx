@@ -50,14 +50,14 @@ export default function EquipmentInput({ form, lang }) {
       </div>
 
       <div className="mb-2 flex flex-wrap gap-2">
-        {form.values.equipment.map((item, index) => (
+        {form.values.equipment?.[lang].map((item, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="group flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1"
           >
-            <span className="text-sm">{item[lang]}</span>
+            <span className="text-sm">{item}</span>
             <button
               type="button"
               onClick={() => handleRemoveEquipment(index)}

@@ -10,7 +10,7 @@ import StudioCard from "./_components/studio-card";
 
 const StudioManagement = () => {
   const { lng, t } = useLocalization();
-  const { data: studiosData, isLoading } = useGetStudio();
+  const { data: studiosData, isLoading } = useGetStudio("all");
   const { deleteStudio } = useDeleteStudio();
 
   const [selectedStudio, setSelectedStudio] = useState(null);

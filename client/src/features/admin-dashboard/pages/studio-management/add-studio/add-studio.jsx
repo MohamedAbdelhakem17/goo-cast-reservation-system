@@ -1,18 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from "react";
 import { useFormik } from "formik";
-import { Input, TextArea } from "@/components/common";
 import { motion } from "framer-motion";
-// import AddNewStudio from "@/apis/studios/add.studio.api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { ErrorFeedback } from "@/components/common";
 import { getStudioInitialValues, validationSchema } from "@/utils/schemas/studio.schema";
-import ImagesInputs from "./_components/images-inputs";
-import EquipmentInput from "./_components/equipment-input";
-import FacilitiesInput from "./_components/facilities-input";
-import { useUpdateStudio } from "@/apis/admin/manage-studio.api";
-import { useGetOneStudio } from "@/apis/public/studio.api";
+
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useState } from "react";
 import { hasError } from "@/utils/formik-helper";
@@ -22,6 +13,9 @@ import StudioArabicFields from "./_components/studio-arabic-fields";
 import StudioShardFields from "./studio-shard-fields";
 import FormStepper from "@/features/admin-dashboard/_components/form-steeper";
 import { AnimatePresence } from "framer-motion";
+import { useUpdateStudio, useAddStudio } from "@/apis/admin/manage-studio.api";
+import { useGetOneStudio } from "@/apis/public/studio.api";
+import { EmptyState, Loading } from "@/components/common";
 
 const STEP_FIELDS = {
   0: [
@@ -37,8 +31,8 @@ const STEP_FIELDS = {
     "name.ar",
     "address.ar",
     "description.ar",
-    "facilities",
-    "equipment",
+    "facilities.ar",
+    "equipment.ar",
   ],
   2: [
     // Step 2: Common fields (no language)
@@ -54,10 +48,27 @@ const STEP_FIELDS = {
 };
 
 export default function AddStudio() {
+  // Localization
   const { t } = useLocalization();
-  const FORM_STEPS = [t("add-english"), t("add-arabic"), t("shared")];
+
+  // Navigation
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isEdit = Boolean(searchParams.get("edit"));
+
+  // State
   const [currentStep, setCurrentStep] = useState(0);
 
+  // Query
+  const { data: updatedStudio, isLoading } = useGetOneStudio(searchParams.get("edit"));
+
+  // Mutation
+  const { addStudio, isPending: isAdding } = useAddStudio();
+  const { updateStudio, isPending: isUpdating } = useUpdateStudio();
+  // Hooks
+  const { addToast } = useToast();
+
+  // Functions
   const handleNextStep = () => {
     if (currentStep < FORM_STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
@@ -70,70 +81,78 @@ export default function AddStudio() {
     }
   };
 
-  const navigate = useNavigate();
-  const { addToast } = useToast();
+  const handelAddStudio = (payload) => {
+    addStudio(payload, {
+      onSuccess: (response) => {
+        addToast(response.message || t("studio-added-successfully"), "success");
+        setTimeout(() => {
+          navigate("/admin-dashboard/studio");
+        }, 2000);
+      },
+      onError: (error) => {
+        addToast(error.response?.data?.message || t("something-went-wrong"), "error");
+      },
+    });
+  };
 
-  // const { formik, isPending } = AddNewStudio({
-  //   onSuccess: (response) => {
-  //     addToast(response.message || "Studio added successfully", "success");
-  //     setTimeout(() => {
-  //       navigate("/admin-dashboard/studio");
-  //     }, 2000);
-  //   },
-  //   onError: (error) => {
-  //     addToast(error.response?.data?.message || "Something went wrong", "error");
-  //   },
-  // });
-  const [searchParams] = useSearchParams();
-  const { data: updatedStudio } = useGetOneStudio(searchParams.get("edit"));
-  const { updateStudio, isLoading: isUpdating } = useUpdateStudio();
-  const isEdit = Boolean(searchParams.get("edit"));
+  const handelEditStudio = ({ id, payload }) => {
+    updateStudio(
+      { id, payload },
+      {
+        onSuccess: (response) => {
+          addToast(response.message || t("studio-updated-successfully"), "success");
 
-  // Formik setup
+          setTimeout(() => {
+            navigate("/admin-dashboard/studio");
+          }, 2000);
+        },
+
+        onError: (error) => {
+          addToast(error.response?.data?.message || t("something-went-wrong"), "error");
+        },
+      },
+    );
+  };
+
+  // Form and validation
   const form = useFormik({
     initialValues: getStudioInitialValues(updatedStudio?.data),
     validationSchema: validationSchema,
-    enableReinitialize: true,
     onSubmit: (values) => {
       const finalData = {
         ...values,
       };
 
+      console.log(finalData);
+
       if (isEdit) {
-        updateStudio(
-          { id: updatedStudio.data._id, data: finalData },
-          {
-            onSuccess: (response) => {
-              addToast(response.message || "Studio updated successfully", "success");
-              setTimeout(() => {
-                navigate("/admin-dashboard/studio-management");
-              }, 2000);
-            },
-            onError: (error) => {
-              addToast(error.response?.data?.message || "Something went wrong", "error");
-            },
-          },
-        );
+        // edit case
+        handelEditStudio({ id: updatedStudio.data._id, payload: finalData });
       } else {
-        formik.setValues(finalData);
-        setTimeout(() => {
-          formik.handleSubmit();
-        }, 100);
+        // add case
+        handelAddStudio(finalData);
       }
     },
+
+    enableReinitialize: true,
   });
 
-  const isPending = true;
-  const currentLoading = isEdit ? isUpdating : isPending;
-
+  // Variables
   const isHasError = hasError(STEP_FIELDS, currentStep, form);
 
-  // const isHasError = false;
+  const FORM_STEPS = [t("add-english"), t("add-arabic"), t("shared")];
+
   const activeStep = {
     0: <StudioEnglishFields formik={form} />,
     1: <StudioArabicFields formik={form} />,
     2: <StudioShardFields formik={form} />,
   };
+
+  if (isLoading) return <Loading />;
+
+  if (isEdit && updatedStudio === undefined) {
+    return <EmptyState />;
+  }
 
   return (
     <motion.div
@@ -173,7 +192,8 @@ export default function AddStudio() {
             TOTAL_STEPS={FORM_STEPS.length}
             handleNextStep={handleNextStep}
             handlePrevStep={handlePrevStep}
-            hasError={false}
+            hasError={isHasError}
+            isLoading={isUpdating || isAdding}
             finalStepText={isEdit ? t("edit-studio") : t("add-studio")}
           />
         </form>

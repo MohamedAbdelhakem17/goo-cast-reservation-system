@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader } from "lucide-react";
 import useLocalization from "@/context/localization-provider/localization-context";
 
 function NavButton({ children, ...props }) {
@@ -17,6 +17,7 @@ export default function FormNavigationButtons({
   handlePrevStep,
   hasError,
   finalStepText = "Submit",
+  isLoading,
 }) {
   const { t, lng } = useLocalization();
   const isFirstStep = currentStep === 0;
@@ -51,12 +52,18 @@ export default function FormNavigationButtons({
               ? "bg-green-500 text-white hover:bg-green-600"
               : "bg-main/90 hover:bg-main text-white"
           } disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400`}
-          disabled={hasError}
+          disabled={hasError || isLoading}
           onClick={handleNextStep}
-          type="button"
+          type={isLastStep ? "submit" : "button"}
         >
-          {isLastStep ? finalStepText : t("next")}
-          <ArrowRight className="ms-1 inline-block" />
+          {isLoading ? (
+            <Loader className="animate-spin" />
+          ) : (
+            <>
+              {isLastStep ? finalStepText : t("next")}
+              <ArrowRight className="ms-1 inline-block" />
+            </>
+          )}
         </NavButton>
       </div>
     </>

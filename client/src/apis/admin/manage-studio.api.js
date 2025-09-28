@@ -131,3 +131,19 @@ export const useUpdateStudio = () => {
 
   return { isPending, error, updateStudio };
 };
+
+export const useChangeStudioStatus = () => {
+  const { mutate: changeStatus, isPending } = useMutation({
+    mutationKey: ["change-studio-status"],
+
+    mutationFn: async ({ payload, id }) => {
+      const { data } = await axiosInstance.put(`/studio/change-status/${id}`, {
+        is_active: payload,
+      });
+
+      return data;
+    },
+  });
+
+  return { changeStatus, isPending };
+};

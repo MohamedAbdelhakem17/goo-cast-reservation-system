@@ -36,4 +36,6 @@ router.put(
   studioController.changePrice
 );
 
+router.route("/change-status/:id").put(studioController.toggleStudioStatus);
+
 module.exports = router;

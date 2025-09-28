@@ -5,38 +5,43 @@ import EquipmentInput from "./equipment-input";
 export default function StudioArabicFields({ formik }) {
   return (
     <>
+      {/* Studio name */}
       <Input
         label="Studio Name"
-        id="name"
-        name="name"
+        id="name.ar"
+        name="name.ar"
         value={formik.values.name?.ar}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        errors={formik.touched.name?.ar && formik.errors.name?.ar}
+        errors={formik.errors.name?.ar}
+        touched={formik.touched.name?.ar}
         placeholder="Enter studio name"
       />
 
+      {/* Address */}
       <Input
         label="Address"
-        id="address"
-        name="address"
+        id="address.ar"
+        name="address.ar"
         value={formik.values.address?.ar}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        errors={formik.touched.address?.ar && formik.errors.address?.ar}
+        errors={formik.errors.address?.ar}
+        touched={formik.touched.address?.ar}
         placeholder="Enter studio address"
       />
 
       {/* Description */}
       <TextArea
         label="Description"
-        value={formik.values.description.ar}
+        value={formik.values.description?.ar}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        id="description"
-        name="description"
-        errors={formik.touched.description?.ar && formik.errors.description?.ar}
-        placeholder="Enter studio Description"
+        id="description.ar"
+        name="description.ar"
+        errors={formik.errors.description?.ar}
+        touched={formik.touched.description?.ar}
+        placeholder="Enter studio description"
         rows={4}
       />
 

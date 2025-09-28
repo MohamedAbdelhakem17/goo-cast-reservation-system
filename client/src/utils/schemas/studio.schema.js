@@ -16,8 +16,8 @@ export const getStudioInitialValues = (studio) => {
       ar: studio?.description?.ar || "",
       en: studio?.description?.en || "",
     },
-    facilities: studio?.facilities?.length > 0 ? studio.facilities : [{ ar: "", en: "" }],
-    equipment: studio?.equipment?.length > 0 ? studio.equipment : [{ ar: "", en: "" }],
+    equipment: studio?.equipment ?? { en: [], ar: [] },
+    facilities: studio?.facilities ?? { en: [], ar: [] },
     startTime: studio?.startTime || "12:00",
     endTime: studio?.endTime || "20:00",
     thumbnail: studio?.thumbnail || null,
@@ -32,6 +32,7 @@ export const getStudioInitialValues = (studio) => {
       friday: 1,
       saturday: 1,
     },
+    recording_seats: 1,
     currentFacility: "",
     currentEquipment: "",
   };
@@ -66,6 +67,24 @@ export const validationSchema = Yup.object({
     en: Yup.string()
       .required("English description is required")
       .min(50, "Description must be at least 50 characters"),
+  }),
+
+  equipment: Yup.object({
+    ar: Yup.array()
+      .of(Yup.string().min(2, "Arabic equipment item too short"))
+      .min(1, "At least one Arabic equipment item is required"),
+    en: Yup.array()
+      .of(Yup.string().min(2, "English equipment item too short"))
+      .min(1, "At least one English equipment item is required"),
+  }),
+
+  facilities: Yup.object({
+    ar: Yup.array()
+      .of(Yup.string().min(2, "Arabic facility item too short"))
+      .min(1, "At least one Arabic facility item is required"),
+    en: Yup.array()
+      .of(Yup.string().min(2, "English facility item too short"))
+      .min(1, "At least one English facility item is required"),
   }),
 
   startTime: Yup.string()
@@ -121,4 +140,6 @@ export const validationSchema = Yup.object({
     friday: Yup.number().min(0, "Minimum slots must be at least 0"),
     saturday: Yup.number().min(0, "Minimum slots must be at least 0"),
   }),
+
+  recording_seats: Yup.number().min(1, "number of recording seats must be at least 1"),
 });

@@ -5,16 +5,43 @@ import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useChangeStudioStatus } from "../../../../../apis/admin/manage-studio.api";
 
 export default function StudioCard({ studio }) {
   // Localization
   const { t, lng } = useLocalization();
+
   // mutation
+  const { isPending, changeStatus } = useChangeStudioStatus();
 
   // hooks
   const priceFormat = usePriceFormat();
   const { addToast } = useToast();
   const queryClient = useQueryClient();
+
+  // Functions
+  const handelUpdateStatus = (value, id) => {
+    return new Promise((resolve, reject) => {
+      changeStatus(
+        { payload: value, id },
+        {
+          onSuccess: () => {
+            addToast(t("change-status-successfully"), "success");
+            queryClient.invalidateQueries("addons");
+            resolve();
+          },
+          onError: (error) => {
+            const errorMessage =
+              error?.response?.data?.message || t("failed-to-change-status");
+
+            addToast(errorMessage, "error");
+
+            reject(error);
+          },
+        },
+      );
+    });
+  };
 
   return (
     <div
@@ -45,23 +72,23 @@ export default function StudioCard({ studio }) {
 
           {/* Facilities & Equipment */}
           <div className="flex flex-wrap gap-3 pt-2">
-            {studio.facilities?.map((f, idx) => (
+            {studio.facilities?.[lng]?.map((f, idx) => (
               <div
                 key={`facility-${idx}`}
                 className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700"
               >
                 <TreePine size={14} className="text-main" />
-                {f?.[lng]}
+                {f}
               </div>
             ))}
 
-            {studio.equipment?.map((e, idx) => (
+            {studio.equipment?.[lng]?.map((e, idx) => (
               <div
                 key={`equipment-${idx}`}
                 className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700"
               >
                 <Camera size={14} className="text-main" />
-                {e?.[lng]}
+                {e}
               </div>
             ))}
           </div>
@@ -102,7 +129,8 @@ export default function StudioCard({ studio }) {
           {/* Change status button */}
           <RadioButton
             initialValue={studio.is_active}
-            // callback={(value) => handelUpdateStatus(value, studio._id)}
+            isPending={isPending}
+            callback={(value) => handelUpdateStatus(value, studio._id)}
           />
         </div>
       </div>

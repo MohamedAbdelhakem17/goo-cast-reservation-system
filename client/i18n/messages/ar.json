@@ -253,5 +253,7 @@
   "previous": "سابق",
   "next": "التالي",
   "remove": "يزيل",
-  "add-to-cart": "أضف إلى السلة"
+  "add-to-cart": "أضف إلى السلة",
+  "studio-updated-successfully": "تم تحديث الاستوديو بنجاح",
+  "studio-added-successfully": "أضاف الاستوديو بنجاح"
 }

@@ -1,9 +1,10 @@
 import ImagesInputs from "./_components/images-inputs";
 import { Input, ErrorFeedback } from "@/components/common";
 
-export default function StudioShardFields({ formik }) {
+export default function StudioSharedFields({ formik }) {
   return (
     <>
+      {/* Base Price Per Slot + Fixed Hourly Checkbox */}
       <div className="my-2 flex flex-col md:flex-row md:gap-6">
         <Input
           type="number"
@@ -13,7 +14,8 @@ export default function StudioShardFields({ formik }) {
           value={formik.values.basePricePerSlot}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          errors={formik.touched.basePricePerSlot && formik.errors.basePricePerSlot}
+          errors={formik.errors.basePricePerSlot}
+          touched={formik.touched.basePricePerSlot}
           placeholder="Enter base price"
           className="w-3/4"
         />
@@ -33,6 +35,21 @@ export default function StudioShardFields({ formik }) {
           </label>
         </div>
       </div>
+
+      {/* Recording Seats */}
+      <Input
+        type="number"
+        label="Recording Seats"
+        id="recording_seats"
+        name="recording_seats"
+        value={formik.values.recording_seats}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        errors={formik.errors.recording_seats}
+        touched={formik.touched.recording_seats}
+        placeholder="Add recording seats"
+        className="my-2 w-full"
+      />
 
       {/* Min Slots Per Day */}
       <div className="my-2 rounded-lg bg-gray-50 p-6">
@@ -59,6 +76,10 @@ export default function StudioShardFields({ formik }) {
                 onChange={formik.handleChange}
                 className="rounded-md border border-gray-300 px-3 py-2"
               />
+              {formik.touched.minSlotsPerDay?.[day] &&
+                formik.errors.minSlotsPerDay?.[day] && (
+                  <ErrorFeedback>{formik.errors.minSlotsPerDay[day]}</ErrorFeedback>
+                )}
             </div>
           ))}
         </div>
@@ -66,21 +87,6 @@ export default function StudioShardFields({ formik }) {
 
       {/* Images and Thumbnail */}
       <ImagesInputs form={formik} />
-
-      {Object.keys(formik.errors).length > 0 && formik.submitCount > 0 && (
-        <div className="rounded-lg border border-red-200 p-4">
-          <h3 className="mb-2 font-medium text-red-800">
-            Please fix the following errors:
-          </h3>
-          <ul className="space-y-1">
-            {Object.entries(formik.errors).map(([field, error]) => (
-              <li key={field}>
-                <ErrorFeedback>{error}</ErrorFeedback>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </>
   );
 }
