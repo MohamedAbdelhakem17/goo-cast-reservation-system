@@ -85,10 +85,10 @@ export default function SelectStudio() {
               onClick={() => {
                 selectStudio({
                   id: studio._id,
-                  name: studio.name?.en,
+                  name: studio.name?.[lng],
                   image: studio.thumbnail,
                 });
-                tracking("add_to_cart", { studio_name: studio.name?.en });
+                tracking("add_to_cart", { studio_name: studio.name?.[lng] });
               }}
             >
               {/* Image with Click Indicator */}
@@ -219,7 +219,7 @@ export default function SelectStudio() {
                       >
                         •
                       </span>
-                      {text}
+                      {text?.[lng]}
                     </motion.li>
                   ))}
                 </ul>

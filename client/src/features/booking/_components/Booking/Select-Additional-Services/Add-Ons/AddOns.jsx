@@ -5,8 +5,10 @@ import { useCallback } from "react";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { tracking } from "@/utils/gtm";
 import { Loading } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function AddOns() {
+  const { t, lng } = useLocalization();
   const { data: addOns, isLoading } = GetAllAddOns();
   const { bookingData, setBookingField } = useBooking();
 
@@ -120,14 +122,18 @@ export default function AddOns() {
               <div className="relative h-80 w-full overflow-hidden p-4">
                 <img
                   src={addon.image}
-                  alt={addon.name}
+                  alt={addon.name?.[lng]}
                   className="h-full w-full rounded-md object-cover transition-transform duration-300"
                 />
               </div>
 
               <div className="flex flex-grow flex-col px-4 py-1">
-                <h3 className="mb-1 text-lg font-semibold text-gray-900">{addon.name}</h3>
-                <p className="flex-grow text-sm text-gray-600">{addon.description}</p>
+                <h3 className="mb-1 text-lg font-semibold text-gray-900">
+                  {addon.name?.[lng]}
+                </h3>
+                <p className="flex-grow text-sm text-gray-600">
+                  {addon.description?.[lng]}
+                </p>
 
                 <div className="text-md top-6 right-4 flex w-fit items-center justify-center rounded-lg p-1 font-bold">
                   {priceFormat(addon.price)}
@@ -139,7 +145,7 @@ export default function AddOns() {
                       className="text-md bg-main mx-auto my-2 flex w-full items-center justify-center rounded-lg px-4 py-2 font-semibold text-white"
                       onClick={() => handleIncrement(addon._id, addon.name, addon.price)}
                     >
-                      Add to cart
+                      {t("add-to-cart")}
                     </button>
                   )}
 
@@ -174,7 +180,7 @@ export default function AddOns() {
                         className="rounded border border-gray-300 px-2 py-1 text-sm"
                         onClick={() => handleRemove(addon._id)}
                       >
-                        Remove
+                        {t("remove")}
                       </button>
                     </div>
                   )}
@@ -186,39 +192,4 @@ export default function AddOns() {
       </motion.div>
     </>
   );
-}
-
-{
-  /* <div className="pt-4 mt-4  flex items-center justify-between">
-                  <span className="text-base font-bold text-gray-800">
-                    {addon.price.toLocaleString()} EGP
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      className="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-gray-700"
-                      onClick={() =>
-                        handleDecrement(addon._id, addon.name, addon.price)
-                      }
-                      disabled={quantity === 0}
-                    >
-                      <i className="fa-solid fa-minus text-sm"></i>
-                    </motion.button>
-
-                    <span className="w-8 text-center font-medium text-gray-700">
-                      {quantity}
-                    </span>
-
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      className="w-8 h-8 bg-main hover:bg-main text-white rounded-full flex items-center justify-center"
-                      onClick={() =>
-                        handleIncrement(addon._id, addon.name, addon.price)
-                      }
-                    >
-                      <i className="fa-solid fa-plus text-sm"></i>
-                    </motion.button>
-                  </div>
-                </div> */
 }

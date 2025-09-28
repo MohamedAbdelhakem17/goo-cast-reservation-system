@@ -248,5 +248,10 @@
   "enter-equipment": "أدخل المعدات",
   "add-english": "أضف اللغة الإنجليزية",
   "add-arabic": "أضف اللغة العربية",
-  "shared": "مشترك"
+  "shared": "مشترك",
+  "add-studio": "إضافة الاستوديو",
+  "previous": "سابق",
+  "next": "التالي",
+  "remove": "يزيل",
+  "add-to-cart": "أضف إلى السلة"
 }

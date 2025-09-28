@@ -254,5 +254,10 @@
   "enter-equipment": "Enter equipment",
   "add-english": "Add English",
   "add-arabic": "Add Arabic",
-  "shared": "Shared"
+  "shared": "Shared",
+  "add-studio": "Add Studio",
+  "previous": "Previous",
+  "next": "Next",
+  "remove": "Remove",
+  "add-to-cart": "Add to cart"
 }

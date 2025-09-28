@@ -5,8 +5,10 @@ import useTimeConvert from "@/hooks/useTimeConvert";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import ApplyDiscount from "../../Apply-Discount/ApplyDiscount";
 import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function CartContent() {
+  const { t, lng } = useLocalization();
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return dateString ? new Date(dateString).toLocaleDateString(undefined, options) : "";

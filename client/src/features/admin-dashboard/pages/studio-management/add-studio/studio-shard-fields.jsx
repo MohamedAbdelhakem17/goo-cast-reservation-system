@@ -1,10 +1,10 @@
-import React from "react";
 import ImagesInputs from "./_components/images-inputs";
+import { Input, ErrorFeedback } from "@/components/common";
 
 export default function StudioShardFields({ formik }) {
   return (
     <>
-      <div className="flex flex-col md:flex-row md:gap-6">
+      <div className="my-2 flex flex-col md:flex-row md:gap-6">
         <Input
           type="number"
           label="Base Price Per Slot"
@@ -35,7 +35,7 @@ export default function StudioShardFields({ formik }) {
       </div>
 
       {/* Min Slots Per Day */}
-      <div className="rounded-lg bg-gray-50 p-6">
+      <div className="my-2 rounded-lg bg-gray-50 p-6">
         <label className="mb-4 block text-sm font-medium text-gray-700">
           Minimum Slots Per Day
         </label>
