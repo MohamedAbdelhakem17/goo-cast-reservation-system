@@ -135,36 +135,3 @@ HourlyPackageSchema.post("init", (doc) => {
 });
 
 module.exports = mongoose.model("HourlyPackage", HourlyPackageSchema);
-
-// Old Price Code
-{
-  // prices: {
-  // twoHours: {
-  // type: Number,
-  // required: [true, "Please provide a price"],
-  // min: [0, "Price must be a positive number"],
-  // },
-  // halfDay: {
-  // type: Number,
-  // required: [true, "Please provide a price"],
-  // min: [0, "Price must be a positive number"],
-  // },
-  // fullDay: {
-  // type: Number,
-  // required: [true, "Please provide a price"],
-  // min: [0, "Price must be a positive number"],
-  // },
-  // },
-  // savings: {
-  // halfDay: {
-  // type: Number,
-  // required: [true, "Please provide a saving"],
-  // min: [0, "Saving must be a positive number"],
-  // },
-  // fullDay: {
-  // type: Number,
-  // required: [true, "Please provide a saving"],
-  // min: [0, "Saving must be a positive number"],
-  // },
-  // },
-}

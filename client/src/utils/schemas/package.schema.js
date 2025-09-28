@@ -6,24 +6,21 @@ const initialPackageValues = {
     en: "",
   },
   target_audience: {
-    ar: "",
-    en: "",
+    ar: [],
+    en: [],
   },
   description: {
     ar: "",
     en: "",
   },
-  category: {
-    ar: "",
-    en: "",
-  },
+  category: "",
   details: {
     ar: "",
     en: "",
   },
   post_session_benefits: {
-    ar: "",
-    en: "",
+    ar: [],
+    en: [],
   },
   session_type: {
     ar: "",

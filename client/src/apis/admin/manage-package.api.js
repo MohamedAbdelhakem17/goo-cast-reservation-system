@@ -24,6 +24,20 @@ export const useGetAllPackages = (status) => {
   return { packages, isLoading, error };
 };
 
+export const useGetSinglePackage = (id) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["package", id],
+
+    queryFn: async () => {
+      const { data } = await axiosInstance(`/hourly-packages/${id}`);
+
+      return data;
+    },
+  });
+
+  return { data, isLoading, error };
+};
+
 export const useGetPackagesByCategory = (id) => {
   const {
     data: packagesInCategory,
