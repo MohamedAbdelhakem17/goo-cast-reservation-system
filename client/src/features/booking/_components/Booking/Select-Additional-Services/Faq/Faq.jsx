@@ -2,8 +2,10 @@ import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useGetAllFaqs } from "@/apis/admin/manage-faq.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function Faq() {
+  const { lng, t } = useLocalization();
   const [openItem, setOpenItem] = useState(null);
   const { faqs, isLoading } = useGetAllFaqs();
 
@@ -16,7 +18,7 @@ export default function Faq() {
   return (
     <div className="mx-auto w-full py-5">
       <h4 className="mb-3 text-xl font-semibold text-gray-900">
-        Frequently Asked Questions
+        {t("frequently-asked-questions")}
       </h4>
 
       <div className="divide-y-2 divide-gray-200">

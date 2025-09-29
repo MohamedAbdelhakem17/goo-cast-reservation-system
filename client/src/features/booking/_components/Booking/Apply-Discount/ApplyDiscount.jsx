@@ -4,13 +4,14 @@ import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { Check } from "lucide-react";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { useApplyCoupon } from "@/apis/public/coupon.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
-function CouponInput({ coupon, setCoupon, onApply, disabled, isPending }) {
+function CouponInput({ coupon, setCoupon, onApply, disabled, isPending, t }) {
   return (
     <div className="my-3 flex items-center justify-between gap-3">
       <input
         type="text"
-        placeholder="Enter coupon code"
+        placeholder={t("enter-coupon-code")}
         value={coupon.toUpperCase()}
         onChange={(e) => setCoupon(e.target.value.toUpperCase())}
         className="flex-grow-1 rounded-md border-2 border-gray-100 bg-transparent px-2 py-1 text-gray-700 focus:outline-none"
@@ -20,13 +21,14 @@ function CouponInput({ coupon, setCoupon, onApply, disabled, isPending }) {
         onClick={onApply}
         className="cursor-pointer rounded-md border-2 border-gray-100 bg-gray-100 px-2 py-1 text-sm text-black shadow-sm transition-all duration-200"
       >
-        {isPending ? "Applying .." : "Apply"}
+        {isPending ? t("applying") : t("apply")}
       </button>
     </div>
   );
 }
 
 export default function ApplyDiscount() {
+  const { t } = useLocalization();
   const { getBookingField, setBookingField } = useBooking();
   const priceFormat = usePriceFormat();
   const [coupon, setCoupon] = useState(getBookingField("couponCode") || "");
@@ -71,7 +73,8 @@ export default function ApplyDiscount() {
   return (
     <div className="my-2 w-full rounded-xl py-2">
       <h2 className="text-sm font-bold text-gray-800">
-        <i className="fa-solid fa-tag mr-3"></i>Promo Code
+        <i className="fa-solid fa-tag me-3"></i>
+        {t("promo-code")}
       </h2>
       {discount ? (
         <div className="mt-2 flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3">
@@ -80,7 +83,7 @@ export default function ApplyDiscount() {
             <div>
               <div className="text-sm">{coupon}</div>
               <div className="text-xs text-green-600">
-                {discount} % Discount (on package only)
+                {t("discount-discount-on-package-only")}
               </div>
             </div>
           </div>
@@ -97,6 +100,7 @@ export default function ApplyDiscount() {
           setCoupon={setCoupon}
           onApply={handleApplyCoupon}
           disabled={!coupon}
+          t={t}
           isPending={isPending}
         />
       )}
