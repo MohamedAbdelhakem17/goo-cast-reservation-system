@@ -2,7 +2,6 @@ import React from "react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { Check } from "lucide-react";
 
-
 export default function Stepper() {
   const { currentStep, stepLabels, setCurrentStep, maxStepReached } = useBooking();
 
@@ -12,9 +11,9 @@ export default function Stepper() {
   }));
 
   return (
-    <div className="px-4 lg:px-8 bg-white w-[100vw] py-2">
+    <div className="bg-white px-4 py-2 lg:px-8">
       {/* Desktop/Tablet View */}
-      <div className="hidden sm:flex items-center justify-between max-w-5xl mx-auto scale-[.9]">
+      <div className="mx-auto hidden max-w-5xl scale-[.9] items-center justify-between sm:flex">
         {steps.map((step, index) => (
           <React.Fragment key={step.id}>
             <button
@@ -24,28 +23,27 @@ export default function Stepper() {
                 }
               }}
               disabled={step.id > maxStepReached}
-              className="flex flex-col items-center focus:outline-none cursor-pointer disabled:cursor-not-allowed "
+              className="flex cursor-pointer flex-col items-center focus:outline-none disabled:cursor-not-allowed"
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 mb-2 transition-colors duration-300
-                ${step.id < currentStep
-                    ? "bg-[#FF3B30] border-[#FF3B30] text-white"
+                className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors duration-300 ${
+                  step.id < currentStep
+                    ? "border-[#FF3B30] bg-[#FF3B30] text-white"
                     : step.id === currentStep
-                      ? "border-[#FF3B30] text-[#FF3B30] bg-white"
-                      : "border-gray-300 text-gray-400 bg-white"
-                  }`}
+                      ? "border-[#FF3B30] bg-white text-[#FF3B30]"
+                      : "border-gray-300 bg-white text-gray-400"
+                }`}
               >
                 {step.id < currentStep ? (
-                  <Check className="w-5 h-5" />
+                  <Check className="h-5 w-5" />
                 ) : (
                   <span className="text-sm font-medium">{step.id}</span>
                 )}
               </div>
               <div
-                className={`text-sm text-center max-w-fit lg:max-w-fit ${step.id === currentStep
-                  ? "text-[#FF3B30] font-medium"
-                  : "text-gray-600"
-                  }`}
+                className={`max-w-fit text-center text-sm lg:max-w-fit ${
+                  step.id === currentStep ? "font-medium text-[#FF3B30]" : "text-gray-600"
+                }`}
               >
                 {step.title}
               </div>
@@ -53,8 +51,9 @@ export default function Stepper() {
 
             {index < steps.length - 1 && (
               <div
-                className={`flex-1 h-0.5 mx-2 lg:mx-4 transition-colors duration-300 ${step.id < currentStep ? "bg-[#FF3B30]" : "bg-gray-300"
-                  }`}
+                className={`mx-2 h-0.5 flex-1 transition-colors duration-300 lg:mx-4 ${
+                  step.id < currentStep ? "bg-[#FF3B30]" : "bg-gray-300"
+                }`}
               />
             )}
           </React.Fragment>
@@ -62,30 +61,30 @@ export default function Stepper() {
       </div>
 
       {/* Mobile View */}
-      <div className="sm:hidden py-3">
+      <div className="py-3 sm:hidden">
         {/* Progress Bar */}
         <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-medium text-gray-600">
               Step {currentStep} of {steps.length}
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-1.5">
+          <div className="h-1.5 w-full rounded-full bg-gray-200">
             <div
-              className="bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] h-1.5 rounded-full transition-all duration-500 ease-out"
+              className="h-1.5 rounded-full bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] transition-all duration-500 ease-out"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
             />
           </div>
         </div>
 
         {/* Current Step Display */}
-        <div className="bg-gradient-to-r from-[#FF3B30]/5 to-[#FF6B60]/5 rounded-xl p-4 border border-[#FF3B30]/20">
+        <div className="rounded-xl border border-[#FF3B30]/20 bg-gradient-to-r from-[#FF3B30]/5 to-[#FF6B60]/5 p-4">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] flex items-center justify-center shadow-lg">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] shadow-lg">
               {currentStep < steps.length ? (
                 <span className="text-xs font-bold text-white">{currentStep}</span>
               ) : (
-                <Check className="w-4 h-4 text-white" />
+                <Check className="h-4 w-4 text-white" />
               )}
             </div>
             <div>
@@ -98,16 +97,17 @@ export default function Stepper() {
         </div>
 
         {/* Mini Steps Overview */}
-        <div className="flex justify-center mt-4 space-x-2 cursor-pointer ">
+        <div className="mt-4 flex cursor-pointer justify-center space-x-2">
           {steps.map((step) => (
             <button
               key={step.id}
-              className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${step.id < currentStep
-                ? "bg-[#FF3B30] scale-110"
-                : step.id === currentStep
-                  ? "bg-[#FF3B30] scale-125 shadow-lg"
-                  : "bg-gray-300 scale-100"
-                }`}
+              className={`h-2 w-2 cursor-pointer rounded-full transition-all duration-300 ${
+                step.id < currentStep
+                  ? "scale-110 bg-[#FF3B30]"
+                  : step.id === currentStep
+                    ? "scale-125 bg-[#FF3B30] shadow-lg"
+                    : "scale-100 bg-gray-300"
+              }`}
             />
           ))}
         </div>

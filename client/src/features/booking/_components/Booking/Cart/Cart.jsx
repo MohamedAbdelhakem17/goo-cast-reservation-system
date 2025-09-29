@@ -22,15 +22,18 @@ export default function Cart() {
       {/* Desktop Cart - Hidden on mobile */}
       <div className="block">
         <Sticky
-          topOffset={-100}
-          stickyStyle={{ top: "95px", zIndex: 40, transition: "top 0.3s ease-in-out" }}
+          topOffset={-150}
+          stickyStyle={{
+            top: "190px",
+            zIndex: 40,
+            transition: "top 0.3s ease-in-out",
+          }}
           boundaryElement="#cart-wrapper"
           // hideOnBoundaryHit={false}
         >
           <CartContent />
         </Sticky>
       </div>
-
       {/* Mobile Full Screen Cart Modal */}
       <div className="lg:hidden">
         {/* Overlay */}

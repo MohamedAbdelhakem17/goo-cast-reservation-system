@@ -263,5 +263,19 @@
   "studio-updated-successfully": "Studio updated successfully",
   "studio-added-successfully": "Studio added successfully",
   "package-created-successfully": "Package created successfully",
-  "package-updated-successfully": "Package updated successfully"
+  "package-updated-successfully": "Package updated successfully",
+  "reservation-summary": "Reservation Summary",
+  "subtotal": "Subtotal",
+  "promo-discount": "Promo Discount",
+  "total": "Total",
+  "proceed-to-payment": "Proceed to payment",
+  "back": "Back",
+  "your-booking-is-secured-with-ssl-encryption-and-protected-by-our-privacy-policy": "Your booking is secured with SSL encryption and protected by our privacy policy.",
+  "enter-coupon-code": "Enter coupon code",
+  "apply": "Apply",
+  "applying": "Applying ..",
+  "discount-discount-on-package-only": "{discount} % Discount (on package only)",
+  "promo-code": "Promo Code",
+  "frequently-asked-questions": "Frequently Asked Questions",
+  "enhance-your-session-with-our-professional-add-ons": "Enhance your session with our professional add-ons"
 }

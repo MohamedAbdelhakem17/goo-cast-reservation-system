@@ -20,15 +20,15 @@ export default function CartContent() {
       <div className="flex items-center justify-between space-y-1 border-b-1 border-gray-300 pb-4">
         <div className="flex-1">
           <p className="text-md text-gray-500">
-            <i className="fa-solid fa-calendar-days mr-2 text-[12px]"></i>
+            <i className="fa-solid fa-calendar-days me-2 text-[12px]"></i>
             {formatDate(date)}
           </p>
           <p className="text-md text-gray-500">
-            <i className="fa-solid fa-clock mr-2 text-[12px]"></i>
+            <i className="fa-solid fa-clock me-2 text-[12px]"></i>
             {formatTime(startSlot)} ({duration}h)
           </p>
           <p className="text-md text-gray-500">
-            <i className="fa-solid fa-location-dot mr-2 text-[12px]"></i>
+            <i className="fa-solid fa-location-dot me-2 text-[12px]"></i>
             {studio.name}
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function CartContent() {
 
   return (
     <div className="rounded-lg border border-gray-200 px-5 py-4">
-      <h2 className="my-2 py-2 text-lg font-bold">Reservation Summary</h2>
+      <h2 className="my-2 py-2 text-lg font-bold">{t("reservation-summary")}</h2>
 
       <StudioSection
         studio={bookingData.studio}
@@ -134,20 +134,22 @@ export default function CartContent() {
 
       <div className="my-2 space-y-2 border-t border-b border-gray-200 py-2">
         <div className="text-md flex justify-between">
-          <span>Subtotal</span>
+          <span>{t("subtotal")}</span>
           <span>{priceFormat(subtotal)}</span>
         </div>
 
         {discountAmount > 0 && (
           <div className="flex justify-between text-sm text-green-600">
-            <span>Promo Discount ({bookingData.couponCode})</span>
+            <span>
+              {t("promo-discount")} ({bookingData.couponCode})
+            </span>
             <span>- {priceFormat(discountAmount)}</span>
           </div>
         )}
       </div>
 
       <div className="flex items-center justify-between py-1 pt-2">
-        <p className="text-md font-bold">Total</p>
+        <p className="text-md font-bold">{t("total")}</p>
         <p className="text-md text-gray-500">{priceFormat(totalAfterDiscount)}</p>
       </div>
 
@@ -160,13 +162,13 @@ export default function CartContent() {
             onClick={handleNextStep}
             className="text-md bg-main mx-auto my-2 flex w-full items-center justify-center rounded-lg px-4 py-[8px] font-semibold text-white disabled:bg-gray-100 disabled:text-gray-300"
           >
-            <span className="m-0">Proceed to payment</span>
+            <span className="m-0">{t("proceed-to-payment")}</span>
           </button>
           <button
             onClick={handlePrevStep}
             className="text-md mx-auto flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-[8px] font-semibold"
           >
-            <span className="m-0">Back</span>
+            <span className="m-0">{t("back")}</span>
           </button>
         </div>
       )}
@@ -174,8 +176,10 @@ export default function CartContent() {
       {currentStep === 5 && (
         <div className="rounded-lg border border-green-200 bg-green-50 p-3">
           <p className="text-xs text-green-700">
-            🔒 Your booking is secured with SSL encryption and protected by our privacy
-            policy.
+            🔒
+            {t(
+              "your-booking-is-secured-with-ssl-encryption-and-protected-by-our-privacy-policy",
+            )}
           </p>
         </div>
       )}

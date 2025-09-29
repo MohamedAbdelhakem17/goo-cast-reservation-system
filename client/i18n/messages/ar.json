@@ -257,5 +257,19 @@
   "studio-updated-successfully": "تم تحديث الاستوديو بنجاح",
   "studio-added-successfully": "أضاف الاستوديو بنجاح",
   "package-created-successfully": "حزمة تم إنشاؤها بنجاح",
-  "package-updated-successfully": "تم تحديث الحزمة بنجاح"
+  "package-updated-successfully": "تم تحديث الحزمة بنجاح",
+  "reservation-summary": "ملخص الحجز",
+  "subtotal": "نطاق فرعي",
+  "promo-discount": "خصم ترويجي",
+  "total": "الاجمالى",
+  "proceed-to-payment": "انتقل إلى الدفع",
+  "back": "خلف",
+  "your-booking-is-secured-with-ssl-encryption-and-protected-by-our-privacy-policy": "تم تأمين حجزك مع تشفير SSL ومحمي من خلال سياسة الخصوصية الخاصة بنا.",
+  "enter-coupon-code": "أدخل رمز القسيمة",
+  "apply": "يتقدم",
+  "applying": "التقديم ..",
+  "discount-discount-on-package-only": "{خصم} ٪ خصم (على الحزمة فقط)",
+  "promo-code": "رمز ترويجي",
+  "frequently-asked-questions": "الأسئلة المتداولة",
+  "enhance-your-session-with-our-professional-add-ons": "عزز جلستك مع إضافاتنا المهنية"
 }
