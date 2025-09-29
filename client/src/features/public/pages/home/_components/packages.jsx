@@ -5,6 +5,7 @@ import { OptimizedImage } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 import React from "react";
 import * as LucideIcons from "lucide-react";
+import { useGetAllPackages } from "@/apis/admin/manage-package.api";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -76,7 +77,7 @@ export default function PackagesSection() {
   const { t, lng } = useLocalization();
 
   // Query
-  const { data: packages } = GetAllPackages();
+  const { packages } = useGetAllPackages(true);
 
   return (
     <section className="flex min-h-screen flex-col items-center justify-center py-8">
@@ -145,7 +146,7 @@ export default function PackagesSection() {
                     >
                       {/* Icon */}
                       <div className="border-main text-main flex h-12 w-12 items-center justify-center rounded-full border backdrop-blur-sm">
-                        {React.createElement(IconComponent)}
+                        {/* {React.createElement(IconComponent)} */}
                       </div>
                     </motion.div>
 

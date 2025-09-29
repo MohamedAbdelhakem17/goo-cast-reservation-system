@@ -20,9 +20,10 @@ exports.serviceImageManipulation = async (req, res, next) => {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    if (req.files.image) {
+    console.log(req.file);
+    if (req.files) {
       const serviceName = `service-${uuidv4()}-${Date.now()}.jpeg`;
-      await sharp(req.files.image[0].buffer)
+      await sharp(req.files.buffer)
         .resize(2000, 1333)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
@@ -93,6 +94,8 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     category,
     post_session_benefits,
     target_audience,
+    price,
+    image,
   } = req.body;
 
   if (
@@ -115,6 +118,8 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     category,
     post_session_benefits,
     target_audience,
+    price,
+    image,
   });
 
   res.status(201).json({

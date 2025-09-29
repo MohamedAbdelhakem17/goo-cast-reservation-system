@@ -33,6 +33,7 @@ export const useGetSinglePackage = (id) => {
 
       return data;
     },
+    enabled: !!id,
   });
 
   return { data, isLoading, error };
@@ -56,7 +57,7 @@ export const useGetPackagesByCategory = (id) => {
   return { packagesInCategory, isLoading, error };
 };
 
-export const AddNewPackage = () => {
+export const useAddNewPackage = () => {
   const {
     mutate: createPackage,
     isPending,
@@ -65,7 +66,7 @@ export const AddNewPackage = () => {
     mutationFn: async (payload) => {
       const formData = appendDataToFormData(payload);
 
-      const { data } = await axios.post(`${API_BASE_URL}/hourly-packages`, formData, {
+      const { data } = await axiosInstance.post(`/hourly-packages`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

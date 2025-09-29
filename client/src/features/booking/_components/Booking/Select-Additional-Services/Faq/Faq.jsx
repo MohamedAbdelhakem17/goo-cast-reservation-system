@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-// import { GetAllFaqs } from "@/apis/faq/faq";
+import { useGetAllFaqs } from "@/apis/admin/manage-faq.api";
 
 export default function Faq() {
   const [openItem, setOpenItem] = useState(null);
-  const { data: faqs, isLoading } = GetAllFaqs();
+  const { faqs, isLoading } = useGetAllFaqs();
 
   const toggleItem = useCallback((itemId) => {
     setOpenItem((prev) => (prev === itemId ? null : itemId));

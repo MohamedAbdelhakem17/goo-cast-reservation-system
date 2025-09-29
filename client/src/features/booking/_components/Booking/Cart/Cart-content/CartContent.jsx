@@ -35,7 +35,7 @@ export default function CartContent() {
         <OptimizedImage
           isFullWidth={false}
           src={studio?.image}
-          alt={studio.name}
+          alt={studio.name?.[lng]}
           className="h-20 w-20 rounded-md"
         />
       </div>
@@ -46,7 +46,7 @@ export default function CartContent() {
     if (!selectedPackage || Object.keys(selectedPackage).length === 0) return null;
     return (
       <div className="flex items-center justify-between py-1">
-        <p className="text-md text-gray-500">{selectedPackage.name}</p>
+        <p className="text-md text-gray-500">{selectedPackage.name?.[lng]}</p>
         <p className="text-md text-gray-500">
           {priceFormat(selectedPackage.price)} x {duration}h
         </p>
@@ -60,7 +60,7 @@ export default function CartContent() {
       <ul className="pb-2">
         {selectedAddOns.map((addon) => (
           <li className="flex items-center justify-between py-1" key={addon._id}>
-            <p className="text-md text-gray-500">{addon.name}</p>
+            <p className="text-md text-gray-500">{addon.name?.[lng]}</p>
             <p className="text-md text-gray-500">
               {priceFormat(addon.price)} / x{addon.quantity}
             </p>

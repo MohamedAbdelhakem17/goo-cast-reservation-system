@@ -1,62 +1,63 @@
-import { useState } from "react"
-import { useBooking } from "@/context/Booking-Context/BookingContext"
-import CartContent from "./Cart-content/CartContent"
-import usePriceFormat from "@/hooks/usePriceFormat"
-import Sticky from 'react-sticky-el';
-import { ArrowLeft, ArrowRight, ShoppingCart, X } from "lucide-react"
+import { useState } from "react";
+import { useBooking } from "@/context/Booking-Context/BookingContext";
+import CartContent from "./Cart-content/CartContent";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import Sticky from "react-sticky-el";
+import { ArrowLeft, ArrowRight, ShoppingCart, X } from "lucide-react";
 
 export default function Cart() {
-    const { bookingData, handleNextStep, handlePrevStep, hasError } = useBooking()
-    const priceFormat = usePriceFormat()
-    const [isCartOpen, setIsCartOpen] = useState(false)
+  const { bookingData, handleNextStep, handlePrevStep, hasError } = useBooking();
+  const priceFormat = usePriceFormat();
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-    const closeCart = () => setIsCartOpen(false)
-    const openCart = () => setIsCartOpen(true)
+  const closeCart = () => setIsCartOpen(false);
+  const openCart = () => setIsCartOpen(true);
 
-    if (!bookingData) {
-        return <div>Loading...</div>
-    }
+  if (!bookingData) {
+    return <div>Loading...</div>;
+  }
 
-    return (
-        <>
-            {/* Desktop Cart - Hidden on mobile */}
-            <div className="block ">
-                <Sticky
-                    topOffset={-100}
-                    stickyStyle={{ top: '95px', zIndex: 40, transition: 'top 0.3s ease-in-out' }}
-                    boundaryElement="#cart-wrapper"
-                // hideOnBoundaryHit={false}
-                >
-                    <CartContent />
-                </Sticky>
-            </div>
+  return (
+    <>
+      {/* Desktop Cart - Hidden on mobile */}
+      <div className="block">
+        <Sticky
+          topOffset={-100}
+          stickyStyle={{ top: "95px", zIndex: 40, transition: "top 0.3s ease-in-out" }}
+          boundaryElement="#cart-wrapper"
+          // hideOnBoundaryHit={false}
+        >
+          <CartContent />
+        </Sticky>
+      </div>
 
-            {/* Mobile Full Screen Cart Modal */}
-            <div className="lg:hidden">
-                {/* Overlay */}
-                {isCartOpen && (
-                    <div
-                        className="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300"
-                        onClick={closeCart}
-                    />
-                )}
+      {/* Mobile Full Screen Cart Modal */}
+      <div className="lg:hidden">
+        {/* Overlay */}
+        {isCartOpen && (
+          <div
+            className="bg-opacity-50 fixed inset-0 z-50 bg-black transition-opacity duration-300"
+            onClick={closeCart}
+          />
+        )}
 
-                {/* Slide Panel */}
-                <div
-                    className={`fixed top-0 right-0 h-full w-full bg-white z-50 transform transition-transform duration-300 ease-in-out ${isCartOpen ? "translate-x-0" : "translate-x-full"
-                        }`}
-                >
-                    <div className="flex justify-end p-4">
-                        <button onClick={closeCart} aria-label="Close cart">
-                            <X className="w-6 h-6 text-gray-600" />
-                        </button>
-                    </div>
-                    <CartContent />
-                </div>
-            </div>
+        {/* Slide Panel */}
+        <div
+          className={`fixed top-0 right-0 z-50 h-full w-full transform bg-white transition-transform duration-300 ease-in-out ${
+            isCartOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex justify-end p-4">
+            <button onClick={closeCart} aria-label="Close cart">
+              <X className="h-6 w-6 text-gray-600" />
+            </button>
+          </div>
+          <CartContent />
+        </div>
+      </div>
 
-            {/* Mobile Bottom Navigation - Fixed */}
-            {/* <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+      {/* Mobile Bottom Navigation - Fixed */}
+      {/* <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
                 <div className="flex items-center justify-between max-w-md mx-auto">
                     <button
                         onClick={openCart}
@@ -75,8 +76,8 @@ export default function Cart() {
                         </div>
                     </button> */}
 
-            {/* Navigation Buttons */}
-            {/* <div className="flex items-center space-x-2">
+      {/* Navigation Buttons */}
+      {/* <div className="flex items-center space-x-2">
                         {currentStep > 1 && (
                             <button
                                 onClick={handlePrevStep}
@@ -106,11 +107,11 @@ export default function Cart() {
                             </div>
                         )}
                     </div> */}
-            {/* </div> */}
-            {/* </div> */}
+      {/* </div> */}
+      {/* </div> */}
 
-            {/* Padding for fixed bottom nav on mobile */}
-            {/* <div className="lg:hidden pb-24" /> */}
-        </>
-    )
+      {/* Padding for fixed bottom nav on mobile */}
+      {/* <div className="lg:hidden pb-24" /> */}
+    </>
+  );
 }

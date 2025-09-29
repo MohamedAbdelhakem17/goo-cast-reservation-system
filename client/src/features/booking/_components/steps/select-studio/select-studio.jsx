@@ -206,7 +206,7 @@ export default function SelectStudio() {
                   </li>
                 </ul>
                 <ul className="mb-4 space-y-2">
-                  {studio.facilities.map((text, i) => (
+                  {studio.facilities?.[lng].map((text, i) => (
                     <motion.li
                       key={i}
                       variants={benefitVariants}
@@ -219,7 +219,7 @@ export default function SelectStudio() {
                       >
                         •
                       </span>
-                      {text?.[lng]}
+                      {text}
                     </motion.li>
                   ))}
                 </ul>

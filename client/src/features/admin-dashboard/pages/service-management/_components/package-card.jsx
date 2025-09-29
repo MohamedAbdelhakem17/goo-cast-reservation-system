@@ -50,7 +50,7 @@ export default function PackageCard({ pkg, key, setSelectedDeletedPackage }) {
   return (
     <div
       className="flex flex-col justify-between gap-y-4 overflow-hidden rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
-      key={key}
+      key={key || pkg._id}
     >
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -58,7 +58,7 @@ export default function PackageCard({ pkg, key, setSelectedDeletedPackage }) {
         <div className="flex items-center gap-3">
           {/* icon */}
           <div className="bg-main/90 rounded-md p-2 text-white">
-            {React.createElement(IconComponent)}
+            {/* {React.createElement(IconComponent)} */}
           </div>
 
           {/* price and name */}
