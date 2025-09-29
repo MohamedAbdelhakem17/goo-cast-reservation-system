@@ -4,16 +4,20 @@ import FormNavigationButtons from "@/features/admin-dashboard/_components/form-n
 import { useState } from "react";
 import { useFormik } from "formik";
 import {
-  getPackageValidationSchema,
-  initialPackageValues,
+  packageValidationSchema,
+  getInitialPackageValues,
 } from "@/utils/schemas/package.schema";
 import { hasError } from "@/utils/formik-helper";
-import EnglishFields from "./_components/english-fields";
-import ArabicFields from "./_components/arabic-fields";
-import ShardFields from "./_components/shard-fields";
+import EnglishPackageFields from "./_components/english-package-fields";
+import ArabicPackageFields from "./_components/arabic-package-fields";
+import ShardPackageFields from "./_components/shard-package-fields";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGetSinglePackage } from "@/apis/admin/manage-package.api";
+import { useAddNewPackage, useUpdatePackage } from "@/apis/admin/manage-package.api";
+import { Loading } from "@/components/common";
+import { EmptyState } from "@/components/common";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 
 const STEP_FIELDS = {
   0: [
@@ -23,7 +27,7 @@ const STEP_FIELDS = {
     "description.en",
     "details.en",
     "post_session_benefits.en",
-    "session_type.en",
+    // "session_type.en",
   ],
   1: [
     // Step 1: Arabic-only fields
@@ -32,15 +36,13 @@ const STEP_FIELDS = {
     "description.ar",
     "details.ar",
     "post_session_benefits.ar",
-    "session_type.ar",
+    // "session_type.ar",
   ],
   2: [
     // Step 2: Common (non-language specific) fields
     "price",
     "image",
-    "icon",
     "category",
-    "is_active",
   ],
 };
 
@@ -68,8 +70,6 @@ const itemVariants = {
   exit: { opacity: 0, y: -5, transition: { duration: 0.15 } },
 };
 
-const FORM_STEPS = ["Add English", "Add Arabic", "Shared"];
-
 export default function AddService() {
   // Localization
   const { t } = useLocalization();
@@ -81,16 +81,18 @@ export default function AddService() {
 
   // Stet
   const [currentStep, setCurrentStep] = useState(0);
-  const FORM_STEPS = [t("add-english"), t("add-arabic"), t("shared")];
 
   // Query
-  const {
-    data: editedPackage,
-    isLoading,
-    error,
-  } = useGetSinglePackage(searchParams.get("edit"));
+  const { data: editedPackage, isLoading } = useGetSinglePackage(
+    searchParams.get("edit"),
+  );
 
   // Mutation
+  const { createPackage, isPending: isCreating } = useAddNewPackage();
+  const { updatePackage, isPending: isUpdating } = useUpdatePackage();
+
+  // Hooks
+  const { addToast } = useToast();
 
   // Function
   const handleNextStep = () => {
@@ -105,34 +107,72 @@ export default function AddService() {
     }
   };
 
-  const handelEditPackage = ({ id, payload }) => {};
+  const handelAddPackage = (payload) => {
+    console.log(payload);
+    createPackage(payload, {
+      onSuccess: (response) => {
+        addToast(response.message || t("package-created-successfully"), "success");
+        setTimeout(() => {
+          navigate("/admin-dashboard/service");
+        }, 2000);
+      },
+      onError: (error) => {
+        console.log(error);
+        addToast(error.response?.data?.message || t("something-went-wrong"), "error");
+      },
+    });
+  };
 
-  const handelAddPackage = (values) => {};
+  const handelEditPackage = ({ id, payload }) => {
+    updatePackage(
+      { id, payload },
+      {
+        onSuccess: (response) => {
+          addToast(response.message || t("package-updated-successfully"), "success");
+
+          setTimeout(() => {
+            navigate("/admin-dashboard/service");
+          }, 2000);
+        },
+
+        onError: (error) => {
+          addToast(error.response?.data?.message || t("something-went-wrong"), "error");
+        },
+      },
+    );
+  };
 
   // Form  and  validation
   const formik = useFormik({
-    initialValues: initialPackageValues,
-    validationSchema: getPackageValidationSchema(isEdit),
+    initialValues: getInitialPackageValues(editedPackage?.data),
+    // validationSchema: packageValidationSchema,
     onSubmit: (values) => {
       if (isEdit) {
         //  edit case
-        handelEditPackage({ id: "", payload: values });
+        handelEditPackage({ id: editedPackage?.data?._id, payload: values });
       } else {
         // add case
         handelAddPackage(values);
       }
     },
+    enableReinitialize: true,
   });
 
   // variables
-
+  const FORM_STEPS = [t("add-english"), t("add-arabic"), t("shared")];
   const isHasError = hasError(STEP_FIELDS, currentStep, formik);
 
   const activeStep = {
-    0: <EnglishFields formik={formik} />,
-    1: <ArabicFields formik={formik} />,
-    2: <ShardFields formik={formik} />,
+    0: <EnglishPackageFields formik={formik} />,
+    1: <ArabicPackageFields formik={formik} />,
+    2: <ShardPackageFields formik={formik} />,
   };
+
+  if (isLoading) return <Loading />;
+
+  if (isEdit && editedPackage === undefined) {
+    return <EmptyState />;
+  }
 
   return (
     <motion.div
@@ -174,17 +214,18 @@ export default function AddService() {
             </motion.div>
           </motion.div>
         </AnimatePresence>
-      </form>
 
-      {/* Navigation buttons */}
-      <FormNavigationButtons
-        currentStep={currentStep}
-        TOTAL_STEPS={FORM_STEPS.length}
-        handleNextStep={handleNextStep}
-        handlePrevStep={handlePrevStep}
-        hasError={isHasError}
-        finalStepText={isEdit ? "Edit Package" : "Add Package"}
-      />
+        {/* Navigation buttons */}
+        <FormNavigationButtons
+          currentStep={currentStep}
+          TOTAL_STEPS={FORM_STEPS.length}
+          handleNextStep={handleNextStep}
+          handlePrevStep={handlePrevStep}
+          isLoading={isCreating || isUpdating}
+          hasError={isHasError}
+          finalStepText={isEdit ? "Edit Package" : "Add Package"}
+        />
+      </form>
     </motion.div>
   );
 }

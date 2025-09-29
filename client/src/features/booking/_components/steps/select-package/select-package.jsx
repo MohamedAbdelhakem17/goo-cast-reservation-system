@@ -44,7 +44,7 @@ export default function SelectPackage() {
     setSelectedPackage(pkg._id);
     setBookingField("selectedPackage", {
       id: pkg._id,
-      name: pkg.name?.en,
+      name: pkg.name,
       category: pkg.category._id,
       slug: pkg.category.slug,
       price: pkg.price,

@@ -65,6 +65,7 @@ export default function AddStudio() {
   // Mutation
   const { addStudio, isPending: isAdding } = useAddStudio();
   const { updateStudio, isPending: isUpdating } = useUpdateStudio();
+
   // Hooks
   const { addToast } = useToast();
 
@@ -122,8 +123,6 @@ export default function AddStudio() {
       const finalData = {
         ...values,
       };
-
-      console.log(finalData);
 
       if (isEdit) {
         // edit case

@@ -261,5 +261,7 @@
   "remove": "Remove",
   "add-to-cart": "Add to cart",
   "studio-updated-successfully": "Studio updated successfully",
-  "studio-added-successfully": "Studio added successfully"
+  "studio-added-successfully": "Studio added successfully",
+  "package-created-successfully": "Package created successfully",
+  "package-updated-successfully": "Package updated successfully"
 }

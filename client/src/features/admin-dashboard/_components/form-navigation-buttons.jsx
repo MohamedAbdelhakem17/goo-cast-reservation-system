@@ -25,18 +25,18 @@ export default function FormNavigationButtons({
 
   return (
     <>
-      {/* Mobile Spacer to prevent overlap */}
       <div className="pb-24 lg:hidden" />
 
-      {/* Navigation Buttons Wrapper */}
       <div
-        className={`fixed right-0 bottom-0 left-0 z-40 container mx-auto flex items-center justify-between border-t border-gray-200 px-4 py-3 lg:static lg:border-0 lg:bg-transparent ${lng === "en" && "flex-row-reverse"}`}
+        className={`fixed right-0 bottom-0 left-0 z-40 container mx-auto flex items-center justify-between border-t border-gray-200 px-4 py-3 lg:static lg:border-0 lg:bg-transparent ${
+          lng === "en" && "flex-row-reverse"
+        }`}
       >
-        {/* Previous Button Container to preserve spacing */}
         <div className="w-fit">
           {!isFirstStep && (
             <NavButton
               className="rounded-md bg-gray-200 px-6 py-2 text-gray-700 hover:bg-gray-300"
+              type="button"
               onClick={handlePrevStep}
             >
               <ArrowLeft className="me-1 inline-block" />
@@ -45,7 +45,6 @@ export default function FormNavigationButtons({
           )}
         </div>
 
-        {/* Next / Submit Button */}
         <NavButton
           className={`cursor-pointer rounded-md px-4 py-2 ${
             isLastStep
@@ -53,7 +52,7 @@ export default function FormNavigationButtons({
               : "bg-main/90 hover:bg-main text-white"
           } disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400`}
           disabled={hasError || isLoading}
-          onClick={handleNextStep}
+          onClick={!isLastStep ? handleNextStep : undefined}
           type={isLastStep ? "submit" : "button"}
         >
           {isLoading ? (

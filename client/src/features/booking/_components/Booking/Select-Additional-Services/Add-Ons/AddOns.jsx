@@ -1,19 +1,44 @@
 import { motion } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { GetAllAddOns } from "@/apis/services/services.api";
 import { useCallback } from "react";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { tracking } from "@/utils/gtm";
 import { Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useGetAddons } from "@/apis/admin/manage-addons.api";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 50 },
+  },
+};
 
 export default function AddOns() {
+  // Localization
   const { t, lng } = useLocalization();
-  const { data: addOns, isLoading } = GetAllAddOns();
-  const { bookingData, setBookingField } = useBooking();
 
+  // Query
+  const { addons, isLoading } = useGetAddons(true);
+
+  // Hooks
+  const { bookingData, setBookingField } = useBooking();
   const priceFormat = usePriceFormat();
 
+  // Function
   const handleAddOnChange = useCallback(
     (id, name, quantity, price) => {
       let updatedAddOns = [...bookingData.selectedAddOns];
@@ -60,7 +85,7 @@ export default function AddOns() {
   const handleDecrement = (id, name, price) => {
     const currentQty = getQuantity(id);
     tracking("remove_from_cart ", {
-      addon_name: name,
+      addon_name: name?.[lng],
       addon_price: price,
       addon_quantity: 1,
     });
@@ -73,28 +98,11 @@ export default function AddOns() {
     const addon = addOns?.data?.find((item) => item._id === id);
     if (addon) {
       handleAddOnChange(id, addon.name, 0, addon.price);
-      tracking("remove_from_cart ", { addon_name: addon.name, addon_price: addon.price });
+      tracking("remove_from_cart ", {
+        addon_name: addon.name?.[lng],
+        addon_price: addon.price,
+      });
     }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 50 },
-    },
   };
 
   if (isLoading) return <Loading />;
@@ -107,7 +115,7 @@ export default function AddOns() {
         initial="hidden"
         animate="visible"
       >
-        {addOns?.data?.map((addon) => {
+        {addons?.data?.map((addon) => {
           const quantity = getQuantity(addon._id);
           const isSelected = quantity > 0;
 

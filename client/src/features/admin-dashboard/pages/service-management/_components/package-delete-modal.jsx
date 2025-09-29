@@ -12,7 +12,7 @@ export default function PackageDeleteModal({
   const { lng, t } = useLocalization();
 
   // Mutation
-  const { deleteAddon, isPending } = useDeletePackage();
+  const { deletePackage, isPending } = useDeletePackage();
 
   // Hooks
   const { addToast } = useToast();
@@ -20,11 +20,11 @@ export default function PackageDeleteModal({
 
   // Functions
   const handelDeleteAddon = (id) => {
-    deleteAddon(id, {
+    deletePackage(id, {
       onSuccess: () => {
         addToast(t("package-deleted-successfully"), "success");
         queryClient.invalidateQueries("packages");
-        setSelectedDeletedAddon(null);
+        setSelectedDeletedPackage(null);
       },
 
       onError: (error) => {

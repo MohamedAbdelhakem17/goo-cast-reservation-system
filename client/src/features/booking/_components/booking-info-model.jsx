@@ -19,6 +19,7 @@ const statusIcons = {
 };
 
 export default function BookingInfoModel({ selectedBooking, setSelectedBooking }) {
+  console.log(selectedBooking);
   const { t, lng } = useLocalization();
   const priceFormat = usePriceFormat();
   const convertTo12HourFormat = useTimeConvert();

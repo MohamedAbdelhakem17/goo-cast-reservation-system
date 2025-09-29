@@ -255,5 +255,7 @@
   "remove": "يزيل",
   "add-to-cart": "أضف إلى السلة",
   "studio-updated-successfully": "تم تحديث الاستوديو بنجاح",
-  "studio-added-successfully": "أضاف الاستوديو بنجاح"
+  "studio-added-successfully": "أضاف الاستوديو بنجاح",
+  "package-created-successfully": "حزمة تم إنشاؤها بنجاح",
+  "package-updated-successfully": "تم تحديث الحزمة بنجاح"
 }

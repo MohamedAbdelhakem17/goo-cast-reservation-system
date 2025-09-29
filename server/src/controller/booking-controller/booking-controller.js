@@ -54,14 +54,14 @@ const createBookingLogic = require("./create-booking-logic .js");
   //         },
   //     });
   //     if (bookings.length === 0) {
-//         //
+  //         //
   //     }
   //     const bookedSlots = bookings.map(book => {
   //         const start = timeToMinutes(book.timeSlot);
   //         const end = start + (book.duration * 60);
   //         return { start, end };
   //     });
-//     //
+  //     //
   //     // Calculate available slots
   //     const availableSlots = [];
   //     // Check available slots within the studio's working hours
@@ -136,8 +136,7 @@ const createBookingLogic = require("./create-booking-logic .js");
 // });
 
 // get fully booked dates for a studio
-const print = (val, lab) => {
-};
+const print = (val, lab) => {};
 
 // Get Full Booked Date
 const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
@@ -251,8 +250,8 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     let dayFullyBooked = true;
 
     for (const studio of studios) {
-      const studioBookings = dayBookings.filter(
-        (b) => b.studio.toString() === studio._id.toString()
+      const studioBookings = dayBookings.filter((b) =>
+        b?.studio?._id.equals(studio._id)
       );
 
       const bookedSlots = [];
@@ -476,11 +475,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   // ✅ Validation
   if (!studioId || !date || !duration) {
     return next(
-      new AppError(
-        400,
-        HTTP_STATUS_TEXT.FAIL,
-        "date and duration are required"
-      )
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "date and duration are required")
     );
   }
 
@@ -1148,7 +1143,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   //             booking
   //         });
   //     } catch (error) {
-//
+  //
   //         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
   //     }
   // });
@@ -1399,7 +1394,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     };
 
     let opportunityID;
-// return
+    // return
     try {
       opportunityID = await saveOpportunityInGoHighLevel(
         userData,
