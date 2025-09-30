@@ -17,7 +17,7 @@ export default function SelectStudio() {
   const [previewIndex, setPreviewIndex] = useState(null);
   const [hoveredImage, setHoveredImage] = useState(null);
 
-  const { data: studiosData, isLoading, error } = useGetStudio();
+  const { data: studiosData, isLoading, error } = useGetStudio(true);
 
   const selectStudio = (studio) => {
     setBookingField("studio", studio);
