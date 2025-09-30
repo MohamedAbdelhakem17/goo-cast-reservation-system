@@ -228,32 +228,53 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
   const requiredDuration = parseInt(req.query.duration) || 0;
   const requiredDurationMinutes = requiredDuration * 60;
 
+  // هات كل الستوديوهات (ممكن تعملها cache لو عددها قليل و ثابت)
   const studios = await StudioModel.find();
-
   if (!studios || studios.length === 0) {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No studios found"));
   }
 
-  const bookings = await BookingModel.find();
+  // حدد نطاق البحث (مثلاً من النهاردة لشهر قدام)
+  const today = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(today.getMonth() + 1);
 
+  // بدل ما نجيب كل الـ bookings ونعمل loop، نستخدم aggregation
+  const bookings = await BookingModel.aggregate([
+    {
+      $match: {
+        date: { $gte: today, $lte: nextMonth },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+          studio: "$studio",
+        },
+        bookings: { $push: { startSlot: "$startSlot", endSlot: "$endSlot" } },
+      },
+    },
+  ]);
+
+  // جهز object مرتب حسب اليوم
   const groupedByDate = {};
-
-  for (const booking of bookings) {
-    const day = booking.date.toISOString().split("T")[0];
-    if (!groupedByDate[day]) groupedByDate[day] = [];
-    groupedByDate[day].push(booking);
+  for (const b of bookings) {
+    const day = b._id.day;
+    if (!groupedByDate[day]) groupedByDate[day] = {};
+    groupedByDate[day][b._id.studio.toString()] = b.bookings;
   }
 
   const fullyBookedDates = [];
 
-  for (const [day, dayBookings] of Object.entries(groupedByDate)) {
+  // عدّي على الأيام واحسب لو اليوم مقفول بالكامل
+  for (const [day, dayStudios] of Object.entries(groupedByDate)) {
     let dayFullyBooked = true;
 
     for (const studio of studios) {
-      const studioBookings = dayBookings.filter((b) =>
-        b?.studio?._id.equals(studio._id)
-      );
+      const studioBookings = dayStudios[studio._id.toString()] || [];
 
+      // حوّل الحجوزات ل slots
       const bookedSlots = [];
       for (const booking of studioBookings) {
         for (let i = booking.startSlot; i < booking.endSlot; i += 30) {
