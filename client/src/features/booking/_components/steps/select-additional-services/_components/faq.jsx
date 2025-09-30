@@ -42,7 +42,7 @@ export default function Faq() {
                     isOpen ? "underline" : ""
                   }`}
                 >
-                  {faq.question}
+                  {faq.question?.[lng]}
                 </span>
                 <motion.div
                   animate={{ rotate: isOpen ? 180 : 0 }}
@@ -63,7 +63,7 @@ export default function Faq() {
                     className="overflow-hidden"
                   >
                     <div className="pb-5 text-sm leading-relaxed text-gray-700">
-                      {faq.answer}
+                      {faq.answer?.[lng]}
                     </div>
                   </motion.div>
                 )}

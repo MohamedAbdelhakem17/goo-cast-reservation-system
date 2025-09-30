@@ -29,39 +29,52 @@ export default function StudioCard({ studio, key }) {
     return () => window.removeEventListener("scroll", updateScrollDir);
   }, []);
 
+  // 🔹 Animation Variants
+  const cardAnimation = {
+    initial: {
+      opacity: 0,
+      y: 50,
+      scale: 0.7,
+      rotate: scrollDir === "down" ? 4 : -4,
+    },
+    whileInView: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      rotate: 0,
+      transition: { duration: 0.8 },
+    },
+    whileHover: {
+      y: -5,
+      transition: { type: "spring", stiffness: 300 },
+    },
+  };
+
+  const imageHover = {
+    whileHover: {
+      scale: 1.05,
+      transition: { duration: 0.3 },
+    },
+  };
+
+  const overlayAnimation = {
+    initial: { opacity: 0 },
+    whileHover: { opacity: 1, transition: { duration: 0.3 } },
+  };
+
   return (
     <motion.div
       key={key}
       className="overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-xl"
-      whileHover={{
-        y: -5,
-        transition: { type: "spring", stiffness: 300 },
-      }}
-      initial={{
-        opacity: 0,
-        y: 50,
-        scale: 0.7,
-        rotate: scrollDir === "down" ? 4 : -4,
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        rotate: 0,
-      }}
-      transition={{ duration: 0.8 }}
+      initial={cardAnimation.initial}
+      whileInView={cardAnimation.whileInView}
+      whileHover={cardAnimation.whileHover}
       viewport={{ once: false, amount: 0.2 }}
     >
       <div className="flex flex-col md:flex-row">
         {/* Studio Image */}
         <div className="relative h-64 overflow-hidden md:h-auto md:w-1/3">
-          <motion.div
-            whileHover={{
-              scale: 1.05,
-              transition: { duration: 0.3 },
-            }}
-            className="h-full"
-          >
+          <motion.div {...imageHover} className="h-full">
             <OptimizedImage
               src={studio.thumbnail}
               alt={studio.name?.[lng]}
@@ -71,8 +84,8 @@ export default function StudioCard({ studio, key }) {
 
           <motion.div
             className="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 to-transparent transition-opacity duration-300 md:opacity-0 md:hover:opacity-100"
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
+            initial={overlayAnimation.initial}
+            whileHover={overlayAnimation.whileHover}
           >
             <div className="p-4 text-white">
               <Link
@@ -88,7 +101,7 @@ export default function StudioCard({ studio, key }) {
         {/* Studio Details */}
         <div className="border-main flex-1 border-b-3 p-6">
           <div className="flex items-start justify-between">
-            {/* studio Name */}
+            {/* Studio Name */}
             <h3 className="mb-2 text-2xl font-semibold text-gray-800">
               {studio.name?.[lng]}
             </h3>
@@ -102,7 +115,7 @@ export default function StudioCard({ studio, key }) {
 
           {/* Facilities */}
           <div className="my-4 grid grid-cols-2 gap-4">
-            {studio.facilities.map(
+            {studio.facilities?.[lng].map(
               (facility, index) =>
                 index <= 3 && (
                   <div className="flex items-center gap-2" key={index}>

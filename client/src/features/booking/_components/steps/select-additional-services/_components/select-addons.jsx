@@ -127,7 +127,7 @@ export default function AddOns() {
                 isSelected ? "border-main" : "border-gray-300"
               }`}
             >
-              <div className="relative h-80 w-full overflow-hidden p-4">
+              <div className="relative h-80 w-full overflow-hidden p-1">
                 <img
                   src={addon.image}
                   alt={addon.name?.[lng]}

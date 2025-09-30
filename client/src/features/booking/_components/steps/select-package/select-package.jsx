@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { GetAllPackages } from "@/apis/services/services.api";
 import { tracking } from "@/utils/gtm";
 import BookingLabel from "../../booking-label";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { Check } from "lucide-react";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useGetAllPackages } from "@/apis/admin/manage-package.api";
 
 // Animation
 const containerVariants = {
@@ -38,7 +38,7 @@ export default function SelectPackage() {
   );
 
   // Mutation
-  const { data: packages } = GetAllPackages();
+  const { packages } = useGetAllPackages(true);
 
   const handlePackageSelect = (pkg) => {
     setSelectedPackage(pkg._id);

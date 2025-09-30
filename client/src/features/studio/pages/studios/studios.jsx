@@ -20,7 +20,7 @@ export default function Studios() {
   const { t } = useLocalization();
 
   // Query
-  const { data: studiosData, isLoading } = useGetStudio();
+  const { data: studiosData, isLoading } = useGetStudio(true);
 
   // Loading State
   if (isLoading) return <Loading />;

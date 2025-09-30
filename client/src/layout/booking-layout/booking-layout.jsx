@@ -1,7 +1,6 @@
-import BookingHeader from "@/layout/_components/booking-header/booking-header";
-import Stepper from "./../../features/booking/_components/Booking/Step-Indicator/StepIndicator";
 import { AnimatePresence, motion } from "framer-motion";
-import NavigationButtons from "../../features/booking/_components/Booking/Navigation-Buttons/NavigationButtons";
+import { NavigationButtons, Stepper } from "@/features/booking/_components";
+import BookingHeader from "@/layout/_components/booking-header/booking-header";
 
 // Container fade animation
 const containerVariants = {
@@ -60,6 +59,7 @@ export default function BookingLayout({ children, currentStep }) {
                 exit="exit"
                 className="items-start space-y-4 md:space-y-6 lg:grid lg:grid-cols-1 lg:gap-6"
               >
+                {/* Steeps */}
                 <motion.div variants={itemVariants} className="rounded-lg">
                   {children}
                 </motion.div>
