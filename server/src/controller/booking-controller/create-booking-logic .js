@@ -70,6 +70,7 @@ const createBookingLogic = async (body, user_id) => {
     date: bookingDate,
     startSlotMinutes,
     endOfDay: endSlotMinutes,
+    duration,
     bookedSlots: [],
   });
   const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
@@ -110,6 +111,7 @@ const createBookingLogic = async (body, user_id) => {
     );
 
   const totalPrice = Math.round(packagePrice + totalAddOnsPriceFromDb);
+
   if (totalPrice !== totalPriceFromClient)
     throw new AppError(
       400,

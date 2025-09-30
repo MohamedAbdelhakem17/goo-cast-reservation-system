@@ -2,9 +2,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import AppRouter from "./Routes/Router";
+import AppRouter from "@/router/router";
 import AuthProvider from "./context/Auth-Context/AuthContext";
 import { ToastProvider } from "./context/Toaster-Context/ToasterContext";
+import { LocalizationProvider } from "./context/localization-provider/localization-provider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,7 +19,7 @@ const queryClient = new QueryClient({
       },
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       staleTime: 5 * 60 * 1000,
-      cacheTime: 30 * 60 * 1000, 
+      cacheTime: 30 * 60 * 1000,
       suspense: false,
       networkMode: "online",
     },
@@ -31,18 +32,19 @@ const queryClient = new QueryClient({
 });
 
 export default function App() {
-
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
-          {/* <TrackPageView /> */}
-          <ToastProvider>
-            <AppRouter />
-          </ToastProvider>
-        </Router>
-      </AuthProvider>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <LocalizationProvider>
+        <AuthProvider>
+          <Router>
+            {/* <TrackPageView /> */}
+            <ToastProvider>
+              <AppRouter />
+            </ToastProvider>
+          </Router>
+        </AuthProvider>
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      </LocalizationProvider>
     </QueryClientProvider>
   );
 }

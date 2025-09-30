@@ -6,8 +6,12 @@ const allowTo = require("../../middleware/allow-to-middleware");
 const router = express.Router();
 router.route("/").get(hourlyPackageController.getAllHourlyPackages); // Get all hourly packages
 router
-  .route("/category/")
-  .post(hourlyPackageController.getHourlyPackagesByCategory);
+  .route("/category/:category")
+  .get(hourlyPackageController.getHourlyPackagesByCategory);
+
+router
+  .route("/change-status/:id")
+  .put(hourlyPackageController.toggleHourlyPackagesStatus);
 
 // Protect all routes after this middleware
 router.use(protect, allowTo("admin"));
@@ -22,6 +26,7 @@ router
 
 router
   .route("/:id")
+  .get(hourlyPackageController.getOneHourlyPackage)
   .put(hourlyPackageController.updateHourlyPackage) // Update hourly packages by ID
   .delete(hourlyPackageController.deleteHourlyPackage); // Delete hourly packages by ID
 
