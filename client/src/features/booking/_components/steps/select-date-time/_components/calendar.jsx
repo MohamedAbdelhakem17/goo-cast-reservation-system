@@ -5,9 +5,33 @@ import { Loading } from "@/components/common";
 import Duration from "./duration";
 import { DateTime } from "luxon";
 import { useCalendar } from "../_hooks/useCalendar";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function Calendar({ openToggle, getAvailableSlots }) {
+  // Localization
+  const { lng } = useLocalization();
+  //hooks
   const { setBookingField, bookingData } = useBooking();
+  const {
+    calendarDays,
+    currentDate,
+    selectedDate,
+    navigateMonth,
+    setSelectedDate,
+    isPrevDisabled,
+    isSelected,
+    isToday,
+    daysOfWeek,
+    monthNames,
+    isLoading,
+  } = useCalendar(bookingData.date, bookingData.duration);
+
+  // stat
+  const [isOpen, setIsOpen] = useState(
+    !bookingData.duration || bookingData.duration === 1,
+  );
+
+  // Functions
   const handleDayClick = (day, currentDate, isBlocked) => {
     switch (true) {
       case isBlocked:
@@ -38,29 +62,12 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     }
   };
 
-  const [isOpen, setIsOpen] = useState(
-    !bookingData.duration || bookingData.duration === 1,
-  );
-
-  const {
-    calendarDays,
-    currentDate,
-    selectedDate,
-    navigateMonth,
-    setSelectedDate,
-    isPrevDisabled,
-    isSelected,
-    isToday,
-    daysOfWeek,
-    monthNames,
-    isLoading,
-  } = useCalendar(bookingData.date, bookingData.duration);
-
   return (
     <div className="mx-auto w-full bg-white">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
+          {/* go to last month */}
           <button
             className="h-8 w-8 disabled:opacity-40"
             onClick={() => navigateMonth("prev")}
@@ -68,9 +75,14 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
+
+          {/* Month */}
           <h1 className="text-center text-xl font-medium lg:min-w-[140px]">
-            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+            {monthNames[currentDate.getMonth()]}{" "}
+            {currentDate.getFullYear().toLocaleString(`${lng}-EG`)}
           </h1>
+
+          {/* go to next month */}
           <button className="h-8 w-8" onClick={() => navigateMonth("next")}>
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -137,7 +149,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
                           : "text-gray-900"
                     } `}
                   >
-                    {day.date}
+                    {day.date.toLocaleString(`${lng}-EG`)}
                   </div>
                 )}
 

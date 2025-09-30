@@ -1,10 +1,10 @@
 import Sticky from "react-sticky-el";
-import AddOns from "./Add-Ons/AddOns";
-import Cart from "../Cart/Cart";
-import Faq from "./Faq/Faq";
+import AddOns from "./select-addons";
+import Cart from "../../../Booking/Cart/Cart";
+import Faq from "./faq";
 import { useEffect } from "react";
 import { tracking } from "@/utils/gtm";
-import BookingLabel from "../../booking-label";
+import BookingLabel from "../../../booking-label";
 import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function SelectAdditionalServices() {

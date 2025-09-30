@@ -9,6 +9,7 @@ const calculateSlotPrices = async ({
   date,
   startSlotMinutes,
   endOfDay,
+  duration,
   bookedSlots,
 }) => {
   const dayOfWeek = new Date(date).getDay();
@@ -50,29 +51,24 @@ const calculateSlotPrices = async ({
 
   const minStartTime = await getCategoryMinHour(package.category._id);
 
-  for (
-  let time = startSlotMinutes + minStartTime;
-  time <= endOfDay + 60;
-  time += 60
-)
- {
-    slotCount++;
+  for (let i = 1; i <= duration; i++) {
+    const currentEnd = startSlotMinutes + i * 60;
 
     const isOverlapping = bookedSlots.some(
-      (b) => startSlotMinutes < b.end && time > b.start
+      (b) => startSlotMinutes < b.end && currentEnd > b.start
     );
     if (isOverlapping) break;
 
     if (isFixedHourly) {
       totalPrice += defaultPricePerSlot;
     } else {
-      const discount = Number(perSlotDiscounts.get(String(slotCount)) || 0);
+      const discount = Number(perSlotDiscounts.get(String(i)) || 0);
       const priceAfterDiscount = defaultPricePerSlot * (1 - discount / 100);
       totalPrice += priceAfterDiscount;
     }
 
     results.push({
-      endTime: minutesToTime(time),
+      endTime: minutesToTime(currentEnd),
       totalPrice: Math.round(totalPrice),
     });
   }

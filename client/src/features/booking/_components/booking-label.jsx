@@ -1,6 +1,12 @@
-export default function BookingHeader({title , desc}) {
-    return <div className="text-center my-6 scale-80">
-        <h2 className="text-2xl mb-2 font-bold">{title}</h2>
-        <p className="text-gray-900">{desc}</p>
+export default function BookingLabel({ title, desc }) {
+  return (
+    // Header
+    <div className="my-6 scale-80 text-center">
+      {/* Main title */}
+      <h2 className="mb-2 text-2xl font-bold">{title}</h2>
+
+      {/* Description */}
+      <p className="text-gray-900">{desc}</p>
     </div>
+  );
 }

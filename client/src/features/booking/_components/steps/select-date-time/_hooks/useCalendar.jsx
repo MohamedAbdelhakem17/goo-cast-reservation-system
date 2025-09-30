@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useGetFullyBookedDates } from "@/apis/public/booking.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export function useCalendar(selectedBookingDate, duration) {
+  const { lng } = useLocalization();
   const today = new Date();
   const handleStartDate = () => {
     const date = new Date();
@@ -76,7 +78,6 @@ export function useCalendar(selectedBookingDate, duration) {
 
     const isPast = dateToCheck < todayStart;
 
-    // استخدام الـ helper function بدلاً من toISOString
     const dateStr = formatDateToString(
       currentDate.getFullYear(),
       currentDate.getMonth(),
@@ -89,7 +90,6 @@ export function useCalendar(selectedBookingDate, duration) {
   };
 
   const isDateFullyBooked = (day) => {
-    // استخدام نفس الـ helper function هنا كمان
     const dateStr = formatDateToString(
       currentDate.getFullYear(),
       currentDate.getMonth(),
@@ -150,21 +150,41 @@ export function useCalendar(selectedBookingDate, duration) {
     });
   }
 
-  const daysOfWeek = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const daysOfWeek = {
+    en: ["MO", "TU", "WE", "TH", "FR", "SA", "SU"],
+    ar: ["الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"],
+  };
+
+  const monthNames = {
+    en: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    ar: [
+      "يناير",
+      "فبراير",
+      "مارس",
+      "أبريل",
+      "مايو",
+      "يونيو",
+      "يوليو",
+      "أغسطس",
+      "سبتمبر",
+      "أكتوبر",
+      "نوفمبر",
+      "ديسمبر",
+    ],
+  };
 
   return {
     calendarDays,
@@ -177,8 +197,8 @@ export function useCalendar(selectedBookingDate, duration) {
     isSelected,
     isToday,
     isLoading,
-    monthNames,
-    daysOfWeek,
+    monthNames: monthNames[lng],
+    daysOfWeek: daysOfWeek[lng],
     disabledDates,
     isDateFullyBooked,
   };

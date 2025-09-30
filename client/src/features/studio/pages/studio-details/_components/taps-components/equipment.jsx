@@ -1,24 +1,27 @@
-import React from "react";
 import { motion } from "framer-motion";
-export default function Equipment({ equipment }) {
-  const listVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
+import useLocalization from "@/context/localization-provider/localization-context";
 
-  const listItemVariants = {
-    hidden: { x: -10, opacity: 0 },
-    visible: {
-      x: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
+const listVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
     },
-  };
+  },
+};
+
+const listItemVariants = {
+  hidden: { x: -10, opacity: 0 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 100 },
+  },
+};
+
+export default function Equipment({ equipment }) {
+  const { t } = useLocalization();
 
   return (
     <div className="mx-auto max-w-3xl rounded-xl bg-white px-6 py-8 shadow-sm">
@@ -28,7 +31,7 @@ export default function Equipment({ equipment }) {
           className="text-2xl font-bold text-gray-800"
           whileHover={{ scale: 1.02 }}
         >
-          Equipment
+          {t("equipment")}
         </motion.h2>
       </div>
       <motion.ul className="space-y-3 text-gray-600" variants={listVariants}>
@@ -39,7 +42,7 @@ export default function Equipment({ equipment }) {
             variants={listItemVariants}
             whileHover={{ x: 5, color: "#f43f5e" }}
           >
-            <span className="mt-2 mr-2 inline-block h-2 w-2 rounded-full bg-rose-500"></span>
+            <span className="me-2 mt-2 inline-block h-2 w-2 rounded-full bg-rose-500"></span>
             {rule}
           </motion.li>
         ))}

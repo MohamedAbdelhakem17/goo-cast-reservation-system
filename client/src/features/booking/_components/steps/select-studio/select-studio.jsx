@@ -186,7 +186,7 @@ export default function SelectStudio() {
                 <ul className="mt-3 text-gray-600">
                   <li className="flex items-start text-sm">
                     <span
-                      className={`mr-2 ${
+                      className={`me-2 ${
                         selectedStudio === studio._id ? "text-main" : "text-black"
                       }`}
                     >
@@ -196,7 +196,7 @@ export default function SelectStudio() {
                   </li>
                   <li className="flex items-start text-sm">
                     <span
-                      className={`mr-2 ${
+                      className={`me-2 ${
                         selectedStudio === studio._id ? "text-main" : "text-black"
                       }`}
                     >
@@ -213,7 +213,7 @@ export default function SelectStudio() {
                       className="flex items-start text-sm"
                     >
                       <span
-                        className={`mr-2 ${
+                        className={`me-2 ${
                           selectedStudio === studio._id ? "text-main" : "text-black"
                         }`}
                       >

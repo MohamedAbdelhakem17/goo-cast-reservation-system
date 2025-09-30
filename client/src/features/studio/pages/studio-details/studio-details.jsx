@@ -1,14 +1,14 @@
 import { useParams } from "react-router-dom";
-import { GetStudioByID } from "@/apis/studios/studios.api";
 import { Loading } from "@/components/common";
 import { Header, Gallery, Taps } from "./_components";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useGetOneStudio } from "@/apis/public/studio.api";
 
 export default function StudioDetails() {
   const { lng } = useLocalization();
   const { id } = useParams();
 
-  const { data, isLoading } = GetStudioByID(id);
+  const { data, isLoading } = useGetOneStudio(id);
 
   if (isLoading) return <Loading />;
 
@@ -17,9 +17,9 @@ export default function StudioDetails() {
       <Header title={data.data.name?.[lng]} location={data.data.address?.[lng]} />
       <Gallery images={[data.data.thumbnail, ...data.data.imagesGallery]} />
       <Taps
-        description={data?.data?.description}
-        facilities={data?.data?.facilities}
-        equipment={data?.data?.equipment}
+        description={data?.data?.description?.[lng]}
+        facilities={data?.data?.facilities?.[lng]}
+        equipment={data?.data?.equipment?.[lng]}
       />
     </main>
   );
