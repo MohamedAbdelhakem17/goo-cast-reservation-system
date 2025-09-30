@@ -138,41 +138,6 @@ const createBookingLogic = require("./create-booking-logic .js");
 // get fully booked dates for a studio
 const print = (val, lab) => {};
 
-// Get Full Booked Date
-const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
-  const slots = [];
-  for (
-    let time = startMinutes;
-    time + slotDuration <= endMinutes;
-    time += slotDuration
-  ) {
-    slots.push(time);
-  }
-  return slots;
-};
-
-const isDurationAvailable = (
-  bookedSlots,
-  totalSlots,
-  requiredDurationSlots
-) => {
-  const availableSlots = totalSlots.filter(
-    (slot) => !bookedSlots.includes(slot)
-  );
-
-  let consecutive = 0;
-  for (let i = 0; i < availableSlots.length; i++) {
-    if (i === 0 || availableSlots[i] === availableSlots[i - 1] + 60) {
-      consecutive++;
-      if (consecutive >= requiredDurationSlots) return true;
-    } else {
-      consecutive = 1;
-    }
-  }
-
-  return false;
-};
-
 // Get Fully Booked Dates Based on Required Duration
 // exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
 //   const { studioId } = req.params;
@@ -225,21 +190,18 @@ const isDurationAvailable = (
 // });
 
 exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
-  const requiredDuration = parseInt(req.query.duration) || 0;
-  const requiredDurationMinutes = requiredDuration * 60;
+  const requiredDuration = parseInt(req.query.duration) || 0; // بالساعة
+  const requiredDurationMinutes = requiredDuration * 60; // بالدقايق
 
-  // هات كل الستوديوهات (ممكن تعملها cache لو عددها قليل و ثابت)
   const studios = await StudioModel.find();
   if (!studios || studios.length === 0) {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No studios found"));
   }
 
-  // حدد نطاق البحث (مثلاً من النهاردة لشهر قدام)
   const today = new Date();
   const nextMonth = new Date();
   nextMonth.setMonth(today.getMonth() + 1);
 
-  // بدل ما نجيب كل الـ bookings ونعمل loop، نستخدم aggregation
   const bookings = await BookingModel.aggregate([
     {
       $match: {
@@ -257,7 +219,6 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     },
   ]);
 
-  // جهز object مرتب حسب اليوم
   const groupedByDate = {};
   for (const b of bookings) {
     const day = b._id.day;
@@ -267,14 +228,12 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
 
   const fullyBookedDates = [];
 
-  // عدّي على الأيام واحسب لو اليوم مقفول بالكامل
   for (const [day, dayStudios] of Object.entries(groupedByDate)) {
     let dayFullyBooked = true;
 
     for (const studio of studios) {
       const studioBookings = dayStudios[studio._id.toString()] || [];
 
-      // حوّل الحجوزات ل slots
       const bookedSlots = [];
       for (const booking of studioBookings) {
         for (let i = booking.startSlot; i < booking.endSlot; i += 30) {
@@ -289,7 +248,8 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
       const isAvailable = isDurationAvailable(
         bookedSlots,
         totalSlots,
-        requiredDurationMinutes / 60
+        requiredDurationMinutes, // 👈 من غير /60
+        30 // slotDuration
       );
 
       if (isAvailable) {
@@ -308,6 +268,44 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     data: fullyBookedDates,
   });
 });
+
+// Helpers
+const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
+  const slots = [];
+  for (
+    let time = startMinutes;
+    time + slotDuration <= endMinutes;
+    time += slotDuration
+  ) {
+    slots.push(time);
+  }
+  return slots;
+};
+
+const isDurationAvailable = (
+  bookedSlots,
+  totalSlots,
+  requiredDurationMinutes,
+  slotDuration = 30
+) => {
+  const requiredSlots = Math.ceil(requiredDurationMinutes / slotDuration);
+
+  const availableSlots = totalSlots.filter(
+    (slot) => !bookedSlots.includes(slot)
+  );
+
+  let consecutive = 0;
+  for (let i = 0; i < availableSlots.length; i++) {
+    if (i === 0 || availableSlots[i] === availableSlots[i - 1] + slotDuration) {
+      consecutive++;
+      if (consecutive >= requiredSlots) return true;
+    } else {
+      consecutive = 1;
+    }
+  }
+
+  return false;
+};
 
 exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
   const studios = await StudioModel.find();
