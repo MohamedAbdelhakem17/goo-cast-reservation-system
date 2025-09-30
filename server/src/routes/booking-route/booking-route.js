@@ -35,7 +35,7 @@ router
   .get(allowTo(USER_ROLE.ADMIN), bookingController.getAllBookings);
 
 router
-  .route("/:id")
+  .route("/")
   .put(allowTo(USER_ROLE.ADMIN), bookingController.changeBookingStatus);
 
 router

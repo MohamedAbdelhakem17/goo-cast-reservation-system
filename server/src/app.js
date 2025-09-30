@@ -1,8 +1,7 @@
 // ====== Load Environment Variables ======
 const path = require("path");
-
 require("dotenv").config({
-  path: path.join(__dirname, "../.env"),
+  path: path.join(__dirname, "../.env.local"),
 });
 
 // ====== Imports ======
@@ -66,17 +65,32 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 // );
 
 // Body parser
+
 app.use(express.json());
 
-// CORS configuration
-app.use(cors("*"));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 
-// Session configuration
 app.use(
   expressSession({
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET || "fallback-secret-key",
     resave: false,
     saveUninitialized: false,
+    name: "sessionId",
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+      domain: undefined,
+      path: "/",
+    },
   })
 );
 

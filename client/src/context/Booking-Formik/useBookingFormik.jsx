@@ -1,10 +1,10 @@
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useToast } from "../../context/Toaster-Context/ToasterContext";
-import { CreateBooking } from "../../apis/Booking/booking.api";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { DateTime } from "luxon";
+import { useCreateBooking } from "@/apis/public/booking.api";
 export default function useBookingFormik() {
   const parsedData = useMemo(() => {
     const localStorageData = localStorage.getItem("bookingData");
@@ -61,7 +61,7 @@ export default function useBookingFormik() {
       .test(
         "is-not-empty",
         "Package is required",
-        (value) => value && Object.keys(value).length > 0
+        (value) => value && Object.keys(value).length > 0,
       )
       .required("Package is required"),
     studio: Yup.object().required("Studio is required"),
@@ -89,7 +89,7 @@ export default function useBookingFormik() {
           const { totalPrice } = this.parent;
           if (value == null || totalPrice == null) return true;
           return value <= totalPrice;
-        }
+        },
       ),
     couponCode: Yup.string().optional(),
     discount: Yup.string().optional(),
@@ -98,7 +98,8 @@ export default function useBookingFormik() {
       .required("Payment method is required"),
   });
 
-  const { mutate: createBooking } = CreateBooking();
+  // const { mutate: createBooking } = CreateBooking();
+  const { createBooking } = useCreateBooking();
 
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -118,8 +119,7 @@ export default function useBookingFormik() {
         },
         totalPrice: values.totalPrice,
         coupon_code: values.couponCode,
-        totalPriceAfterDiscount:
-          values.totalPriceAfterDiscount || values.totalPrice,
+        totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
         personalInfo: {
           ...values.personalInfo,
           fullName: `${values.personalInfo.firstName} ${values.personalInfo.lastName}`,
@@ -132,26 +132,19 @@ export default function useBookingFormik() {
             "bookingConfirmation",
             JSON.stringify({
               bookingResponse: res.booking,
-            })
+            }),
           );
-          addToast(
-            res.message || "Booking submitted successfully",
-            "success",
-            1000
-          );
+          addToast(res.message || "Booking submitted successfully", "success", 1000);
           formik.resetForm();
-          localStorage.removeItem("bookingData");
-          localStorage.removeItem("maxStepReached");
-          localStorage.removeItem("bookingStep");
           setTimeout(() => {
+            localStorage.removeItem("bookingData");
+            localStorage.removeItem("maxStepReached");
+            localStorage.removeItem("bookingStep");
             navigate("/booking/confirmation");
           }, 1200);
         },
         onError: (error) => {
-          addToast(
-            error.response?.data?.message || "Something went wrong",
-            "error"
-          );
+          addToast(error.response?.data?.message || "Something went wrong", "error");
         },
         onSettled: () => {
           setSubmitting(false);
@@ -166,23 +159,17 @@ export default function useBookingFormik() {
     (field, value) => {
       formik.setFieldValue(field, value);
     },
-    [formik]
+    [formik],
   );
 
   const getBookingField = (field) => {
     const keys = field?.split(".");
-    return keys.reduce(
-      (acc, key) => (acc ? acc[key] : undefined),
-      formik.values
-    );
+    return keys.reduce((acc, key) => (acc ? acc[key] : undefined), formik.values);
   };
 
   const getBookingError = (field) => {
     const keys = field?.split(".");
-    return keys.reduce(
-      (acc, key) => (acc ? acc[key] : undefined),
-      formik.errors
-    );
+    return keys.reduce((acc, key) => (acc ? acc[key] : undefined), formik.errors);
   };
 
   return {

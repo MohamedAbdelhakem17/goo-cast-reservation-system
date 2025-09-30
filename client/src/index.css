@@ -1,14 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Delius&display=swap');
+/* English Font */
+@import url("https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Delius&display=swap");
+
+/* arabic */
+@import url("https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&display=swap");
 
 @import "tailwindcss";
 
 @theme {
-    /* Main Font */
-    --font-main: "Mulish", sans-serif;
-    --font-sub: "Delius", cursive;
+  /* Main Font */
+  --font-main: "Mulish", sans-serif;
+  --font-sub: "Delius", cursive;
+  --font-arabic: "El Messiri", sans-serif;
 
-    /* Main Color */
-    --color-main: #ed1e26;
+  /* Main Color */
+  --color-main: #ed1e26;
 }
-

@@ -12,6 +12,7 @@ const CouponSchema = new mongoose.Schema(
       required: [true, "Please provide a discount code"],
       trim: true,
       unique: true,
+      uppercase: true,
     },
     discount: {
       type: Number,
