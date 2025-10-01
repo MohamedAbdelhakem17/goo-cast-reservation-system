@@ -1,8 +1,10 @@
 import React from "react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { Check } from "lucide-react";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function Stepper() {
+  const { lng } = useLocalization();
   const { currentStep, stepLabels, setCurrentStep, maxStepReached } = useBooking();
 
   const steps = stepLabels.map((title, index) => ({
@@ -37,7 +39,9 @@ export default function Stepper() {
                 {step.id < currentStep ? (
                   <Check className="h-5 w-5" />
                 ) : (
-                  <span className="text-sm font-medium">{step.id}</span>
+                  <span className="text-sm font-medium">
+                    {new Intl.NumberFormat(`${lng}-EG`).format(step.id)}
+                  </span>
                 )}
               </div>
               <div

@@ -12,7 +12,7 @@ export const PackageSection = memo(function PackageSection({
     <div className="flex items-center justify-between py-1">
       <p className="text-md text-gray-500">{selectedPackage.name?.[lng]}</p>
       <p className="text-md text-gray-500">
-        {priceFormat(selectedPackage.price)} x {duration}h
+        {priceFormat(selectedPackage.price)} x {duration} {lng === "ar" ? "ساعة" : "h"}
       </p>
     </div>
   );

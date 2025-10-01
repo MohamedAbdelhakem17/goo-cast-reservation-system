@@ -12,7 +12,7 @@ export default function useDateFormat() {
       return "";
     }
 
-    return parsedDate.toLocaleDateString(`${lng}-US`, {
+    return parsedDate.toLocaleDateString(`${lng}-EG`, {
       year: "numeric",
       month: "short",
       day: "numeric",
