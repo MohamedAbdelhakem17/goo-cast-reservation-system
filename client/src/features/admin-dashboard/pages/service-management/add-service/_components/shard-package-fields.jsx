@@ -4,7 +4,7 @@ import { useGetAllCategories } from "@/apis/admin/manage-category.api";
 import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function ShardFields({ formik }) {
-  const { lng } = useLocalization();
+  const { lng, t } = useLocalization();
   const { categories } = useGetAllCategories();
 
   const CategoryOptions = categories?.data?.map((category) => ({
@@ -37,31 +37,31 @@ export default function ShardFields({ formik }) {
       {/* English Name */}
       <Input
         type="number"
-        label="Package Price"
+        label={t("package-price")}
         id="price"
         name="price"
         value={formik.values.price}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         errors={formik.touched.price && formik.errors.price}
-        placeholder="Package Price per hour"
+        placeholder={t("package-price-per-hour")}
         className="col-span-1 md:col-span-2"
       />
 
       {/* Category Select */}
       <SelectInput
         name="category"
-        label="Category"
+        label={t("category")}
         value={formik.values.category}
         onChange={(e) => formik.setFieldValue("category", e.target.value)}
         options={CategoryOptions}
-        placeholder="Select a category..."
+        placeholder={t("select-a-category")}
         className="col-span-1 md:col-span-2"
       />
 
       {/* Image */}
       <div className="col-span-1 md:col-span-2">
-        <label className="mb-2 block font-semibold">Image</label>
+        <label className="mb-2 block font-semibold">{t("image")}</label>
         <input
           type="file"
           accept="image/*"
@@ -85,7 +85,7 @@ export default function ShardFields({ formik }) {
               onClick={handleRemoveImage}
               className="mt-1 block text-red-500"
             >
-              Remove Image
+              {t("remove-image")}
             </button>
           </div>
         )}

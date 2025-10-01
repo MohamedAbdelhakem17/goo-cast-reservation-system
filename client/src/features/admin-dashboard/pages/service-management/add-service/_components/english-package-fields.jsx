@@ -1,19 +1,21 @@
 import { Input, TextArea } from "@/components/common";
 import MultiLangArrayInput from "./multi-lang-array-input";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function EnglishFields({ formik }) {
+  const { t } = useLocalization();
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {/* Service Name */}
       <Input
-        label="Service name"
+        label={t("service-name")}
         id="name.en"
         name="name.en"
         value={formik.values.name.en}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         errors={formik.touched.name?.en && formik.errors.name?.en}
-        placeholder="Enter english name"
+        placeholder={t("enter-english-name")}
         className="col-span-1 md:col-span-2"
       />
 
@@ -31,14 +33,14 @@ export default function EnglishFields({ formik }) {
 
       {/* Service Description */}
       <TextArea
-        label="Service description"
+        label={t("service-description")}
         id="description.en"
         name="description.en"
         value={formik.values.description.en}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         errors={formik.touched.description?.en && formik.errors.description?.en}
-        placeholder="Enter english description"
+        placeholder={t("enter-english-description")}
         rows={4}
       />
 
@@ -47,8 +49,8 @@ export default function EnglishFields({ formik }) {
         form={formik}
         fieldName="target_audience"
         lang={"en"}
-        labelKey="target-audience"
-        placeholderKey="enter-target"
+        labelKey={t("target-audience-0")}
+        placeholderKey={t("enter-target")}
       />
 
       {/* Post-session Benefits */}
@@ -56,8 +58,8 @@ export default function EnglishFields({ formik }) {
         form={formik}
         fieldName="post_session_benefits"
         lang={"en"}
-        labelKey="post-session-benefits"
-        placeholderKey="enter-benefit"
+        labelKey={t("post-session-benefits")}
+        placeholderKey={t("enter-benefit")}
       />
 
       {/* Details */}
@@ -65,8 +67,8 @@ export default function EnglishFields({ formik }) {
         form={formik}
         fieldName="details"
         lang={"en"}
-        labelKey="details"
-        placeholderKey="enter-detail"
+        labelKey={t("details-0")}
+        placeholderKey={t("enter-detail-0")}
       />
     </div>
   );

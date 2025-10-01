@@ -1,19 +1,21 @@
 import { TextArea, Input } from "@/components/common";
 import MultiLangArrayInput from "./multi-lang-array-input";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function ArabicFields({ formik }) {
+  const { t } = useLocalization();
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {/* Service Name */}
       <Input
-        label="Service name"
+        label={t("service-name")}
         id="name.ar"
         name="name.ar"
         value={formik.values.name.ar}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         errors={formik.touched.name?.ar && formik.errors.name?.ar}
-        placeholder="Enter Arabic name"
+        placeholder={t("enter-arabic-name")}
         className="col-span-1 md:col-span-2"
       />
 
@@ -31,14 +33,14 @@ export default function ArabicFields({ formik }) {
 
       {/* Service Description */}
       <TextArea
-        label="Service description"
+        label={t("service-description")}
         id="description.ar"
         name="description.ar"
         value={formik.values.description.ar}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         errors={formik.touched.description?.ar && formik.errors.description?.ar}
-        placeholder="Enter Arabic description"
+        placeholder={t("enter-arabic-description")}
         rows={4}
       />
 
@@ -47,8 +49,8 @@ export default function ArabicFields({ formik }) {
         form={formik}
         fieldName="target_audience"
         lang={"ar"}
-        labelKey="target-audience"
-        placeholderKey="enter-target"
+        labelKey={t("target-audience-0")}
+        placeholderKey={t("enter-target")}
       />
 
       {/* Post-session Benefits */}
@@ -56,8 +58,8 @@ export default function ArabicFields({ formik }) {
         form={formik}
         fieldName="post_session_benefits"
         lang={"ar"}
-        labelKey="post-session-benefits"
-        placeholderKey="enter-benefit"
+        labelKey={t("post-session-benefits")}
+        placeholderKey={t("enter-benefit")}
       />
 
       {/* Details */}
@@ -65,8 +67,8 @@ export default function ArabicFields({ formik }) {
         form={formik}
         fieldName="details"
         lang={"ar"}
-        labelKey="details"
-        placeholderKey="enter-detail"
+        labelKey={t("details-0")}
+        placeholderKey={t("enter-detail")}
       />
     </div>
   );
