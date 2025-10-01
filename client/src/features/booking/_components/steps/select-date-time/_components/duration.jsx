@@ -61,7 +61,7 @@ export default function Duration({ isOpen, setIsOpen }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="fixed end-100 top-[35%] z-[500] w-[250px] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl"
+              className="absolute end-0 -top-20 z-[500] w-[250px] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl"
             >
               <div className="border-b border-gray-100 bg-gray-50 px-4 py-3">
                 <div className="flex items-center justify-between">
