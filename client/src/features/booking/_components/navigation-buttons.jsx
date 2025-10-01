@@ -4,11 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 function NavButton({ children, ...props }) {
   return (
-    <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      {...props}
-    >
+    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} {...props}>
       {children}
     </motion.button>
   );
@@ -24,15 +20,20 @@ export default function NavigationButtons() {
     getBookingField,
   } = useBooking();
 
-<<<<<<< HEAD:client/src/components/Booking/Navigation-Buttons/NavigationButtons.jsx
+  const isPackageSelected =
+    Object.keys(getBookingField("selectedPackage") || {}).length > 0;
+
+  const isDisabled = hasError() || currentStep === TOTAL_STEPS || !isPackageSelected;
+
   return (
     <>
-      <div className="lg:hidden pb-24" />
-      <div className="lg:hidden fixed flex items-center justify-between bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+      <div className="pb-24 lg:hidden" />
+      <div className="fixed right-0 bottom-0 left-0 z-40 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 lg:hidden">
+        {/* Previous */}
         <NavButton
-          className={`px-6 py-2 rounded-md ${
+          className={`rounded-md px-6 py-2 ${
             currentStep === 1
-              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+              ? "cursor-not-allowed bg-gray-200 text-gray-400"
               : "bg-gray-200 text-gray-700 hover:bg-gray-300"
           }`}
           disabled={currentStep === 1}
@@ -41,14 +42,15 @@ export default function NavigationButtons() {
           <ArrowLeft className="me-1 inline-block" />
           Previous
         </NavButton>
+
+        {/* Next */}
         <NavButton
-          className={`px-4 py-2 rounded-md cursor-pointer bg-main/90 text-white hover:bg-main
-  disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
-          disabled={
-            hasError() ||
-            currentStep === TOTAL_STEPS ||
-            Object.keys(getBookingField("selectedPackage") || {}).length === 0
-          }
+          className={`cursor-pointer rounded-md px-4 py-2 ${
+            currentStep === TOTAL_STEPS
+              ? "bg-green-500 text-white hover:bg-green-600"
+              : "bg-main/90 hover:bg-main text-white"
+          } disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400`}
+          disabled={isDisabled}
           onClick={handleNextStep}
           type="button"
         >
@@ -58,37 +60,4 @@ export default function NavigationButtons() {
       </div>
     </>
   );
-=======
-
-
-    return (
-        <>
-            <div className="lg:hidden pb-24" />
-            <div className="lg:hidden fixed flex items-center justify-between bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
-
-                <NavButton
-                    className={`px-6 py-2 rounded-md ${currentStep === 1
-                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
-                    disabled={currentStep === 1}
-                    onClick={handlePrevStep}
-                >
-                    <ArrowLeft className="me-1 inline-block" />
-                    Previous
-                </NavButton>
-                <NavButton
-                    className={`px-4 py-2  rounded-md cursor-pointer ${currentStep === TOTAL_STEPS
-                        ? "bg-green-500 text-white hover:bg-green-600"
-                        : "bg-main/90 text-white hover:bg-main"} disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed`}
-                    disabled={hasError() || currentStep === TOTAL_STEPS}
-                    onClick={handleNextStep}
-                    type="button"
-                >
-                    Next
-                    <ArrowRight className="ms-1 inline-block" />
-                </NavButton>
-            </div>
-        </>
-    );
->>>>>>> d6e0283572ca03308adfcb2e44a14af7d4499395:client/src/features/booking/_components/navigation-buttons.jsx
 }
