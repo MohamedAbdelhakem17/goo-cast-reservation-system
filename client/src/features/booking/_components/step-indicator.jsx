@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function Stepper() {
-  const { lng } = useLocalization();
+  const { lng, t } = useLocalization();
   const { currentStep, stepLabels, setCurrentStep, maxStepReached } = useBooking();
 
   const steps = stepLabels.map((title, index) => ({
@@ -70,7 +70,10 @@ export default function Stepper() {
         <div className="mb-4">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-medium text-gray-600">
-              Step {currentStep} of {steps.length}
+              {t("steps-indicator", {
+                currentStep: new Intl.NumberFormat(`${lng}-EG`).format(currentStep),
+                length: new Intl.NumberFormat(`${lng}-EG`).format(steps.length),
+              })}
             </span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-gray-200">
@@ -86,7 +89,9 @@ export default function Stepper() {
           <div className="flex items-center space-x-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] shadow-lg">
               {currentStep < steps.length ? (
-                <span className="text-xs font-bold text-white">{currentStep}</span>
+                <span className="text-xs font-bold text-white">
+                  {new Intl.NumberFormat(`${lng}-EG`).format(currentStep)}
+                </span>
               ) : (
                 <Check className="h-4 w-4 text-white" />
               )}
@@ -95,7 +100,7 @@ export default function Stepper() {
               <div className="text-sm font-semibold text-gray-900">
                 {steps[currentStep - 1]?.title}
               </div>
-              <div className="text-xs text-gray-500">Current step</div>
+              <div className="text-xs text-gray-500">{t("current-step")}</div>
             </div>
           </div>
         </div>

@@ -5,7 +5,9 @@ import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { DateTime } from "luxon";
 import { useCreateBooking } from "@/apis/public/booking.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 export default function useBookingFormik() {
+  const { t } = useLocalization();
   const parsedData = useMemo(() => {
     const localStorageData = localStorage.getItem("bookingData");
     return localStorageData ? JSON.parse(localStorageData) : null;
@@ -51,7 +53,7 @@ export default function useBookingFormik() {
       totalPriceAfterDiscount: 0,
       couponCode: "",
       discount: "",
-      paymentMethod: "CASH", // Default payment method
+      paymentMethod: "CASH",
     };
   }, [parsedData]);
 
@@ -59,22 +61,22 @@ export default function useBookingFormik() {
   const bookingValidationSchema = Yup.object({
     selectedPackage: Yup.object()
       .test(
-        "is-not-empty",
-        "Package is required",
+        t("is-not-empty"),
+        t("package-is-required"),
         (value) => value && Object.keys(value).length > 0,
       )
-      .required("Package is required"),
-    studio: Yup.object().required("Studio is required"),
+      .required(t("package-is-required")),
+    studio: Yup.object().required(t("studio-is-required")),
     endSlot: Yup.string().required("Time end slot is required"),
     startSlot: Yup.string().required("Time  slot is required"),
     selectedAddOns: Yup.array().nullable().notRequired(),
     personalInfo: Yup.object({
-      firstName: Yup.string().required("First name is required"),
-      lastName: Yup.string().required("Last name is required"),
+      firstName: Yup.string().required(t("first-name-is-required")),
+      lastName: Yup.string().required(t("last-name-is-required")),
       phone: Yup.string()
-        .matches(/^01(0|1|2|5)[0-9]{8}$/, "Phone number is not valid")
-        .required("Phone is required"),
-      email: Yup.string().email("Invalid email").required("Email is required"),
+        .matches(/^01(0|1|2|5)[0-9]{8}$/, t("phone-number-is-not-valid"))
+        .required(t("phone-is-required")),
+      email: Yup.string().email(t("invalid-email")).required(t("email-is-required")),
       brand: Yup.string().optional(),
     }),
 
