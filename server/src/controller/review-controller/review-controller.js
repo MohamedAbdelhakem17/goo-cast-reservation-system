@@ -4,7 +4,7 @@ const ReviewModel = require("../../models/review-model/review-model");
 const asyncHandler = require("express-async-handler");
 
 cron.schedule("0 0 */3 * *", () => {
-  getPlaceReviews();
+  // getPlaceReviews();
 });
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -37,7 +37,10 @@ async function getPlaceReviews() {
     result?.reviews ? (result.reviews = filteredReviews) : "";
 
     let isNew = false;
-    if (!cached || result?.user_ratings_total > (cached.userRatingsTotal || 0)) {
+    if (
+      !cached ||
+      result?.user_ratings_total > (cached.userRatingsTotal || 0)
+    ) {
       isNew = true;
     }
 
@@ -67,4 +70,4 @@ exports.getPlaceReviews = asyncHandler(async (req, res, next) => {
   });
 });
 
-getPlaceReviews();
+// getPlaceReviews();
