@@ -8,8 +8,10 @@ import { motion } from "framer-motion";
 import { TextArea, Input, Button, ErrorFeedback } from "@/components/common";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useQueryClient } from "@tanstack/react-query";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function AddAddons() {
+  const { t } = useLocalization();
   const [searchParams] = useSearchParams();
   const addonId = searchParams.get("edit");
   const isEdit = Boolean(addonId);
@@ -57,13 +59,13 @@ export default function AddAddons() {
       { payload: values, id: singleAddon?.data?._id },
       {
         onSuccess: (response) => {
-          addToast(response.message || "Addon updated successfully", "success");
+          addToast(response.message || t("addon-updated-successfully"), "success");
           queryClient.invalidateQueries("addons");
 
           setTimeout(() => navigate("/admin-dashboard/addons"), 2000);
         },
         onError: (error) => {
-          addToast(error.response?.data?.message || "Something went wrong", "error");
+          addToast(error.response?.data?.message || t("something-went-wrong"), "error");
         },
       },
     );
@@ -72,13 +74,13 @@ export default function AddAddons() {
   const handelAddAddon = (values) => {
     addAddon(values, {
       onSuccess: (response) => {
-        addToast(response.message || "Addon added successfully", "success");
+        addToast(response.message || t("addon-added-successfully"), "success");
         queryClient.invalidateQueries("addons");
 
         setTimeout(() => navigate("/admin-dashboard/addons"), 2000);
       },
       onError: (error) => {
-        addToast(error.response?.data?.message || "Something went wrong", "error");
+        addToast(error.response?.data?.message || t("something-went-wrong"), "error");
       },
     });
   };
@@ -121,7 +123,7 @@ export default function AddAddons() {
     >
       <>
         <h2 className="border-main mb-4 rounded-md border-b py-2 text-center text-3xl font-bold text-gray-800">
-          {isEdit ? "Edit Addon" : "Add New Addon"}
+          {isEdit ? t("edit-addon") : t("add-new-addons")}
         </h2>
 
         <form
@@ -131,51 +133,51 @@ export default function AddAddons() {
           {/* Name Fields */}
           <div className="col-span-2 grid grid-cols-1 gap-4 md:grid-cols-2">
             <Input
-              label="Addon Arabic Name"
+              label={t("addon-arabic-name")}
               id="name.ar"
               name="name.ar"
               value={form.values.name.ar}
               onChange={form.handleChange}
               onBlur={form.handleBlur}
               errors={form.touched.name?.ar && form.errors.name?.ar}
-              placeholder="Enter Arabic name"
+              placeholder={t("enter-arabic-name")}
               className="font-arabic"
             />
             <Input
-              label="Addon English Name"
+              label={t("addon-english-name")}
               id="name.en"
               name="name.en"
               value={form.values.name.en}
               onChange={form.handleChange}
               onBlur={form.handleBlur}
               errors={form.touched.name?.en && form.errors.name?.en}
-              placeholder="Enter English name"
+              placeholder={t("enter-english-name")}
             />
           </div>
 
           {/* Description Fields */}
           <div className="col-span-2 grid grid-cols-1 gap-4 md:grid-cols-2">
             <TextArea
-              label="Arabic Description"
+              label={t("arabic-description")}
               id="description.ar"
               name="description.ar"
               value={form.values.description.ar}
               onChange={form.handleChange}
               onBlur={form.handleBlur}
               errors={form.touched.description?.ar && form.errors.description?.ar}
-              placeholder="Enter Arabic description"
+              placeholder={t("enter-arabic-description")}
               className="font-arabic rtl text-right"
               rows={4}
             />
             <TextArea
-              label="English Description"
+              label={t("english-description")}
               id="description.en"
               name="description.en"
               value={form.values.description.en}
               onChange={form.handleChange}
               onBlur={form.handleBlur}
               errors={form.touched.description?.en && form.errors.description?.en}
-              placeholder="Enter English description"
+              placeholder={t("enter-english-description")}
               rows={4}
             />
           </div>
@@ -183,7 +185,7 @@ export default function AddAddons() {
           {/* Price */}
           <div className="col-span-2">
             <Input
-              label="Price"
+              label={t("price")}
               id="price"
               name="price"
               type="number"
@@ -191,13 +193,13 @@ export default function AddAddons() {
               onChange={form.handleChange}
               onBlur={form.handleBlur}
               errors={form.touched.price && form.errors.price}
-              placeholder="Enter price"
+              placeholder={t("enter-price")}
             />
           </div>
 
           {/* Image Upload */}
           <div className="col-span-2">
-            <label className="mb-2 block font-semibold">Thumbnail</label>
+            <label className="mb-2 block font-semibold">{t("thumbnail")}</label>
             <input
               id="image"
               name="image"
@@ -232,14 +234,14 @@ export default function AddAddons() {
                 checked={form.values.is_active}
                 onChange={(e) => form.setFieldValue("is_active", e.target.checked)}
               />
-              <span className="text-gray-700">Is Active</span>
+              <span className="text-gray-700">{t("is-active")}</span>
             </label>
           </div>
 
           {/* Submit */}
           <div className="col-span-2">
-            <Button isPending={currentLoading} fallback="Processing...">
-              {isEdit ? "Update Addon" : "Add Addon"}
+            <Button isPending={currentLoading} fallback={t("processing-0")}>
+              {isEdit ? t("update-addon") : t("add-addon")}
             </Button>
           </div>
         </form>

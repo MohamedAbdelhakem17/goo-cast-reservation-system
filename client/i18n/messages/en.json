@@ -372,5 +372,17 @@
   "phone-is-required": "Phone is required",
   "email-is-required": "Email is required",
   "invalid-email": "Invalid email",
-  "something-went-wrong-please-try-again": "Something went wrong. Please try again."
+  "something-went-wrong-please-try-again": "Something went wrong. Please try again.",
+  "addon-updated-successfully": "Addon updated successfully",
+  "addon-added-successfully": "Addon added successfully",
+  "edit-addon": "Edit Addon",
+  "addon-arabic-name": "Addon Arabic Name",
+  "addon-english-name": "Addon English Name",
+  "arabic-description": "Arabic Description",
+  "english-description": "English Description",
+  "enter-price": "Enter price",
+  "thumbnail": "Thumbnail",
+  "is-active": "Is Active",
+  "update-addon": "Update Addon",
+  "add-addon": "Add Addon"
 }
