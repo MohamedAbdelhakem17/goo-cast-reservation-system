@@ -10,7 +10,7 @@ import { useCleanLocalStorage } from "@/hooks";
 const SuccessLogin = lazy(
   () => import("@/features/auth/pages/success-login/success-login"),
 );
-const NotFound = lazy(() => import("@/features/public/pages/Not-Found/NotFound"));
+const NotFound = lazy(() => import("@/features/public/pages/not-found/not-found"));
 
 export default function AppRouter() {
   const { loading } = useAuth();
