@@ -22,6 +22,7 @@ export default function FormNavigationButtons({
   const { t, lng } = useLocalization();
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === TOTAL_STEPS - 1;
+  const isRTL = lng === "ar";
 
   return (
     <>
@@ -29,24 +30,33 @@ export default function FormNavigationButtons({
 
       <div
         className={`fixed right-0 bottom-0 left-0 z-40 container mx-auto flex items-center justify-between border-t border-gray-200 px-4 py-3 lg:static lg:border-0 lg:bg-transparent ${
-          lng === "en" && "flex-row-reverse"
+          isRTL ? "flex-row" : "flex-row-reverse"
         }`}
       >
         <div className="w-fit">
           {!isFirstStep && (
             <NavButton
-              className="rounded-md bg-gray-200 px-6 py-2 text-gray-700 hover:bg-gray-300"
+              className="flex items-center rounded-md bg-gray-200 px-6 py-2 text-gray-700 hover:bg-gray-300"
               type="button"
               onClick={handlePrevStep}
             >
-              <ArrowLeft className="me-1 inline-block" />
-              {t("previous")}
+              {isRTL ? (
+                <>
+                  <ArrowRight className="me-1 inline-block" />
+                  {t("previous")}
+                </>
+              ) : (
+                <>
+                  <ArrowLeft className="me-1 inline-block" />
+                  {t("previous")}
+                </>
+              )}
             </NavButton>
           )}
         </div>
 
         <NavButton
-          className={`cursor-pointer rounded-md px-4 py-2 ${
+          className={`flex cursor-pointer items-center rounded-md px-4 py-2 ${
             isLastStep
               ? "bg-green-500 text-white hover:bg-green-600"
               : "bg-main/90 hover:bg-main text-white"
@@ -60,7 +70,11 @@ export default function FormNavigationButtons({
           ) : (
             <>
               {isLastStep ? finalStepText : t("next")}
-              <ArrowRight className="ms-1 inline-block" />
+              {isRTL ? (
+                <ArrowLeft className="ms-1 inline-block" />
+              ) : (
+                <ArrowRight className="ms-1 inline-block" />
+              )}
             </>
           )}
         </NavButton>
