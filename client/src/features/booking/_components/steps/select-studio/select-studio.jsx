@@ -85,7 +85,7 @@ export default function SelectStudio() {
               onClick={() => {
                 selectStudio({
                   id: studio._id,
-                  name: studio.name?.[lng],
+                  name: studio.name,
                   image: studio.thumbnail,
                 });
                 tracking("add_to_cart", { studio_name: studio.name?.[lng] });
@@ -230,7 +230,7 @@ export default function SelectStudio() {
                     onClick={() => {
                       selectStudio({
                         id: studio._id,
-                        name: studio.name?.[lng],
+                        name: studio.name,
                         image: studio.thumbnail,
                       });
                       handleNextStep();
