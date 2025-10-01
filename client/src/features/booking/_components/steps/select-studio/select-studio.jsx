@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import BookingLabel from "../../booking-label";
@@ -9,16 +9,9 @@ import { useGetStudio } from "@/apis/public/studio.api";
 import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function SelectStudio() {
-<<<<<<< HEAD:client/src/components/Booking/Select-Studio/SelectStudio.jsx
-  const { setBookingField, bookingData, handleNextStep } = useBooking();
-  const [selectedStudio, setSelectedStudio] = useState(
-    bookingData?.studio?.id || null
-  );
-=======
   const { t, lng } = useLocalization();
   const { setBookingField, bookingData, handleNextStep } = useBooking();
   const [selectedStudio, setSelectedStudio] = useState(bookingData?.studio?.id || null);
->>>>>>> d6e0283572ca03308adfcb2e44a14af7d4499395:client/src/features/booking/_components/steps/select-studio/select-studio.jsx
 
   const [previewImages, setPreviewImages] = useState([]);
   const [previewIndex, setPreviewIndex] = useState(null);
@@ -62,10 +55,6 @@ export default function SelectStudio() {
     setPreviewIndex((prev) => (prev === 0 ? previewImages.length - 1 : prev - 1));
   };
 
-  useEffect(() => {
-    tracking("view_content");
-  }, []);
-
   if (isLoading) return <Loading />;
   if (error)
     return (
@@ -81,15 +70,6 @@ export default function SelectStudio() {
           desc={t("select-the-studio-that-best-fits-your-needs")}
         />
 
-<<<<<<< HEAD:client/src/components/Booking/Select-Studio/SelectStudio.jsx
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {studiosData.data.map((studio) => (
-            <motion.div
-              key={studio.id}
-              className={`bg-white rounded-2xl overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer border border-gray-100
-        ${selectedStudio === studio._id ? "border-main/50 scale-[.98]" : ""}
-      `}
-=======
         <div className="flex scale-90 flex-wrap justify-around gap-3">
           {studiosData.data.map((studio) => (
             <motion.div
@@ -97,7 +77,6 @@ export default function SelectStudio() {
               className={`w-full cursor-pointer overflow-hidden rounded-2xl border-1 border-gray-100 bg-white shadow-sm transition-shadow duration-300 md:w-[40%] ${
                 selectedStudio === studio._id ? "border-main/50 scale-[.98]" : ""
               }`}
->>>>>>> d6e0283572ca03308adfcb2e44a14af7d4499395:client/src/features/booking/_components/steps/select-studio/select-studio.jsx
               variants={itemVariants}
               whileHover={{
                 y: -10,
@@ -109,10 +88,7 @@ export default function SelectStudio() {
                   name: studio.name,
                   image: studio.thumbnail,
                 });
-<<<<<<< HEAD:client/src/components/Booking/Select-Studio/SelectStudio.jsx
-=======
                 tracking("add_to_cart", { studio_name: studio.name?.[lng] });
->>>>>>> d6e0283572ca03308adfcb2e44a14af7d4499395:client/src/features/booking/_components/steps/select-studio/select-studio.jsx
               }}
             >
               {/* Image with Click Indicator */}
@@ -210,15 +186,8 @@ export default function SelectStudio() {
                 <ul className="mt-3 text-gray-600">
                   <li className="flex items-start text-sm">
                     <span
-<<<<<<< HEAD:client/src/components/Booking/Select-Studio/SelectStudio.jsx
-                      className={`mr-2 ${
-                        selectedStudio === studio._id
-                          ? "text-main"
-                          : "text-black"
-=======
                       className={`me-2 ${
                         selectedStudio === studio._id ? "text-main" : "text-black"
->>>>>>> d6e0283572ca03308adfcb2e44a14af7d4499395:client/src/features/booking/_components/steps/select-studio/select-studio.jsx
                       }`}
                     >
                       •
@@ -227,15 +196,8 @@ export default function SelectStudio() {
                   </li>
                   <li className="flex items-start text-sm">
                     <span
-<<<<<<< HEAD:client/src/components/Booking/Select-Studio/SelectStudio.jsx
-                      className={`mr-2 ${
-                        selectedStudio === studio._id
-                          ? "text-main"
-                          : "text-black"
-=======
                       className={`me-2 ${
                         selectedStudio === studio._id ? "text-main" : "text-black"
->>>>>>> d6e0283572ca03308adfcb2e44a14af7d4499395:client/src/features/booking/_components/steps/select-studio/select-studio.jsx
                       }`}
                     >
                       •
@@ -251,15 +213,8 @@ export default function SelectStudio() {
                       className="flex items-start text-sm"
                     >
                       <span
-<<<<<<< HEAD:client/src/components/Booking/Select-Studio/SelectStudio.jsx
-                        className={`mr-2 ${
-                          selectedStudio === studio._id
-                            ? "text-main"
-                            : "text-black"
-=======
                         className={`me-2 ${
                           selectedStudio === studio._id ? "text-main" : "text-black"
->>>>>>> d6e0283572ca03308adfcb2e44a14af7d4499395:client/src/features/booking/_components/steps/select-studio/select-studio.jsx
                         }`}
                       >
                         •
@@ -280,17 +235,10 @@ export default function SelectStudio() {
                       });
                       handleNextStep();
                     }}
-<<<<<<< HEAD:client/src/components/Booking/Select-Studio/SelectStudio.jsx
-                    className={`w-full py-2 px-4 rounded-lg mx-auto text-md font-semibold flex items-center justify-center ${
-                      selectedStudio === studio._id
-                        ? "bg-main text-white"
-                        : "border-gray-200 border-2 text-gray-700 hover:bg-gray-200"
-=======
                     className={`text-md mx-auto flex w-full items-center justify-center rounded-lg px-4 py-2 font-semibold ${
                       selectedStudio === studio._id
                         ? "bg-main text-white"
                         : "border-2 border-gray-200 text-gray-700 hover:bg-gray-200"
->>>>>>> d6e0283572ca03308adfcb2e44a14af7d4499395:client/src/features/booking/_components/steps/select-studio/select-studio.jsx
                     }`}
                   >
                     {selectedStudio === studio._id ? t("selected-0") : t("select")}
