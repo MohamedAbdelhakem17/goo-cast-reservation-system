@@ -41,7 +41,7 @@ export default function SelectInput({
           {selectedOption ? selectedOption.label : placeholder}
         </span>
 
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
+        <div className="absolute inset-y-0 end-3 flex items-center pr-3 text-gray-500">
           <i
             className={`${iconClass} transition-transform ${isOpen ? "rotate-180" : ""}`}
           ></i>
