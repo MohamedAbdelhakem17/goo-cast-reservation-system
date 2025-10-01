@@ -1,12 +1,14 @@
 import { Input, TextArea } from "@/components/common";
 import FacilitiesInput from "./facilities-input";
 import EquipmentInput from "./equipment-input";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function StudioEnglishFields({ formik }) {
+  const { t } = useLocalization();
   return (
     <>
       <Input
-        label="Studio Name"
+        label={t("studio-name")}
         id="name.en"
         name="name.en"
         value={formik.values.name.en}
@@ -14,11 +16,11 @@ export default function StudioEnglishFields({ formik }) {
         onBlur={formik.handleBlur}
         errors={formik.touched.name?.en && formik.errors.name?.en}
         touched={formik.touched.name?.en}
-        placeholder="Enter studio name"
+        placeholder={t("enter-studio-name")}
       />
 
       <Input
-        label="Address"
+        label={t("address")}
         id="address.en"
         name="address.en"
         value={formik.values.address.en}
@@ -26,19 +28,19 @@ export default function StudioEnglishFields({ formik }) {
         onBlur={formik.handleBlur}
         touched={formik.touched.address?.en}
         errors={formik.touched.address?.en && formik.errors.address?.en}
-        placeholder="Enter studio address"
+        placeholder={t("enter-studio-address")}
       />
 
       {/* Description */}
       <TextArea
-        label="Description"
+        label={t("description")}
         id="description.en"
         name="description.en"
         value={formik.values.description.en}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         errors={formik.touched.description?.en && formik.errors.description?.en}
-        placeholder="Enter studio description"
+        placeholder={t("enter-studio-description")}
         touched={formik.touched.description?.en}
         rows={4}
       />

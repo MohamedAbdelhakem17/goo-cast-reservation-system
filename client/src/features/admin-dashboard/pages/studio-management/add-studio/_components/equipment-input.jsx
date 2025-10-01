@@ -23,7 +23,7 @@ export default function EquipmentInput({ form, lang }) {
   return (
     <div className="w-full rounded-lg bg-gray-50 p-4">
       <label className="mb-4 block text-sm font-medium text-gray-700">
-        Equipment ({lang.toUpperCase()})
+        {t("equipment")} ({lang.toUpperCase()})
       </label>
       <div className="mb-2 flex w-full items-center gap-5">
         <Input

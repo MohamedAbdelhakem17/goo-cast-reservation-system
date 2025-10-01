@@ -1,6 +1,8 @@
 import { useMemo, useEffect } from "react";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function ImagesInputs({ form }) {
+  const { t } = useLocalization();
   const imageUrls = useMemo(() => {
     const urls = new Map();
 
@@ -49,11 +51,13 @@ export default function ImagesInputs({ form }) {
 
   return (
     <div className="rounded-lg bg-gray-50 p-6">
-      <label className="mb-4 block text-sm font-medium text-gray-700">Images</label>
+      <label className="mb-4 block text-sm font-medium text-gray-700">
+        {t("images")}
+      </label>
       <div className="flex flex-wrap gap-6">
         {/* Thumbnail */}
         <div className="min-w-[200px] flex-1">
-          <label className="mb-2 block font-semibold">Thumbnail</label>
+          <label className="mb-2 block font-semibold">{t("thumbnail")}</label>
           <input
             type="file"
             accept="image/*"
@@ -76,7 +80,7 @@ export default function ImagesInputs({ form }) {
                 onClick={handleRemoveThumbnail}
                 className="mt-1 block text-red-500"
               >
-                Remove Thumbnail
+                {t("remove-thumbnail")}
               </button>
             </div>
           )}
@@ -84,7 +88,7 @@ export default function ImagesInputs({ form }) {
 
         {/* Images Gallery */}
         <div className="min-w-[200px] flex-1">
-          <label className="mb-2 block font-semibold">Images Gallery</label>
+          <label className="mb-2 block font-semibold">{t("images-gallery")}</label>
           <input
             type="file"
             accept="image/*"

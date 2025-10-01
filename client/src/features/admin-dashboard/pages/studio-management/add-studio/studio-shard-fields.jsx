@@ -1,14 +1,16 @@
 import ImagesInputs from "./_components/images-inputs";
 import { Input, ErrorFeedback } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function StudioSharedFields({ formik }) {
+  const { t } = useLocalization();
   return (
     <>
       {/* Base Price Per Slot + Fixed Hourly Checkbox */}
       <div className="my-2 flex flex-col md:flex-row md:gap-6">
         <Input
           type="number"
-          label="Base Price Per Slot"
+          label={t("base-price-per-slot")}
           id="basePricePerSlot"
           name="basePricePerSlot"
           value={formik.values.basePricePerSlot}
@@ -16,7 +18,7 @@ export default function StudioSharedFields({ formik }) {
           onBlur={formik.handleBlur}
           errors={formik.errors.basePricePerSlot}
           touched={formik.touched.basePricePerSlot}
-          placeholder="Enter base price"
+          placeholder={t("enter-base-price")}
           className="w-3/4"
         />
 
@@ -31,7 +33,7 @@ export default function StudioSharedFields({ formik }) {
               }
               className="text-main h-6 w-6 rounded p-3"
             />
-            <span className="text-gray-700">Fixed Hourly Rate</span>
+            <span className="text-gray-700">{t("fixed-hourly-rate")}</span>
           </label>
         </div>
       </div>
@@ -39,7 +41,7 @@ export default function StudioSharedFields({ formik }) {
       {/* Recording Seats */}
       <Input
         type="number"
-        label="Recording Seats"
+        label={t("recording-seats")}
         id="recording_seats"
         name="recording_seats"
         value={formik.values.recording_seats}
@@ -47,24 +49,24 @@ export default function StudioSharedFields({ formik }) {
         onBlur={formik.handleBlur}
         errors={formik.errors.recording_seats}
         touched={formik.touched.recording_seats}
-        placeholder="Add recording seats"
+        placeholder={t("add-recording-seats")}
         className="my-2 w-full"
       />
 
       {/* Min Slots Per Day */}
       <div className="my-2 rounded-lg bg-gray-50 p-6">
         <label className="mb-4 block text-sm font-medium text-gray-700">
-          Minimum Slots Per Day
+          {t("minimum-slots-per-day")}
         </label>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {[
-            "sunday",
-            "monday",
-            "tuesday",
-            "wednesday",
-            "thursday",
-            "friday",
-            "saturday",
+            t("sunday"),
+            t("monday"),
+            t("tuesday"),
+            t("wednesday"),
+            t("thursday"),
+            t("friday"),
+            t("saturday"),
           ].map((day) => (
             <div key={day} className="flex flex-col">
               <label className="mb-1 text-sm text-gray-600 capitalize">{day}</label>
