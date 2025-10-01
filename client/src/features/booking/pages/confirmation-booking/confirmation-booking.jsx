@@ -79,12 +79,11 @@ export default function BookingConfirmation() {
   const formatTime = useTimeConvert();
 
   const subtotal = useMemo(() => {
-    return bookingData.totalPackagePrice + bookingData.totalAddOnsPrice;
-  }, [bookingData.totalPackagePrice, bookingData.totalAddOnsPrice]);
+    return bookingData?.totalPackagePrice + bookingData?.totalAddOnsPrice;
+  }, [bookingData?.totalPackagePrice, bookingData?.totalAddOnsPrice]);
 
   useEffect(() => {
     return () => {
-      localStorage.removeItem("bookingConfirmation");
       localStorage.removeItem("bookingStep");
       localStorage.removeItem("bookingData");
     };
@@ -182,9 +181,9 @@ export default function BookingConfirmation() {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <div>
-                    <span className="block text-sm text-gray-500">Service</span>
+                    <span className="block text-sm text-gray-500">{t("service")}</span>
                     <span className="font-medium text-gray-900">
-                      {bookingData?.package?.name}
+                      {bookingData?.package?.name?.[lng]}
                     </span>
                   </div>
                   <DetailRow
@@ -292,7 +291,7 @@ export default function BookingConfirmation() {
                   value={priceFormat(bookingData?.totalPackagePrice)}
                 />
                 <div>
-                  <PriceRow label="Subtotal" value={priceFormat(subtotal)} />
+                  <PriceRow label={t("subtotal")} value={priceFormat(subtotal)} />
                   {/* If discount  */}
                   {bookingData.totalPriceAfterDiscount !== bookingData.totalPrice && (
                     <PriceRow
