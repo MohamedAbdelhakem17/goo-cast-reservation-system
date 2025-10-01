@@ -45,7 +45,7 @@ export default function UserProfile() {
               <ul className="py-2">
                 <li>
                   <NavLink
-                    to={isAdmin ? "/admin-dashboard/" : "/user-dashboard/profile"}
+                    to={isAdmin ? "/admin-dashboard/" : "/user-dashboard/"}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     {t("dashboard")}
