@@ -3,12 +3,14 @@ import BookingLabel from "../../booking-label";
 import { Calendar, Slots } from "./_components";
 import { useGetAvailableSlots } from "@/apis/public/booking.api";
 import useLocalization from "@/context/localization-provider/localization-context";
+import useLockBodyScroll from "@/hooks/use-lock-body-scroll";
 
 export default function SelectDateTime() {
   // Localization
   const { t } = useLocalization();
 
   const [isOpen, setIsOpen] = useState(false);
+  useLockBodyScroll(isOpen);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
