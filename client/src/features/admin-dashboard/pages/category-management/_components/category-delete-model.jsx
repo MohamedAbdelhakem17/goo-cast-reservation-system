@@ -3,6 +3,7 @@ import { Popup } from "@/components/common";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 
 export default function CategoryDeleteModel({ setDeleteCategory, deletedCategory }) {
   // Localization
@@ -10,6 +11,7 @@ export default function CategoryDeleteModel({ setDeleteCategory, deletedCategory
 
   // Hooks
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
 
   // Mutation
   const { deleteCategory, isPending } = useDeleteCategory();
