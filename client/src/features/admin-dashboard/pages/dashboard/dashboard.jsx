@@ -6,9 +6,9 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { GetDashboardStats } from "@/apis/analytics/analytics.api";
 // import { GetBookings } from '@/apis/Booking/booking.api';
 import { motion, AnimatePresence } from "framer-motion";
+import MostUserActive from "./_components/MostUserActive";
 // import BookingTrendsChart from '@/components/Admin-Dashboard/BookingTrendsChart/BookingTrendsChart';
 // import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import MostUserActive from "@/features/admin-dashboard/_components/Admin-Dashboard/Wellcome/Most-User-Active/MostUserActive";
 
 const Dashboard = () => {
   const { data: statsData, isLoading } = GetDashboardStats();
