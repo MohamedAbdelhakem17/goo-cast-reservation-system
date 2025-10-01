@@ -5,12 +5,12 @@ import BookingProvider from "@/context/Booking-Context/BookingContext";
 import { lazy } from "react";
 
 // Pages Public
-const Home = lazy(() => import("@/features/public/pages/Home/Home"));
-const Studios = lazy(() => import("@/features/studio/pages/Studios/Studios"));
+const Home = lazy(() => import("@/features/public/pages/home/home"));
+const Studios = lazy(() => import("@/features/studio/pages/studios/studios"));
 const StudioDetails = lazy(
   () => import("@/features/studio/pages/studio-details/studio-details"),
 );
-const Booking = lazy(() => import("@/features/booking/pages/booking/Booking"));
+const Booking = lazy(() => import("@/features/booking/pages/booking/booking"));
 const ConfirmationBooking = lazy(
   () => import("@/features/booking/pages/confirmation-booking/confirmation-booking"),
 );
