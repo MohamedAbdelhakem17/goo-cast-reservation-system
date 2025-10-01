@@ -7,6 +7,7 @@ import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots";
 import SlotButton from "./slot-button";
 import { tracking } from "@/utils/gtm";
 import useLocalization from "@/context/localization-provider/localization-context";
+import useLockBodyScroll from "@/hooks/use-lock-body-scroll";
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
   //  Localization

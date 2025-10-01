@@ -35,7 +35,7 @@ export default function CartContent() {
         studio={bookingData.studio}
         date={formatDate(bookingData.date)}
         startSlot={bookingData.startSlot}
-        duration={bookingData.duration}
+        duration={new Intl.NumberFormat(`${lng}-EG`).format(bookingData.duration)}
         formatTime={formatTime}
         lng={lng}
       />
@@ -43,7 +43,7 @@ export default function CartContent() {
       {/* Package Section */}
       <PackageSection
         selectedPackage={bookingData.selectedPackage}
-        duration={bookingData.duration}
+        duration={new Intl.NumberFormat(`${lng}-EG`).format(bookingData.duration)}
         priceFormat={priceFormat}
         lng={lng}
       />

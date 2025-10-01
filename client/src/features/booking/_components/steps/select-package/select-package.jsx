@@ -109,7 +109,7 @@ export default function SelectPackage() {
                 >
                   {priceFormat(pkg.price)}
                   <span className="my-1 inline-block text-sm font-normal text-gray-600">
-                    /hour
+                    /{t("hour")}
                   </span>
                 </div>
 
@@ -135,7 +135,7 @@ export default function SelectPackage() {
                     transition={{ delay: 0.6 + index * 0.1 }}
                   >
                     <h4 className="mb-2 text-sm font-semibold text-gray-900">
-                      {"What's Included:"}
+                      {t("whats-included")}:
                     </h4>
                     <ul className="space-y-2">
                       {pkg.details?.[lng].map((detail, idx) => (
@@ -160,7 +160,7 @@ export default function SelectPackage() {
                     transition={{ delay: 0.8 + index * 0.1 }}
                   >
                     <h4 className="mb-2 text-sm font-semibold text-gray-900">
-                      After Your Session:
+                      {t("after-your-session")}:
                     </h4>
                     <ul className="space-y-2">
                       {pkg.post_session_benefits?.[lng].map((benefit, idx) => (

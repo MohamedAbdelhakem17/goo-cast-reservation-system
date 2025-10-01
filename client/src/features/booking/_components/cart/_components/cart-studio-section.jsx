@@ -19,7 +19,7 @@ export const StudioSection = memo(function StudioSection({
         </p>
         <p className="text-md text-gray-500">
           <i className="fa-solid fa-clock me-2 text-[12px]"></i>
-          {formatTime(startSlot)} ({duration}h)
+          {formatTime(startSlot)} ({duration} {lng === "ar" ? "ساعة" : "h"})
         </p>
         <p className="text-md text-gray-500">
           <i className="fa-solid fa-location-dot me-2 text-[12px]"></i>
