@@ -182,7 +182,7 @@ export default function AddService() {
     >
       {/* Header title */}
       <h2 className="border-main mb-4 rounded-md border-b py-2 text-center text-3xl font-bold text-gray-800">
-        {isEdit ? "Edit Service" : "Add New Service"}
+        {isEdit ? t("edit-service") : t("add-new-service")}
       </h2>
 
       {/* Form step */}
@@ -223,7 +223,7 @@ export default function AddService() {
           handlePrevStep={handlePrevStep}
           isLoading={isCreating || isUpdating}
           hasError={isHasError}
-          finalStepText={isEdit ? "Edit Package" : "Add Package"}
+          finalStepText={isEdit ? t("edit-package") : t("add-package")}
         />
       </form>
     </motion.div>
