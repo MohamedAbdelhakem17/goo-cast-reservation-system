@@ -403,5 +403,9 @@
   "enter-studio-name": "Enter studio name",
   "address": "Address",
   "enter-studio-address": "Enter studio address",
-  "enter-studio-description": "Enter studio description"
+  "enter-studio-description": "Enter studio description",
+  "showing": "Showing",
+  "to": "to",
+  "of": "of",
+  "results": "results"
 }
