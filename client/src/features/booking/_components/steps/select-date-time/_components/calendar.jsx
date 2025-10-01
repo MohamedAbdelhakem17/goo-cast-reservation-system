@@ -6,6 +6,7 @@ import Duration from "./duration";
 import { DateTime } from "luxon";
 import { useCalendar } from "../_hooks/useCalendar";
 import useLocalization from "@/context/localization-provider/localization-context";
+import useLockBodyScroll from "@/hooks/use-lock-body-scroll";
 
 export default function Calendar({ openToggle, getAvailableSlots }) {
   // Localization
@@ -30,6 +31,8 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
   const [isOpen, setIsOpen] = useState(
     !bookingData.duration || bookingData.duration === 1,
   );
+
+  useLockBodyScroll(isOpen);
 
   // Functions
   const handleDayClick = (day, currentDate, isBlocked) => {
@@ -65,7 +68,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
   return (
     <div className="mx-auto w-full bg-white">
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* go to last month */}
           <button
@@ -88,6 +91,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
           </button>
         </div>
 
+        {/* Duration selection */}
         <Duration isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
 
@@ -111,7 +115,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
             {calendarDays.map((day, index) => (
               <div
                 key={index}
-                className={`relative h-15 border-r border-b border-gray-200 last:border-r-0 lg:h-20 ${
+                className={`relative h-15 border-r border-b border-gray-200 last:border-e-0 lg:h-20 ${
                   day.blocked
                     ? "cursor-not-allowed bg-gray-50"
                     : "cursor-pointer bg-white transition-colors hover:bg-blue-50"
