@@ -24,7 +24,7 @@ export default function SelectStudio() {
   const [previewIndex, setPreviewIndex] = useState(null);
   const [hoveredImage, setHoveredImage] = useState(null);
 
-  const { data: studiosData, isLoading, error } = useGetStudio();
+  const { data: studiosData, isLoading, error } = useGetStudio(true);
 
   const selectStudio = (studio) => {
     setBookingField("studio", studio);
@@ -106,7 +106,7 @@ export default function SelectStudio() {
               onClick={() => {
                 selectStudio({
                   id: studio._id,
-                  name: studio.name?.[lng],
+                  name: studio.name,
                   image: studio.thumbnail,
                 });
 <<<<<<< HEAD:client/src/components/Booking/Select-Studio/SelectStudio.jsx
@@ -275,7 +275,7 @@ export default function SelectStudio() {
                     onClick={() => {
                       selectStudio({
                         id: studio._id,
-                        name: studio.name?.[lng],
+                        name: studio.name,
                         image: studio.thumbnail,
                       });
                       handleNextStep();
