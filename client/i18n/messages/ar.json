@@ -360,5 +360,17 @@
   "phone-is-required": "الهاتف مطلوب",
   "invalid-email": "بريد إلكتروني غير صالح ",
   "email-is-required": "البريد الإلكتروني مطلوب",
-  "something-went-wrong-please-try-again": "حدث خطأ ما. \nمن فضلك حاول مرة أخرى."
+  "something-went-wrong-please-try-again": "حدث خطأ ما. \nمن فضلك حاول مرة أخرى.",
+  "addon-updated-successfully": "تم تحديث Addon بنجاح",
+  "addon-added-successfully": "أضاف Addon بنجاح",
+  "edit-addon": "تحرير الاضافة ",
+  "addon-arabic-name": "الاسم العربي للاضافة",
+  "addon-english-name": "الاسم باللغة الانجليزية للاضافة ",
+  "arabic-description": "الوصف العربي",
+  "enter-price": "أدخل السعر",
+  "thumbnail": "الصورة المصغرة",
+  "is-active": "نشط",
+  "update-addon": "تحديث الاضافة",
+  "add-addon": "إضافة addon",
+  "english-description": "وصف اللغة الإنجليزية"
 }

@@ -30,7 +30,7 @@ const Textarea = ({
             : { x: 12, y: 0, opacity: value ? 0 : 0.7, scale: 1 }
         }
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="pointer-events-none absolute left-0 text-base font-medium tracking-wide text-gray-600 dark:text-gray-500"
+        className="pointer-events-none absolute start-0 text-base font-medium tracking-wide text-gray-600 dark:text-gray-500"
         htmlFor={id}
       >
         {label}

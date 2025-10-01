@@ -225,7 +225,7 @@ exports.activateEmail = asyncHandler(async (req, res) => {
                 <script>
                     function resendActivation() {
                         const email = document.getElementById('emailInput').value;
-                        fetch('/api/v1/auth//resend-activation-link', {
+                        fetch('/api/v1/auth/resend-activation-link', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ email })
