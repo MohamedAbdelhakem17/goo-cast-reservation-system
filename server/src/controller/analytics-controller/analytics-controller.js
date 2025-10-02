@@ -125,11 +125,8 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       $project: {
         count: 1,
         name: {
-          $cond: {
-            if: { $ifNull: ["$service.name.en", false] },
-            then: "$service.name.en",
-            else: { $ifNull: ["$service.name", "Unknown Service"] },
-          },
+          en: { $ifNull: ["$service.name.en", "Unknown Service"] },
+          ar: { $ifNull: ["$service.name.ar", "خدمة غير معروفة"] },
         },
       },
     },
@@ -162,11 +159,8 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     {
       $project: {
         name: {
-          $cond: {
-            if: { $ifNull: ["$studio.name.en", false] },
-            then: "$studio.name.en",
-            else: { $ifNull: ["$studio.name", "Unknown Studio"] },
-          },
+          en: { $ifNull: ["$studio.name.en", "Unknown Studio"] },
+          ar: { $ifNull: ["$studio.name.ar", "استوديو غير معروف"] },
         },
         count: 1,
         _id: 0,
@@ -208,11 +202,8 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     {
       $project: {
         label: {
-          $cond: {
-            if: { $ifNull: ["$service.name.en", false] },
-            then: "$service.name.en",
-            else: { $ifNull: ["$service.name", "Unknown Service"] },
-          },
+          en: { $ifNull: ["$service.name.en", "Unknown Service"] },
+          ar: { $ifNull: ["$service.name.ar", "خدمة غير معروفة"] },
         },
         count: 1,
         _id: 0,
@@ -234,8 +225,8 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     count: s.count,
     percentage:
       totalServiceCount > 0
-        ? ((s.count / totalServiceCount) * 100).toFixed(1) + "%"
-        : "0%",
+        ? ((s.count / totalServiceCount) * 100).toFixed(1)
+        : 0,
   }));
 
   // Add "Others" category if there are more than 3 services
@@ -245,12 +236,12 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       .reduce((acc, s) => acc + s.count, 0);
 
     serviceDistribution.push({
-      label: "Others",
+      label: { en: "Others", ar: "خدمات أخرى" },
       count: othersCount,
       percentage:
         totalServiceCount > 0
-          ? ((othersCount / totalServiceCount) * 100).toFixed(1) + "%"
-          : "0%",
+          ? ((othersCount / totalServiceCount) * 100).toFixed(1)
+          : 0,
     });
   }
 
@@ -271,11 +262,8 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     {
       $project: {
         label: {
-          $cond: {
-            if: { $ifNull: ["$addon.name.en", false] },
-            then: "$addon.name.en",
-            else: { $ifNull: ["$addon.name", "Unknown AddOn"] },
-          },
+          en: { $ifNull: ["$addon.name.en", "Unknown AddOn"] },
+          ar: { $ifNull: ["$addon.name.ar", "إضافة غير معروفة"] },
         },
         count: 1,
         _id: 0,
@@ -292,8 +280,8 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     ...a,
     percentage:
       totalAddonsCount > 0
-        ? ((a.count / totalAddonsCount) * 100).toFixed(1) + "%"
-        : "0%",
+        ? ((a.count / totalAddonsCount) * 100).toFixed(1)
+        : 0,
   }));
 
   // ===================== 📅 Revenue Trends =====================
@@ -354,18 +342,12 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       $project: {
         customer: "$personalInfo.fullName",
         service: {
-          $cond: {
-            if: { $ifNull: ["$packageData.name.en", false] },
-            then: "$packageData.name.en",
-            else: { $ifNull: ["$packageData.name", "Unknown Service"] },
-          },
+          en: { $ifNull: ["$packageData.name.en", "Unknown Service"] },
+          ar: { $ifNull: ["$packageData.name.ar", "خدمة غير معروفة"] },
         },
         studio: {
-          $cond: {
-            if: { $ifNull: ["$studioData.name.en", false] },
-            then: "$studioData.name.en",
-            else: { $ifNull: ["$studioData.name", "Unknown Studio"] },
-          },
+          en: { $ifNull: ["$studioData.name.en", "Unknown Studio"] },
+          ar: { $ifNull: ["$studioData.name.ar", "استوديو غير معروف"] },
         },
         date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
         time: "$startSlot",
