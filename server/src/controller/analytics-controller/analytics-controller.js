@@ -4,7 +4,6 @@ const AppError = require("../../utils/app-error");
 const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
 const AnalyticsModel = require("../../models/analytics-model/analytics-model");
 const BookingModel = require("../../models/booking-model/booking-model");
-const StudioModel = require("../../models/studio-model/studio-model");
 
 // add analytics
 exports.addAnalytics = asyncHandler(async (req, res, next) => {
@@ -60,167 +59,97 @@ exports.getAnalytics = asyncHandler(async (req, res) => {
 });
 
 exports.getDashboardStats = asyncHandler(async (req, res) => {
-  const [totalStudios, totalBookings] = await Promise.all([
-    StudioModel.countDocuments(),
-    BookingModel.countDocuments(),
-  ]);
+  // ===================== 📊 Basic Stats =====================
+  const totalBookings = await BookingModel.countDocuments();
 
-  const revenueResult = await BookingModel.aggregate([
+  const prevMonthBookings = await BookingModel.countDocuments({
+    createdAt: {
+      $gte: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1),
+      $lt: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    },
+  });
+
+  // 💰 Revenue
+  const totalRevenueResult = await BookingModel.aggregate([
+    { $group: { _id: null, total: { $sum: "$totalPriceAfterDiscount" } } },
+  ]);
+  const totalRevenue = totalRevenueResult[0]?.total || 0;
+
+  const prevRevenueResult = await BookingModel.aggregate([
     {
-      $group: {
-        _id: null,
-        totalRevenue: { $sum: "$totalPrice" },
+      $match: {
+        createdAt: {
+          $gte: new Date(
+            new Date().getFullYear(),
+            new Date().getMonth() - 1,
+            1
+          ),
+          $lt: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        },
       },
     },
+    { $group: { _id: null, total: { $sum: "$totalPriceAfterDiscount" } } },
   ]);
+  const prevRevenue = prevRevenueResult[0]?.total || 0;
 
-  const totalRevenue = revenueResult[0]?.totalRevenue || 0;
+  // 📈 Growth %
+  const totalBookingsGrowth =
+    prevMonthBookings === 0
+      ? 0
+      : (
+          ((totalBookings - prevMonthBookings) / prevMonthBookings) *
+          100
+        ).toFixed(1);
 
-  // --- Most Booked User ---
-  const mostBookedUser = await BookingModel.aggregate([
-    { $match: { "personalInfo.email": { $ne: null } } },
-    {
-      $group: {
-        _id: "$personalInfo.email",
-        totalBookings: { $sum: 1 },
-        personalInfo: { $first: "$personalInfo" },
-        studios: { $push: "$studio" },
-        packages: { $push: "$package" },
-        addOns: { $push: "$addOns.item" },
-      },
-    },
-    { $sort: { totalBookings: -1 } },
+  const totalRevenueGrowth =
+    prevRevenue === 0
+      ? 0
+      : (((totalRevenue - prevRevenue) / prevRevenue) * 100).toFixed(1);
+
+  // ===================== 🏆 Top Service =====================
+  const topServiceAgg = await BookingModel.aggregate([
+    { $match: { package: { $ne: null } } },
+    { $group: { _id: "$package", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
     { $limit: 1 },
     {
+      $lookup: {
+        from: "hourlypackages",
+        localField: "_id",
+        foreignField: "_id",
+        as: "service",
+      },
+    },
+    { $unwind: { path: "$service", preserveNullAndEmptyArrays: true } },
+    {
       $project: {
-        personalInfo: 1,
-        totalBookings: 1,
-        studios: 1,
-        packages: 1,
-        addOns: {
-          $reduce: {
-            input: "$addOns",
-            initialValue: [],
-            in: { $concatArrays: ["$$value", "$$this"] },
+        count: 1,
+        name: {
+          $cond: {
+            if: { $ifNull: ["$service.name.en", false] },
+            then: "$service.name.en",
+            else: { $ifNull: ["$service.name", "Unknown Service"] },
           },
         },
       },
     },
-
-    // --- Most Booked Studio ---
-    { $unwind: "$studios" },
-    {
-      $group: {
-        _id: { email: "$personalInfo.email", studio: "$studios" },
-        personalInfo: { $first: "$personalInfo" },
-        totalBookings: { $first: "$totalBookings" },
-        packages: { $first: "$package" },
-        addOns: { $first: "$addOns" },
-        studioCount: { $sum: 1 },
-      },
-    },
-    { $sort: { studioCount: -1 } },
-    { $limit: 1 },
-    {
-      $lookup: {
-        from: "studios",
-        localField: "_id.studio",
-        foreignField: "_id",
-        as: "studio",
-      },
-    },
-    { $unwind: "$studio" },
-
-    // --- Most Booked Package ---
-    { $unwind: { path: "$packages", preserveNullAndEmptyArrays: true } },
-    {
-      $group: {
-        _id: { email: "$_id.email", package: "$package" },
-        personalInfo: { $first: "$personalInfo" },
-        totalBookings: { $first: "$totalBookings" },
-        studio: { $first: "$studio" },
-        studioBookings: { $first: "$studioCount" },
-        addOns: { $first: "$addOns" },
-        packageCount: { $sum: 1 },
-      },
-    },
-    { $sort: { packageCount: -1 } },
-    { $limit: 1 },
-    {
-      $lookup: {
-        from: "hourlypackages",
-        localField: "_id.package",
-        foreignField: "_id",
-        as: "package",
-      },
-    },
-    { $unwind: { path: "$package", preserveNullAndEmptyArrays: true } },
-
-    // --- Most Booked AddOn ---
-    { $unwind: { path: "$addOns", preserveNullAndEmptyArrays: true } },
-    {
-      $group: {
-        _id: { email: "$_id.email", addOn: "$addOns" },
-        personalInfo: { $first: "$personalInfo" },
-        totalBookings: { $first: "$totalBookings" },
-        studio: { $first: "$studio" },
-        studioBookings: { $first: "$studioBookings" },
-        package: { $first: "$package" },
-        packageBookings: { $first: "$packageCount" },
-        addOnCount: { $sum: 1 },
-      },
-    },
-    { $sort: { addOnCount: -1 } },
-    { $limit: 1 },
-    {
-      $lookup: {
-        from: "addons",
-        localField: "_id.addOn",
-        foreignField: "_id",
-        as: "addOn",
-      },
-    },
-    { $unwind: { path: "$addOn", preserveNullAndEmptyArrays: true } },
-
-    // --- Add the Most Booked Package ---
-    {
-      $lookup: {
-        from: "hourlypackages",
-        localField: "_id.package",
-        foreignField: "_id",
-        as: "mostBookedPackage",
-      },
-    },
-    {
-      $unwind: { path: "$mostBookedPackage", preserveNullAndEmptyArrays: true },
-    },
-
-    {
-      $project: {
-        _id: 0,
-        personalInfo: 1,
-        totalBookings: 1,
-        mostBookedStudio: "$studio.name",
-        studioBookings: "$studioBookings",
-        mostBookedPackage: "$mostBookedPackage.name", 
-        packageBookings: "$packageBookings",
-        mostBookedAddOn: "$addOn.name",
-        addOnBookings: "$addOnCount",
-      },
-    },
   ]);
 
-  // --- Most Booked Studios ---
-  const mostBookedStudios = await BookingModel.aggregate([
-    { $match: { studio: { $ne: null } } },
-    {
-      $group: {
-        _id: "$studio",
-        count: { $sum: 1 },
-      },
-    },
+  const topService =
+    topServiceAgg[0] && totalBookings > 0
+      ? {
+          name: topServiceAgg[0].name,
+          percentage: ((topServiceAgg[0].count / totalBookings) * 100).toFixed(
+            1
+          ),
+        }
+      : null;
+
+  // ===================== 🏢 Top Studio =====================
+  const topStudioAgg = await BookingModel.aggregate([
+    { $group: { _id: "$studio", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
-    { $limit: 5 },
+    { $limit: 1 },
     {
       $lookup: {
         from: "studios",
@@ -232,102 +161,237 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     { $unwind: "$studio" },
     {
       $project: {
-        label: "$studio.name",
+        name: {
+          $cond: {
+            if: { $ifNull: ["$studio.name.en", false] },
+            then: "$studio.name.en",
+            else: { $ifNull: ["$studio.name", "Unknown Studio"] },
+          },
+        },
         count: 1,
         _id: 0,
       },
     },
   ]);
 
-  // --- Most Booked Packages ---
-  const mostBookedPackages = await BookingModel.aggregate([
+  const topStudio =
+    topStudioAgg[0] && totalBookings > 0
+      ? {
+          name: topStudioAgg[0].name,
+          percentage: ((topStudioAgg[0].count / totalBookings) * 100).toFixed(
+            1
+          ),
+        }
+      : null;
+
+  // ===================== ⏰ Peak Booking Hours =====================
+  const peakBookingHours = await BookingModel.aggregate([
+    { $group: { _id: "$startSlot", count: { $sum: 1 } } },
+    { $sort: { _id: 1 } },
+    { $project: { hour: "$_id", count: 1, _id: 0 } },
+  ]);
+
+  // ===================== 📦 Service Distribution (Top 3) =====================
+  let serviceDistributionRaw = await BookingModel.aggregate([
     { $match: { package: { $ne: null } } },
-    {
-      $group: {
-        _id: "$package",
-        count: { $sum: 1 },
-      },
-    },
+    { $group: { _id: "$package", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
-    { $limit: 5 },
     {
       $lookup: {
         from: "hourlypackages",
         localField: "_id",
         foreignField: "_id",
-        as: "package",
+        as: "service",
       },
     },
-    { $unwind: "$package" },
+    { $unwind: { path: "$service", preserveNullAndEmptyArrays: true } },
     {
       $project: {
-        label: "$package.name",
+        label: {
+          $cond: {
+            if: { $ifNull: ["$service.name.en", false] },
+            then: "$service.name.en",
+            else: { $ifNull: ["$service.name", "Unknown Service"] },
+          },
+        },
         count: 1,
         _id: 0,
       },
     },
   ]);
 
-  // --- Most Booked AddOns ---
-  const mostBookedAddOns = await BookingModel.aggregate([
+  const totalServiceCount = serviceDistributionRaw.reduce(
+    (acc, s) => acc + s.count,
+    0
+  );
+
+  // Get top 3 services
+  const top3Services = serviceDistributionRaw.slice(0, 3);
+
+  // Calculate "Others" if more than 3 services exist
+  let serviceDistribution = top3Services.map((s) => ({
+    label: s.label,
+    count: s.count,
+    percentage:
+      totalServiceCount > 0
+        ? ((s.count / totalServiceCount) * 100).toFixed(1) + "%"
+        : "0%",
+  }));
+
+  // Add "Others" category if there are more than 3 services
+  if (serviceDistributionRaw.length > 3) {
+    const othersCount = serviceDistributionRaw
+      .slice(3)
+      .reduce((acc, s) => acc + s.count, 0);
+
+    serviceDistribution.push({
+      label: "Others",
+      count: othersCount,
+      percentage:
+        totalServiceCount > 0
+          ? ((othersCount / totalServiceCount) * 100).toFixed(1) + "%"
+          : "0%",
+    });
+  }
+
+  // ===================== ➕ AddOns Distribution =====================
+  let addonsDistribution = await BookingModel.aggregate([
     { $unwind: "$addOns" },
-    { $match: { "addOns.item": { $ne: null } } },
-    {
-      $group: {
-        _id: "$addOns.item",
-        count: { $sum: 1 },
-      },
-    },
+    { $group: { _id: "$addOns.item", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
-    { $limit: 5 },
     {
       $lookup: {
         from: "addons",
         localField: "_id",
         foreignField: "_id",
-        as: "addOn",
+        as: "addon",
       },
     },
-    { $unwind: "$addOn" },
+    { $unwind: "$addon" },
     {
       $project: {
-        label: "$addOn.name",
+        label: {
+          $cond: {
+            if: { $ifNull: ["$addon.name.en", false] },
+            then: "$addon.name.en",
+            else: { $ifNull: ["$addon.name", "Unknown AddOn"] },
+          },
+        },
         count: 1,
         _id: 0,
       },
     },
   ]);
 
-  // --- Most Booked Days ---
-  const mostBookedDay = await BookingModel.aggregate([
+  const totalAddonsCount = addonsDistribution.reduce(
+    (acc, a) => acc + a.count,
+    0
+  );
+
+  addonsDistribution = addonsDistribution.map((a) => ({
+    ...a,
+    percentage:
+      totalAddonsCount > 0
+        ? ((a.count / totalAddonsCount) * 100).toFixed(1) + "%"
+        : "0%",
+  }));
+
+  // ===================== 📅 Revenue Trends =====================
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const revenueTrendsRaw = await BookingModel.aggregate([
     {
       $group: {
-        _id: "$date",
-        count: { $sum: 1 },
+        _id: { $month: "$createdAt" },
+        totalRevenue: { $sum: "$totalPriceAfterDiscount" },
       },
     },
     { $sort: { _id: 1 } },
+  ]);
+
+  const revenueTrends = revenueTrendsRaw.map((item) => ({
+    month: monthNames[item._id - 1],
+    totalRevenue: item.totalRevenue,
+  }));
+
+  // ===================== 📌 Upcoming Bookings =====================
+  const upcomingBookings = await BookingModel.aggregate([
+    { $match: { date: { $gte: new Date() } } },
+    { $sort: { date: 1, startSlotMinutes: 1 } },
+    { $limit: 5 },
+    {
+      $lookup: {
+        from: "studios",
+        localField: "studio",
+        foreignField: "_id",
+        as: "studioData",
+      },
+    },
+    { $unwind: "$studioData" },
+    {
+      $lookup: {
+        from: "hourlypackages",
+        localField: "package",
+        foreignField: "_id",
+        as: "packageData",
+      },
+    },
+    { $unwind: "$packageData" },
     {
       $project: {
-        label: { $dateToString: { format: "%Y-%m-%d", date: "$_id" } },
-        count: 1,
-        _id: 0,
+        customer: "$personalInfo.fullName",
+        service: {
+          $cond: {
+            if: { $ifNull: ["$packageData.name.en", false] },
+            then: "$packageData.name.en",
+            else: { $ifNull: ["$packageData.name", "Unknown Service"] },
+          },
+        },
+        studio: {
+          $cond: {
+            if: { $ifNull: ["$studioData.name.en", false] },
+            then: "$studioData.name.en",
+            else: { $ifNull: ["$studioData.name", "Unknown Studio"] },
+          },
+        },
+        date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+        time: "$startSlot",
       },
     },
   ]);
 
-  // --- Response ---
-  res.status(200).json({
+  // ===================== ✅ Response =====================
+  res.json({
     status: "success",
     data: {
-      totalStudios,
-      totalBookings,
-      totalRevenue,
-      mostBookedStudios,
-      mostBookedPackages,
-      mostBookedAddOns,
-      mostBookedDay,
-      mostBookedUser: mostBookedUser[0] || null,
+      totalBookings: {
+        value: totalBookings,
+        growth: parseFloat(totalBookingsGrowth),
+      },
+      totalRevenue: {
+        value: totalRevenue,
+        growth: parseFloat(totalRevenueGrowth),
+      },
+      topService,
+      topStudio,
+      peakBookingHours,
+      serviceDistribution,
+      addonsDistribution,
+      revenueTrends,
+      upcomingBookings,
     },
   });
 });
