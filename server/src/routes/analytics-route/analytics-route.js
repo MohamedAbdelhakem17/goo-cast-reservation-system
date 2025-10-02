@@ -9,7 +9,7 @@ const analyticsController = require("../../controller/analytics-controller/analy
 router.route("/").post(analyticsController.addAnalytics);
 
 // Protected admin routes
-router.use(protectRoute, allowTo(USER_ROLE.ADMIN));
+// router.use(protectRoute, allowTo(USER_ROLE.ADMIN));
 
 router.route("/dashboard-stats").get(analyticsController.getDashboardStats);
 router.route("/").get(analyticsController.getAnalytics);
