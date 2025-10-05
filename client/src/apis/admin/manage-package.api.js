@@ -100,7 +100,7 @@ export const useUpdatePackage = () => {
     error,
   } = useMutation({
     mutationFn: async ({ id, payload }) => {
-      const formData = appendDataToFormData(payload);
+      const formData = appendDataToFormData(payload, "image", "image");
 
       const { data } = await axiosInstance.put(`/hourly-packages/${id}`, formData, {
         headers: {

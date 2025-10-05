@@ -98,7 +98,8 @@ const HourlyPackageSchema = new mongoose.Schema(
     },
 
     session_type: {
-      type: String,
+      en: { type: String },
+      ar: { type: String },
     },
 
     is_active: {

@@ -15,8 +15,9 @@ export default function FormNavigationButtons({
   TOTAL_STEPS,
   handleNextStep,
   handlePrevStep,
+  handleSubmit,
   hasError,
-  finalStepText = "Submit",
+  finalStepText = "submit",
   isLoading,
 }) {
   const { t, lng } = useLocalization();
@@ -33,6 +34,7 @@ export default function FormNavigationButtons({
           isRTL ? "flex-row" : "flex-row-reverse"
         }`}
       >
+        {/* Previous Button */}
         <div className="w-fit">
           {!isFirstStep && (
             <NavButton
@@ -55,6 +57,7 @@ export default function FormNavigationButtons({
           )}
         </div>
 
+        {/* Next / Submit Button */}
         <NavButton
           className={`flex cursor-pointer items-center rounded-md px-4 py-2 ${
             isLastStep
@@ -62,8 +65,8 @@ export default function FormNavigationButtons({
               : "bg-main/90 hover:bg-main text-white"
           } disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400`}
           disabled={hasError || isLoading}
-          onClick={!isLastStep ? handleNextStep : undefined}
-          type={isLastStep ? "submit" : "button"}
+          type="button"
+          onClick={isLastStep ? handleSubmit : handleNextStep}
         >
           {isLoading ? (
             <Loader className="animate-spin" />

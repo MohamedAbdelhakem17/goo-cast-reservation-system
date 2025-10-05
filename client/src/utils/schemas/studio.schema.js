@@ -56,10 +56,17 @@ export const validationSchema = Yup.object({
       .max(100, "Address must be less than 100 characters"),
   }),
   basePricePerSlot: Yup.number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? null : Number(originalValue),
+    )
     .typeError("Price must be a number")
     .min(0, "Base price must be greater than or equal to 0")
     .required("Base price is required"),
-  isFixedHourly: Yup.boolean(),
+  isFixedHourly: Yup.boolean().transform((val, orig) => {
+    if (orig === "true") return true;
+    if (orig === "false") return false;
+    return val;
+  }),
   description: Yup.object({
     ar: Yup.string()
       .required("Arabic description is required")
@@ -93,31 +100,38 @@ export const validationSchema = Yup.object({
   endTime: Yup.string()
     .required("End time is required")
     .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),
+
   thumbnail: Yup.mixed()
     .required("Thumbnail is required")
-    .test("fileSize", "File too large", (value) => !value || value.size <= 5000000)
-    .test(
-      "fileType",
-      "Unsupported file type",
-      (value) => !value || ["image/jpeg", "image/png", "image/jpg"].includes(value.type),
-    ),
+    .test("fileSize", "File too large", (value) => {
+      if (!value) return false;
+      if (typeof value === "string") return true;
+      return value.size <= 5000000;
+    })
+    .test("fileType", "Unsupported file type", (value) => {
+      if (!value) return false;
+      if (typeof value === "string") return true;
+      return ["image/jpeg", "image/png", "image/jpg"].includes(value.type);
+    }),
+
   imagesGallery: Yup.array()
     .min(1, "At least one gallery image is required")
     .max(5, "Maximum 5 images allowed")
-    .test(
-      "fileSize",
-      "One or more files are too large",
-      (values) => !values || values.every((file) => file.size <= 5000000),
-    )
-    .test(
-      "fileType",
-      "Unsupported file type",
-      (values) =>
-        !values ||
-        values.every((file) =>
-          ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
-        ),
-    ),
+    .test("fileSize", "One or more files are too large", (values) => {
+      if (!values) return true;
+      return values.every((file) =>
+        typeof file === "string" ? true : file.size <= 5000000,
+      );
+    })
+    .test("fileType", "Unsupported file type", (values) => {
+      if (!values) return true;
+      return values.every((file) =>
+        typeof file === "string"
+          ? true
+          : ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
+      );
+    }),
+
   dayOff: Yup.array()
     .of(
       Yup.string().oneOf([
@@ -131,6 +145,7 @@ export const validationSchema = Yup.object({
       ]),
     )
     .nullable(),
+
   minSlotsPerDay: Yup.object().shape({
     sunday: Yup.number().min(0, "Minimum slots must be at least 0"),
     monday: Yup.number().min(0, "Minimum slots must be at least 0"),

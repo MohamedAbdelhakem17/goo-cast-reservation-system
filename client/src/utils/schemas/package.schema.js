@@ -38,7 +38,7 @@ const getInitialPackageValues = (pkg) => {
       en: pkg?.session_type?.en || "",
     },
 
-    price: pkg?.price ?? null,
+    price: pkg?.price ?? "",
 
     image: pkg?.image ?? null,
 
@@ -112,26 +112,33 @@ const packageValidationSchema = Yup.object().shape({
   }),
 
   price: Yup.number()
+    .transform((value, originalValue) => {
+      return originalValue === "" ? null : Number(originalValue);
+    })
     .typeError("Price must be a valid number.")
     .required("Please enter the price.")
     .min(0, "Price cannot be negative."),
 
   image: Yup.mixed()
     .required("Please upload an image.")
-    .test(
-      "fileSize",
-      "Image size must be less than 5MB.",
-      (value) => !value || (value && value.size <= 5 * 1024 * 1024),
-    )
-    .test(
-      "fileType",
-      "Only image files are allowed (jpg, jpeg, png).",
-      (value) =>
-        !value ||
-        (value && ["image/jpg", "image/jpeg", "image/png"].includes(value.type)),
-    ),
+    .test("fileSize", "Image size must be less than 5MB.", (value) => {
+      if (!value) return false;
+      if (typeof value === "string") return true;
+      return value.size <= 5 * 1024 * 1024;
+    })
+    .test("fileType", "Only image files are allowed (jpg, jpeg, png).", (value) => {
+      if (!value) return false;
+      if (typeof value === "string") return true;
+      return ["image/jpg", "image/jpeg", "image/png"].includes(value.type);
+    }),
 
-  is_active: Yup.boolean().required(),
+  is_active: Yup.boolean()
+    .transform((value, originalValue) => {
+      if (originalValue === "true") return true;
+      if (originalValue === "false") return false;
+      return value;
+    })
+    .required(),
 });
 
 export { packageValidationSchema, getInitialPackageValues };

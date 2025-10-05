@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useChangeStudioStatus } from "../../../../../apis/admin/manage-studio.api";
 
-export default function StudioCard({ studio }) {
+export default function StudioCard({ studio, key }) {
   // Localization
   const { t, lng } = useLocalization();
 
@@ -45,7 +45,7 @@ export default function StudioCard({ studio }) {
 
   return (
     <div
-      key={studio._id}
+      key={key}
       className="group flex flex-col justify-between overflow-hidden rounded-xl bg-white shadow-lg transition hover:shadow-xl"
     >
       {/* Image */}

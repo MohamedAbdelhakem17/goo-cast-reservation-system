@@ -16,6 +16,7 @@ import { AnimatePresence } from "framer-motion";
 import { useUpdateStudio, useAddStudio } from "@/apis/admin/manage-studio.api";
 import { useGetOneStudio } from "@/apis/public/studio.api";
 import { EmptyState, Loading } from "@/components/common";
+import { useQueryClient } from "@tanstack/react-query";
 
 const STEP_FIELDS = {
   0: [
@@ -68,6 +69,7 @@ export default function AddStudio() {
 
   // Hooks
   const { addToast } = useToast();
+  const queryClient = useQueryClient();
 
   // Functions
   const handleNextStep = () => {
@@ -86,6 +88,7 @@ export default function AddStudio() {
     addStudio(payload, {
       onSuccess: (response) => {
         addToast(response.message || t("studio-added-successfully"), "success");
+        queryClient.refetchQueries("studio");
         setTimeout(() => {
           navigate("/admin-dashboard/studio");
         }, 2000);
@@ -102,7 +105,7 @@ export default function AddStudio() {
       {
         onSuccess: (response) => {
           addToast(response.message || t("studio-updated-successfully"), "success");
-
+          queryClient.refetchQueries("studio");
           setTimeout(() => {
             navigate("/admin-dashboard/studio");
           }, 2000);
@@ -194,6 +197,7 @@ export default function AddStudio() {
             hasError={isHasError}
             isLoading={isUpdating || isAdding}
             finalStepText={isEdit ? t("edit-studio") : t("add-studio")}
+            handleSubmit={form.handleSubmit}
           />
         </form>
       </div>

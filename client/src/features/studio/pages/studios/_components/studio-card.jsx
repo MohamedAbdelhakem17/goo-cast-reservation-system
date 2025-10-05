@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { OptimizedImage } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 
-export default function StudioCard({ studio, key }) {
+export default function StudioCard({ studio }) {
   // Localization
   const { t, lng } = useLocalization();
 
@@ -64,7 +64,6 @@ export default function StudioCard({ studio, key }) {
 
   return (
     <motion.div
-      key={key}
       className="overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-xl"
       initial={cardAnimation.initial}
       whileInView={cardAnimation.whileInView}

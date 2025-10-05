@@ -18,6 +18,7 @@ import { useAddNewPackage, useUpdatePackage } from "@/apis/admin/manage-package.
 import { Loading } from "@/components/common";
 import { EmptyState } from "@/components/common";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 const STEP_FIELDS = {
   0: [
@@ -93,6 +94,7 @@ export default function AddService() {
 
   // Hooks
   const { addToast } = useToast();
+  const queryClient = useQueryClient();
 
   // Function
   const handleNextStep = () => {
@@ -108,16 +110,15 @@ export default function AddService() {
   };
 
   const handelAddPackage = (payload) => {
-    console.log(payload);
     createPackage(payload, {
       onSuccess: (response) => {
         addToast(response.message || t("package-created-successfully"), "success");
+        queryClient.refetchQueries("packages");
         setTimeout(() => {
           navigate("/admin-dashboard/service");
         }, 2000);
       },
       onError: (error) => {
-        console.log(error);
         addToast(error.response?.data?.message || t("something-went-wrong"), "error");
       },
     });
@@ -129,10 +130,11 @@ export default function AddService() {
       {
         onSuccess: (response) => {
           addToast(response.message || t("package-updated-successfully"), "success");
+          queryClient.refetchQueries("packages");
 
           setTimeout(() => {
             navigate("/admin-dashboard/service");
-          }, 2000);
+          }, 1200);
         },
 
         onError: (error) => {
@@ -145,14 +147,18 @@ export default function AddService() {
   // Form  and  validation
   const formik = useFormik({
     initialValues: getInitialPackageValues(editedPackage?.data),
-    // validationSchema: packageValidationSchema,
+    validationSchema: packageValidationSchema,
     onSubmit: (values) => {
+      const finalData = {
+        ...values,
+      };
+
       if (isEdit) {
         //  edit case
-        handelEditPackage({ id: editedPackage?.data?._id, payload: values });
+        handelEditPackage({ id: editedPackage?.data?._id, payload: finalData });
       } else {
         // add case
-        handelAddPackage(values);
+        handelAddPackage(finalData);
       }
     },
     enableReinitialize: true,
@@ -224,6 +230,7 @@ export default function AddService() {
           isLoading={isCreating || isUpdating}
           hasError={isHasError}
           finalStepText={isEdit ? t("edit-package") : t("add-package")}
+          handleSubmit={formik.handleSubmit}
         />
       </form>
     </motion.div>

@@ -27,7 +27,11 @@ router
 router
   .route("/:id")
   .get(hourlyPackageController.getOneHourlyPackage)
-  .put(hourlyPackageController.updateHourlyPackage) // Update hourly packages by ID
+  .put(
+    hourlyPackageController.serviceImageUpload,
+    hourlyPackageController.serviceImageManipulation,
+    hourlyPackageController.updateHourlyPackage
+  ) // Update hourly packages by ID
   .delete(hourlyPackageController.deleteHourlyPackage); // Delete hourly packages by ID
 
 router.put("/price-mange/:id", hourlyPackageController.packagePriceMange);

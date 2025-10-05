@@ -13,7 +13,6 @@ const hasError = (steps, currentStep, formik) => {
   return fields.some((field) => {
     const value = getFieldValue(field, formik);
     const error = getFieldError(field, formik);
-    console.log(error);
     return !value || error;
   });
 };
