@@ -12,6 +12,7 @@ export default function CouponForm({
   onSubmit,
 }) {
   const { t } = useLocalization();
+
   const formik = useFormik({
     initialValues: getInitialValues(editingCoupon),
     validationSchema: couponValidationSchema,

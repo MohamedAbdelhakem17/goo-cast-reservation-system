@@ -44,7 +44,7 @@ export const useUpdateCoupon = () => {
     mutationKey: ["edit-coupon"],
 
     mutationFn: async (payload) => {
-      const { id, dataPayload } = payload;
+      const { id, payload: dataPayload } = payload;
       const { data } = await axiosInstance.put(`/coupon/${id}`, dataPayload);
 
       return data;
