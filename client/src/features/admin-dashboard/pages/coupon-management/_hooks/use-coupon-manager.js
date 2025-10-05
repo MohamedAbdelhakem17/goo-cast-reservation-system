@@ -5,6 +5,7 @@ import {
   useDeleteCoupon,
   useUpdateCoupon,
 } from "@/apis/admin/manage-coupon.api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useCouponManager() {
   // state
@@ -19,6 +20,7 @@ export function useCouponManager() {
 
   // hooks
   const { addToast } = useToast();
+  const queryClient = useQueryClient();
 
   const onSubmit = (values, callback) => {
     if (editingCoupon) {
@@ -47,6 +49,7 @@ export function useCouponManager() {
     createCoupon(values, {
       onSuccess: () => {
         addToast(`Coupon ${values.name} has been created successfully.`, "success");
+        queryClient.refetchQueries("coupon");
         callback();
       },
       onError: () => {
@@ -60,8 +63,9 @@ export function useCouponManager() {
       { id: editingCoupon._id, payload: values },
       {
         onSuccess: () => {
-          setEditingCoupon(null);
           addToast(`Coupon ${values.name} has been updated successfully.`, "success");
+          queryClient.refetchQueries("coupon");
+          setEditingCoupon(null);
           callback();
         },
         onError: () => {
@@ -74,23 +78,21 @@ export function useCouponManager() {
   const handleDelete = () => {
     if (!couponToDelete) return;
 
-    deleteCoupon(
-      { id: couponToDelete._id },
-      {
-        onSuccess: () => {
-          addToast(
-            `Coupon ${couponToDelete.name} has been deleted successfully.`,
-            "success",
-          );
-          setCouponToDelete(null);
-          setDeleteDialogOpen(false);
-        },
-        onError: () => {
-          addToast("Failed to delete coupon. Please try again.", "error");
-          setDeleteDialogOpen(false);
-        },
+    deleteCoupon(couponToDelete._id, {
+      onSuccess: () => {
+        addToast(
+          `Coupon ${couponToDelete.name} has been deleted successfully.`,
+          "success",
+        );
+        queryClient.refetchQueries("coupon");
+        setCouponToDelete(null);
+        setDeleteDialogOpen(false);
       },
-    );
+      onError: () => {
+        addToast("Failed to delete coupon. Please try again.", "error");
+        setDeleteDialogOpen(false);
+      },
+    });
   };
 
   return {

@@ -13,7 +13,6 @@ export default function Pagination({
     return new Intl.NumberFormat(`${lng}-EG`).format(num);
   };
 
-  // تحديد اتجاه الأسهم حسب اللغة
   const isRTL = lng === "ar";
 
   return (
@@ -72,7 +71,6 @@ export default function Pagination({
             className="relative z-0 inline-flex -space-x-px rounded-md shadow-sm"
             aria-label="Pagination"
           >
-            {/* زر السابق */}
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
@@ -86,7 +84,6 @@ export default function Pagination({
               )}
             </button>
 
-            {/* أرقام الصفحات */}
             {[...Array(totalPages)].map((_, index) => (
               <button
                 key={index + 1}
@@ -101,7 +98,6 @@ export default function Pagination({
               </button>
             ))}
 
-            {/* زر التالي */}
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}

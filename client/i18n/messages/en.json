@@ -429,5 +429,7 @@
   "monthly-revenue-over-time-egp": "Monthly revenue over time (EGP)",
   "totalrevenue": "totalRevenue",
   "service-percentage": "{{label}}: {{percentage}} %",
-  "dashboard-0": "Dashboard"
+  "dashboard-0": "Dashboard",
+  "are-you-sure": "Are you sure?",
+  "delete-coupon-confirm": "Do you really want to delete the coupon <strong>{{name}}</strong>? This action cannot be undone."
 }

@@ -413,5 +413,7 @@
   "revenue-trends": "اتجاهات الإيرادات",
   "monthly-revenue-over-time-egp": "الإيرادات الشهرية بمرور الوقت (جنية)",
   "totalrevenue": "TotalRevenue",
-  "service-percentage": "{{label}}:  %{{percentage}}"
+  "service-percentage": "{{label}}:  %{{percentage}}",
+  "are-you-sure": "هل أنت متأكد؟",
+  "delete-coupon-confirm": "هل تريد حقًا حذف القسيمة <strong> {{name}} </strong>؟ \nلا يمكن التراجع عن هذا الإجراء."
 }
