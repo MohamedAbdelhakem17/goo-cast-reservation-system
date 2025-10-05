@@ -57,7 +57,7 @@ const StudioManagement = () => {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* include Data */}
             {studiosData?.data.map((studio) => (
-              <StudioCard studio={studio} />
+              <StudioCard studio={studio} key={studio._id} />
             ))}
           </div>
         )}

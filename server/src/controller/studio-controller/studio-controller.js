@@ -173,6 +173,7 @@ exports.createStudio = asyncHandler(async (req, res) => {
 // update a studio
 exports.updateStudio = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  console.log(req.body);
   const studio = await StudioModel.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true,

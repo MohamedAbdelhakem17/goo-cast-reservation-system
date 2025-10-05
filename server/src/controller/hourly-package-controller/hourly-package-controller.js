@@ -3,6 +3,8 @@ const HourlyPackageModel = require("../../models/hourly-packages-model/hourly-pa
 const AppError = require("../../utils/app-error");
 const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
 
+const sharp = require("sharp");
+const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const path = require("path");
 
@@ -20,14 +22,15 @@ exports.serviceImageManipulation = async (req, res, next) => {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    console.log(req.file);
-    if (req.files) {
+    if (req.file) {
       const serviceName = `service-${uuidv4()}-${Date.now()}.jpeg`;
-      await sharp(req.files.buffer)
+
+      await sharp(req.file.buffer)
         .resize(2000, 1333)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
         .toFile(`${uploadDir}/${serviceName}`);
+
       req.body.image = serviceName;
     } else if (req.body.imageUrl) {
       req.body.image = req.body.imageUrl;
@@ -132,6 +135,7 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
 // update hourly package
 exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
+  console.log(req.body);
   const hourlyPackage = await HourlyPackageModel.findByIdAndUpdate(
     id,
     req.body,

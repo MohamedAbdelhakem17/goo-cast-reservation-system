@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import axios from "axios";
-import { API_BASE_URL } from '@/constants/config';
+import { API_BASE_URL } from "@/constants/config";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -41,8 +41,7 @@ export default function AuthProvider({ children }) {
         withCredentials: true,
       });
       return response.data?.isValid ?? false;
-    } catch (err) {
-      console.error("Session check failed:", err);
+    } catch (_) {
       return false;
     }
   };
