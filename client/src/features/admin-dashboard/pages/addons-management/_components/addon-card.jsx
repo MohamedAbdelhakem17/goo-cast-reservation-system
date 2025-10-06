@@ -42,10 +42,7 @@ export default function AddonCart({ addon, setDeletedAddon }) {
   };
 
   return (
-    <div
-      key={addon._id}
-      className="flex flex-col justify-between overflow-hidden rounded-md bg-white shadow"
-    >
+    <div className="flex flex-col justify-between overflow-hidden rounded-md bg-white shadow">
       {/* Image */}
       <div className="h-80 w-full">
         <OptimizedImage

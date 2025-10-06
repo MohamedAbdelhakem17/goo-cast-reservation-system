@@ -6,12 +6,12 @@ import Equipment from "./taps-components/equipment";
 import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function Taps({ description, facilities, equipment }) {
-  const { t } = useLocalization();
+  const { t, lng } = useLocalization();
   const tabs = [
     {
       label: t("description"),
       id: 1,
-      content: <Description description={description} />,
+      content: <Description description={description?.[lng]} />,
     },
     { label: t("facilities"), id: 2, content: <Facilities facilities={facilities} /> },
     { label: t("equipment"), id: 3, content: <Equipment equipment={equipment} /> },
