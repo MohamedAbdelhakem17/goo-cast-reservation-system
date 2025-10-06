@@ -131,6 +131,11 @@ const bookingSchema = new mongoose.Schema(
       required: true,
     },
 
+    eventID: {
+      type: String,
+      required: true,
+    },
+
     totalPriceAfterDiscount: {
       type: Number,
       validate: {

@@ -22,6 +22,9 @@ const StudioModel = require("../../models/studio-model/studio-model");
 
 const saveOpportunityInGoHighLevel = require("../../utils/save-opportunity-in-go-high-level");
 const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
+const {
+  createCalendarEvent,
+} = require("../../utils/google-calendar-integration.js");
 
 const { getCategoryMinHour } = require("../../utils/get-category-hour.js");
 const { getFreeSlots } = require("../../utils/get-free-slots.js");
@@ -190,7 +193,7 @@ const print = (val, lab) => {};
 // });
 
 exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
-  const requiredDuration = parseInt(req.query.duration) || 0; // بالساعة
+  const requiredDuration = parseInt(req.query.duration) || 0; // بالساعات
   const requiredDurationMinutes = requiredDuration * 60; // بالدقايق
 
   const studios = await StudioModel.find();
@@ -202,6 +205,7 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
   const nextMonth = new Date();
   nextMonth.setMonth(today.getMonth() + 1);
 
+  // هات الحجوزات للشهر الجاي
   const bookings = await BookingModel.aggregate([
     {
       $match: {
@@ -219,6 +223,7 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     },
   ]);
 
+  // ترتيب البيانات حسب اليوم والاستوديو
   const groupedByDate = {};
   for (const b of bookings) {
     const day = b._id.day;
@@ -228,28 +233,25 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
 
   const fullyBookedDates = [];
 
+  // شيك على كل يوم
   for (const [day, dayStudios] of Object.entries(groupedByDate)) {
     let dayFullyBooked = true;
 
     for (const studio of studios) {
       const studioBookings = dayStudios[studio._id.toString()] || [];
 
-      const bookedSlots = [];
-      for (const booking of studioBookings) {
-        for (let i = booking.startSlot; i < booking.endSlot; i += 30) {
-          bookedSlots.push(i);
-        }
-      }
+      // مثل: [[540, 600], [660, 720]] => intervals بالدقايق
+      const intervals = studioBookings.map((b) => [b.startSlot, b.endSlot]);
 
       const startOfDay = timeToMinutes(studio.startTime);
       const endOfDay = timeToMinutes(studio.endTime);
-      const totalSlots = getTimeSlots(startOfDay, endOfDay);
 
-      const isAvailable = isDurationAvailable(
-        bookedSlots,
-        totalSlots,
-        requiredDurationMinutes, // 👈 من غير /60
-        30 // slotDuration
+      // اتأكد هل في فترة متاحة كفاية
+      const isAvailable = hasFreeInterval(
+        intervals,
+        startOfDay,
+        endOfDay,
+        requiredDurationMinutes
       );
 
       if (isAvailable) {
@@ -268,6 +270,27 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     data: fullyBookedDates,
   });
 });
+
+// ✅ دالة تشيك إذا في فترة فاضية كفاية
+function hasFreeInterval(intervals, startOfDay, endOfDay, requiredMinutes) {
+  if (requiredMinutes === 0) return true;
+
+  // رتّب الـintervals حسب البداية
+  intervals.sort((a, b) => a[0] - b[0]);
+
+  let prevEnd = startOfDay;
+
+  for (const [s, e] of intervals) {
+    // في فجوة بين prevEnd و بداية الـbooking الحالي؟
+    if (s - prevEnd >= requiredMinutes) return true;
+    prevEnd = Math.max(prevEnd, e);
+  }
+
+  // بعد آخر booking لحد نهاية اليوم
+  if (endOfDay - prevEnd >= requiredMinutes) return true;
+
+  return false;
+}
 
 // Helpers
 const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
@@ -1357,7 +1380,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       duration,
     } = await createBookingLogic(req.body, user_id);
 
-    const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name} | ${pkg.session_type}`;
+    const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name?.en} | ${pkg.session_type?.en}`;
     const emailBookingData = {
       studio: {
         name: studio.name,
@@ -1396,7 +1419,6 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
     const opportunityData = {
       name: bookingTitle,
-      // Goocast | Full Name | Service Name | Session
       price: totalPriceAfterDiscount,
       sessionType: pkg.session_type,
       duration: duration,
@@ -1412,7 +1434,21 @@ exports.createBooking = asyncHandler(async (req, res) => {
       studioId: studio._id,
     };
 
+    const eventData = {
+      summary: bookingTitle,
+      start: {
+        dateTime: combineDateAndTime(bookingDate, startSlot),
+        timeZone: "Africa/Cairo",
+      },
+      end: {
+        dateTime: combineDateAndTime(bookingDate, endSlot),
+        timeZone: "Africa/Cairo",
+      },
+      // attendees: [{ email: personalInfo.email }],
+    };
+
     let opportunityID;
+    let eventID;
     // return
     try {
       opportunityID = await saveOpportunityInGoHighLevel(
@@ -1420,6 +1456,12 @@ exports.createBooking = asyncHandler(async (req, res) => {
         opportunityData,
         appointmentData
       );
+
+      eventID = await createCalendarEvent(eventData, {
+        username: personalInfo.fullName,
+        duration,
+        package: pkg?.name?.en,
+      });
       await sendEmail(emailOptions);
     } catch (err) {
       throw new AppError(
@@ -1430,6 +1472,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     }
 
     tempBooking.opportunityID = opportunityID;
+    tempBooking.eventID = eventID;
     const booking = await tempBooking.save();
 
     res.status(201).json({
