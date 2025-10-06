@@ -17,9 +17,15 @@ export default function StudioDetails() {
       <Header title={data.data.name?.[lng]} location={data.data.address?.[lng]} />
       <Gallery images={[data.data.thumbnail, ...data.data.imagesGallery]} />
       <Taps
+<<<<<<< HEAD
         description={data?.data?.description}
         facilities={data?.data?.facilities}
         equipment={data?.data?.equipment}
+=======
+        description={data?.data?.description?.[lng]}
+        facilities={data?.data?.facilities?.[lng]}
+        equipment={data?.data?.equipment?.[lng]}
+>>>>>>> 2bbf6a5f21629c3914b661d0f5c408eacf1ee7ba
       />
     </main>
   );

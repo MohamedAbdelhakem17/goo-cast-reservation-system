@@ -199,7 +199,11 @@ export default function DisplayBookingData({
                   setSelectedBooking={setSelectedBooking}
                   isDesktop={isDesktop}
                   setConfirmPopup={setConfirmPopup}
+<<<<<<< HEAD
                   isPending={booking.status === "pending"}
+=======
+                  isPending={booking.status === t("pending")}
+>>>>>>> 2bbf6a5f21629c3914b661d0f5c408eacf1ee7ba
                   booking={booking}
                   t={t}
                 />

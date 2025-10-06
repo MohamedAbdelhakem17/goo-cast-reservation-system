@@ -153,7 +153,10 @@ export default function AddService() {
         ...values,
       };
 
+<<<<<<< HEAD
       console.log(finalData);
+=======
+>>>>>>> 2bbf6a5f21629c3914b661d0f5c408eacf1ee7ba
       if (isEdit) {
         //  edit case
         handelEditPackage({ id: editedPackage?.data?._id, payload: finalData });

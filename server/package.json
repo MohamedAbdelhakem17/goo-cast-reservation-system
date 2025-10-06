@@ -20,7 +20,10 @@
     "express-async-handler": "^1.2.0",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
+<<<<<<< HEAD
     "googleapis": "^161.0.0",
+=======
+>>>>>>> 2bbf6a5f21629c3914b661d0f5c408eacf1ee7ba
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.7.1",

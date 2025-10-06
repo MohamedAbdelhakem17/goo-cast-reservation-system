@@ -33,6 +33,31 @@ export default function AddonsManagement() {
     setSearchParams({ status: selectedValue });
   };
 
+<<<<<<< HEAD
+=======
+  const handelUpdateStatus = (value, id) => {
+    return new Promise((resolve, reject) => {
+      changeStatus(
+        { payload: value, id },
+        {
+          onSuccess: () => {
+            addToast(t("change-status-successfully"), "success");
+            queryClient.invalidateQueries("addons");
+            resolve();
+          },
+          onError: (error) => {
+            const errorMessage =
+              error?.response?.data?.message || t("failed-to-change-status");
+
+            addToast(errorMessage, "error");
+
+            reject(error);
+          },
+        },
+      );
+    });
+  };
+>>>>>>> 2bbf6a5f21629c3914b661d0f5c408eacf1ee7ba
   // Variables
   const ADDONS_STATUS = [
     { label: t("all"), value: "all" },
@@ -101,11 +126,15 @@ export default function AddonsManagement() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* include Data */}
             {addons.data.map((addon) => (
+<<<<<<< HEAD
               <AddonCart
                 addon={addon}
                 setDeletedAddon={setSelectedDeletedAddon}
                 key={addon._id}
               />
+=======
+              <AddonCart addon={addon} setDeletedAddon={setSelectedDeletedAddon} />
+>>>>>>> 2bbf6a5f21629c3914b661d0f5c408eacf1ee7ba
             ))}
           </div>
         )}
