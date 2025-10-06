@@ -41,13 +41,13 @@ exports.getAllAddOns = asyncHandler(async (req, res, next) => {
   const addOns = await AddOnModel.find(filter).sort({ name: 1 });
 
   if (addOns.length === 0) {
-    res.status(200).json({
+    return res.status(200).json({
       status: HTTP_STATUS_TEXT.SUCCESS,
       data: addOns,
     });
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: addOns,
   });

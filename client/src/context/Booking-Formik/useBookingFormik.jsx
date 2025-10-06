@@ -124,7 +124,7 @@ export default function useBookingFormik() {
         totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
         personalInfo: {
           ...values.personalInfo,
-          fullName: `${values.personalInfo.firstName} ${values.personalInfo.lastName}`,
+          fullName: `${values.personalInfo.firstName}${values.personalInfo.lastName}`,
         },
       };
 

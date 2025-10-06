@@ -1444,7 +1444,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
         dateTime: combineDateAndTime(bookingDate, endSlot),
         timeZone: "Africa/Cairo",
       },
-      // attendees: [{ email: personalInfo.email }],
+      attendees: [{ email: personalInfo.email }],
     };
 
     let opportunityID;
@@ -1462,6 +1462,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
         duration,
         package: pkg?.name?.en,
       });
+
       await sendEmail(emailOptions);
     } catch (err) {
       throw new AppError(

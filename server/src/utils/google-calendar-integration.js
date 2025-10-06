@@ -4,10 +4,8 @@ const { google } = require("googleapis");
 const auth = new google.auth.JWT({
   email: process.env.client_email,
   key: process.env.private_key,
-  scopes: [
-    "https://www.googleapis.com/auth/calendar",
-    "https://www.googleapis.com/auth/calendar.events",
-  ],
+  scopes: ["https://www.googleapis.com/auth/calendar"],
+  subject: process.env.DELEGATED_USER,
 });
 
 // Connect with calendar
@@ -51,75 +49,39 @@ exports.createCalendarEvent = async (
   }
 };
 
-// createCalendarEvent();
-
 // Update event
-const updateCalenderEvent = () => {};
+exports.updateCalenderEvent = async (eventId, newEventData) => {
+  try {
+    // Check if event id exist
+    if (!eventId) {
+      throw new Error("Event ID is required to update an event");
+    }
 
-// // services/calendarService.js
-// const { google } = require("googleapis");
-// const path = require("path");
+    // updata event data
+    const { data } = await calendar.events.patch({
+      calendarId: process.env.CALENDAR_ID,
+      eventId,
+      resource: newEventData,
+      sendUpdates: "all",
+    });
 
-// const ACCOUNT_KEY = path.join(__dirname, "../config/service_account.json");
+    return data.id;
+  } catch (error) {
+    console.error("Google Calendar Error (updateEvent):", err.message);
+    throw new Error(`Google Calendar error: ${err.message}`);
+  }
+};
 
-// const auth = new google.auth.GoogleAuth({
-//   keyFile: ACCOUNT_KEY,
-//   scopes: [
-//     "https://www.googleapis.com/auth/calendar",
-//     "https://www.googleapis.com/auth/calendar.events",
-//   ],
-// });
-
-// class CalendarService {
-//   static async createEvent(eventData) {
-//     try {
-//       // Basic validation
-//       if (!eventData?.summary || !eventData?.start || !eventData?.end) {
-//         throw new Error("Missing required event fields: summary, start, end");
+// Delete event
+// exports.deleteCalenderEvent = await (eventId) => {
+//   try {
+//           if (!eventId) {
+//         throw new Error("Event ID is required to delete an event");
 //       }
+//   } catch (error) {
 
-//       const { data } = await calendar.events.insert({
-//         calendarId: process.env.CALENDAR_ID,
-//         resource: eventData,
-//         sendUpdates: "all", // Notify attendees by email
-//       });
-
-//       return {
-//         id: data.id,
-//         link: data.htmlLink,
-//         start: data.start,
-//         end: data.end,
-//       };
-//     } catch (err) {
-//       console.error("Google Calendar Error (createEvent):", err.message);
-//       throw new Error(`Google Calendar error: ${err.message}`);
-//     }
 //   }
-
-//   static async updateEvent(eventId, eventData) {
-//     try {
-//       if (!eventId) {
-//         throw new Error("Event ID is required to update an event");
-//       }
-
-//       const { data } = await calendar.events.patch({
-//         calendarId: process.env.CALENDAR_ID,
-//         eventId,
-//         resource: eventData,
-//         sendUpdates: "all",
-//       });
-
-//       return {
-//         id: data.id,
-//         link: data.htmlLink,
-//         start: data.start,
-//         end: data.end,
-//       };
-//     } catch (err) {
-//       console.error("Google Calendar Error (updateEvent):", err.message);
-//       throw new Error(`Google Calendar error: ${err.message}`);
-//     }
-//   }
+// };
 
 //   static async deleteEvent(eventId) {
 //     try {
