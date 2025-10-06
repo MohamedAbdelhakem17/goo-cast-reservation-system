@@ -147,7 +147,7 @@ export default function AddService() {
   // Form  and  validation
   const formik = useFormik({
     initialValues: getInitialPackageValues(editedPackage?.data),
-    validationSchema: packageValidationSchema,
+    // validationSchema: packageValidationSchema,
     onSubmit: (values) => {
       const finalData = {
         ...values,
