@@ -20,13 +20,8 @@ const listItemVariants = {
   },
 };
 export default function Facilities({ facilities }) {
-<<<<<<< HEAD
   const { t, lng } = useLocalization();
   console.log(facilities);
-=======
-  const { t } = useLocalization();
-
->>>>>>> 2bbf6a5f21629c3914b661d0f5c408eacf1ee7ba
   return (
     <div className="mx-auto max-w-3xl rounded-xl bg-white px-6 py-8 shadow-sm">
       <div className="mb-4 flex items-center">
@@ -39,11 +34,7 @@ export default function Facilities({ facilities }) {
         </motion.h2>
       </div>
       <motion.ul className="space-y-3 text-gray-600" variants={listVariants}>
-<<<<<<< HEAD
         {facilities?.[lng]?.map((rule, index) => (
-=======
-        {facilities?.map((rule, index) => (
->>>>>>> 2bbf6a5f21629c3914b661d0f5c408eacf1ee7ba
           <motion.li
             key={index}
             className="flex items-start"
