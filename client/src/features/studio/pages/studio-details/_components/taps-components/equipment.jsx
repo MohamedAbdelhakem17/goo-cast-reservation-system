@@ -21,7 +21,7 @@ const listItemVariants = {
 };
 
 export default function Equipment({ equipment }) {
-  const { t } = useLocalization();
+  const { t, lng } = useLocalization();
 
   return (
     <div className="mx-auto max-w-3xl rounded-xl bg-white px-6 py-8 shadow-sm">
@@ -35,7 +35,7 @@ export default function Equipment({ equipment }) {
         </motion.h2>
       </div>
       <motion.ul className="space-y-3 text-gray-600" variants={listVariants}>
-        {equipment?.map((rule, index) => (
+        {equipment?.[lng]?.map((rule, index) => (
           <motion.li
             key={index}
             className="flex items-start"
