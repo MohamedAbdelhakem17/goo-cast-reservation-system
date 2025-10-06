@@ -1,10 +1,9 @@
 const { google } = require("googleapis");
-const { client_email, private_key } = require("../config/service_account.json");
 
 // Connect with google api
 const auth = new google.auth.JWT({
-  email: client_email,
-  key: private_key,
+  email: process.env.client_email,
+  key: process.env.private_key,
   scopes: ["https://www.googleapis.com/auth/calendar"],
 });
 
@@ -35,12 +34,12 @@ const testEventDate = {
 };
 
 // Create event
-const createCalendarEvent = async () => {
+exports.createCalendarEvent = async () => {
   try {
     const res = await calendar.events.insert({
-      // calendarId: process.env.CALENDAR_ID,
-      calendarId:
-        "c_4f8c39d5ea3153c0229ab525d482f7afebe6207de0ed7ec383d98f8c9efa321d@group.calendar.google.com",
+      calendarId: process.env.CALENDAR_ID,
+      // calendarId:
+      //   "c_4f8c39d5ea3153c0229ab525d482f7afebe6207de0ed7ec383d98f8c9efa321d@group.calendar.google.com",
       resource: testEventDate,
     });
 
@@ -50,7 +49,7 @@ const createCalendarEvent = async () => {
   }
 };
 
-createCalendarEvent();
+// createCalendarEvent();
 
 // Update event
 const updateCalenderEvent = () => {};

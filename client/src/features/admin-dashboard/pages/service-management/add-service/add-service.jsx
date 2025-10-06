@@ -147,12 +147,13 @@ export default function AddService() {
   // Form  and  validation
   const formik = useFormik({
     initialValues: getInitialPackageValues(editedPackage?.data),
-    validationSchema: packageValidationSchema,
+    // validationSchema: packageValidationSchema,
     onSubmit: (values) => {
       const finalData = {
         ...values,
       };
 
+      console.log(finalData);
       if (isEdit) {
         //  edit case
         handelEditPackage({ id: editedPackage?.data?._id, payload: finalData });

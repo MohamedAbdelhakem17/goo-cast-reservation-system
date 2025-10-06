@@ -129,6 +129,9 @@ app.use("*", (req, res, next) => {
 app.use(errorMiddlewareHandler);
 
 // ====== Start Server ======
+const { createCalendarEvent } = require("./utils/google-calendar-integration");
+// createCalendarEvent();
+
 const PORT = process.env.PORT || 7000;
 const server = app.listen(PORT, () => {
   console.log(
