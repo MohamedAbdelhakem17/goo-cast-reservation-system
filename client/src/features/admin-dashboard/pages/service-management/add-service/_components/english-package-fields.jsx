@@ -14,7 +14,8 @@ export default function EnglishFields({ formik }) {
         value={formik.values.name.en}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        errors={formik.touched.name?.en && formik.errors.name?.en}
+        errors={formik.errors.name?.en}
+        touched={formik.touched.name?.en}
         placeholder={t("enter-english-name")}
         className="col-span-1 md:col-span-2"
       />
@@ -39,7 +40,8 @@ export default function EnglishFields({ formik }) {
         value={formik.values.description.en}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        errors={formik.touched.description?.en && formik.errors.description?.en}
+        errors={formik.errors.description?.en}
+        touched={formik.touched.description?.en}
         placeholder={t("enter-english-description")}
         rows={4}
       />

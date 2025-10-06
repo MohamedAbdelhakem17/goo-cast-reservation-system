@@ -78,28 +78,28 @@ const packageValidationSchema = Yup.object().shape({
   details: Yup.object().shape({
     ar: Yup.array()
       .of(Yup.string().required("Each Arabic detail is required."))
-      .min(1, "Please provide at least one Arabic detail."),
+      .min(0, "Please provide at least one Arabic detail."),
     en: Yup.array()
       .of(Yup.string().required("Each English detail is required."))
-      .min(1, "Please provide at least one English detail."),
+      .min(0, "Please provide at least one English detail."),
   }),
 
   target_audience: Yup.object().shape({
     ar: Yup.array()
       .of(Yup.string().required("Each Arabic audience is required."))
-      .min(1, "Please provide at least one Arabic target audience."),
+      .min(0, "Please provide at least one Arabic target audience."),
     en: Yup.array()
       .of(Yup.string().required("Each English audience is required."))
-      .min(1, "Please provide at least one English target audience."),
+      .min(0, "Please provide at least one English target audience."),
   }),
 
   post_session_benefits: Yup.object().shape({
     ar: Yup.array()
       .of(Yup.string().required("Each Arabic benefit is required."))
-      .min(1, "Please provide at least one Arabic post-session benefit."),
+      .min(0, "Please provide at least one Arabic post-session benefit."),
     en: Yup.array()
       .of(Yup.string().required("Each English benefit is required."))
-      .min(1, "Please provide at least one English post-session benefit."),
+      .min(0, "Please provide at least one English post-session benefit."),
   }),
 
   session_type: Yup.object().shape({
@@ -113,22 +113,23 @@ const packageValidationSchema = Yup.object().shape({
 
   price: Yup.number()
     .transform((value, originalValue) => {
-      return originalValue === "" ? null : Number(originalValue);
+      if (originalValue === "" || originalValue === null) return null;
+      return Number(originalValue);
     })
     .typeError("Price must be a valid number.")
+    .nullable()
     .required("Please enter the price.")
     .min(0, "Price cannot be negative."),
 
   image: Yup.mixed()
-    .required("Please upload an image.")
-    .test("fileSize", "Image size must be less than 5MB.", (value) => {
-      if (!value) return false;
-      if (typeof value === "string") return true;
-      return value.size <= 5 * 1024 * 1024;
+    .test("fileRequired", "Please upload an image.", (value) => {
+      if (!value) return false; // مفيش صورة خالص
+      if (typeof value === "string") return true; // صورة قديمة جايه من الـ DB
+      return value && value.size <= 5 * 1024 * 1024; // صورة جديدة
     })
     .test("fileType", "Only image files are allowed (jpg, jpeg, png).", (value) => {
       if (!value) return false;
-      if (typeof value === "string") return true;
+      if (typeof value === "string") return true; // صورة قديمة URL
       return ["image/jpg", "image/jpeg", "image/png"].includes(value.type);
     }),
 
