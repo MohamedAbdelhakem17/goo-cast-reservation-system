@@ -12,6 +12,7 @@ import {
   Blocks,
   Users,
   LogOut,
+  ShieldUser,
 } from "lucide-react";
 import DashboardSidebar from "../_components/dashboard-sidebar/dashboard-sidebar";
 import useLocalization from "@/context/localization-provider/localization-context";
@@ -61,6 +62,11 @@ const AdminDashboardLayout = () => {
       name: t("coupon"),
       path: "/admin-dashboard/coupon",
       icon: Ticket,
+    },
+    {
+      name: t("admins"),
+      path: "/admin-dashboard/admins",
+      icon: ShieldUser,
     },
     {
       name: t("customers"),

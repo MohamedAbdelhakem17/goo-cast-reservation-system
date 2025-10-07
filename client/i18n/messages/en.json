@@ -431,5 +431,11 @@
   "service-percentage": "{{label}}: {{percentage}} %",
   "dashboard-0": "Dashboard",
   "are-you-sure": "Are you sure?",
-  "delete-coupon-confirm": "Do you really want to delete the coupon <strong>{{name}}</strong>? This action cannot be undone."
+  "delete-coupon-confirm": "Do you really want to delete the coupon <strong>{{name}}</strong>? This action cannot be undone.",
+  "admins": "Admins",
+  "admin-management": "Admins Management",
+  "mange-your-admins-in-system": "Mange Your Admins in System",
+  "add-admin": "Add Admin",
+  "edit-admin-data": "Edit Admin Data",
+  "add-new-admin": "Add new admin"
 }

@@ -415,5 +415,11 @@
   "totalrevenue": "إجمالي الإيرادات",
   "service-percentage": "{{label}}: {{percentage}}%",
   "are-you-sure": "هل أنت متأكد؟",
-  "delete-coupon-confirm": "هل تريد حقاً حذف الكوبون <strong>{{name}}</strong>؟ لا يمكن التراجع عن هذا الإجراء"
+  "delete-coupon-confirm": "هل تريد حقاً حذف الكوبون <strong>{{name}}</strong>؟ لا يمكن التراجع عن هذا الإجراء",
+  "mange-your-admins-in-system": "قم بإدارة مدراءك في النظام",
+  "admin-management": "إدارة المشرفين",
+  "admins": "مسؤولون",
+  "add-new-admin": "أضف مسؤول جديد",
+  "add-admin": "إضافة المسؤول",
+  "edit-admin-data": "تحرير بيانات المسؤول"
 }

@@ -5,7 +5,7 @@ import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import useLocalization from "@/context/localization-provider/localization-context";
-import { useChangeStudioStatus } from "../../../../../apis/admin/manage-studio.api";
+import { useChangeStudioStatus } from "@/apis/admin/manage-studio.api";
 
 export default function StudioCard({ studio, key }) {
   // Localization

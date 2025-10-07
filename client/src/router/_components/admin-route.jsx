@@ -48,6 +48,9 @@ const CategoryManagement = lazy(
   () =>
     import("@/features/admin-dashboard/pages/category-management/category-management"),
 );
+const AdminManagement = lazy(
+  () => import("@/features/admin-dashboard/pages/admin-management/admin-management"),
+);
 const UserManagement = lazy(
   () => import("@/features/admin-dashboard/pages/user-management/user-management"),
 );
@@ -75,6 +78,7 @@ export default function AdminRoute() {
       <Route path="addons" element={<AddonsManagement />} />
       <Route path="addons/add" element={<AddAddons />} />
       <Route path="booking" element={<BookingManagement />} />
+      <Route path="admins" element={<AdminManagement />} />
       <Route path="users" element={<UserManagement />} />
       <Route path="coupon" element={<CouponManagement />} />
       {/* <Route path="analytics" element={<PageAnalytics />} /> */}
