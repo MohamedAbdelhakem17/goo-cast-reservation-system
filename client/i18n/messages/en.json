@@ -437,5 +437,8 @@
   "mange-your-admins-in-system": "Mange Your Admins in System",
   "add-admin": "Add Admin",
   "edit-admin-data": "Edit Admin Data",
-  "add-new-admin": "Add new admin"
+  "add-new-admin": "Add new admin",
+  "create-new-booking": "Create New Booking",
+  "update-booking-data": "Update Booking Data",
+  "select-package": "Select Package"
 }

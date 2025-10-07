@@ -44,6 +44,11 @@ const AddAddons = lazy(
 const BookingManagement = lazy(
   () => import("@/features/admin-dashboard/pages/booking-management/booking-management"),
 );
+
+const AddBooking = lazy(
+  () =>
+    import("@/features/admin-dashboard/pages/booking-management/add-booking/add-booking"),
+);
 const CategoryManagement = lazy(
   () =>
     import("@/features/admin-dashboard/pages/category-management/category-management"),
@@ -78,6 +83,7 @@ export default function AdminRoute() {
       <Route path="addons" element={<AddonsManagement />} />
       <Route path="addons/add" element={<AddAddons />} />
       <Route path="booking" element={<BookingManagement />} />
+      <Route path="booking/add" element={<AddBooking />} />
       <Route path="admins" element={<AdminManagement />} />
       <Route path="users" element={<UserManagement />} />
       <Route path="coupon" element={<CouponManagement />} />
