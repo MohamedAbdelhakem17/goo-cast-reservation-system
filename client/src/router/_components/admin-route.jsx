@@ -1,5 +1,7 @@
 import { Route } from "react-router-dom";
 import AdminDashboardLayout from "@/layout/admin-dashboard/admin-dashboard";
+import BookingProvider from "@/context/Booking-Context/BookingContext";
+
 import ProtectedRoute from "./protected-route";
 
 import { lazy } from "react";
@@ -83,7 +85,14 @@ export default function AdminRoute() {
       <Route path="addons" element={<AddonsManagement />} />
       <Route path="addons/add" element={<AddAddons />} />
       <Route path="booking" element={<BookingManagement />} />
-      <Route path="booking/add" element={<AddBooking />} />
+      <Route
+        path="booking/add"
+        element={
+          // <BookingProvider>
+          <AddBooking />
+          // </BookingProvider>
+        }
+      />
       <Route path="admins" element={<AdminManagement />} />
       <Route path="users" element={<UserManagement />} />
       <Route path="coupon" element={<CouponManagement />} />

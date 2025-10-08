@@ -15,7 +15,12 @@ function reducer(state, action) {
   }
 }
 
-export default function TimeCalendar({ selectedBookingDate, duration, onDateSelect }) {
+export default function TimeCalendar({
+  selectedBookingDate,
+  duration,
+  onDateSelect,
+  bookingData,
+}) {
   const {
     calendarDays,
     currentDate,
@@ -50,7 +55,12 @@ export default function TimeCalendar({ selectedBookingDate, duration, onDateSele
       0,
     );
     setSelectedDate(date);
-    if (onDateSelect) onDateSelect(date, state.duration);
+    if (onDateSelect)
+      onDateSelect({
+        studioId: bookingData?.studio?.id,
+        date: selectedDate || currentDate,
+        duration: bookingData.duration || 1,
+      });
   };
 
   return (

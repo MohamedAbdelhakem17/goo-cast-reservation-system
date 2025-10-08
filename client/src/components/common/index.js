@@ -15,3 +15,4 @@ export { default as OptimizedImage } from "./image";
 export { default as RadioButton } from "./radio-button";
 export { default as EmptyState } from "./empty-state";
 export { default as LanguageSwitcher } from "./language-switcher";
+export { default as SlotButton } from "./slot-button";
