@@ -181,7 +181,6 @@
   "booking-management": "إدارة الحجوزات",
   "reject": "رفض",
   "phone": "رقم الهاتف",
-  "brand": "العلامة التجارية",
   "total-package-price": "إجمالي سعر الباقة",
   "total-add-ons": "إجمالي الإضافات",
   "payment-summary": "ملخص الدفع",
@@ -423,5 +422,6 @@
   "add-admin": "إضافة المسؤول",
   "edit-admin-data": "تحرير بيانات المسؤول",
   "create-new-booking": "إنشاء حجز جديد",
-  "update-booking-data": "تحديث بيانات الحجز"
+  "update-booking-data": "تحديث بيانات الحجز",
+  "comment": "تعليقات إضافية"
 }

@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { OptimizedImage } from "@/components/common";
 
-export const StudioSection = memo(function StudioSection({
+const StudioSection = memo(function StudioSection({
   studio,
   date,
   startSlot,
@@ -35,3 +35,5 @@ export const StudioSection = memo(function StudioSection({
     </div>
   );
 });
+
+export default StudioSection;

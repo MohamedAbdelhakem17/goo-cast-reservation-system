@@ -7,7 +7,6 @@ export const useAddOnsManager = ({
   tracking,
   lng,
 }) => {
-  console.log(bookingData);
   // Update addons Quantity
   const handleAddOnChange = useCallback(
     (id, name, quantity, price) => {
@@ -34,7 +33,7 @@ export const useAddOnsManager = ({
 
       setBookingField("selectedAddOns", updatedAddOns);
     },
-    [bookingData?.selectedAddOns, setBookingField],
+    [bookingData?.selectedAddOns],
   );
 
   // Return Quantity

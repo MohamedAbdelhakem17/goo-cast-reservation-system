@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { Loading } from "@/components/common";
 import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots";
-import { SlotButton } from "@/components/common";
+import { SlotButton } from "@/components/booking";
 import { tracking } from "@/utils/gtm";
 import useLocalization from "@/context/localization-provider/localization-context";
 import useDataFormat from "@/hooks/useDateFormat";

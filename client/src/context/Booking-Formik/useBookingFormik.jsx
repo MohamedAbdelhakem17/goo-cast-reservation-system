@@ -82,9 +82,16 @@ export default function useBookingFormik() {
   // Helpers Functions to access formik values and errors
   const setBookingField = useCallback(
     (field, value) => {
-      formik.setFieldValue(field, value);
+      if (typeof value === "function") {
+        const current = field
+          .split(".")
+          .reduce((acc, key) => (acc ? acc[key] : undefined), formik.values);
+        formik.setFieldValue(field, value(current));
+      } else {
+        formik.setFieldValue(field, value);
+      }
     },
-    [formik],
+    [formik.values],
   );
 
   const getBookingField = (field) => {

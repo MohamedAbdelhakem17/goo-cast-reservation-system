@@ -20,7 +20,11 @@ export default function TimeCalendar({
     isLoading,
   } = useCalendar(bookingData.date, duration);
 
+  // Variables
   const currentDuration = duration || 1;
+  const isStudioAndPackageSelected = Boolean(
+    bookingData?.studio?.id && bookingData?.selectedPackage?.id,
+  );
 
   const handleIncrement = () => {
     const newValue = Math.min(10, currentDuration + 1);
@@ -48,6 +52,7 @@ export default function TimeCalendar({
       0,
     );
     setSelectedDate(date);
+    setFieldValue("date", date);
     if (onDateSelect)
       onDateSelect({
         studioId: bookingData?.studio?.id,
@@ -58,7 +63,22 @@ export default function TimeCalendar({
   };
 
   return (
-    <div className="w-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+    <div
+      className={`relative w-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition-all duration-300 ${
+        !isStudioAndPackageSelected
+          ? "pointer-events-none opacity-60 backdrop-blur-sm"
+          : ""
+      }`}
+    >
+      {/* Overlay when no studio selected */}
+      {!isStudioAndPackageSelected && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/50 backdrop-blur-md">
+          <p className="text-xl font-medium text-zinc-600">
+            Please select a studio and package first
+          </p>
+        </div>
+      )}
+
       {/* Duration Selector */}
       <div className="mb-5 flex flex-col items-center justify-between gap-3 md:flex-row">
         <p className="text-sm font-medium text-gray-700">Session duration (hours)</p>
@@ -66,17 +86,21 @@ export default function TimeCalendar({
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleDecrement}
-            className="flex h-10 w-10 items-center justify-center border-r border-gray-200 bg-gray-100 text-gray-700 transition hover:bg-gray-200"
+            disabled={!isStudioAndPackageSelected}
+            className="flex h-10 w-10 items-center justify-center border-r border-gray-200 bg-gray-100 text-gray-700 transition hover:bg-gray-200 disabled:opacity-40"
           >
             <i className="fa-solid fa-minus"></i>
           </motion.button>
+
           <div className="flex h-10 w-16 items-center justify-center bg-white text-center text-base font-semibold text-gray-800">
             {currentDuration}
           </div>
+
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleIncrement}
-            className="flex h-10 w-10 items-center justify-center border-l border-gray-200 bg-gray-100 text-gray-700 transition hover:bg-gray-200"
+            disabled={!isStudioAndPackageSelected}
+            className="flex h-10 w-10 items-center justify-center border-l border-gray-200 bg-gray-100 text-gray-700 transition hover:bg-gray-200 disabled:opacity-40"
           >
             <i className="fa-solid fa-plus"></i>
           </motion.button>

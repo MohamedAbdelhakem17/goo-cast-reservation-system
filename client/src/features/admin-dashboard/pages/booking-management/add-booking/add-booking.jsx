@@ -13,7 +13,7 @@ import {
 import { useGetAvailableSlots } from "@/apis/public/booking.api";
 import useAdminCreateBooking from "./_hook/use-admin-create-booking";
 import PaymentOptions from "../../../../booking/_components/steps/personal-information/_components/payment-way";
-import BookingInput from "../../../../booking/_components/booking-input";
+import { BookingInput } from "@/components/booking";
 
 const motionProps = {
   initial: { opacity: 0, x: -10 },
@@ -63,6 +63,7 @@ export default function AddBooking() {
         <AdminSelectPackage
           selectPackage={setFieldValue}
           selectedPackage={values?.selectedPackage.id}
+          formik={formik}
         />
 
         {/* Select Studio */}
@@ -108,7 +109,7 @@ export default function AddBooking() {
           </h3>
 
           {/* Form */}
-          <div className="w-full rounded-md border-1 border-gray-100 py-5 shadow-sm">
+          <div className="w-full space-y-4 rounded-md border-1 border-gray-100 bg-white p-5 shadow-sm">
             <motion.div
               {...motionProps}
               className="b-0 m-0 flex w-full flex-col gap-4 lg:flex-row"
@@ -215,6 +216,7 @@ export default function AddBooking() {
             </motion.div>
           </div>
         </div>
+
         <PaymentOptions setBookingField={setFieldValue} showInfo={false} />
 
         {/* Cart */}

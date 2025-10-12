@@ -1,15 +1,17 @@
-import React from "react";
-import { StudioSection } from "../../../../../booking/_components/cart/_components/cart-studio-section";
-import { PackageSection } from "../../../../../booking/_components/cart/_components/cart-package-section";
-import { AddOnsSection } from "../../../../../booking/_components/cart/_components/cart-addons-section";
+import {
+  PackageSection,
+  AddOnsSection,
+  StudioSection,
+  ApplyDiscount,
+} from "@/components/booking";
+
 import useDataFormat from "@/hooks/useDateFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
 import useNumberFormat from "@/hooks/use-number-format";
 import useLocalization from "@/context/localization-provider/localization-context";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { ShoppingCart } from "lucide-react";
-import useCartCalculations from "../../../../../booking/_components/cart/_hooks/use-cart-calculations";
-import ApplyDiscount from "./../../../../../booking/_components/cart/_components/apply-discount";
+import useCartCalculations from "@/hooks/use-cart-calculations";
 
 export default function AdminBookingCart({ data, setFieldValue, getFieldValue }) {
   // Localization

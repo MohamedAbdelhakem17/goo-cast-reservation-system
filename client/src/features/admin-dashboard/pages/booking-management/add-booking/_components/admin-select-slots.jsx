@@ -1,6 +1,7 @@
-import { SlotButton, Loading } from "@/components/common";
+import { Loading, EmptyState } from "@/components/common";
+import { SlotButton } from "@/components/booking";
 import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots";
-import { Clock } from "lucide-react";
+import { Clock, TimerOff } from "lucide-react";
 
 export default function AdminSelectSlots({ setFieldValue, values, isPending, slots }) {
   // Functions
@@ -26,6 +27,12 @@ export default function AdminSelectSlots({ setFieldValue, values, isPending, slo
     return null;
   }
 
+  // not have available slots
+  if (slots?.data.length === 0) {
+    return (
+      <EmptyState message="don't have available time for this date" Icon={TimerOff} />
+    );
+  }
   return (
     <>
       {/* Title */}

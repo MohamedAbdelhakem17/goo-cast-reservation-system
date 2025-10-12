@@ -1,10 +1,6 @@
 import { memo } from "react";
 
-export const AddOnsSection = memo(function AddOnsSection({
-  selectedAddOns,
-  priceFormat,
-  lng,
-}) {
+const AddOnsSection = memo(function AddOnsSection({ selectedAddOns, priceFormat, lng }) {
   if (!selectedAddOns || selectedAddOns.length === 0) return null;
 
   return (
@@ -20,3 +16,5 @@ export const AddOnsSection = memo(function AddOnsSection({
     </ul>
   );
 });
+
+export default AddOnsSection;

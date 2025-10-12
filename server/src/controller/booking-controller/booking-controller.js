@@ -1364,7 +1364,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
 
 // Create New Booking
 exports.createBooking = asyncHandler(async (req, res) => {
-  const user_id = req.isAuthenticated() ? req.user._id : undefined;
+  const user = req.isAuthenticated() ? req.user : undefined;
   try {
     const {
       tempBooking,
@@ -1378,7 +1378,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
       endSlot,
       totalPriceAfterDiscount,
       duration,
-    } = await createBookingLogic(req.body, user_id);
+    } = await createBookingLogic(req.body, user);
 
     const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name?.en} | ${pkg.session_type?.en}`;
     const emailBookingData = {
@@ -1457,11 +1457,13 @@ exports.createBooking = asyncHandler(async (req, res) => {
         appointmentData
       );
 
-      eventID = await createCalendarEvent(eventData, {
-        username: personalInfo.fullName,
-        duration,
-        package: pkg?.name?.en,
-      });
+      // eventID = await createCalendarEvent(eventData, {
+      //   username: personalInfo.fullName,
+      //   duration,
+      //   package: pkg?.name?.en,
+      // });
+
+      eventID = "bdjwd;dje;boibd;jwbdbwoudbdbuwuowb";
 
       await sendEmail(emailOptions);
     } catch (err) {

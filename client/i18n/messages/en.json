@@ -188,7 +188,6 @@
   "time-0": "Time",
   "persons": "Persons",
   "phone": "Phone",
-  "brand": "Brand",
   "total-package-price": "Total Package Price",
   "total-add-ons": "Total Add-ons",
   "payment-summary": "Payment Summary",
@@ -440,5 +439,6 @@
   "add-new-admin": "Add new admin",
   "create-new-booking": "Create New Booking",
   "update-booking-data": "Update Booking Data",
-  "select-package": "Select Package"
+  "select-package": "Select Package",
+  "comment": "addational comments"
 }

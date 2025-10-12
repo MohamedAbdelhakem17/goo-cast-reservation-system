@@ -8,7 +8,6 @@ export const useGetFullyBookedDates = (duration) => {
     queryFn: async () => {
       const { data } = await axiosInstance(`/bookings/fully-booked?duration=${duration}`);
 
-      console.log(data);
       return data;
     },
 

@@ -166,7 +166,7 @@ bookingSchema.pre(/^find/, function (next) {
     },
     {
       path: "createdBy",
-      select: "fullName email",
+      select: "fullName",
     },
   ]);
   next();

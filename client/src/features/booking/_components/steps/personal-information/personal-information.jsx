@@ -1,9 +1,9 @@
 import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import BookingInput from "../../booking-input";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import Cart from "@/features/booking/_components/cart/cart";
 
+import { BookingInput } from "@/components/booking";
 import PaymentOptions from "./_components/payment-way";
 import { BookingLabel } from "@/features/booking/_components";
 import { Loader } from "lucide-react";

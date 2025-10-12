@@ -7,12 +7,13 @@ const AppError = require("../../utils/app-error");
 const {
   HTTP_STATUS_TEXT,
   PAYMENT_METHOD,
+  USER_ROLE,
 } = require("../../config/system-variables");
 
 const { calculateSlotPrices } = require("../../utils/priceCalculator");
 const { getAllDay, timeToMinutes } = require("../../utils/time-mange");
 
-const createBookingLogic = async (body, user_id) => {
+const createBookingLogic = async (body, user) => {
   const {
     studio: studioId,
     date,
@@ -142,6 +143,9 @@ const createBookingLogic = async (body, user_id) => {
   if (paymentMethod && !Object.values(PAYMENT_METHOD).includes(paymentMethod))
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid payment method");
 
+  const isGuest = user?._id.role === USER_ROLE.ADMIN ? false : !user?._id;
+  const Admin = user?._id.role === USER_ROLE.ADMIN ? user?._id : null;
+
   const bookingData = {
     studio: studio._id,
     date: bookingDate,
@@ -159,8 +163,8 @@ const createBookingLogic = async (body, user_id) => {
     totalPrice,
     totalPriceAfterDiscount,
     status: "pending",
-    createdBy: user_id,
-    isGuest: !user_id,
+    createdBy: Admin,
+    isGuest: isGuest,
     paymentMethod: paymentMethod || PAYMENT_METHOD.CASH,
   };
 

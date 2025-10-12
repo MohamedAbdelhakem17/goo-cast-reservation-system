@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-export const PackageSection = memo(function PackageSection({
+const PackageSection = memo(function PackageSection({
   selectedPackage,
   duration,
   priceFormat,
@@ -17,3 +17,5 @@ export const PackageSection = memo(function PackageSection({
     </div>
   );
 });
+
+export default PackageSection;

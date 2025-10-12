@@ -126,7 +126,7 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
                 <Field label={t("phone")} value={selectedBooking?.personalInfo?.phone} />
                 {selectedBooking?.personalInfo?.brand && (
                   <Field
-                    label={t("brand")}
+                    label={t("comment")}
                     value={selectedBooking?.personalInfo?.brand}
                   />
                 )}

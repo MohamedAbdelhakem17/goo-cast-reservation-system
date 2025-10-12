@@ -37,6 +37,7 @@ export default function AddOns() {
 
   // Hooks
   const { bookingData, setBookingField } = useBooking();
+
   const { handleIncrement, handleDecrement, handleRemove, getQuantity } =
     useAddOnsManager({
       bookingData,
