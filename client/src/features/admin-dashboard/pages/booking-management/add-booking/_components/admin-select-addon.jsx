@@ -53,6 +53,18 @@ export default function AdminSelectAddon({ bookingData, setBookingField }) {
 
               {/* Quantity Selector */}
               <div className="mt-5 flex items-center justify-between gap-x-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm transition hover:shadow-md">
+                {/* Remove Button */}
+                {quantity > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(_id)}
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500 text-white transition hover:bg-red-600 active:scale-95"
+                    title="Remove item"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </button>
+                )}
+
                 {/* Counter Section */}
                 <div className="flex flex-1 items-center justify-between gap-3">
                   {/* Decrement */}
@@ -78,18 +90,6 @@ export default function AdminSelectAddon({ bookingData, setBookingField }) {
                     +
                   </button>
                 </div>
-
-                {/* Remove Button */}
-                {quantity > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemove(_id)}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500 text-white transition hover:bg-red-600 active:scale-95"
-                    title="Remove item"
-                  >
-                    <Trash className="h-4 w-4" />
-                  </button>
-                )}
               </div>
 
               {/* Decorative Bottom Bar */}

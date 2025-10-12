@@ -16,6 +16,7 @@ export default function AdminSelectPackage({ selectPackage, selectedPackage }) {
 
   // function
   const handleSelectPackage = ({ _id, name, price }) => {
+    selectPackage("totalPackagePrice", price);
     selectPackage("selectedPackage", {
       id: _id,
       name,

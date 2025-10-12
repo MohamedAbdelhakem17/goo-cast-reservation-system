@@ -13,7 +13,7 @@ export default function useAdminCreateBooking() {
   const { t } = useLocalization();
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const { createBooking } = useCreateBooking();
+  const { createBooking, isPending } = useCreateBooking();
 
   const parsedData = useMemo(() => {
     try {
@@ -37,14 +37,14 @@ export default function useAdminCreateBooking() {
           totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
           personalInfo: {
             ...values.personalInfo,
-            fullName: `${values.personalInfo.firstName} ${values.personalInfo.lastName}`,
+            fullName: `${values.personalInfo.firstName}${values.personalInfo.lastName}`,
           },
         };
 
         await createBooking(payload, {
           onSuccess: (res) => {
-            addToast(res.message || "Booking submitted successfully", "success", 500);
-            setTimeout(() => navigate("/admin-dashboard/booking/"), 900);
+            addToast(res.message || "Booking submitted successfully", "success", 1000);
+            setTimeout(() => navigate("/admin-dashboard/booking/"), 1200);
           },
           onError: (err) => {
             addToast(err.response?.data?.message || "Something went wrong", "error");
@@ -68,11 +68,18 @@ export default function useAdminCreateBooking() {
     enableReinitialize: true,
   });
 
+  const getFieldValue = (field) => {
+    const keys = field?.split(".");
+    return keys.reduce((acc, key) => (acc ? acc[key] : undefined), formik.values);
+  };
+
   return {
     formik,
     values: formik.values,
     errors: formik.errors,
     setFieldValue: formik.setFieldValue,
+    getFieldValue: getFieldValue,
     handleSubmit: formik.handleSubmit,
+    isPending,
   };
 }

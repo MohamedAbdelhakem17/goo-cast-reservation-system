@@ -176,7 +176,7 @@ export default function PersonalInformation() {
               <i className="fa-solid fa-credit-card mr-3"></i>
               {t("payment-method")}
             </h3>
-            <PaymentOptions />
+            <PaymentOptions setBookingField={setBookingField} />
 
             {/* Action Buttons */}
             <div className="mt-3 flex flex-col items-center gap-4 px-5 md:flex-row">

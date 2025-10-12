@@ -7,24 +7,20 @@ import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots";
 import { SlotButton } from "@/components/common";
 import { tracking } from "@/utils/gtm";
 import useLocalization from "@/context/localization-provider/localization-context";
+import useDataFormat from "@/hooks/useDateFormat";
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
   //  Localization
-  const { t, lng } = useLocalization();
+  const { t } = useLocalization();
 
+  // State
   const [selectedTime, setSelectedTime] = useState(null);
+
+  // Hooks
   const { handleNextStep, bookingData, setBookingField, currentStep } = useBooking();
+  const formattedDate = useDataFormat();
 
-  const formattedDate = useMemo(() => {
-    if (!bookingData?.date) return "";
-    return new Date(bookingData.date).toLocaleDateString(`${lng}-EG`, {
-      weekday: "long",
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  }, [bookingData?.date]);
-
+  // Functions
   const handleTimeSelect = useCallback(
     (time) => {
       setSelectedTime(time);

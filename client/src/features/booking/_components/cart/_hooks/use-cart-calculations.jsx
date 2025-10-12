@@ -1,24 +1,21 @@
 import { useEffect, useMemo } from "react";
-import { useBooking } from "@/context/Booking-Context/BookingContext";
 
-export default function useCartCalculations() {
-  const { bookingData, setBookingField } = useBooking();
-
+export default function useCartCalculations({ bookingData, setBookingField }) {
   const { totalAddOnPrice, subtotal, discountAmount, totalAfterDiscount } =
     useMemo(() => {
       const addOnPrice =
-        bookingData.selectedAddOns?.reduce(
+        bookingData?.selectedAddOns?.reduce(
           (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
           0,
         ) || 0;
 
-      const sub = bookingData.totalPackagePrice + addOnPrice;
-
-      const discount = bookingData.discount
-        ? (bookingData.totalPackagePrice * bookingData.discount) / 100
+      const basePrice = bookingData?.totalPackagePrice || 0;
+      const discount = bookingData?.discount
+        ? (basePrice * bookingData.discount) / 100
         : 0;
 
-      const total = bookingData.totalPackagePrice - discount + addOnPrice;
+      const sub = basePrice + addOnPrice;
+      const total = basePrice - discount + addOnPrice;
 
       return {
         totalAddOnPrice: addOnPrice,
@@ -26,15 +23,18 @@ export default function useCartCalculations() {
         discountAmount: discount,
         totalAfterDiscount: total,
       };
-    }, [bookingData]);
+    }, [
+      bookingData?.totalPackagePrice,
+      bookingData?.discount,
+      bookingData?.selectedAddOns,
+    ]);
 
   useEffect(() => {
     setBookingField("totalPrice", subtotal);
     setBookingField("totalPriceAfterDiscount", totalAfterDiscount);
-  }, [subtotal, totalAfterDiscount]);
+  }, [subtotal, totalAfterDiscount, setBookingField]);
 
   return {
-    bookingData,
     totalAddOnPrice,
     subtotal,
     discountAmount,

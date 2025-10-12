@@ -3,15 +3,12 @@ import { Banknote } from "lucide-react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
 
-export default function PaymentOptions() {
+export default function PaymentOptions({ setBookingField, showInfo = true }) {
   // Localization
   const { t } = useLocalization();
 
   //   State
   const [selected, setSelected] = useState("CASH");
-
-  //   Hooks
-  const { setBookingField } = useBooking();
 
   //   VAriables
   const paymentMethods = [
@@ -80,7 +77,7 @@ export default function PaymentOptions() {
         </div>
       )}
 
-      {selected === "CASH" && (
+      {selected === "CASH" && showInfo && (
         <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
           <div className="flex items-start">
             <div className="me-2 text-amber-600">ℹ️</div>

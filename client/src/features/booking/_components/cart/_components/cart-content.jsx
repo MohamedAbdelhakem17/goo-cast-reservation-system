@@ -16,10 +16,20 @@ export default function CartContent() {
   const { t, lng } = useLocalization();
 
   // Hooks
-  const { bookingData, subtotal, discountAmount, totalAfterDiscount } =
-    useCartCalculations();
+  const {
+    handleNextStep,
+    handlePrevStep,
+    currentStep,
+    hasError,
+    bookingData,
+    getBookingField,
+    setBookingField,
+  } = useBooking();
 
-  const { handleNextStep, handlePrevStep, currentStep, hasError } = useBooking();
+  const { subtotal, discountAmount, totalAfterDiscount } = useCartCalculations({
+    bookingData,
+    setBookingField,
+  });
 
   const formatTime = useTimeConvert();
   const priceFormat = usePriceFormat();
@@ -81,7 +91,10 @@ export default function CartContent() {
       </div>
 
       {/* Add discount */}
-      <ApplyDiscount />
+      <ApplyDiscount
+        getBookingField={getBookingField}
+        setBookingField={setBookingField}
+      />
 
       {/* Actions  in select additional serves*/}
       {currentStep === 4 && (
