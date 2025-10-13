@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useEffect } from "react";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useNavigate } from "react-router-dom";
 import { useCreateBooking } from "@/apis/public/booking.api";
@@ -9,7 +9,7 @@ import {
 } from "@/utils/schemas/booking.schema";
 import { useFormik } from "formik";
 
-export default function useAdminCreateBooking() {
+export default function useAdminCreateBooking({ data }) {
   const { t } = useLocalization();
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -59,7 +59,10 @@ export default function useAdminCreateBooking() {
     [createBooking, addToast, navigate],
   );
 
-  const initialValues = useMemo(() => getBookingInitialValues(parsedData), [parsedData]);
+  const initialValues = useMemo(
+    () => getBookingInitialValues(data ? data : parsedData),
+    [parsedData, data],
+  );
 
   const formik = useFormik({
     initialValues,
@@ -72,6 +75,14 @@ export default function useAdminCreateBooking() {
     const keys = field?.split(".");
     return keys.reduce((acc, key) => (acc ? acc[key] : undefined), formik.values);
   };
+
+  useEffect(() => {
+    if (data) {
+      Object.keys(initialValues).forEach((key) => {
+        formik.setFieldTouched(key, true, false);
+      });
+    }
+  }, [data]);
 
   return {
     formik,

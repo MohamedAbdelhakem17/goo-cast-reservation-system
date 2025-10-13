@@ -39,6 +39,10 @@ router
   .put(allowTo(USER_ROLE.ADMIN), bookingController.changeBookingStatus);
 
 router
+  .route("/:id")
+  .get(allowTo(USER_ROLE.ADMIN), bookingController.getSingleBooking);
+
+router
   .route("/user-bookings")
   .get(allowTo(USER_ROLE.USER), bookingController.getUserBookings);
 

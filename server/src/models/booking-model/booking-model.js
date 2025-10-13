@@ -154,7 +154,7 @@ bookingSchema.pre(/^find/, function (next) {
   this.populate([
     {
       path: "studio",
-      select: "name thumbnail address",
+      select: "name thumbnail address basePricePerSlot",
     },
     {
       path: "package",
