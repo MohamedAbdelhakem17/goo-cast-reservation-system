@@ -158,7 +158,7 @@ bookingSchema.pre(/^find/, function (next) {
     },
     {
       path: "package",
-      select: "name",
+      select: "name price",
     },
     {
       path: "addOns.item",

@@ -6,9 +6,10 @@ import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { CheckCheck, Expand, X } from "lucide-react";
+import { CheckCheck, Expand, SquarePen, X } from "lucide-react";
 import useLocalization from "@/context/localization-provider/localization-context";
 import usePriceFormat from "@/hooks/usePriceFormat";
+import { Link } from "react-router-dom";
 
 function BookingAction({
   isPending,
@@ -35,6 +36,13 @@ function BookingAction({
           >
             {isDesktop ? t("reject") : <X />}
           </button>
+
+          <Link
+            to={`add?edit=${booking._id}`}
+            className="text-sm text-sky-900 hover:text-sky-500 disabled:opacity-50"
+          >
+            {isDesktop ? t("edit-booking") : <SquarePen />}
+          </Link>
         </>
       )}
 

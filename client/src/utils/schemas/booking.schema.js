@@ -1,20 +1,18 @@
 import * as Yup from "yup";
 import { DateTime } from "luxon";
 
-export const getBookingInitialValues = (parsedData = null) => {
-  if (parsedData) return parsedData;
-
-  const handelStartDate = () => {
+export const getBookingInitialValues = (data = null) => {
+  //  get start date
+  const getDefaultDate = () => {
     let date = DateTime.now().setZone("Africa/Cairo");
-    if (date.hour > 18) {
-      date = date.plus({ days: 1 });
-    }
+    if (date.hour > 18) date = date.plus({ days: 1 });
     return date.toISO();
   };
 
-  return {
+  //  Default form structure
+  const defaultValues = {
     studio: { id: null, name: "", image: "", price: 0 },
-    date: handelStartDate(),
+    date: getDefaultDate(),
     startSlot: null,
     endSlot: null,
     duration: 1,
@@ -34,6 +32,55 @@ export const getBookingInitialValues = (parsedData = null) => {
     couponCode: "",
     discount: "",
     paymentMethod: "CASH",
+  };
+
+  //  No data → return defaults
+  if (!data) return defaultValues;
+
+  //  Data already matches form structure → return as is
+  const isFormSchema =
+    data?.studio?.id !== undefined && data?.personalInfo?.firstName !== undefined;
+
+  if (isFormSchema) return data;
+
+  //  Data from backend → map it to form structure
+  const booking = data;
+  const [firstName, ...lastNameParts] = booking.personalInfo?.fullName?.split(" ") || [];
+
+  return {
+    ...defaultValues,
+    studio: {
+      id: booking.studio?._id || booking.studio?.id || null,
+      name: booking.studio?.name || {},
+      image: booking.studio?.thumbnail || "",
+      price: booking.studio?.basePricePerSlot || 0,
+    },
+    date: booking.date ? new Date(booking.date) : getDefaultDate(),
+    startSlot: booking.startSlot || null,
+    endSlot: booking.endSlot || null,
+    duration: booking.duration || 1,
+    persons: booking.persons || 1,
+    selectedPackage: booking.package || {},
+    selectedAddOns:
+      booking.addOns?.map((a) => ({
+        id: a.item?._id || "",
+        name: a.item?.name || {},
+        price: a.price || 0,
+        quantity: a.quantity || 1,
+      })) || [],
+    personalInfo: {
+      firstName: firstName || "",
+      lastName: lastNameParts.join(" ") || "",
+      phone: booking.personalInfo?.phone || "",
+      email: booking.personalInfo?.email || "",
+      brand: booking.personalInfo?.brand || "",
+    },
+    totalPackagePrice: booking.totalPackagePrice || 0,
+    totalPrice: booking.totalPrice || 0,
+    totalPriceAfterDiscount: booking.totalPriceAfterDiscount || 0,
+    couponCode: booking.coupon_code || booking.couponCode || "",
+    discount: booking.discount || "",
+    paymentMethod: booking.paymentMethod || "CASH",
   };
 };
 

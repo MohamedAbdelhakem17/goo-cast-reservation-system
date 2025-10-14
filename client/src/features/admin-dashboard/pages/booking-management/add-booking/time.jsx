@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useCalendar } from "../../../../../features/booking/_components/steps/select-date-time/_hooks/useCalendar";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function TimeCalendar({
   duration,
@@ -8,6 +9,10 @@ export default function TimeCalendar({
   bookingData,
   setFieldValue,
 }) {
+  // Localization
+  const { t } = useLocalization();
+
+  // Hooks
   const {
     calendarDays,
     currentDate,
@@ -26,6 +31,7 @@ export default function TimeCalendar({
     bookingData?.studio?.id && bookingData?.selectedPackage?.id,
   );
 
+  // Functions
   const handleIncrement = () => {
     const newValue = Math.min(10, currentDuration + 1);
     const totalPricePackage = newValue * +bookingData.totalPackagePrice;
@@ -53,15 +59,37 @@ export default function TimeCalendar({
     );
     setSelectedDate(date);
     setFieldValue("date", date);
-    if (onDateSelect)
-      onDateSelect({
-        studioId: bookingData?.studio?.id,
-        date: selectedDate || currentDate,
-        duration: currentDuration,
-      });
+    onDateSelect({
+      studioId: bookingData?.studio?.id,
+      date: date || currentDate,
+      duration: currentDuration,
+    });
     setFieldValue("startSlot", null);
   };
 
+  useEffect(() => {
+    if (
+      bookingData?.date && // فيه تاريخ محفوظ (يعنى edit mode)
+      bookingData?.studio?.id &&
+      bookingData?.selectedPackage?.id &&
+      duration // فيه مدة
+    ) {
+      // نحول التاريخ من string إلى Date لو جاى من السيرفر
+      const parsedDate = new Date(bookingData.date);
+
+      // ننادى onDateSelect بنفس الطريقة اللى بتستخدمها handleDateClick
+      onDateSelect({
+        studioId: bookingData?.studio?.id,
+        date: parsedDate,
+        duration,
+      });
+    }
+  }, [
+    bookingData?.date,
+    bookingData?.studio?.id,
+    bookingData?.selectedPackage?.id,
+    duration,
+  ]);
   return (
     <div
       className={`relative w-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition-all duration-300 ${
@@ -74,15 +102,19 @@ export default function TimeCalendar({
       {!isStudioAndPackageSelected && (
         <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/50 backdrop-blur-md">
           <p className="text-xl font-medium text-zinc-600">
-            Please select a studio and package first
+            {t("please-select-a-studio-and-package-first")}
           </p>
         </div>
       )}
 
       {/* Duration Selector */}
       <div className="mb-5 flex flex-col items-center justify-between gap-3 md:flex-row">
-        <p className="text-sm font-medium text-gray-700">Session duration (hours)</p>
+        {/* Title */}
+        <p className="text-sm font-medium text-gray-700">{t("session-duration-hours")}</p>
+
+        {/* Duration controller container */}
         <div className="flex items-center overflow-hidden rounded-xl border border-gray-300 bg-gray-50 shadow-sm">
+          {/* Decrement duration button*/}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleDecrement}
@@ -92,10 +124,12 @@ export default function TimeCalendar({
             <i className="fa-solid fa-minus"></i>
           </motion.button>
 
+          {/* Duration value */}
           <div className="flex h-10 w-16 items-center justify-center bg-white text-center text-base font-semibold text-gray-800">
             {currentDuration}
           </div>
 
+          {/* Increment duration button*/}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleIncrement}
@@ -109,15 +143,17 @@ export default function TimeCalendar({
 
       {/* Calendar Container */}
       <div className="relative min-h-[350px]">
+        {/* Loading calendar stat */}
         {isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-gray-50">
             <i className="fa-solid fa-spinner fa-spin text-main mb-2 text-2xl"></i>
-            <p className="text-sm text-gray-500">Loading calendar...</p>
+            <p className="text-sm text-gray-500">{t("loading-calendar")}</p>
           </div>
         ) : (
           <>
             {/* Calendar Header */}
             <div className="mb-4 flex items-center justify-between">
+              {/* Previous month button*/}
               <button
                 disabled={isPrevDisabled}
                 onClick={() => navigateMonth("prev")}
@@ -128,10 +164,12 @@ export default function TimeCalendar({
                 <i className="fa-solid fa-chevron-left"></i>
               </button>
 
+              {/* Date */}
               <h2 className="text-lg font-semibold text-gray-800">
                 {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
               </h2>
 
+              {/* Next month button */}
               <button
                 onClick={() => navigateMonth("next")}
                 className="rounded-lg px-3 py-1 text-gray-600 transition hover:bg-gray-100"
@@ -154,6 +192,7 @@ export default function TimeCalendar({
               layout
               className="mt-2 grid grid-cols-7 gap-1 text-center text-sm"
             >
+              {/* Days */}
               {calendarDays.map((day, index) => (
                 <motion.div
                   key={index}
@@ -179,13 +218,14 @@ export default function TimeCalendar({
             {/* Legend */}
             <div className="mt-5 flex flex-wrap justify-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1">
-                <div className="bg-main h-3 w-3 rounded"></div> Selected
+                <div className="bg-main h-3 w-3 rounded"></div> {t("selected")}
               </div>
               <div className="flex items-center gap-1">
-                <div className="border-main h-3 w-3 rounded border-2"></div> Today
+                <div className="border-main h-3 w-3 rounded border-2"></div> {t("today")}
               </div>
               <div className="flex items-center gap-1">
-                <div className="h-3 w-3 rounded bg-gray-200"></div> Booked/Unavailable
+                <div className="h-3 w-3 rounded bg-gray-200"></div>
+                {t("booked-unavailable")}
               </div>
             </div>
           </>

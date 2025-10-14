@@ -440,5 +440,14 @@
   "create-new-booking": "Create New Booking",
   "update-booking-data": "Update Booking Data",
   "select-package": "Select Package",
-  "comment": "addational comments"
+  "comment": "addational comments",
+  "please-select-a-studio-and-package-first": "Please select a studio and package first",
+  "loading-calendar": "Loading calendar...",
+  "today": "Today",
+  "booked-unavailable": "Booked/Unavailable",
+  "creating-booking": "Creating Booking ...",
+  "create-booking": "Create Booking",
+  "updata-booking": "Updata Booking",
+  "edit-booking": "Edit Booking",
+  "session-duration-hours": "Session duration (hours)"
 }

@@ -71,8 +71,10 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
 
   // 💰 Revenue
   const totalRevenueResult = await BookingModel.aggregate([
+    { $match: { status: "approved" } },
     { $group: { _id: null, total: { $sum: "$totalPriceAfterDiscount" } } },
   ]);
+
   const totalRevenue = totalRevenueResult[0]?.total || 0;
 
   const prevRevenueResult = await BookingModel.aggregate([

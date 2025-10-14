@@ -40,7 +40,8 @@ router
 
 router
   .route("/:id")
-  .get(allowTo(USER_ROLE.ADMIN), bookingController.getSingleBooking);
+  .get(allowTo(USER_ROLE.ADMIN), bookingController.getSingleBooking)
+  .put(allowTo(USER_ROLE.ADMIN), bookingController.updateBooking);
 
 router
   .route("/user-bookings")

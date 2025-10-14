@@ -1,20 +1,21 @@
-const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
-const BookingModel = require("../../models/booking-model/booking-model");
-const StudioModel = require("../../models/studio-model/studio-model");
-const AddOnModel = require("../../models/add-on-model/add-on-model");
+const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model.js");
+const BookingModel = require("../../models/booking-model/booking-model.js");
+const StudioModel = require("../../models/studio-model/studio-model.js");
+const AddOnModel = require("../../models/add-on-model/add-on-model.js");
 const CouponModel = require("../../models/coupon-model/coupon-model.js");
-const AppError = require("../../utils/app-error");
+const AppError = require("../../utils/app-error.js");
 const {
   HTTP_STATUS_TEXT,
   PAYMENT_METHOD,
   USER_ROLE,
-} = require("../../config/system-variables");
+} = require("../../config/system-variables.js");
 
-const { calculateSlotPrices } = require("../../utils/priceCalculator");
-const { getAllDay, timeToMinutes } = require("../../utils/time-mange");
+const { calculateSlotPrices } = require("../../utils/priceCalculator.js");
+const { getAllDay, timeToMinutes } = require("../../utils/time-mange.js");
 
-const createBookingLogic = async (body, user) => {
+const prepareBookingData = async (body, user, isEdit = false) => {
   const {
+    bookingId,
     studio: studioId,
     date,
     startSlot,
@@ -30,10 +31,12 @@ const createBookingLogic = async (body, user) => {
     paymentMethod,
   } = body;
 
+  // Parse booking date and time
   const bookingDate = new Date(date);
   const startSlotMinutes = timeToMinutes(startSlot);
   const endSlotMinutes = timeToMinutes(endSlot);
 
+  // 1. Validate Studio
   const studio = await StudioModel.findById(studioId?.id || studioId);
   if (!studio)
     throw new AppError(
@@ -42,6 +45,7 @@ const createBookingLogic = async (body, user) => {
       "Studio not found for booking"
     );
 
+  // 2. Validate Package
   const pkg = await PackageModel.findById(
     selectedPackage?.id || selectedPackage
   );
@@ -52,13 +56,21 @@ const createBookingLogic = async (body, user) => {
       "Package not found for booking"
     );
 
+  // 3. Check for booking conflicts (skip self if editing)
   const { startOfDay, endOfDay } = getAllDay(bookingDate);
-  const conflictBooking = await BookingModel.exists({
+  const conflictQuery = {
     studio: studio._id,
     date: { $gte: startOfDay, $lt: endOfDay },
     startSlotMinutes: { $lt: endSlotMinutes },
     endSlotMinutes: { $gt: startSlotMinutes },
-  });
+  };
+
+  if (isEdit && bookingId) {
+    conflictQuery._id = { $ne: bookingId };
+  }
+
+  const conflictBooking = await BookingModel.exists(conflictQuery);
+
   if (conflictBooking)
     throw new AppError(
       400,
@@ -66,6 +78,7 @@ const createBookingLogic = async (body, user) => {
       "This time is already booked"
     );
 
+  // 4. Calculate package price
   const slotPrices = await calculateSlotPrices({
     package: pkg,
     date: bookingDate,
@@ -74,8 +87,10 @@ const createBookingLogic = async (body, user) => {
     duration,
     bookedSlots: [],
   });
+
   const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
 
+  // 5. Validate and calculate Add-ons
   const addonsTotalPriceFromClient =
     selectedAddOns?.reduce(
       (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
@@ -85,10 +100,11 @@ const createBookingLogic = async (body, user) => {
   let totalAddOnsPriceFromDb = 0;
   const addOnDetails = [];
 
-  if (Array.isArray(selectedAddOns)) {
+  if (Array.isArray(selectedAddOns) && selectedAddOns.length > 0) {
     const addOnDocs = await Promise.all(
       selectedAddOns.map((a) => AddOnModel.findById(a._id))
     );
+
     for (let i = 0; i < selectedAddOns.length; i++) {
       const dbAddOn = addOnDocs[i];
       const clientAddOn = selectedAddOns[i];
@@ -96,6 +112,7 @@ const createBookingLogic = async (body, user) => {
 
       const addOnPrice = dbAddOn.price * clientAddOn.quantity;
       totalAddOnsPriceFromDb += addOnPrice;
+
       addOnDetails.push({
         item: dbAddOn._id,
         quantity: clientAddOn.quantity,
@@ -111,20 +128,21 @@ const createBookingLogic = async (body, user) => {
       "The add-on price is incorrect"
     );
 
+  // 6. Validate total price
   const totalPrice = Math.round(packagePrice + totalAddOnsPriceFromDb);
 
-  if (totalPrice !== totalPriceFromClient)
+  if (!isEdit && totalPrice !== totalPriceFromClient)
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
       "The total price is incorrect"
     );
 
+  // 7. Apply coupon if available
   const coupon = await CouponModel.findOne({ code: coupon_code });
   if (!coupon && coupon_code)
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Coupon not found");
 
-  // Apply discount on package only
   const totalPriceAfterDiscount = coupon?.discount
     ? Math.round(
         packagePrice -
@@ -133,19 +151,23 @@ const createBookingLogic = async (body, user) => {
       )
     : totalPrice;
 
-  if (totalPriceAfterDiscount !== totalPriceAfterDiscountFromClient)
+  if (!isEdit && totalPriceAfterDiscount !== totalPriceAfterDiscountFromClient)
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
       "The total price after Discount is incorrect"
     );
 
+  // 8. Validate payment method
   if (paymentMethod && !Object.values(PAYMENT_METHOD).includes(paymentMethod))
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid payment method");
 
-  const isGuest = user?._id.role === USER_ROLE.ADMIN ? false : !user?._id;
-  const Admin = user?._id.role === USER_ROLE.ADMIN ? user?._id : null;
+  // 9. Identify user role
+  const isAdmin = user?._id?.role === USER_ROLE.ADMIN;
+  const isGuest = !user?._id;
+  const Admin = isAdmin ? user?._id : null;
 
+  // 10. Prepare booking data
   const bookingData = {
     studio: studio._id,
     date: bookingDate,
@@ -162,16 +184,23 @@ const createBookingLogic = async (body, user) => {
     personalInfo,
     totalPrice,
     totalPriceAfterDiscount,
-    status: "pending",
-    createdBy: Admin,
-    isGuest: isGuest,
     paymentMethod: paymentMethod || PAYMENT_METHOD.CASH,
   };
 
-  const tempBooking = new BookingModel(bookingData);
+  if (!isEdit) {
+    bookingData.status = "pending";
+    bookingData.createdBy = Admin;
+    bookingData.isGuest = isGuest;
+  }
+
+  // 11. Return either new booking or update data
+  const tempBooking = isEdit
+    ? null // In edit mode we don't create a new model
+    : new BookingModel(bookingData);
 
   return {
     tempBooking,
+    bookingData,
     studio,
     pkg,
     addOns: selectedAddOns,
@@ -187,4 +216,4 @@ const createBookingLogic = async (body, user) => {
   };
 };
 
-module.exports = createBookingLogic;
+module.exports = prepareBookingData;

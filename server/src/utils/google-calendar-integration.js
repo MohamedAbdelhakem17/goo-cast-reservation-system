@@ -81,12 +81,13 @@ exports.deleteCalenderEvent = async (eventId) => {
     }
 
     // Delete event from google calendar
-    await calendar.events.delete({
+    const { data } = await calendar.events.delete({
       calendarId: process.env.CALENDAR_ID,
       eventId,
     });
 
     // If delete successfully
+    console.log("delete", data);
     return true;
   } catch (error) {
     console.error("Google Calendar Error (updateEvent):", err.message);

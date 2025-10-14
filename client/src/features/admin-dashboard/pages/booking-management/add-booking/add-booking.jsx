@@ -9,11 +9,12 @@ import {
   AdminSelectSlots,
   AdminBookingCart,
 } from "./_components";
-
 import { useGetAvailableSlots } from "@/apis/public/booking.api";
 import useAdminCreateBooking from "./_hook/use-admin-create-booking";
 import PaymentOptions from "../../../../booking/_components/steps/personal-information/_components/payment-way";
 import { BookingInput } from "@/components/booking";
+import { useGetSingleBooking } from "@/apis/admin/manage-booking.api";
+import { useSearchParams } from "react-router-dom";
 
 const motionProps = {
   initial: { opacity: 0, x: -10 },
@@ -22,29 +23,34 @@ const motionProps = {
 };
 
 export default function AddBooking() {
-  // Localization
   const { t } = useLocalization();
+  const [searchParams] = useSearchParams();
+  const bookingId = searchParams.get("edit");
+  const isEdit = Boolean(bookingId);
 
-  // Mutation
+  // Fetch booking data if in edit mode
+  const { singleBooking, isLoading } = useGetSingleBooking(bookingId);
+
+  // Fetch available slots
   const { getSlots, data: slots, isPending } = useGetAvailableSlots();
 
-  const isEdit = false;
-
-  // Hooks
+  // Custom booking hook (create/update)
   const {
     formik,
     values,
     setFieldValue,
     getFieldValue,
     handleSubmit,
-    isPending: creatingBooking,
-  } = useAdminCreateBooking();
+    isPending: isProcessing,
+  } = useAdminCreateBooking({ data: singleBooking?.data, isEdit, bookingId });
 
+  // Helper to get nested error message
   const getFieldError = (field) => {
     const keys = field?.split(".");
     return keys.reduce((acc, key) => (acc ? acc[key] : undefined), formik.errors);
   };
 
+  // Destructure personal info for cleaner usage
   const { firstName, lastName, phone, email, brand } = values.personalInfo;
 
   return (
@@ -54,33 +60,31 @@ export default function AddBooking() {
       className="ms:p-8 container mx-auto py-2"
     >
       <div className="space-y-5 md:p-1">
-        {/* Header */}
+        {/* Page header */}
         <h2 className="border-main mb-8 rounded-md border-b pb-4 text-center text-3xl font-bold text-gray-800">
           {isEdit ? t("update-booking-data") : t("create-new-booking")}
         </h2>
 
-        {/* Select Package */}
+        {/* Step 1: Select package */}
         <AdminSelectPackage
           selectPackage={setFieldValue}
           selectedPackage={values?.selectedPackage.id}
           formik={formik}
         />
 
-        {/* Select Studio */}
+        {/* Step 2: Select studio */}
         <AdminSelectStudio
           selectStudio={setFieldValue}
           selectedStudio={values?.studio.id}
         />
 
-        {/* Select Date and Time */}
+        {/* Step 3: Select date and time */}
         <div className="space-y-4">
-          {/* Title */}
           <h3 className="flex items-center text-2xl font-bold">
             <Calendar className="text-main me-2" />
             {t("date-and-time")}
           </h3>
 
-          {/* Calender */}
           <TimeCalendar
             duration={values.duration}
             onDateSelect={getSlots}
@@ -89,66 +93,52 @@ export default function AddBooking() {
           />
         </div>
 
-        {/* Select Slots */}
+        {/* Step 4: Choose time slots */}
         <AdminSelectSlots
+          isEdit={isEdit}
           slots={slots}
           isPending={isPending}
           setFieldValue={setFieldValue}
           values={values}
+          currentSlot={singleBooking?.data?.startSlot}
         />
 
-        {/* Select addons */}
+        {/* Step 5: Select add-ons */}
         <AdminSelectAddon bookingData={values} setBookingField={setFieldValue} />
 
-        {/* Payment Info */}
+        {/* Step 6: Personal and payment info */}
         <div className="space-y-4">
-          {/* Title */}
           <h3 className="flex items-center text-2xl font-bold">
             <UserCheck className="text-main me-2" />
             {t("payment-info")}
           </h3>
 
-          {/* Form */}
-          <div className="w-full space-y-4 rounded-md border-1 border-gray-100 bg-white p-5 shadow-sm">
-            <motion.div
-              {...motionProps}
-              className="b-0 m-0 flex w-full flex-col gap-4 lg:flex-row"
-            >
-              {/* First name */}
+          <div className="w-full space-y-4 rounded-md border border-gray-100 bg-white p-5 shadow-sm">
+            {/* Personal Info Inputs */}
+            <motion.div {...motionProps} className="flex flex-col gap-4 lg:flex-row">
+              {/* First Name */}
               <BookingInput
                 className="w-full lg:w-1/2"
-                type="text"
                 id="firstName"
                 label={t("first-name")}
                 placeholder={t("enter-your-first-name")}
                 errors={getFieldError("personalInfo.firstName")}
-                onBlur={(e) => {
-                  formik.handleBlur(e);
-                }}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setFieldValue("personalInfo.firstName", e.target.value);
-                }}
-                touched={formik.touched.firstName}
+                onChange={(e) => setFieldValue("personalInfo.firstName", e.target.value)}
+                onBlur={formik.handleBlur}
+                touched={formik.touched?.personalInfo?.firstName}
                 value={firstName}
               />
 
-              {/* Last name */}
+              {/* Last Name */}
               <BookingInput
                 className="w-full lg:w-1/2"
-                type="text"
                 id="lastName"
                 label={t("last-name")}
                 placeholder={t("enter-your-last-name")}
                 errors={getFieldError("personalInfo.lastName")}
-                onBlur={(e) => {
-                  formik.handleBlur(e);
-                }}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setFieldValue("personalInfo.lastName", e.target.value);
-                }}
-                touched={formik.touched.lastName}
+                onChange={(e) => setFieldValue("personalInfo.lastName", e.target.value)}
+                onBlur={formik.handleBlur}
+                touched={formik.touched?.personalInfo?.lastName}
                 value={lastName}
               />
             </motion.div>
@@ -156,95 +146,75 @@ export default function AddBooking() {
             {/* Email */}
             <motion.div {...motionProps}>
               <BookingInput
-                type="text"
                 id="email"
                 label={t("email")}
                 placeholder={t("enter-your-email")}
                 errors={getFieldError("personalInfo.email")}
-                onBlur={(e) => {
-                  formik.handleBlur(e);
-                }}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setFieldValue("personalInfo.email", e.target.value);
-                }}
-                touched={formik.touched.email}
+                onChange={(e) => setFieldValue("personalInfo.email", e.target.value)}
+                onBlur={formik.handleBlur}
+                touched={formik.touched?.personalInfo?.email}
                 value={email}
               />
             </motion.div>
 
-            {/* Phone number */}
+            {/* Phone */}
             <motion.div {...motionProps}>
               <BookingInput
-                type="text"
-                id="phoneNumber"
-                value={phone}
+                id="phone"
                 label={t("phone-number")}
                 placeholder={t("enter-your-phone-number")}
                 errors={getFieldError("personalInfo.phone")}
-                onBlur={(e) => {
-                  formik.handleBlur(e);
-                }}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setFieldValue("personalInfo.phone", e.target.value);
-                }}
-                touched={formik.touched.phoneNumber}
+                onChange={(e) => setFieldValue("personalInfo.phone", e.target.value)}
+                onBlur={formik.handleBlur}
+                touched={formik.touched?.personalInfo?.phone}
+                value={phone}
               />
             </motion.div>
 
-            {/* Extra comments */}
+            {/* Extra Comments */}
             <motion.div {...motionProps}>
               <BookingInput
-                type="text"
-                id="brandName"
+                id="brand"
                 label={t("special-requests-or-comments")}
-                value={brand}
                 placeholder={t(
                   "any-special-requirements-equipment-needs-or-additional-information",
                 )}
                 errors={getFieldError("personalInfo.brand")}
-                onBlur={(e) => {
-                  formik.handleBlur(e);
-                }}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setFieldValue("personalInfo.brand", e.target.value);
-                }}
-                touched={formik.touched.brandName}
+                onChange={(e) => setFieldValue("personalInfo.brand", e.target.value)}
+                onBlur={formik.handleBlur}
+                touched={formik.touched?.personalInfo?.brand}
+                value={brand}
               />
             </motion.div>
           </div>
         </div>
 
+        {/* Payment Options */}
         <PaymentOptions setBookingField={setFieldValue} showInfo={false} />
 
-        {/* Cart */}
+        {/* Booking Summary Cart */}
         <AdminBookingCart
           data={values}
           setFieldValue={setFieldValue}
           getFieldValue={getFieldValue}
         />
 
-        {/* Create button Action */}
+        {/* Submit Button */}
         <button
           type="submit"
-          disabled={creatingBooking || !formik.isValid}
+          disabled={isProcessing || !formik.isValid}
           className="bg-main ms-auto flex w-fit items-center gap-x-3 rounded-md px-4 py-2 text-lg text-white disabled:bg-gray-100 disabled:text-gray-400"
-          onClick={() => {
-            handleSubmit();
-            console.log("clicked");
-          }}
+          onClick={handleSubmit}
         >
-          {creatingBooking ? (
+          {isProcessing ? (
             <>
               <Loader className="animate-spin" />
-              Creating Booking ...
+              {t(isEdit ? "updating-booking" : "creating-booking")}
             </>
           ) : (
             <>
               <FilePlus2 />
-              Create Booking
+              {t(isEdit ? "update-booking" : "create-booking")}
             </>
           )}
         </button>

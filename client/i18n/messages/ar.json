@@ -423,5 +423,14 @@
   "edit-admin-data": "تحرير بيانات المسؤول",
   "create-new-booking": "إنشاء حجز جديد",
   "update-booking-data": "تحديث بيانات الحجز",
-  "comment": "تعليقات إضافية"
+  "comment": "تعليقات إضافية",
+  "please-select-a-studio-and-package-first": "يرجى اختيار الاستوديو ,والخدمة أولاً",
+  "loading-calendar": "جارٍ تحميل التقويم...",
+  "today": "اليوم",
+  "booked-unavailable": "محجوز/غير متاح",
+  "creating-booking": "جارٍ إنشاء الحجز...",
+  "create-booking": "إنشاء الحجز",
+  "updata-booking": "تحديث بيانات الحجز ",
+  "edit-booking": "تعديل الحجز",
+  "session-duration-hours": "مدة الجلسة (ساعات)"
 }
