@@ -73,15 +73,27 @@ exports.updateCalenderEvent = async (eventId, newEventData) => {
 };
 
 // Delete event
-// exports.deleteCalenderEvent = await (eventId) => {
-//   try {
-//           if (!eventId) {
-//         throw new Error("Event ID is required to delete an event");
-//       }
-//   } catch (error) {
+exports.deleteCalenderEvent = async (eventId) => {
+  try {
+    // Check if event id
+    if (!eventId) {
+      throw new Error("Event ID is required to delete an event");
+    }
 
-//   }
-// };
+    // Delete event from google calendar
+    const { data } = await calendar.events.delete({
+      calendarId: process.env.CALENDAR_ID,
+      eventId,
+    });
+
+    // If delete successfully
+    console.log("delete", data);
+    return true;
+  } catch (error) {
+    console.error("Google Calendar Error (updateEvent):", err.message);
+    throw new Error(`Google Calendar error: ${err.message}`);
+  }
+};
 
 //   static async deleteEvent(eventId) {
 //     try {

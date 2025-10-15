@@ -1,9 +1,9 @@
 import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import BookingInput from "../../booking-input";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import Cart from "@/features/booking/_components/cart/cart";
 
+import { BookingInput } from "@/components/booking";
 import PaymentOptions from "./_components/payment-way";
 import { BookingLabel } from "@/features/booking/_components";
 import { Loader } from "lucide-react";
@@ -176,7 +176,7 @@ export default function PersonalInformation() {
               <i className="fa-solid fa-credit-card mr-3"></i>
               {t("payment-method")}
             </h3>
-            <PaymentOptions />
+            <PaymentOptions setBookingField={setBookingField} />
 
             {/* Action Buttons */}
             <div className="mt-3 flex flex-col items-center gap-4 px-5 md:flex-row">

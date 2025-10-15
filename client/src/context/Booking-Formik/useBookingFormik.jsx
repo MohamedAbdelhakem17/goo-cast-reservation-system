@@ -1,167 +1,97 @@
-import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useMemo, useCallback } from "react";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useNavigate } from "react-router-dom";
-import { DateTime } from "luxon";
 import { useCreateBooking } from "@/apis/public/booking.api";
 import useLocalization from "@/context/localization-provider/localization-context";
+import {
+  getBookingInitialValues,
+  getBookingValidationSchema,
+} from "@/utils/schemas/booking.schema";
+
 export default function useBookingFormik() {
+  // Localization
   const { t } = useLocalization();
+
+  // Navigation
+  const navigate = useNavigate();
+
+  // Hooks
+  const { addToast } = useToast();
+
+  //  Mutation
+  const { createBooking } = useCreateBooking();
+
+  // Variables
   const parsedData = useMemo(() => {
     const localStorageData = localStorage.getItem("bookingData");
     return localStorageData ? JSON.parse(localStorageData) : null;
   }, []);
 
-  // Formik initial values
-  const bookingInitialValues = useMemo(() => {
-    if (parsedData) return parsedData;
-
-    const handelStartDate = () => {
-      let date = DateTime.now().setZone("Africa/Cairo");
-
-      if (date.hour > 18) {
-        date = date.plus({ days: 1 });
-      }
-
-      return date.toISO();
-    };
-
-    return {
-      studio: {
-        id: null,
-        name: "",
-        image: "",
-        price: 0,
-      },
-      date: handelStartDate(),
-      startSlot: null,
-      endSlot: null,
-      duration: 1,
-      persons: 1,
-      selectedPackage: {},
-      selectedAddOns: [],
+  // Functions
+  const handleCreateBooking = (values, { setSubmitting, resetForm }) => {
+    const payload = {
+      ...values,
+      studio: { id: values.studio.id },
+      package: { id: values.selectedPackage.id },
+      totalPrice: values.totalPrice,
+      coupon_code: values.couponCode,
+      totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
       personalInfo: {
-        firstName: "",
-        lastName: "",
-        phone: "",
-        email: "",
-        brand: "",
+        ...values.personalInfo,
+        fullName: `${values.personalInfo.firstName} ${values.personalInfo.lastName}`,
       },
-      totalPackagePrice: 0,
-      totalPrice: 0,
-      totalPriceAfterDiscount: 0,
-      couponCode: "",
-      discount: "",
-      paymentMethod: "CASH",
     };
-  }, [parsedData]);
 
-  // Formik validation schema
-  const bookingValidationSchema = Yup.object({
-    selectedPackage: Yup.object()
-      .test(
-        t("is-not-empty"),
-        t("package-is-required"),
-        (value) => value && Object.keys(value).length > 0,
-      )
-      .required(t("package-is-required")),
-    studio: Yup.object().required(t("studio-is-required")),
-    endSlot: Yup.string().required("Time end slot is required"),
-    startSlot: Yup.string().required("Time  slot is required"),
-    selectedAddOns: Yup.array().nullable().notRequired(),
-    personalInfo: Yup.object({
-      firstName: Yup.string().required(t("first-name-is-required")),
-      lastName: Yup.string().required(t("last-name-is-required")),
-      phone: Yup.string()
-        .matches(/^01(0|1|2|5)[0-9]{8}$/, t("phone-number-is-not-valid"))
-        .required(t("phone-is-required")),
-      email: Yup.string().email(t("invalid-email")).required(t("email-is-required")),
-      brand: Yup.string().optional(),
-    }),
+    createBooking(payload, {
+      onSuccess: (res) => {
+        localStorage.setItem(
+          "bookingConfirmation",
+          JSON.stringify({ bookingResponse: res.booking }),
+        );
 
-    totalPrice: Yup.number().required("Total price is required"),
+        addToast(res.message || "Booking submitted successfully", "success");
+        resetForm();
 
-    totalPriceAfterDiscount: Yup.number()
-      .required("Discounted price is required")
-      .test(
-        "is-less-than-or-equal-total",
-        "Discounted price must be less than or equal to total price",
-        function (value) {
-          const { totalPrice } = this.parent;
-          if (value == null || totalPrice == null) return true;
-          return value <= totalPrice;
-        },
-      ),
-    couponCode: Yup.string().optional(),
-    discount: Yup.string().optional(),
-    paymentMethod: Yup.string()
-      .oneOf(["CARD", "CASH"], "Invalid payment method")
-      .required("Payment method is required"),
-  });
+        setTimeout(() => {
+          localStorage.removeItem("bookingData");
+          navigate("/booking/confirmation");
+        }, 1200);
+      },
+      onError: (err) => {
+        addToast(err.response?.data?.message || "Something went wrong", "error");
+      },
+      onSettled: () => setSubmitting(false),
+    });
+  };
 
-  // const { mutate: createBooking } = CreateBooking();
-  const { createBooking } = useCreateBooking();
+  const initialValues = useMemo(() => getBookingInitialValues(parsedData), [parsedData]);
 
-  const navigate = useNavigate();
-  const { addToast } = useToast();
-  // Formik handleSubmit function
+  // Form  and  validation
   const formik = useFormik({
-    initialValues: bookingInitialValues,
-    validationSchema: bookingValidationSchema,
+    initialValues,
+    validationSchema: getBookingValidationSchema(t),
 
-    onSubmit: (values, { setSubmitting }) => {
-      const dataBaseObject = {
-        ...values,
-        studio: {
-          id: values.studio.id,
-        },
-        package: {
-          id: values.selectedPackage.id,
-        },
-        totalPrice: values.totalPrice,
-        coupon_code: values.couponCode,
-        totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
-        personalInfo: {
-          ...values.personalInfo,
-          fullName: `${values.personalInfo.firstName}${values.personalInfo.lastName}`,
-        },
-      };
-
-      createBooking(dataBaseObject, {
-        onSuccess: (res) => {
-          localStorage.setItem(
-            "bookingConfirmation",
-            JSON.stringify({
-              bookingResponse: res.booking,
-            }),
-          );
-          addToast(res.message || "Booking submitted successfully", "success", 1000);
-          formik.resetForm();
-          setTimeout(() => {
-            localStorage.removeItem("bookingData");
-            localStorage.removeItem("maxStepReached");
-            localStorage.removeItem("bookingStep");
-            navigate("/booking/confirmation");
-          }, 1200);
-        },
-        onError: (error) => {
-          addToast(error.response?.data?.message || "Something went wrong", "error");
-        },
-        onSettled: () => {
-          setSubmitting(false);
-        },
-      });
+    onSubmit: (values, { setSubmitting, resetForm }) => {
+      handleCreateBooking(values, { setSubmitting, resetForm });
     },
+
     enableReinitialize: true,
   });
 
   // Helpers Functions to access formik values and errors
   const setBookingField = useCallback(
     (field, value) => {
-      formik.setFieldValue(field, value);
+      if (typeof value === "function") {
+        const current = field
+          .split(".")
+          .reduce((acc, key) => (acc ? acc[key] : undefined), formik.values);
+        formik.setFieldValue(field, value(current));
+      } else {
+        formik.setFieldValue(field, value);
+      }
     },
-    [formik],
+    [formik.values],
   );
 
   const getBookingField = (field) => {

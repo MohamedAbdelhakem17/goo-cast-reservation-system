@@ -6,9 +6,10 @@ import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { CheckCheck, Expand, X } from "lucide-react";
+import { CheckCheck, Expand, SquarePen, X } from "lucide-react";
 import useLocalization from "@/context/localization-provider/localization-context";
 import usePriceFormat from "@/hooks/usePriceFormat";
+import { Link } from "react-router-dom";
 
 function BookingAction({
   isPending,
@@ -35,6 +36,13 @@ function BookingAction({
           >
             {isDesktop ? t("reject") : <X />}
           </button>
+
+          <Link
+            to={`add?edit=${booking._id}`}
+            className="text-sm text-sky-900 hover:text-sky-500 disabled:opacity-50"
+          >
+            {isDesktop ? t("edit-booking") : <SquarePen />}
+          </Link>
         </>
       )}
 
@@ -58,6 +66,7 @@ export default function DisplayBookingData({
 
   const formatDate = useDataFormat();
   const formatPrice = usePriceFormat();
+
   const convertTo12HourFormat = (time) => {
     const [hour, minute] = time.split(":");
     const hour12 = hour % 12 || 12;
@@ -72,7 +81,7 @@ export default function DisplayBookingData({
 
   const handleStatusChange = () => {
     changeStatus(
-      { id: booking._id, status: confirmPopup.status },
+      { id: confirmPopup.booking._id, status: confirmPopup.status },
       {
         onSuccess: ({ message }) => {
           addToast(message || t("status-changed-successfully"), "success");
@@ -178,7 +187,7 @@ export default function DisplayBookingData({
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm font-medium text-gray-900">
-                  {formatPrice(booking.totalPrice)}
+                  {formatPrice(booking.totalPriceAfterDiscount || booking.totalPrice)}
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -259,18 +268,18 @@ export default function DisplayBookingData({
             </p>
             <ul className="mb-4 list-inside list-disc text-sm text-gray-700">
               <li>
-                <strong>{t("studio")}:</strong>{" "}
+                <strong>{t("studio")}:</strong>
                 {confirmPopup.booking?.studio?.name?.[lng]}
               </li>
               <li>
                 <strong>{t("date-0")}:</strong> {formatDate(confirmPopup.booking.date)}
               </li>
               <li>
-                <strong>{t("time")}:</strong>{" "}
+                <strong>{t("time")}:</strong>
                 {convertTo12HourFormat(confirmPopup.booking.startSlot)}
               </li>
               <li>
-                <strong>t('duration-0'):</strong> {confirmPopup.booking.duration}{" "}
+                <strong>t('duration'):</strong> {confirmPopup.booking.duration}
                 {t("hour-s")}
               </li>
             </ul>

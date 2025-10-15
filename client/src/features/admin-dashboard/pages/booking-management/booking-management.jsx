@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Loading } from "@/components/common";
 import { useGetBookings } from "@/apis/admin/manage-booking.api";
 import { HeaderAndFilter, Pagination } from "./_components";
 
 import DisplayBookingData from "./_components/display-booking-data";
 import BookingInfoModel from "@/features/booking/_components/booking-info-model";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function BookingManagement() {
+  // Localization
+  const { t } = useLocalization();
   const ITEMS_PER_PAGE = 10;
   const currentPageRef = useRef(1);
 
@@ -63,6 +66,14 @@ export default function BookingManagement() {
   return (
     <div className="py-6">
       <HeaderAndFilter filters={filters} onFilterChange={handleFilterChange} />
+
+      {/* Go To Add Booking */}
+      <Link
+        to={"add"}
+        className="bg-main text-canter my-3 ms-auto block w-fit rounded-md px-4 py-2 text-center text-lg font-bold text-white"
+      >
+        {t("create-new-booking")}
+      </Link>
 
       <div className="p-3">
         <DisplayBookingData

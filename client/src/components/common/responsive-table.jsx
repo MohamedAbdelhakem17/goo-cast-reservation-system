@@ -1,9 +1,6 @@
-export default function ResponsiveTable({ key, title, subtitle, fields = [], actions }) {
+export default function ResponsiveTable({ title, subtitle, fields = [], actions }) {
   return (
-    <div
-      className="my-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
-      key={key}
-    >
+    <div className="my-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
       <div className="mb-3 flex items-start justify-between">
         <div>
           <h4 className="font-semibold text-gray-900">{title}</h4>

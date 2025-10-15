@@ -2,9 +2,12 @@ import { motion } from "framer-motion";
 import useDateFormat from "@/hooks/useDateFormat";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
-import BookingReceiptPDF from "@/features/booking/_components/booking-receipt-pdf";
-import useLocalization from "@/context/localization-provider/localization-context";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import BookingReceiptPDF from "./booking-receipt-pdf";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { useMemo } from "react";
+import { Buffer } from "buffer";
+window.Buffer = Buffer;
 
 const statusClasses = {
   approved: "bg-gradient-to-r from-green-500 to-green-600 text-white",
@@ -19,11 +22,18 @@ const statusIcons = {
 };
 
 export default function BookingInfoModel({ selectedBooking, setSelectedBooking }) {
-  console.log(selectedBooking);
   const { t, lng } = useLocalization();
   const priceFormat = usePriceFormat();
   const convertTo12HourFormat = useTimeConvert();
   const formatDate = useDateFormat();
+
+  if (!selectedBooking) return null;
+
+  const pdfDocument = useMemo(
+    () => <BookingReceiptPDF booking={selectedBooking} />,
+    [selectedBooking],
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -39,13 +49,11 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
         className="max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-white shadow-xl md:max-w-[60%]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal Header with Studio Image */}
+        {/* Header */}
         <div className="relative h-48">
           <img
-            src={
-              selectedBooking.studio.thumbnail || "/placeholder.svg?height=192&width=672"
-            }
-            alt={selectedBooking.studio.name?.[lng]}
+            src={selectedBooking?.studio?.thumbnail || "/images/placeholder.png"}
+            alt={selectedBooking?.studio?.name?.[lng] || "Studio"}
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
@@ -53,16 +61,20 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-3xl font-bold">
-                  {selectedBooking.studio.name?.[lng]}
+                  {selectedBooking?.studio?.name?.[lng] || t("unknown-studio")}
                 </h2>
                 <div className="mt-1 flex items-center">
                   <span
                     className={`flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium capitalize ${
-                      statusClasses[selectedBooking.status]
+                      statusClasses[selectedBooking?.status] || "bg-gray-400 text-white"
                     }`}
                   >
-                    <i className={`${statusIcons[selectedBooking.status]} text-xs`}></i>
-                    {selectedBooking.status}
+                    <i
+                      className={`${
+                        statusIcons[selectedBooking?.status] || "fa-solid fa-circle-info"
+                      } text-xs`}
+                    ></i>
+                    {selectedBooking?.status || t("unknown")}
                   </span>
                 </div>
               </div>
@@ -76,167 +88,131 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
           </div>
         </div>
 
+        {/* Content */}
         <div className="p-6">
           <div className="space-y-6">
-            {/* Booking Summary */}
+            {/* Summary */}
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <div className="rounded-xl bg-gray-50 p-4 text-center">
-                <i className="fa-solid fa-calendar-days text-main mb-2 text-xl"></i>
-                <p className="text-xs text-gray-500">{t("date-0")}</p>
-                <p className="font-medium">{formatDate(selectedBooking.date, "short")}</p>
-              </div>
-              <div className="rounded-xl bg-gray-50 p-4 text-center">
-                <i className="fa-solid fa-clock text-main mb-2 text-xl"></i>
-                <p className="text-xs text-gray-500">{t("time-0")}</p>
-                <p className="font-medium">
-                  {convertTo12HourFormat(selectedBooking.startSlot)}
-                </p>
-              </div>
-              <div className="rounded-xl bg-gray-50 p-4 text-center">
-                <i className="fa-solid fa-hourglass-half text-main mb-2 text-xl"></i>
-                <p className="text-xs text-gray-500">{t("duration-0")}</p>
-                <p className="font-medium">{selectedBooking.duration} hours</p>
-              </div>
-              <div className="rounded-xl bg-gray-50 p-4 text-center">
-                <i className="fa-solid fa-users text-main mb-2 text-xl"></i>
-                <p className="text-xs text-gray-500">{t("persons")}</p>
-                <p className="font-medium">{selectedBooking.persons}</p>
-              </div>
+              <InfoCard
+                icon="fa-calendar-days"
+                label={t("date-0")}
+                value={formatDate(selectedBooking?.date, "short")}
+              />
+              <InfoCard
+                icon="fa-clock"
+                label={t("time-0")}
+                value={convertTo12HourFormat(selectedBooking?.startSlot)}
+              />
+              <InfoCard
+                icon="fa-hourglass-half"
+                label={t("duration-0")}
+                value={`${selectedBooking?.duration || 0} ${t("hours")}`}
+              />
+              <InfoCard
+                icon="fa-users"
+                label={t("persons")}
+                value={selectedBooking?.persons || 0}
+              />
             </div>
 
-            <div>
-              <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
-                <i className="fa-solid fa-user-circle text-main me-2"></i>
-                {t("personal-information")}
-              </h3>
-              <div className="rounded-xl bg-gray-50 p-4">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div>
-                    <p className="text-xs text-gray-500">{t("full-name")}</p>
-                    <p className="font-medium">{selectedBooking.personalInfo.fullName}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">{t("email")}</p>
-                    <p className="leading-snug font-medium break-words">
-                      {selectedBooking.personalInfo.email}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">{t("phone")}</p>
-                    <p className="font-medium">{selectedBooking.personalInfo.phone}</p>
-                  </div>
-                  {selectedBooking.personalInfo.brand && (
-                    <div>
-                      <p className="text-xs text-gray-500">{t("brand")}</p>
-                      <p className="font-medium">{selectedBooking.personalInfo.brand}</p>
-                    </div>
-                  )}
+            {/* Personal Info */}
+            <Section title={t("personal-information")} icon="fa-user-circle">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Field
+                  label={t("full-name")}
+                  value={selectedBooking?.personalInfo?.fullName}
+                />
+                <Field label={t("email")} value={selectedBooking?.personalInfo?.email} />
+                <Field label={t("phone")} value={selectedBooking?.personalInfo?.phone} />
+                {selectedBooking?.personalInfo?.brand && (
+                  <Field
+                    label={t("comment")}
+                    value={selectedBooking?.personalInfo?.brand}
+                  />
+                )}
+              </div>
+            </Section>
+
+            {/* Package */}
+            {selectedBooking?.package && (
+              <Section title={t("package-details")} icon="fa-box">
+                <div className="mb-3">
+                  <p className="text-lg font-medium">
+                    {selectedBooking?.package?.name?.[lng]}
+                  </p>
                 </div>
-              </div>
-            </div>
+                <div className="border-t border-gray-200 pt-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{t("total-package-price")}:</span>
+                    <span className="font-medium">
+                      {priceFormat(selectedBooking?.totalPackagePrice || 0)}
+                    </span>
+                  </div>
+                </div>
+              </Section>
+            )}
 
-            {selectedBooking.package && (
-              <div>
-                <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
-                  <i className="fa-solid fa-box text-main me-2"></i>
-                  {t("package-details")}
-                </h3>
-                <div className="rounded-xl bg-gray-50 p-4">
-                  <div className="mb-3 flex items-center justify-between">
+            {/* Add-ons */}
+            {selectedBooking?.addOns?.length > 0 && (
+              <Section title={t("add-ons")} icon="fa-puzzle-piece">
+                {selectedBooking.addOns.map((addon, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center justify-between py-2 ${
+                      index !== selectedBooking.addOns.length - 1
+                        ? "border-b border-gray-200"
+                        : ""
+                    }`}
+                  >
                     <div>
-                      <p className="text-lg font-medium">
-                        {selectedBooking.package.name?.[lng]}
+                      <p className="font-medium">{addon?.item?.name?.[lng]}</p>
+                      <p className="text-sm text-gray-500">
+                        {t("quantity")}: {addon?.quantity}
                       </p>
                     </div>
-                  </div>
-                  <div className="border-t border-gray-200 pt-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">{t("total-package-price")}:</span>
-                      <span className="font-medium">
-                        {priceFormat(selectedBooking?.totalPackagePrice || 0)}
-                      </span>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">{t("price")}</p>
+                      <p className="font-medium">{priceFormat(addon?.price)}</p>
                     </div>
                   </div>
+                ))}
+                <div className="mt-3 border-t border-gray-200 pt-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{t("total-add-ons")}:</span>
+                    <span className="font-medium">
+                      {priceFormat(selectedBooking?.totalAddOnsPrice || 0)}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </Section>
             )}
 
-            {selectedBooking.addOns && selectedBooking.addOns.length > 0 && (
-              <div>
-                <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
-                  <i className="fa-solid fa-puzzle-piece text-main me-2"></i>
-                  {t("add-ons")}
-                </h3>
-                <div className="rounded-xl bg-gray-50 p-4">
-                  {selectedBooking.addOns.map((addon, index) => (
-                    <div
-                      key={index}
-                      className={`flex items-center justify-between py-2 ${
-                        index !== selectedBooking.addOns.length - 1
-                          ? "border-b border-gray-200"
-                          : ""
-                      }`}
-                    >
-                      <div>
-                        <p className="font-medium">{addon?.item?.name?.[lng]}</p>
-                        <p className="text-sm text-gray-500">
-                          Quantity: {addon?.quantity}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-gray-500">{t("price")}</p>
-                        <p className="font-medium">{priceFormat(addon?.price)}</p>
-                      </div>
-                    </div>
-                  ))}
-                  <div className="mt-3 border-t border-gray-200 pt-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">{t("total-add-ons")}:</span>
-                      <span className="font-medium">
-                        {priceFormat(selectedBooking?.totalAddOnsPrice)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            {/* Payment */}
+            <Section title={t("payment-summary")} icon="fa-receipt">
+              {selectedBooking?.package && (
+                <Line
+                  label={t("package-price")}
+                  value={priceFormat(selectedBooking?.totalPackagePrice || 0)}
+                />
+              )}
+              {selectedBooking?.totalAddOnsPrice > 0 && (
+                <Line
+                  label={t("add-ons-price")}
+                  value={priceFormat(selectedBooking?.totalAddOnsPrice)}
+                />
+              )}
+              <div className="mt-1 border-t border-gray-200 pt-3">
+                <Line
+                  label={t("total-price-0")}
+                  value={priceFormat(selectedBooking?.totalPrice || 0)}
+                  bold
+                  main
+                />
               </div>
-            )}
-
-            <div>
-              <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
-                <i className="fa-solid fa-receipt text-main me-2"></i>
-                {t("payment-summary")}
-              </h3>
-              <div className="space-y-2 rounded-xl bg-gray-50 p-4">
-                {selectedBooking.package && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">{t("package-price")}:</span>
-                    <span className="text-gray-600">
-                      {priceFormat(selectedBooking.totalPackagePrice || 0)}
-                    </span>
-                  </div>
-                )}
-                {selectedBooking.totalAddOnsPrice > 0 && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">{t("add-ons-price")}:</span>
-                    <span className="text-gray-600">
-                      {priceFormat(selectedBooking.totalAddOnsPrice)}
-                    </span>
-                  </div>
-                )}
-                <div className="mt-1 border-t border-gray-200 pt-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-gray-800">
-                      {t("total-price-0")}:
-                    </span>
-                    <span className="text-main text-xl font-bold">
-                      {priceFormat(selectedBooking.totalPrice)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </Section>
           </div>
 
+          {/* Footer */}
           <div className="mt-8 flex flex-col justify-end gap-3 sm:flex-row">
             <button
               onClick={() => setSelectedBooking(null)}
@@ -259,5 +235,53 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
         </div>
       </motion.div>
     </motion.div>
+  );
+}
+
+/* ==== Helper Components ==== */
+
+function InfoCard({ icon, label, value }) {
+  return (
+    <div className="rounded-xl bg-gray-50 p-4 text-center">
+      <i className={`fa-solid ${icon} text-main mb-2 text-xl`}></i>
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="font-medium">{value || "-"}</p>
+    </div>
+  );
+}
+
+function Section({ title, icon, children }) {
+  return (
+    <div>
+      <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
+        <i className={`fa-solid ${icon} text-main me-2`}></i>
+        {title}
+      </h3>
+      <div className="rounded-xl bg-gray-50 p-4">{children}</div>
+    </div>
+  );
+}
+
+function Field({ label, value }) {
+  return (
+    <div>
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="font-medium break-words">{value || "-"}</p>
+    </div>
+  );
+}
+
+function Line({ label, value, bold = false, main = false }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className={`${bold ? "font-semibold" : "text-gray-600"}`}>{label}:</span>
+      <span
+        className={`${main ? "text-main text-xl font-bold" : "text-gray-600"} ${
+          bold ? "font-semibold" : ""
+        }`}
+      >
+        {value}
+      </span>
+    </div>
   );
 }

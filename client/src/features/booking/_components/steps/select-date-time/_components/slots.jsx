@@ -4,29 +4,23 @@ import { X } from "lucide-react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { Loading } from "@/components/common";
 import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots";
-import SlotButton from "./slot-button";
+import { SlotButton } from "@/components/booking";
 import { tracking } from "@/utils/gtm";
 import useLocalization from "@/context/localization-provider/localization-context";
-import useLockBodyScroll from "@/hooks/use-lock-body-scroll";
+import useDataFormat from "@/hooks/useDateFormat";
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
   //  Localization
-  const { t, lng } = useLocalization();
+  const { t } = useLocalization();
 
+  // State
   const [selectedTime, setSelectedTime] = useState(null);
-  const { handleNextStep, bookingData, setBookingField, currentStep, stepLabels } =
-    useBooking();
 
-  const formattedDate = useMemo(() => {
-    if (!bookingData?.date) return "";
-    return new Date(bookingData.date).toLocaleDateString(`${lng}-EG`, {
-      weekday: "long",
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  }, [bookingData?.date]);
+  // Hooks
+  const { handleNextStep, bookingData, setBookingField, currentStep } = useBooking();
+  const formattedDate = useDataFormat();
 
+  // Functions
   const handleTimeSelect = useCallback(
     (time) => {
       setSelectedTime(time);

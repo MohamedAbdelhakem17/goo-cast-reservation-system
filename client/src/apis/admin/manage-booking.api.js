@@ -26,6 +26,25 @@ export const useGetBookings = (filters) => {
   });
 };
 
+// Get single booking data
+export const useGetSingleBooking = (id) => {
+  const {
+    data: singleBooking,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["single-booking", id],
+
+    queryFn: async () => {
+      const { data } = await axiosInstance("/bookings/" + id);
+
+      return data;
+    },
+  });
+
+  return { singleBooking, isLoading, error };
+};
+
 // Change booking status
 export const useChangeBookingStatus = () => {
   const { mutate: changeStatus, isPending } = useMutation({
@@ -39,4 +58,19 @@ export const useChangeBookingStatus = () => {
   });
 
   return { changeStatus, isPending };
+};
+
+// Update booking data
+export const useUpdateBooking = () => {
+  const { mutate: updateBooking, isPending } = useMutation({
+    mutationKey: ["edit-booking"],
+
+    mutationFn: async ({ payload, id }) => {
+      const { data } = await axiosInstance.put("/bookings/" + id, payload);
+
+      return data;
+    },
+  });
+
+  return { updateBooking, isPending };
 };

@@ -24,11 +24,13 @@ const saveOpportunityInGoHighLevel = require("../../utils/save-opportunity-in-go
 const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
 const {
   createCalendarEvent,
+  deleteCalenderEvent,
+  updateCalenderEvent,
 } = require("../../utils/google-calendar-integration.js");
 
 const { getCategoryMinHour } = require("../../utils/get-category-hour.js");
 const { getFreeSlots } = require("../../utils/get-free-slots.js");
-const createBookingLogic = require("./create-booking-logic .js");
+const prepareBookingData = require("./prepare-booking-data.js");
 
 // old code For getting available slots
 {
@@ -985,57 +987,58 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
   });
 });
 
-// Change booking status
+// Update booking status and handle related actions (email, calendar, opportunity)
 exports.changeBookingStatus = asyncHandler(async (req, res) => {
   const id = req.params.id || req.body.id;
-
   const { status } = req.body;
 
-  if (!status) {
-    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Status is required");
+  // Validate provided status
+  const allowedStatuses = ["pending", "approved", "rejected"];
+  if (!status || !allowedStatuses.includes(status)) {
+    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid or missing status");
   }
 
-  if (status !== "pending" && status !== "approved" && status !== "rejected") {
-    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid status");
-  }
-
-  const booking = await BookingModel.findByIdAndUpdate(
-    id,
-    { status },
-    {
-      new: true,
-      runValidators: true,
-    }
-  ).populate("studio", "name");
-
-  if (!booking) {
+  // Find booking before updating to trigger Mongoose hooks if needed
+  const booking = await BookingModel.findById(id).populate("studio", "name");
+  if (!booking)
     throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
+
+  booking.status = status;
+  await booking.save();
+
+  const { opportunityID, eventID } = booking;
+
+  try {
+    // If booking is approved
+    if (status === "approved") {
+      await changeOpportunityStatus(opportunityID, "won");
+
+      // Send approval email to customer
+      await sendEmail({
+        to: booking.personalInfo.email,
+        subject: "Booking Approved",
+        message: changeBookingStatusEmail({ type: "approved", data: booking }),
+      });
+    }
+
+    // If booking is rejected
+    if (status === "rejected") {
+      await deleteCalenderEvent(eventID);
+      await changeOpportunityStatus(opportunityID, "lost");
+
+      // Send rejection email to customer
+      await sendEmail({
+        to: booking.personalInfo.email,
+        subject: "Booking Rejected",
+        message: changeBookingStatusEmail({ type: "rejected", data: booking }),
+      });
+    }
+  } catch (err) {
+    // Log any side effect errors (email, calendar, etc.)
+    console.error("Status change side effects failed:", err.message);
   }
 
-  const opportunityID = booking.opportunityID;
-
-  if (status === "approved") {
-    changeOpportunityStatus(opportunityID, "won");
-    // Send email to user
-    const mailOptions = {
-      to: booking.personalInfo.email,
-      subject: "Booking Approved",
-      message: changeBookingStatusEmail({ type: "approved", data: booking }),
-    };
-    await sendEmail(mailOptions);
-  }
-
-  if (status === "rejected") {
-    changeOpportunityStatus(opportunityID, "lost");
-    // Send email to user
-    const mailOptions = {
-      to: booking.personalInfo.email,
-      subject: "Booking Rejected",
-      message: changeBookingStatusEmail({ type: "rejected", data: booking }),
-    };
-    await sendEmail(mailOptions);
-  }
-
+  // Send response back to client
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: booking,
@@ -1362,132 +1365,209 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   // });
 }
 
-// Create New Booking
+// Create Booking
 exports.createBooking = asyncHandler(async (req, res) => {
-  const user_id = req.isAuthenticated() ? req.user._id : undefined;
+  const user = req.isAuthenticated() ? req.user : undefined;
+
+  const {
+    tempBooking,
+    studio,
+    pkg,
+    addOns,
+    bookingDate,
+    personalInfo,
+    totalAddOnsPriceFromDb,
+    startSlot,
+    endSlot,
+    totalPriceAfterDiscount,
+    duration,
+  } = await prepareBookingData(req.body, user, false);
+
+  const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name?.en} | ${pkg.session_type?.en}`;
+
+  const emailBookingData = {
+    studio: {
+      name: studio.name?.en,
+      image: studio.thumbnail,
+    },
+    personalInfo,
+    selectedAddOns: {
+      totalPrice: totalAddOnsPriceFromDb,
+      items: addOns,
+    },
+    selectedPackage: pkg.name?.en,
+    date: bookingDate,
+    startSlot,
+    endSlot,
+    duration,
+    totalPrice: tempBooking.totalPrice,
+    totalPriceAfterDiscount,
+    bookingId: tempBooking._id,
+  };
+
+  const emailOptions = {
+    to: personalInfo.email,
+    subject: bookingTitle,
+    message: bookingConfirmationEmailBody(emailBookingData),
+  };
+
+  const userData = {
+    name: personalInfo.fullName,
+    email: personalInfo.email,
+    phone: personalInfo.phone,
+  };
+
+  const opportunityData = {
+    name: bookingTitle,
+    price: totalPriceAfterDiscount,
+    sessionType: pkg.session_type,
+    duration,
+    studioName: studio.name,
+    bookingId: tempBooking._id,
+  };
+
+  const appointmentData = {
+    startTime: combineDateAndTime(bookingDate, startSlot),
+    endTime: combineDateAndTime(bookingDate, endSlot),
+    title: bookingTitle,
+    notes: personalInfo.fullName,
+    studioId: studio._id,
+  };
+
+  const eventData = {
+    summary: bookingTitle,
+    start: {
+      dateTime: combineDateAndTime(bookingDate, startSlot),
+      timeZone: "Africa/Cairo",
+    },
+    end: {
+      dateTime: combineDateAndTime(bookingDate, endSlot),
+      timeZone: "Africa/Cairo",
+    },
+    attendees: [{ email: personalInfo.email }],
+  };
+
+  let opportunityID;
+  let eventID;
+
   try {
-    const {
-      tempBooking,
-      studio,
-      pkg,
-      selectedAddOns,
-      bookingDate,
+    opportunityID = await saveOpportunityInGoHighLevel(
+      userData,
+      opportunityData,
+      appointmentData
+    );
+
+    eventID = await createCalendarEvent(eventData, {
+      username: personalInfo.fullName,
+      duration,
+      package: pkg?.name?.en,
+    });
+
+    await sendEmail(emailOptions);
+  } catch (err) {
+    throw new AppError(
+      500,
+      HTTP_STATUS_TEXT.FAIL,
+      "Failed to create opportunity or send email"
+    );
+  }
+
+  tempBooking.opportunityID = opportunityID;
+  tempBooking.eventID = eventID;
+
+  const booking = await tempBooking.save();
+
+  res.status(201).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    message: "Booking created successfully",
+    booking,
+  });
+});
+
+// UPDATE BOOKING
+exports.updateBooking = asyncHandler(async (req, res) => {
+  const bookingId = req.params.id;
+
+  // Ensure the booking exists
+  const existingBooking = await BookingModel.findById(bookingId);
+  if (!existingBooking)
+    throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
+
+  // Recalculate booking data using the same logic
+  const {
+    bookingData,
+    studio,
+    pkg,
+    bookingDate,
+    personalInfo,
+    startSlot,
+    endSlot,
+    totalPriceAfterDiscount,
+    duration,
+  } = await prepareBookingData({ ...req.body, bookingId }, null, true);
+
+  // Update the booking
+  const updatedBooking = await BookingModel.findByIdAndUpdate(
+    bookingId,
+    bookingData,
+    { new: true }
+  );
+
+  // 🔹 Check if calendar event needs to be updated
+  const eventChanged =
+    existingBooking?.startSlot !== startSlot ||
+    existingBooking?.endSlot !== endSlot ||
+    existingBooking?.bookingDate?.toISOString() !==
+      new Date(bookingDate).toISOString();
+
+  if (existingBooking.eventID && eventChanged) {
+    try {
+      // Prepare the event data
+      const eventData = {
+        summary: `Booking - ${studio.name?.en}`,
+        description: `Updated booking for ${personalInfo.name} (${personalInfo.email})`,
+        start: { dateTime: new Date(startSlot).toISOString() },
+        end: { dateTime: new Date(endSlot).toISOString() },
+      };
+
+      // Call Google Calendar update function
+      await updateCalenderEvent(existingBooking.googleEventId, eventData);
+    } catch (err) {
+      console.warn("⚠️ Failed to update Google Calendar event:", err.message);
+    }
+  }
+
+  // 🔹 Optional: send update email
+  if (eventChanged) {
+    const emailData = {
+      studio: { name: studio.name?.en, image: studio.thumbnail },
       personalInfo,
-      addOnsTotalPriceFromDb,
+      date: bookingDate,
       startSlot,
       endSlot,
-      totalPriceAfterDiscount,
       duration,
-    } = await createBookingLogic(req.body, user_id);
-
-    const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name?.en} | ${pkg.session_type?.en}`;
-    const emailBookingData = {
-      studio: {
-        name: studio.name,
-        image: studio.thumbnail,
-      },
-      personalInfo: {
-        fullName: personalInfo.fullName,
-        email: personalInfo.email,
-        phone: personalInfo.phone,
-      },
-      selectedAddOns: {
-        totalPrice: addOnsTotalPriceFromDb,
-        items: selectedAddOns,
-      },
-      selectedPackage: pkg.name,
-      date: bookingDate,
-      startSlot: startSlot,
-      endSlot: endSlot,
-      duration: duration,
-      totalPrice: tempBooking.totalPrice,
-      totalPriceAfterDiscount: totalPriceAfterDiscount,
-      bookingId: tempBooking._id,
+      totalPriceAfterDiscount,
+      bookingId: updatedBooking._id,
     };
 
     const emailOptions = {
       to: personalInfo.email,
-      subject: bookingTitle,
-      message: bookingConfirmationEmailBody(emailBookingData),
+      subject: `Booking Updated | ${studio.name?.en}`,
+      message: bookingConfirmationEmailBody(emailData),
     };
 
-    const userData = {
-      name: personalInfo.fullName,
-      email: personalInfo.email,
-      phone: personalInfo.phone,
-    };
-
-    const opportunityData = {
-      name: bookingTitle,
-      price: totalPriceAfterDiscount,
-      sessionType: pkg.session_type,
-      duration: duration,
-      studioName: studio.name,
-      bookingId: tempBooking._id,
-    };
-
-    const appointmentData = {
-      startTime: combineDateAndTime(bookingDate, startSlot),
-      endTime: combineDateAndTime(bookingDate, endSlot),
-      title: bookingTitle,
-      notes: personalInfo.fullName || personalInfo.name,
-      studioId: studio._id,
-    };
-
-    const eventData = {
-      summary: bookingTitle,
-      start: {
-        dateTime: combineDateAndTime(bookingDate, startSlot),
-        timeZone: "Africa/Cairo",
-      },
-      end: {
-        dateTime: combineDateAndTime(bookingDate, endSlot),
-        timeZone: "Africa/Cairo",
-      },
-      attendees: [{ email: personalInfo.email }],
-    };
-
-    let opportunityID;
-    let eventID;
-    // return
     try {
-      opportunityID = await saveOpportunityInGoHighLevel(
-        userData,
-        opportunityData,
-        appointmentData
-      );
-
-      eventID = await createCalendarEvent(eventData, {
-        username: personalInfo.fullName,
-        duration,
-        package: pkg?.name?.en,
-      });
-
       await sendEmail(emailOptions);
     } catch (err) {
-      throw new AppError(
-        500,
-        HTTP_STATUS_TEXT.FAIL,
-        "Failed to create opportunity, booking not saved"
-      );
+      console.warn("⚠️ Failed to send update email:", err.message);
     }
-
-    tempBooking.opportunityID = opportunityID;
-    tempBooking.eventID = eventID;
-    const booking = await tempBooking.save();
-
-    res.status(201).json({
-      status: HTTP_STATUS_TEXT.SUCCESS,
-      message: "Booking created successfully and sent confirmation email",
-      booking,
-    });
-  } catch (error) {
-    throw new AppError(
-      500,
-      HTTP_STATUS_TEXT.FAIL,
-      error.message || "Failed to complete booking process"
-    );
   }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    message: "Booking updated successfully",
+    booking: updatedBooking,
+  });
 });
 
 // Create Booking With GHL
@@ -1546,5 +1626,23 @@ exports.getUserBookings = asyncHandler(async (req, res, next) => {
     status: HTTP_STATUS_TEXT.SUCCESS,
     message: "Bookings fetched successfully",
     data: bookings,
+  });
+});
+
+// Get single booking
+exports.getSingleBooking = asyncHandler(async (req, res) => {
+  // get exist Booking
+  const { id } = req.params;
+  const existBooking = await BookingModel.findById(id);
+
+  // if Booking not exist
+  if (!existBooking) {
+    throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "This booking not exist");
+  }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    message: "Bookings retrieve successfully",
+    data: existBooking,
   });
 });

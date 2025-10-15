@@ -27,9 +27,9 @@ function CouponInput({ coupon, setCoupon, onApply, disabled, isPending, t }) {
   );
 }
 
-export default function ApplyDiscount() {
+export default function ApplyDiscount({ getBookingField, setBookingField }) {
   const { t } = useLocalization();
-  const { getBookingField, setBookingField } = useBooking();
+
   const priceFormat = usePriceFormat();
   const [coupon, setCoupon] = useState(getBookingField("couponCode") || "");
   const { addToast } = useToast();

@@ -6,6 +6,7 @@ import { tracking } from "@/utils/gtm";
 import { Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useGetAddons } from "@/apis/admin/manage-addons.api";
+import { useAddOnsManager } from "@/hooks/use-addons-manger";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -36,74 +37,16 @@ export default function AddOns() {
 
   // Hooks
   const { bookingData, setBookingField } = useBooking();
+
+  const { handleIncrement, handleDecrement, handleRemove, getQuantity } =
+    useAddOnsManager({
+      bookingData,
+      setBookingField,
+      addons,
+      tracking,
+      lng,
+    });
   const priceFormat = usePriceFormat();
-
-  // Function
-  const handleAddOnChange = useCallback(
-    (id, name, quantity, price) => {
-      let updatedAddOns = [...bookingData.selectedAddOns];
-      const index = updatedAddOns.findIndex((addon) => addon._id === id);
-
-      if (quantity === 0 && index !== -1) {
-        updatedAddOns.splice(index, 1);
-      } else if (index !== -1) {
-        updatedAddOns[index] = {
-          ...updatedAddOns[index],
-          quantity,
-          totalPrice: price * quantity,
-        };
-      } else {
-        updatedAddOns.push({
-          _id: id,
-          name,
-          quantity,
-          price,
-          totalPrice: price * quantity,
-        });
-      }
-
-      setBookingField("selectedAddOns", updatedAddOns);
-    },
-    [bookingData.selectedAddOns, setBookingField],
-  );
-
-  const getQuantity = (id) => {
-    const found = bookingData.selectedAddOns.find((item) => item._id === id);
-    return found ? found.quantity : 0;
-  };
-
-  const handleIncrement = (id, name, price) => {
-    const currentQty = getQuantity(id);
-    tracking("add_to_cart ", {
-      addon_name: name,
-      addon_price: price,
-      addon_quantity: currentQty + 1,
-    });
-    handleAddOnChange(id, name, currentQty + 1, price);
-  };
-
-  const handleDecrement = (id, name, price) => {
-    const currentQty = getQuantity(id);
-    tracking("remove_from_cart ", {
-      addon_name: name?.[lng],
-      addon_price: price,
-      addon_quantity: 1,
-    });
-    if (currentQty > 0) {
-      handleAddOnChange(id, name, currentQty - 1, price);
-    }
-  };
-
-  const handleRemove = (id) => {
-    const addon = addOns?.data?.find((item) => item._id === id);
-    if (addon) {
-      handleAddOnChange(id, addon.name, 0, addon.price);
-      tracking("remove_from_cart ", {
-        addon_name: addon.name?.[lng],
-        addon_price: addon.price,
-      });
-    }
-  };
 
   if (isLoading) return <Loading />;
 

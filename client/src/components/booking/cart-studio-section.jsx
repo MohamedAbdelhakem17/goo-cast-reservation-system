@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { OptimizedImage } from "@/components/common";
 
-export const StudioSection = memo(function StudioSection({
+const StudioSection = memo(function StudioSection({
   studio,
   date,
   startSlot,
@@ -13,14 +13,19 @@ export const StudioSection = memo(function StudioSection({
   return (
     <div className="flex items-center justify-between space-y-1 border-b-1 border-gray-300 pb-4">
       <div className="flex-1">
+        {/* Booking date */}
         <p className="text-md text-gray-500">
           <i className="fa-solid fa-calendar-days me-2 text-[12px]"></i>
           {date}
         </p>
+
+        {/* Hour and duration */}
         <p className="text-md text-gray-500">
           <i className="fa-solid fa-clock me-2 text-[12px]"></i>
           {formatTime(startSlot)} ({duration} {lng === "ar" ? "ساعة" : "h"})
         </p>
+
+        {/* Studio name */}
         <p className="text-md text-gray-500">
           <i className="fa-solid fa-location-dot me-2 text-[12px]"></i>
           {studio.name?.[lng]}
@@ -35,3 +40,5 @@ export const StudioSection = memo(function StudioSection({
     </div>
   );
 });
+
+export default StudioSection;

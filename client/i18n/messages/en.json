@@ -188,7 +188,6 @@
   "time-0": "Time",
   "persons": "Persons",
   "phone": "Phone",
-  "brand": "Brand",
   "total-package-price": "Total Package Price",
   "total-add-ons": "Total Add-ons",
   "payment-summary": "Payment Summary",
@@ -437,5 +436,18 @@
   "mange-your-admins-in-system": "Mange Your Admins in System",
   "add-admin": "Add Admin",
   "edit-admin-data": "Edit Admin Data",
-  "add-new-admin": "Add new admin"
+  "add-new-admin": "Add new admin",
+  "create-new-booking": "Create New Booking",
+  "update-booking-data": "Update Booking Data",
+  "select-package": "Select Package",
+  "comment": "addational comments",
+  "please-select-a-studio-and-package-first": "Please select a studio and package first",
+  "loading-calendar": "Loading calendar...",
+  "today": "Today",
+  "booked-unavailable": "Booked/Unavailable",
+  "creating-booking": "Creating Booking ...",
+  "create-booking": "Create Booking",
+  "updata-booking": "Updata Booking",
+  "edit-booking": "Edit Booking",
+  "session-duration-hours": "Session duration (hours)"
 }

@@ -1,7 +1,16 @@
 import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function useTimeConvert() {
-  const { lng } = useLocalization();
+  let lng = "en";
+
+  try {
+    const localization = useLocalization();
+    if (localization && localization.lng) {
+      lng = localization.lng;
+    }
+  } catch (err) {
+    lng = "en";
+  }
 
   const toArabicDigits = (num) =>
     num.toString().replace(/[0-9]/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);

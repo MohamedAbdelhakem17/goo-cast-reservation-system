@@ -2,24 +2,36 @@
 import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import ApplyDiscount from "./apply-discount";
 
 import useLocalization from "@/context/localization-provider/localization-context";
 import useDataFormat from "@/hooks/useDateFormat";
-import { StudioSection } from "./cart-studio-section";
-import { PackageSection } from "./cart-package-section";
-import { AddOnsSection } from "./cart-addons-section";
-import useCartCalculations from "../_hooks/use-cart-calculations";
+import useCartCalculations from "@/hooks/use-cart-calculations";
+import {
+  PackageSection,
+  AddOnsSection,
+  StudioSection,
+  ApplyDiscount,
+} from "@/components/booking";
 
 export default function CartContent() {
   // Localization
   const { t, lng } = useLocalization();
 
   // Hooks
-  const { bookingData, subtotal, discountAmount, totalAfterDiscount } =
-    useCartCalculations();
+  const {
+    handleNextStep,
+    handlePrevStep,
+    currentStep,
+    hasError,
+    bookingData,
+    getBookingField,
+    setBookingField,
+  } = useBooking();
 
-  const { handleNextStep, handlePrevStep, currentStep, hasError } = useBooking();
+  const { subtotal, discountAmount, totalAfterDiscount } = useCartCalculations({
+    bookingData,
+    setBookingField,
+  });
 
   const formatTime = useTimeConvert();
   const priceFormat = usePriceFormat();
@@ -81,7 +93,10 @@ export default function CartContent() {
       </div>
 
       {/* Add discount */}
-      <ApplyDiscount />
+      <ApplyDiscount
+        getBookingField={getBookingField}
+        setBookingField={setBookingField}
+      />
 
       {/* Actions  in select additional serves*/}
       {currentStep === 4 && (
