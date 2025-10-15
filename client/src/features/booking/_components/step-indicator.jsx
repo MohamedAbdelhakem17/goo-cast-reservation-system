@@ -12,8 +12,15 @@ export default function Stepper() {
     title,
   }));
 
+  const handleScroll = () => {
+    window.scrollBy({
+      top: 150,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <div className="bg-white px-4 py-2 lg:px-8">
+    <div className="bg-white px-4 py-3 lg:px-8">
       {/* Desktop/Tablet View */}
       <div className="mx-auto hidden max-w-5xl scale-[.9] items-center justify-between sm:flex">
         {steps.map((step, index) => (
@@ -85,7 +92,10 @@ export default function Stepper() {
         </div>
 
         {/* Current Step Display */}
-        <div className="rounded-xl border border-[#FF3B30]/20 bg-gradient-to-r from-[#FF3B30]/5 to-[#FF6B60]/5 p-4">
+        <div
+          className="cursor-pointer rounded-xl border border-[#FF3B30]/20 bg-gradient-to-r from-[#FF3B30]/5 to-[#FF6B60]/5 p-4"
+          onClick={handleScroll}
+        >
           <div className="flex items-center space-x-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] shadow-lg">
               {currentStep < steps.length ? (

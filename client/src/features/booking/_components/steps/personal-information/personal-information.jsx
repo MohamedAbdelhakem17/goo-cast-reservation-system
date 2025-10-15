@@ -9,6 +9,8 @@ import { BookingLabel } from "@/features/booking/_components";
 import { Loader } from "lucide-react";
 import { tracking } from "@/utils/gtm";
 import useLocalization from "@/context/localization-provider/localization-context";
+import Faq from "./../select-additional-services/_components/faq";
+import CartContent from "../../cart/_components/cart-content";
 
 const motionProps = {
   initial: { opacity: 0, x: -10 },
@@ -47,6 +49,22 @@ export default function PersonalInformation() {
 
   return (
     <div className="mx-auto space-y-4 duration-300">
+      <div className="flex flex-col items-start gap-6 md:flex-row">
+        {/* Image Section */}
+        <div className="w-full md:w-1/3">
+          <img
+            src={bookingData?.studio?.image}
+            alt={bookingData?.studio?.name || "Selected Studio"}
+            className="h-96 w-full rounded-xl object-cover shadow-md"
+          />
+        </div>
+
+        {/* Cart Section */}
+        <div className="w-full md:w-2/3">
+          <CartContent />
+        </div>
+      </div>
+
       {/* Header */}
       <BookingLabel
         title={t("payment-information")}
@@ -54,10 +72,10 @@ export default function PersonalInformation() {
       />
 
       {/* Responsive Content */}
-      <div className="flex w-full flex-col items-start gap-6 lg:flex-row">
+      <div className="space-y-4">
         {/* Form section */}
-        <div className="w-full rounded-md border-1 border-gray-100 py-5 shadow-sm lg:w-2/3">
-          <form className="w-full space-y-2 px-5">
+        <div className="w-full rounded-md border-1 border-gray-100 p-4 py-5 shadow-sm">
+          <form className="w-full space-y-5 px-5">
             <motion.div
               {...motionProps}
               className="b-0 m-0 flex w-full flex-col gap-4 lg:flex-row"
@@ -221,10 +239,13 @@ export default function PersonalInformation() {
           </div>
         </div>
 
-        {/* Cart section */}
+        {/* Faq */}
+        <Faq />
+
+        {/* Cart section
         <div className="w-full lg:w-1/3">
           <Cart />
-        </div>
+        </div> */}
       </div>
     </div>
   );

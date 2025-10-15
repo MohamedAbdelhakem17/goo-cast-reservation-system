@@ -78,13 +78,13 @@ export default function PaymentOptions({ setBookingField, showInfo = true }) {
       )}
 
       {selected === "CASH" && showInfo && (
-        <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
+        <div className="mt-4 p-4">
           <div className="flex items-start">
-            <div className="me-2 text-amber-600">ℹ️</div>
-            <div className="text-sm text-amber-700">
-              <p className="mb-2">
+            {/* <div className="me-2 text-gray-300">ℹ️</div> */}
+            <div className="text-base text-gray-500">
+              {/* <p className="mb-2">
                 <strong>{t("cash-payment-information")}</strong>
-              </p>
+              </p> */}
               <ul className="list-inside list-disc space-y-1 text-xs">
                 {cashNotes.map((note, idx) => (
                   <li key={idx}>{note}</li>

@@ -66,10 +66,13 @@ export default function AddOns() {
             <motion.div
               key={addon._id}
               variants={cardVariants}
-              className={`flex flex-col justify-between overflow-hidden rounded-xl border bg-white shadow-sm transition-transform duration-300 hover:scale-[1.02] ${
-                isSelected ? "border-main" : "border-gray-300"
+              className={`flex flex-col justify-between gap-y-4 overflow-hidden rounded-3xl bg-gray-50 py-4 shadow-sm transition-transform duration-300 hover:scale-[1.02] px-2${
+                isSelected
+                  ? "border-main shadow-main/20 border-2"
+                  : "border-gray-100 shadow-sm"
               }`}
             >
+              {/* Card  image*/}
               <div className="relative h-80 w-full overflow-hidden p-1">
                 <img
                   src={addon.image}
@@ -78,22 +81,28 @@ export default function AddOns() {
                 />
               </div>
 
-              <div className="flex flex-grow flex-col px-4 py-1">
-                <h3 className="mb-1 text-lg font-semibold text-gray-900">
+              {/* Information */}
+              <div className="flex flex-grow flex-col gap-y-4 px-4 py-1">
+                {/* Name */}
+                <h3 className="text-main mb-1 text-lg font-semibold">
                   {addon.name?.[lng]}
                 </h3>
+
+                {/* description */}
                 <p className="flex-grow text-sm text-gray-600">
                   {addon.description?.[lng]}
                 </p>
 
-                <div className="text-md top-6 right-4 flex w-fit items-center justify-center rounded-lg p-1 font-bold">
+                {/* Price */}
+                <div className="text-md text-color top-6 right-4 flex w-fit items-center justify-center rounded-lg p-1 font-bold">
                   {priceFormat(addon.price)}
                 </div>
 
+                {/* Actions */}
                 <div>
                   {quantity === 0 && (
                     <button
-                      className="text-md bg-main mx-auto my-2 flex w-full items-center justify-center rounded-lg px-4 py-2 font-semibold text-white"
+                      className="text-md mx-auto my-2 flex w-full items-center justify-center rounded-lg bg-black px-4 py-2 font-semibold text-white"
                       onClick={() => handleIncrement(addon._id, addon.name, addon.price)}
                     >
                       {t("add-to-cart")}

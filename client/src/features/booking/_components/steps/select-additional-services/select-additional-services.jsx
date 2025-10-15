@@ -3,7 +3,7 @@ import { tracking } from "@/utils/gtm";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { BookingLabel } from "@/features/booking/_components";
 import AddOns from "./_components/select-addons";
-import Faq from "./_components/faq";
+// import Faq from "./_components/faq";
 import Cart from "@/features/booking/_components/cart/cart";
 
 export default function SelectAdditionalServices() {
@@ -30,8 +30,8 @@ export default function SelectAdditionalServices() {
           {/* Additional Serves */}
           <AddOns />
 
-          {/* Faq */}
-          <Faq />
+          {/* Faq
+          <Faq /> */}
         </div>
 
         {/* Cart Sticky */}

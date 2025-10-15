@@ -16,13 +16,14 @@ export default function Cart() {
       <div className="block">
         <Sticky
           topOffset={-150}
+          bottomOffset={140}
           stickyStyle={{
             top: "190px",
             zIndex: 40,
             transition: "top 0.3s ease-in-out",
           }}
           boundaryElement="#cart-wrapper"
-          hideOnBoundaryHit={false}
+          hideOnBoundaryHit={true}
         >
           <CartContent />
         </Sticky>

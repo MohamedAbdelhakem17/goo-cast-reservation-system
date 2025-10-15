@@ -449,5 +449,17 @@
   "create-booking": "Create Booking",
   "updata-booking": "Updata Booking",
   "edit-booking": "Edit Booking",
-  "session-duration-hours": "Session duration (hours)"
+  "session-duration-hours": "Session duration (hours)",
+  "book": "Book",
+  "growing-community": "growing community",
+  "of-goocast": "of Goocast.",
+  "join-the": "Join the",
+  "stay-up-to-date-with-industry-insights-and-community-events": "Stay up to date with industry insights and community events",
+  "subscribing": "Subscribing...",
+  "subscribe-now": "Subscribe Now",
+  "home-of-content-creators": "Home of Content Creators",
+  "privacy-policy": "Privacy Policy",
+  "terms-and-conditions": "Terms & Conditions",
+  "find-us-at": "Find us at",
+  "invalid-email-address": "Invalid email address"
 }
