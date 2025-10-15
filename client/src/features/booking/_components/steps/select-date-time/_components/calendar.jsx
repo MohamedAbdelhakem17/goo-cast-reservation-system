@@ -7,6 +7,7 @@ import { DateTime } from "luxon";
 import { useCalendar } from "../_hooks/useCalendar";
 import useLocalization from "@/context/localization-provider/localization-context";
 import useLockBodyScroll from "@/hooks/use-lock-body-scroll";
+import { DurationInput } from "@/components/booking";
 
 export default function Calendar({ openToggle, getAvailableSlots }) {
   // Localization
@@ -28,11 +29,11 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
   } = useCalendar(bookingData.date, bookingData.duration);
 
   // stat
-  const [isOpen, setIsOpen] = useState(
-    !bookingData.duration || bookingData.duration === 1,
-  );
+  // const [isOpen, setIsOpen] = useState(
+  //   !bookingData.duration || bookingData.duration === 1,
+  // );
 
-  useLockBodyScroll(isOpen);
+  // useLockBodyScroll(isOpen);
 
   // Functions
   const handleDayClick = (day, currentDate, isBlocked) => {
@@ -65,9 +66,35 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     }
   };
 
+  // Functions
+  const handleIncrement = () => {
+    const newValue = Math.min(8, currentDuration + 1);
+    const totalPricePackage = newValue * +bookingData.totalPackagePrice;
+    setBookingField("duration", newValue);
+    setBookingField("totalPackagePrice", totalPricePackage);
+  };
+
+  const handleDecrement = () => {
+    const newValue = Math.max(1, currentDuration - 1);
+    const totalPricePackage = newValue * +bookingData.totalPackagePrice;
+    setBookingField("duration", newValue);
+    setBookingField("totalPackagePrice", totalPricePackage);
+  };
+
+  // Variables
+  const currentDuration = bookingData.duration || 1;
+
   return (
     <div className="mx-auto w-full bg-white">
       {/* Header */}
+      <div className="p-3">
+        <DurationInput
+          handleDecrement={handleDecrement}
+          duration={currentDuration}
+          handleIncrement={handleIncrement}
+        />
+      </div>
+
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* go to last month */}
@@ -92,7 +119,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
         </div>
 
         {/* Duration selection */}
-        <Duration isOpen={isOpen} setIsOpen={setIsOpen} />
+        {/* <Duration isOpen={isOpen} setIsOpen={setIsOpen} /> */}
       </div>
 
       {/* Calendar */}

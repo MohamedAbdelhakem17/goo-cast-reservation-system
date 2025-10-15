@@ -432,5 +432,16 @@
   "create-booking": "إنشاء الحجز",
   "updata-booking": "تحديث بيانات الحجز ",
   "edit-booking": "تعديل الحجز",
-  "session-duration-hours": "مدة الجلسة (ساعات)"
+  "session-duration-hours": "مدة الجلسة (ساعات)",
+  "stay-up-to-date-with-industry-insights-and-community-events": "ابق على اطلاع برؤى الصناعة وأحداث المجتمع",
+  "growing-community": "المجتمع المتنامي",
+  "join-the": "انضم إلى",
+  "of-goocast": "من جوكاست.",
+  "subscribe-now": "اشترك الآن",
+  "subscribing": "الاشتراك...",
+  "home-of-content-creators": "الصفحة الرئيسية لمنشئي المحتوى",
+  "terms-and-conditions": "شروط",
+  "privacy-policy": "سياسة الخصوصية",
+  "find-us-at": "تجدنا في",
+  "invalid-email-address": "عنوان البريد الإلكتروني غير صالح"
 }

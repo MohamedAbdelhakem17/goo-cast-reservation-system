@@ -17,7 +17,7 @@ export default function Faq() {
 
   return (
     <div className="mx-auto w-full py-5">
-      <h4 className="mb-3 text-xl font-semibold text-gray-900">
+      <h4 className="mb-3 text-3xl font-semibold text-gray-900">
         {t("frequently-asked-questions")}
       </h4>
 

@@ -121,7 +121,7 @@ export default function CartContent() {
       )}
 
       {/* Footer in payment info */}
-      {currentStep === 5 && (
+      {/* {currentStep === 5 && (
         <div className="rounded-lg border border-green-200 bg-green-50 p-3">
           <p className="text-xs text-green-700">
             🔒
@@ -130,7 +130,7 @@ export default function CartContent() {
             )}
           </p>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

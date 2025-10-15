@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { NavigationButtons, Stepper } from "@/features/booking/_components";
 import BookingHeader from "@/layout/_components/booking-header/booking-header";
+import { BookingFooter } from "./booking-footer";
 
 // Container fade animation
 const containerVariants = {
@@ -36,7 +37,7 @@ export default function BookingLayout({ children, currentStep }) {
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto w-full px-3 py-3 md:px-4 lg:max-w-4xl lg:px-6 xl:max-w-6xl">
+      <div className="mx-auto mb-3 w-full px-3 md:px-4 lg:max-w-4xl lg:px-6 xl:max-w-6xl">
         <motion.div
           className="rounded-xl bg-white"
           initial={{ opacity: 0 }}
@@ -71,6 +72,9 @@ export default function BookingLayout({ children, currentStep }) {
         {/* Next and Prev Buttons */}
         <NavigationButtons />
       </div>
+
+      {/* Footer */}
+      <BookingFooter />
     </div>
   );
 }

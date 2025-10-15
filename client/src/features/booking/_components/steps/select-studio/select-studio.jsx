@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import BookingLabel from "../../booking-label";
 import { tracking } from "@/utils/gtm";
@@ -15,9 +15,28 @@ export default function SelectStudio() {
 
   const [previewImages, setPreviewImages] = useState([]);
   const [previewIndex, setPreviewIndex] = useState(null);
-  const [hoveredImage, setHoveredImage] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState({});
 
   const { data: studiosData, isLoading, error } = useGetStudio(true);
+
+  useEffect(() => {
+    if (!studiosData?.data) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => {
+        const newIndices = { ...prev };
+        studiosData.data.forEach((studio) => {
+          const allImages = [studio.thumbnail, ...(studio.imagesGallery || [])];
+          const imageCount = allImages.length;
+          const currentIndex = prev[studio._id] || 0;
+          newIndices[studio._id] = (currentIndex + 1) % imageCount;
+        });
+        return newIndices;
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [studiosData]);
 
   const selectStudio = (studio) => {
     setBookingField("studio", studio);
@@ -62,6 +81,7 @@ export default function SelectStudio() {
         {error.response?.data?.message || error.message || "Something went wrong"}
       </ErrorFeedback>
     );
+
   return (
     <div className="space-y-6">
       <>
@@ -70,164 +90,60 @@ export default function SelectStudio() {
           desc={t("select-the-studio-that-best-fits-your-needs")}
         />
 
-        <div className="flex scale-90 flex-wrap justify-around gap-3">
-          {studiosData.data.map((studio) => (
-            <motion.div
-              key={studio.id}
-              className={`w-full cursor-pointer overflow-hidden rounded-2xl border-1 border-gray-100 bg-white shadow-sm transition-shadow duration-300 md:w-[40%] ${
-                selectedStudio === studio._id ? "border-main/50 scale-[.98]" : ""
-              }`}
-              variants={itemVariants}
-              whileHover={{
-                y: -10,
-                transition: { type: "spring", stiffness: 300 },
-              }}
-              onClick={() => {
-                selectStudio({
-                  id: studio._id,
-                  name: studio.name,
-                  image: studio.thumbnail,
-                });
-                tracking("add_to_cart", { studio_name: studio.name?.[lng] });
-              }}
-            >
-              {/* Image with Click Indicator */}
-              <motion.div
-                className="group relative h-64 overflow-hidden p-5"
-                onMouseEnter={() => setHoveredImage(studio._id)}
-                onMouseLeave={() => setHoveredImage(null)}
-              >
-                {selectedStudio === studio._id && (
-                  <div className="bg-main absolute top-8 right-8 z-10 flex h-8 w-8 items-center justify-center rounded-full text-white">
-                    <i className="fa-solid fa-check"></i>
-                  </div>
-                )}
+        <div className="flex flex-col gap-6">
+          {studiosData.data.map((studio) => {
+            const allImages = [studio.thumbnail, ...(studio.imagesGallery || [])];
+            const isActive = selectedStudio === studio._id;
 
-                <div className="relative h-full w-full overflow-hidden rounded-lg">
-                  <OptimizedImage
-                    src={studio.thumbnail || "/placeholder.svg"}
-                    alt={studio.name?.[lng]}
-                    className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-110"
+            return (
+              <motion.div
+                key={studio._id}
+                className={`flex cursor-pointer flex-col-reverse items-start justify-between overflow-hidden rounded-2xl border bg-gray-50 p-2 shadow-lg transition-colors duration-300 md:flex-row ${
+                  isActive ? "border-main border-2" : "border-gray-100 shadow-sm"
+                }`}
+                variants={itemVariants}
+                onClick={() => {
+                  selectStudio({
+                    id: studio._id,
+                    name: studio.name,
+                    image: studio.thumbnail,
+                  });
+                  tracking("add_to_cart", { studio_name: studio.name?.[lng] });
+                }}
+              >
+                {/* Left side - Text content */}
+                <div className="flex min-h-96 w-full flex-col justify-between p-2 md:w-1/2 md:p-4">
+                  <div>
+                    <h3 className="mb-6 text-2xl font-bold text-red-600">
+                      {studio.name?.[lng]}
+                    </h3>
+                    <ul className="space-y-2 text-gray-700">
+                      <li className="flex items-start text-sm">
+                        <span className="me-2 text-gray-800">•</span>
+                        {studio.recording_seats} {t("recording-seats")}
+                      </li>
+                      <li className="flex items-start text-sm">
+                        <span className="me-2 text-gray-800">•</span>
+                        {studio.address?.[lng]}
+                      </li>
+                      {studio.facilities?.[lng].map((text, i) => (
+                        <motion.li
+                          key={i}
+                          variants={benefitVariants}
+                          className="flex items-start text-sm"
+                        >
+                          <span className="me-2 text-gray-800">•</span>
+                          {text}
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      const images = [studio.thumbnail, ...(studio.imagesGallery || [])];
-                      setPreviewImages(images);
-                      setPreviewIndex(0);
-                    }}
-                  />
-
-                  {/* Hover Overlay with Click Indicator */}
-                  <AnimatePresence>
-                    {hoveredImage === studio._id && (
-                      <motion.div
-                        className="absolute inset-0 flex items-center justify-center bg-black/40"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <motion.div
-                          className="flex items-center gap-2 rounded-full bg-white/90 p-3 text-gray-800 backdrop-blur-sm"
-                          initial={{ scale: 0.8, y: 10 }}
-                          animate={{ scale: 1, y: 0 }}
-                          exit={{ scale: 0.8, y: 10 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const images = [
-                              studio.thumbnail,
-                              ...(studio.imagesGallery || []),
-                            ];
-                            setPreviewImages(images);
-                            setPreviewIndex(0);
-                          }}
-                        >
-                          <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-                            />
-                          </svg>
-                          <span className="text-sm font-medium">{t("view-gallery")}</span>
-                        </motion.div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Small indicator in corner */}
-                  <div className="absolute top-3 left-3 rounded-full bg-white/80 p-1.5 opacity-70 backdrop-blur-sm transition-opacity group-hover:opacity-100">
-                    <svg
-                      className="h-3 w-3 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Info */}
-              <div className="p-5">
-                <h3 className="text-xl font-bold text-gray-800">{studio.name?.[lng]}</h3>
-                <ul className="mt-3 text-gray-600">
-                  <li className="flex items-start text-sm">
-                    <span
-                      className={`me-2 ${
-                        selectedStudio === studio._id ? "text-main" : "text-black"
-                      }`}
-                    >
-                      •
-                    </span>
-                    {studio.recording_seats} {t("recording-seats")}
-                  </li>
-                  <li className="flex items-start text-sm">
-                    <span
-                      className={`me-2 ${
-                        selectedStudio === studio._id ? "text-main" : "text-black"
-                      }`}
-                    >
-                      •
-                    </span>
-                    {studio.address?.[lng]}
-                  </li>
-                </ul>
-                <ul className="mb-4 space-y-2">
-                  {studio.facilities?.[lng].map((text, i) => (
-                    <motion.li
-                      key={i}
-                      variants={benefitVariants}
-                      className="flex items-start text-sm"
-                    >
-                      <span
-                        className={`me-2 ${
-                          selectedStudio === studio._id ? "text-main" : "text-black"
-                        }`}
-                      >
-                        •
-                      </span>
-                      {text}
-                    </motion.li>
-                  ))}
-                </ul>
-                <div className="mt-auto">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => {
                       selectStudio({
                         id: studio._id,
                         name: studio.name,
@@ -235,18 +151,77 @@ export default function SelectStudio() {
                       });
                       handleNextStep();
                     }}
-                    className={`text-md mx-auto flex w-full items-center justify-center rounded-lg px-4 py-2 font-semibold ${
-                      selectedStudio === studio._id
+                    className={`text-md mx-auto mt-6 flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold transition ${
+                      isActive
                         ? "bg-main text-white"
-                        : "border-2 border-gray-200 text-gray-700 hover:bg-gray-200"
+                        : "border-2 border-gray-200 bg-black text-white"
                     }`}
                   >
-                    {selectedStudio === studio._id ? t("selected-0") : t("select")}
+                    {isActive ? t("selected-0") : t("select")}
                   </motion.button>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+
+                {/* Right side - Image */}
+                <div className="relative w-full overflow-hidden p-2 md:w-1/2 md:p-4">
+                  {/* ✅ Swipe فقط على الصورة */}
+                  <motion.div
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.2}
+                    onDragEnd={(e, info) => {
+                      const delta = info.offset.x;
+                      if (delta > 50) {
+                        // Swipe Right
+                        setCurrentImageIndex((prev) => ({
+                          ...prev,
+                          [studio._id]:
+                            (prev[studio._id] || 0) === 0
+                              ? allImages.length - 1
+                              : (prev[studio._id] || 0) - 1,
+                        }));
+                      } else if (delta < -50) {
+                        // Swipe Left
+                        setCurrentImageIndex((prev) => ({
+                          ...prev,
+                          [studio._id]: ((prev[studio._id] || 0) + 1) % allImages.length,
+                        }));
+                      }
+                    }}
+                  >
+                    <OptimizedImage
+                      src={
+                        allImages[currentImageIndex[studio._id] || 0] ||
+                        "/placeholder.svg"
+                      }
+                      alt={studio.name?.[lng]}
+                      className="h-96 w-full rounded-2xl object-cover select-none"
+                    />
+                  </motion.div>
+
+                  {/* ✅ Clickable Dots */}
+                  <div className="absolute right-0 -bottom-1.5 left-0 flex justify-center gap-2 py-2">
+                    {allImages.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentImageIndex((prev) => ({
+                            ...prev,
+                            [studio._id]: i,
+                          }));
+                        }}
+                        className={`h-2 w-2 rounded-full transition-colors ${
+                          i === (currentImageIndex[studio._id] || 0)
+                            ? "bg-main"
+                            : "bg-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </>
 
