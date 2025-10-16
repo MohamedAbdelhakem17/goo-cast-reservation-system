@@ -28,7 +28,7 @@ const Home = () => {
       <Hero />
       <Packages />
       <BookNow />
-      <Studio />
+      {/* <Studio /> */}
       {/* <Reviews /> */}
       <AnimatePresence>{showMessage && <EmailSuccessfully />}</AnimatePresence>
     </main>
