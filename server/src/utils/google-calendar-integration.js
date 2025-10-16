@@ -65,6 +65,7 @@ exports.updateCalenderEvent = async (eventId, newEventData) => {
       sendUpdates: "all",
     });
 
+    console.log(data);
     return data.id;
   } catch (error) {
     console.error("Google Calendar Error (updateEvent):", err.message);

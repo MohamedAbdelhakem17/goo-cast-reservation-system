@@ -142,7 +142,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
             {calendarDays.map((day, index) => (
               <div
                 key={index}
-                className={`relative h-15 border-r border-b border-gray-200 last:border-e-0 lg:h-20 ${
+                className={`relative h-10 border-r border-b border-gray-200 last:border-e-0 lg:h-16 ${
                   day.blocked
                     ? "cursor-not-allowed bg-gray-50"
                     : "cursor-pointer bg-white transition-colors hover:bg-blue-50"

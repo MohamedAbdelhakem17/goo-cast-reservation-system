@@ -185,7 +185,7 @@ export default function SelectPackage() {
       />
 
       <motion.div
-        className="flex scale-90 flex-wrap justify-center gap-2 md:px-8 lg:justify-around lg:px-0"
+        className="flex scale-x-90 flex-wrap justify-center gap-2 md:px-8 lg:justify-around lg:px-0"
         variants={containerVariants}
         initial="hidden"
         animate="visible"

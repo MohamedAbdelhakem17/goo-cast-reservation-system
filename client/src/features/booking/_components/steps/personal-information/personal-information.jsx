@@ -2,7 +2,6 @@ import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import Cart from "@/features/booking/_components/cart/cart";
-
 import { BookingInput } from "@/components/booking";
 import PaymentOptions from "./_components/payment-way";
 import { BookingLabel } from "@/features/booking/_components";
@@ -10,7 +9,6 @@ import { Loader } from "lucide-react";
 import { tracking } from "@/utils/gtm";
 import useLocalization from "@/context/localization-provider/localization-context";
 import Faq from "./../select-additional-services/_components/faq";
-import CartContent from "../../cart/_components/cart-content";
 
 const motionProps = {
   initial: { opacity: 0, x: -10 },
@@ -49,32 +47,16 @@ export default function PersonalInformation() {
 
   return (
     <div className="mx-auto space-y-4 duration-300">
-      <div className="flex flex-col items-start gap-6 md:flex-row">
-        {/* Image Section */}
-        <div className="w-full md:w-1/3">
-          <img
-            src={bookingData?.studio?.image}
-            alt={bookingData?.studio?.name || "Selected Studio"}
-            className="h-96 w-full rounded-xl object-cover shadow-md"
-          />
-        </div>
-
-        {/* Cart Section */}
-        <div className="w-full md:w-2/3">
-          <CartContent />
-        </div>
-      </div>
-
       {/* Header */}
       <BookingLabel
         title={t("payment-information")}
         desc={t("complete-your-booking-with-your-contact-details")}
       />
 
-      {/* Responsive Content */}
-      <div className="space-y-4">
-        {/* Form section */}
-        <div className="w-full rounded-md border-1 border-gray-100 p-4 py-5 shadow-sm">
+      {/* Responsive Grid Layout */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
+        {/* === Form Section === */}
+        <div className="col-span-2 w-full rounded-md border border-gray-100 p-4 py-5 shadow-sm">
           <form className="w-full space-y-5 px-5">
             <motion.div
               {...motionProps}
@@ -239,13 +221,17 @@ export default function PersonalInformation() {
           </div>
         </div>
 
-        {/* Faq */}
-        <Faq />
-
-        {/* Cart section
-        <div className="w-full lg:w-1/3">
+        {/* === Cart Section === */}
+        <div className="order-1 w-full lg:order-none">
           <Cart />
-        </div> */}
+        </div>
+      </div>
+
+      {/* === FAQ Section (same width as form) === */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
+        <div className="order-2 col-span-2 w-full rounded-md border border-gray-100 p-4 py-5 shadow-sm lg:order-none">
+          <Faq />
+        </div>
       </div>
     </div>
   );

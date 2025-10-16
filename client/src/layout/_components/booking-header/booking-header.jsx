@@ -8,7 +8,7 @@ export default function BookingHeader() {
   const { t } = useLocalization();
 
   return (
-    <div className="sticky top-0 z-[500] border-b border-gray-200 bg-black">
+    <div className="sticky top-0 z-[500] border-b border-gray-300 bg-white text-gray-500">
       <div className="mx-auto w-full px-4 py-4 lg:max-w-6xl lg:px-8">
         <div className="flex items-center justify-between">
           <div>
@@ -17,13 +17,13 @@ export default function BookingHeader() {
                 <OptimizedImage src={logo} alt="Goocast" className="w-36" />
               </Link>
             </h1>
-            <p className="mt-1 text-sm text-white md:text-base">
+            <p className="mt-1 text-sm md:text-base">
               {t("easy-podcasting-for-everyone")}
             </p>
           </div>
 
           {/* Trust Indicators */}
-          <div className="hidden items-center space-x-6 text-sm text-white md:flex">
+          <div className="hidden items-center space-x-6 text-sm md:flex">
             <div className="flex items-center">
               <Users className="me-1 h-4 w-4" />
               <span>{t("500-sessions")}</span>

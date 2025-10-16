@@ -8,18 +8,20 @@ import useLocalization from "@/context/localization-provider/localization-contex
 
 function CouponInput({ coupon, setCoupon, onApply, disabled, isPending, t }) {
   return (
-    <div className="my-3 flex items-center justify-between gap-3">
+    <div className="my-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <input
         type="text"
         placeholder={t("enter-coupon-code")}
         value={coupon.toUpperCase()}
         onChange={(e) => setCoupon(e.target.value.toUpperCase())}
-        className="flex-grow-1 rounded-md border-2 border-gray-100 bg-transparent px-2 py-1 text-gray-700 focus:outline-none"
+        className="focus:border-main focus:ring-main w-full flex-1 rounded-md border-2 border-gray-200 bg-transparent px-3 py-2 text-gray-700 placeholder-gray-400 focus:ring-1 focus:outline-none sm:text-sm"
       />
       <button
         disabled={disabled || isPending}
         onClick={onApply}
-        className="cursor-pointer rounded-md border-2 border-gray-100 bg-gray-100 px-2 py-1 text-sm text-black shadow-sm transition-all duration-200"
+        className={`w-full rounded-md border-2 border-gray-100 bg-gray-100 px-4 py-2 text-sm font-medium text-black shadow-sm transition-all duration-200 sm:w-auto ${
+          disabled ? "cursor-not-allowed opacity-50" : "hover:bg-gray-200"
+        }`}
       >
         {isPending ? t("applying") : t("apply")}
       </button>
@@ -61,7 +63,6 @@ export default function ApplyDiscount({ getBookingField, setBookingField }) {
 
           addToast(response.message || "Coupon Applied Successfully", "success");
         },
-
         onError: (error) => {
           const errorMessage = error.response?.data?.message || "Coupon is not valid";
           addToast(errorMessage, "error");
@@ -71,25 +72,25 @@ export default function ApplyDiscount({ getBookingField, setBookingField }) {
   };
 
   return (
-    <div className="my-2 w-full rounded-xl py-2">
-      <h2 className="text-sm font-bold text-gray-800">
-        <i className="fa-solid fa-tag me-3"></i>
+    <div className="my-3 w-full rounded-xl py-2">
+      <h2 className="flex items-center gap-2 text-sm font-bold text-gray-800">
+        <i className="fa-solid fa-tag text-gray-600"></i>
         {t("promo-code")}
       </h2>
+
       {discount ? (
-        <div className="mt-2 flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3">
-          <div className="flex items-center space-x-2">
-            <Check className="h-4 w-4 text-green-600" />
+        <div className="mt-3 flex flex-col rounded-lg border border-green-200 bg-green-50 p-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-2 sm:items-center">
+            <Check className="mt-[2px] h-4 w-4 text-green-600" />
             <div>
-              <div className="text-sm">{coupon}</div>
+              <div className="text-sm font-medium">{coupon}</div>
               <div className="text-xs text-green-600">
                 {t("discount-discount-on-package-only")}
               </div>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            {/* Show discount value calculated from the package price */}
-            <span className="text-sm text-green-600">
+          <div className="mt-2 flex items-center sm:mt-0">
+            <span className="text-sm font-medium text-green-600">
               - {priceFormat(totalPackagePrice * (discount / 100))}
             </span>
           </div>
