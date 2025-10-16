@@ -16,15 +16,16 @@ export default function Cart() {
   return (
     <>
       {/*  Cart */}
-      <div className="block">
+      <div className="block pb-6">
         {isDesktop ? (
           <Sticky
             topOffset={-150}
             bottomOffset={140}
             stickyStyle={{
               top: "190px",
+              bottom: "30px",
               zIndex: 40,
-              transition: "top 0.3s ease-in-out",
+              transition: "top 0.3s linear",
             }}
             boundaryElement="#cart-wrapper"
             hideOnBoundaryHit={true}
