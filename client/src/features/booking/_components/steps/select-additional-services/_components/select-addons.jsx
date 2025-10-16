@@ -51,105 +51,97 @@ export default function AddOns() {
   if (isLoading) return <Loading />;
 
   return (
-    <>
-      <motion.div
-        className="grid grid-cols-1 gap-6 md:grid-cols-2"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {addons?.data?.map((addon) => {
-          const quantity = getQuantity(addon._id);
-          const isSelected = quantity > 0;
+    <motion.div
+      className="grid w-full grid-cols-1 gap-6 px-2 sm:grid-cols-2 sm:px-4 lg:px-0 xl:grid-cols-2"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {addons?.data?.map((addon) => {
+        const quantity = getQuantity(addon._id);
+        const isSelected = quantity > 0;
 
-          return (
-            <motion.div
-              key={addon._id}
-              variants={cardVariants}
-              className={`flex flex-col justify-between gap-y-4 overflow-hidden rounded-3xl bg-gray-50 py-4 shadow-sm transition-transform duration-300 hover:scale-[1.02] px-2${
-                isSelected
-                  ? "border-main shadow-main/20 border-2"
-                  : "border-gray-100 shadow-sm"
-              }`}
-            >
-              {/* Card  image*/}
-              <div className="relative h-80 w-full overflow-hidden p-1">
-                <img
-                  src={addon.image}
-                  alt={addon.name?.[lng]}
-                  className="h-full w-full rounded-md object-cover transition-transform duration-300"
-                />
+        return (
+          <motion.div
+            key={addon._id}
+            variants={cardVariants}
+            className={`flex flex-col justify-between overflow-hidden rounded-2xl border bg-gray-50 shadow-sm transition-transform duration-300 hover:shadow-2xl ${
+              isSelected ? "border-main shadow-main/10" : "border-gray-100"
+            } `}
+          >
+            {/* === Image === */}
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl p-2">
+              <img
+                src={addon.image}
+                alt={addon.name?.[lng]}
+                className="h-full w-full rounded-2xl object-cover transition-transform duration-300 hover:scale-95"
+              />
+            </div>
+
+            {/* === Info === */}
+            <div className="flex flex-grow flex-col gap-y-3 p-4">
+              {/* Title */}
+              <h3 className="text-lg font-semibold text-black">{addon.name?.[lng]}</h3>
+
+              {/* Description */}
+              <p className="flex-grow text-sm leading-relaxed text-gray-600">
+                {addon.description?.[lng]}
+              </p>
+
+              {/* Price */}
+              <div className="text-md flex w-fit items-center justify-center rounded-lg p-1 font-bold text-gray-800">
+                {priceFormat(addon.price)}
               </div>
 
-              {/* Information */}
-              <div className="flex flex-grow flex-col gap-y-4 px-4 py-1">
-                {/* Name */}
-                <h3 className="text-main mb-1 text-lg font-semibold">
-                  {addon.name?.[lng]}
-                </h3>
-
-                {/* description */}
-                <p className="flex-grow text-sm text-gray-600">
-                  {addon.description?.[lng]}
-                </p>
-
-                {/* Price */}
-                <div className="text-md text-color top-6 right-4 flex w-fit items-center justify-center rounded-lg p-1 font-bold">
-                  {priceFormat(addon.price)}
-                </div>
-
-                {/* Actions */}
-                <div>
-                  {quantity === 0 && (
-                    <button
-                      className="text-md mx-auto my-2 flex w-full items-center justify-center rounded-lg bg-black px-4 py-2 font-semibold text-white"
-                      onClick={() => handleIncrement(addon._id, addon.name, addon.price)}
-                    >
-                      {t("add-to-cart")}
-                    </button>
-                  )}
-
-                  {quantity > 0 && (
-                    <div className="flex items-center justify-between py-2">
-                      <div className="flex items-center gap-2">
-                        <motion.button
-                          whileTap={{ scale: 0.9 }}
-                          className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-black"
-                          onClick={() =>
-                            handleDecrement(addon._id, addon.name, addon.price)
-                          }
-                          disabled={quantity === 0}
-                        >
-                          <i className="fa-solid fa-minus text-sm"></i>
-                        </motion.button>
-
-                        <span className="w-8 text-center font-medium">{quantity}</span>
-
-                        <motion.button
-                          whileTap={{ scale: 0.9 }}
-                          className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-black"
-                          onClick={() =>
-                            handleIncrement(addon._id, addon.name, addon.price)
-                          }
-                        >
-                          <i className="fa-solid fa-plus text-sm"></i>
-                        </motion.button>
-                      </div>
-
-                      <button
-                        className="rounded border border-gray-300 px-2 py-1 text-sm"
-                        onClick={() => handleRemove(addon._id)}
+              {/* === Actions === */}
+              <div className="mt-2">
+                {quantity === 0 ? (
+                  <button
+                    className="text-md w-full rounded-lg bg-black px-4 py-2 font-semibold text-white transition-all duration-200 hover:bg-gray-800"
+                    onClick={() => handleIncrement(addon._id, addon.name, addon.price)}
+                  >
+                    {t("add-to-cart")}
+                  </button>
+                ) : (
+                  <div className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-2">
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-black"
+                        onClick={() =>
+                          handleDecrement(addon._id, addon.name, addon.price)
+                        }
+                        disabled={quantity === 0}
                       >
-                        {t("remove")}
-                      </button>
+                        <i className="fa-solid fa-minus text-sm"></i>
+                      </motion.button>
+
+                      <span className="w-8 text-center font-medium">{quantity}</span>
+
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-black"
+                        onClick={() =>
+                          handleIncrement(addon._id, addon.name, addon.price)
+                        }
+                      >
+                        <i className="fa-solid fa-plus text-sm"></i>
+                      </motion.button>
                     </div>
-                  )}
-                </div>
+
+                    <button
+                      className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => handleRemove(addon._id)}
+                    >
+                      {t("remove")}
+                    </button>
+                  </div>
+                )}
               </div>
-            </motion.div>
-          );
-        })}
-      </motion.div>
-    </>
+            </div>
+          </motion.div>
+        );
+      })}
+    </motion.div>
   );
 }

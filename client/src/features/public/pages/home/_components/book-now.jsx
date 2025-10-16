@@ -26,7 +26,7 @@ export default function BookNow() {
   ];
 
   return (
-    <div className="from-main to-main/70 my-12 rounded-xl bg-gradient-to-r p-12 text-white">
+    <div className="from-main to-main/70 my-12 bg-gradient-to-r p-12 text-white md:rounded-xl">
       {/* Header */}
       <div className="mx-auto max-w-[90%] text-center">
         {/* Title */}
@@ -64,7 +64,7 @@ export default function BookNow() {
         {/* Link */}
         <Link
           to={"/booking"}
-          className="mt-8 inline-block cursor-pointer rounded-full border-white bg-white px-8 py-3 font-semibold text-red-600 hover:bg-red-50"
+          className="mt-8 inline-block cursor-pointer rounded-full border-white bg-white px-5 py-3 font-semibold text-red-600 hover:bg-red-50"
         >
           {t("book-your-session-now")}
         </Link>

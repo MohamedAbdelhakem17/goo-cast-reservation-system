@@ -1,8 +1,9 @@
 export default function Table({ children, headers }) {
   return (
     <div className="overflow-hidden rounded-xl bg-white shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      {/* 💻 Desktop Table */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-[95%]">
           {/* Table headers */}
           <thead className="bg-gray-50">
             <tr>

@@ -7,35 +7,33 @@ import AddOns from "./_components/select-addons";
 import Cart from "@/features/booking/_components/cart/cart";
 
 export default function SelectAdditionalServices() {
-  // Localization
   const { t } = useLocalization();
 
-  // Effects
   useEffect(() => {
     tracking("initiate_checkout");
   }, []);
 
   return (
-    <div className="space-y-4 duration-300">
+    <div className="space-y-6 duration-300">
       {/* Header */}
       <BookingLabel
         title={t("additional-services")}
         desc={t("enhance-your-session-with-our-professional-add-ons")}
       />
 
-      {/* Responsive Content */}
-      <div className="mb-[10px] flex flex-col gap-6 lg:flex-row" id="cart-wrapper">
-        {/* AddOns takes full width on mobile, 2/3 on large screens */}
-        <div className="w-full space-y-4 lg:w-2/3">
-          {/* Additional Serves */}
+      {/* Grid Layout */}
+      <div
+        id="cart-wrapper"
+        className="mb-6 grid grid-rows-[auto_auto] gap-6 lg:grid-cols-3 lg:grid-rows-1"
+      >
+        {/* AddOns (Top on Mobile, Left on Desktop) */}
+        <div className="order-1 space-y-4 lg:order-1 lg:col-span-2">
           <AddOns />
-
-          {/* Faq
-          <Faq /> */}
+          {/* <Faq /> */}
         </div>
 
-        {/* Cart Sticky */}
-        <div className="w-full lg:w-1/3">
+        {/* Cart (Bottom on Mobile, Right on Desktop) */}
+        <div className="order-2 lg:sticky lg:top-24 lg:order-2 lg:col-span-1">
           <Cart />
         </div>
       </div>

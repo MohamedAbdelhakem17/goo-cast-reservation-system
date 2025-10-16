@@ -148,7 +148,7 @@ export default function Hero() {
         >
           {t("book-now-at")}
           <span className="relative">
-            <span className="text-main">{t("goocast")}</span>
+            <span className="text-main px-1">{t("goocast")}</span>
             <motion.span
               className="bg-main absolute -bottom-2 left-0 h-1 w-full rounded-full"
               initial={{ width: 0, left: "50%" }}
@@ -239,7 +239,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Floating elements for visual interest */}
-        <motion.div
+        {/* <motion.div
           className="border-main/20 absolute top-20 left-10 hidden h-12 w-12 rounded-full border-2 md:block"
           animate={{
             y: [0, -15, 0],
@@ -263,7 +263,7 @@ export default function Hero() {
             repeat: Number.POSITIVE_INFINITY,
             repeatType: "reverse",
           }}
-        ></motion.div>
+        ></motion.div> */}
       </div>
     </section>
   );

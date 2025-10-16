@@ -8,16 +8,33 @@ export default function Pagination({
   bookingsData,
 }) {
   const { t, lng } = useLocalization();
-
-  const formatNumber = (num) => {
-    return new Intl.NumberFormat(`${lng}-EG`).format(num);
-  };
-
   const isRTL = lng === "ar";
+
+  const formatNumber = (num) => new Intl.NumberFormat(`${lng}-EG`).format(num);
+
+  const total =
+    bookingsData?.total ??
+    bookingsData?.total ??
+    bookingsData?.data?.count ??
+    bookingsData?.data?.bookings?.length ??
+    0;
+
+  const startIndex = Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, total);
+  const endIndex = Math.min(currentPage * ITEMS_PER_PAGE, total);
+
+  console.log({
+    currentPage,
+    totalPages,
+    ITEMS_PER_PAGE,
+    total,
+    startIndex,
+    endIndex,
+    bookingsData,
+  });
 
   return (
     <div className="flex items-center justify-between border-t border-gray-200 px-6 py-4">
-      {/* Mobile Pagination */}
+      {/* 📱 Mobile Pagination */}
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
@@ -28,6 +45,7 @@ export default function Pagination({
           {t("previous")}
           {!isRTL ? <i className="fa-solid fa-chevron-left ms-2"></i> : null}
         </button>
+
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
@@ -39,33 +57,19 @@ export default function Pagination({
         </button>
       </div>
 
+      {/* 💻 Desktop Pagination */}
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         {/* Number of results */}
         <div>
-          <p className="text-sm text-gray-700">
+          {/* <p className="text-sm text-gray-700">
             {t("showing")}{" "}
-            <span className="font-medium">
-              {formatNumber(
-                Math.min(
-                  (currentPage - 1) * ITEMS_PER_PAGE + 1,
-                  bookingsData?.data?.total || 0,
-                ),
-              )}
-            </span>{" "}
-            {t("to")}{" "}
-            <span className="font-medium">
-              {formatNumber(
-                Math.min(currentPage * ITEMS_PER_PAGE, bookingsData?.data?.total || 0),
-              )}
-            </span>{" "}
-            {t("of")}{" "}
-            <span className="font-medium">
-              {formatNumber(bookingsData?.data?.total || 0)}
-            </span>{" "}
-            {t("results")}
-          </p>
+            <span className="font-medium">{formatNumber(currentPage)}</span> {t("to")}{" "}
+            <span className="font-medium">{formatNumber(endIndex)}</span> {t("of")}{" "}
+            <span className="font-medium">{formatNumber(total)}</span> {t("results")}
+          </p> */}
         </div>
 
+        {/* Pagination numbers */}
         <div>
           <nav
             className="relative z-0 inline-flex -space-x-px rounded-md shadow-sm"

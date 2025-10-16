@@ -3,7 +3,6 @@ import { memo } from "react";
 const AddOnsSection = memo(function AddOnsSection({ selectedAddOns, priceFormat, lng }) {
   if (!selectedAddOns || selectedAddOns.length === 0) return null;
 
-  console.log({ "select addons": selectedAddOns });
   return (
     <ul className="pb-2">
       {selectedAddOns.map((addon) => (

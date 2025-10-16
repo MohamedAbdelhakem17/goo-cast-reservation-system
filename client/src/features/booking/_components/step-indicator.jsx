@@ -14,7 +14,7 @@ export default function Stepper() {
 
   const handleScroll = () => {
     window.scrollBy({
-      top: 150,
+      top: 200,
       behavior: "smooth",
     });
   };
