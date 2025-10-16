@@ -21,9 +21,9 @@ export default function AppRouter() {
     window.scrollTo(0, 0, { behavior: "smooth" });
   }, [location.pathname]);
 
-  useEffect(() => {
-    trackPageView(location.pathname);
-  }, [location]);
+  // useEffect(() => {
+  //   trackPageView(location.pathname);
+  // }, [location]);
 
   useEffect(() => {
     cleanLocalStorage();
