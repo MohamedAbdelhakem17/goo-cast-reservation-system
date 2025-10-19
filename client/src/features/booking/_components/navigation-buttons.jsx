@@ -26,7 +26,6 @@ export default function NavigationButtons() {
     Object.keys(getBookingField("selectedPackage") || {}).length > 0;
 
   const isDisabled = hasError() || currentStep === TOTAL_STEPS || !isPackageSelected;
-
   const isRTL = lng === "ar";
 
   return (
@@ -48,8 +47,12 @@ export default function NavigationButtons() {
             disabled={currentStep === 1}
             onClick={handlePrevStep}
           >
-            <ArrowRight className="inline-block" />
-            {t("previous")}
+            <ArrowLeft
+              className={`inline-block transition-transform duration-200 ${
+                isRTL ? "-scale-x-100" : ""
+              }`}
+            />
+            {t("back")}
           </NavButton>
         )}
 
@@ -66,7 +69,11 @@ export default function NavigationButtons() {
             type="button"
           >
             {t("next")}
-            <ArrowLeft className="inline-block" />
+            <ArrowRight
+              className={`inline-block transition-transform duration-200 ${
+                isRTL ? "-scale-x-100" : ""
+              }`}
+            />
           </NavButton>
         )}
       </div>

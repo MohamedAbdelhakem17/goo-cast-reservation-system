@@ -460,5 +460,14 @@
   "privacy-policy": "Privacy Policy",
   "terms-and-conditions": "Terms & Conditions",
   "find-us-at": "Find us at",
-  "invalid-email-address": "Invalid email address"
+  "invalid-email-address": "Invalid email address",
+  "booking-receipt": "Booking Receipt",
+  "receipt-number": "Receipt #",
+  "client-information": "Client Information",
+  "booking-details": "Booking Details",
+  "brand": "Brand",
+  "package": "Package",
+  "quantity": "Quantity",
+  "addons-price": "Add-ons Price",
+  "thank-you": "Thank you for booking with us!"
 }

@@ -133,7 +133,7 @@ const PackageCard = memo(({ pkg, isActive, onSelect }) => {
           >
             {isActive ? (
               <>
-                <Check className="mr-2 h-4 w-4" /> {t("next")}
+                <Check className="me-2 h-4 w-4" /> {t("next")}
               </>
             ) : (
               t("book")

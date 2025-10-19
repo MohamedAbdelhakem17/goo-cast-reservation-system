@@ -9,13 +9,22 @@ import {
 } from "@/utils/schemas/booking.schema";
 import { useFormik } from "formik";
 import { useUpdateBooking } from "@/apis/admin/manage-booking.api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function useAdminCreateBooking({ data, isEdit, bookingId = null }) {
+  // Localization
   const { t } = useLocalization();
+
+  // Navigation
   const navigate = useNavigate();
-  const { addToast } = useToast();
+
+  // Mutation
   const { createBooking, isPending: creating } = useCreateBooking();
   const { isPending: updating, updateBooking } = useUpdateBooking();
+
+  // Hooks
+  const { addToast } = useToast();
+  const queryClient = useQueryClient();
 
   // Parse local storage data safely
   const parsedData = useMemo(() => {
@@ -35,6 +44,7 @@ export default function useAdminCreateBooking({ data, isEdit, bookingId = null }
         await createBooking(payload, {
           onSuccess: (res) => {
             addToast(res.message || "Booking submitted successfully", "success", 1000);
+            queryClient.invalidateQueries("get-bookings");
             setTimeout(() => navigate("/admin-dashboard/booking/"), 1200);
           },
           onError: (err) => {
@@ -59,6 +69,7 @@ export default function useAdminCreateBooking({ data, isEdit, bookingId = null }
           {
             onSuccess: (res) => {
               addToast(res.message || "Booking updated successfully", "success", 1000);
+              queryClient.invalidateQueries("get-bookings");
               setTimeout(() => navigate("/admin-dashboard/booking/"), 1200);
             },
             onError: (err) => {
@@ -99,7 +110,7 @@ export default function useAdminCreateBooking({ data, isEdit, bookingId = null }
         },
       };
 
-      console.log("click");
+      console.log(payload);
       if (isEdit) {
         await handleUpdateBooking(payload, setSubmitting);
       } else {

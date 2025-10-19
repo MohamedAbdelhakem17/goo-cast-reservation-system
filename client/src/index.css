@@ -1,19 +1,19 @@
-/* English Font */
+/* English Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Delius&display=swap");
 
-/* arabic */
-@import url("https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&display=swap");
+/* Arabic Font - Local */
+@import "./assets/fonts/ping-font/font.css";
 
+/* Tailwind Base */
 @import "tailwindcss";
 
+/* Theme Variables */
 @theme {
-  /* Main Font */
   --font-main: "Montserrat", sans-serif;
   --font-sub: "Delius", cursive;
-  --font-arabic: "El Messiri", sans-serif;
+  --font-arabic: "PingAR LT", sans-serif;
 
-  /* Main Color */
   --color-main: #ff0000;
 }
 
@@ -22,5 +22,5 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
+  override-colors: transparent;
 }

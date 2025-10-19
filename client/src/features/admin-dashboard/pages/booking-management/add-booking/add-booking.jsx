@@ -13,6 +13,7 @@ import { useGetAvailableSlots } from "@/apis/public/booking.api";
 import useAdminCreateBooking from "./_hook/use-admin-create-booking";
 import PaymentOptions from "../../../../booking/_components/steps/personal-information/_components/payment-way";
 import { BookingInput } from "@/components/booking";
+import { Loading, EmptyState } from "@/components/common";
 import { useGetSingleBooking } from "@/apis/admin/manage-booking.api";
 import { useSearchParams } from "react-router-dom";
 
@@ -52,6 +53,12 @@ export default function AddBooking() {
 
   // Destructure personal info for cleaner usage
   const { firstName, lastName, phone, email, brand } = values.personalInfo;
+
+  if (isLoading) return <Loading />;
+
+  if (isEdit && singleBooking === undefined) {
+    return <EmptyState />;
+  }
 
   return (
     <motion.div

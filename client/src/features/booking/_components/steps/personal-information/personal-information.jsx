@@ -24,15 +24,7 @@ export default function PersonalInformation() {
   const inputRef = useRef(null);
 
   // Hooks
-  const {
-    getBookingError,
-    formik,
-    bookingData,
-    setBookingField,
-    hasError,
-    handlePrevStep,
-    handleSubmit,
-  } = useBooking();
+  const { getBookingError, formik, bookingData, setBookingField } = useBooking();
 
   // Effects
   useEffect(() => {
@@ -56,8 +48,8 @@ export default function PersonalInformation() {
       {/* Responsive Grid Layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
         {/* === Form Section === */}
-        <div className="col-span-2 w-full rounded-md border border-gray-100 p-4 py-5 shadow-sm">
-          <form className="w-full space-y-5 px-5">
+        <div className="col-span-2 w-full rounded-md border border-gray-100 p-4 py-3 shadow-sm">
+          <form className="w-full space-y-3 px-5">
             <motion.div
               {...motionProps}
               className="b-0 m-0 flex w-full flex-col gap-4 lg:flex-row"
@@ -171,7 +163,7 @@ export default function PersonalInformation() {
           </form>
 
           {/* Payment Section */}
-          <div className="border-t border-gray-200 px-5 py-4">
+          <div className="border-t border-gray-200 px-5 pt-4">
             <h3 className="flex items-center gap-2 font-semibold text-gray-700">
               <i className="fa-solid fa-credit-card mr-3"></i>
               {t("payment-method")}
@@ -179,8 +171,8 @@ export default function PersonalInformation() {
             <PaymentOptions setBookingField={setBookingField} />
 
             {/* Action Buttons */}
-            <div className="mt-3 flex flex-col items-center gap-4 px-5 md:flex-row">
-              {/* Complete booking button */}
+            {/* <div className="mt-3 flex flex-col items-center gap-4 px-5 md:flex-row">
+              // Complete booking button
               <button
                 type="button"
                 disabled={hasError() || formik.isSubmitting}
@@ -209,15 +201,14 @@ export default function PersonalInformation() {
                   <span>{t("complete-booking")}</span>
                 )}
               </button>
-
-              {/* Back button */}
+              // Back button
               <button
                 onClick={handlePrevStep}
                 className="text-md mx-auto flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-[8px] font-semibold"
               >
                 <span className="m-0">{t("back")}</span>
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
