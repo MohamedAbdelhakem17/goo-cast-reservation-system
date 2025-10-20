@@ -63,11 +63,12 @@ export const getBookingInitialValues = (data = null) => {
     selectedPackage: booking.package || {},
     selectedAddOns:
       booking.addOns?.map((a) => ({
-        id: a.item?._id || "",
+        id: a.item?._id || a.item?.id || "",
         name: a.item?.name || {},
-        price: a.price || 0,
-        quantity: a.quantity || 1,
+        price: a.price ?? a.item?.price ?? 0,
+        quantity: a.quantity ?? 1,
       })) || [],
+
     personalInfo: {
       firstName: firstName || "",
       lastName: lastNameParts.join(" ") || "",
@@ -79,6 +80,7 @@ export const getBookingInitialValues = (data = null) => {
     totalPrice: booking.totalPrice || 0,
     totalPriceAfterDiscount: booking.totalPriceAfterDiscount || 0,
     couponCode: booking.coupon_code || booking.couponCode || "",
+    totalAddOnsPrice: booking.totalAddOnsPrice,
     discount: booking.discount || "",
     paymentMethod: booking.paymentMethod || "CASH",
   };

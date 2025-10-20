@@ -35,16 +35,15 @@ export default function DashboardSidebar({ children }) {
       <aside className="hidden h-full w-72 flex-col border-r border-gray-200 bg-white md:fixed md:start-0 md:top-0 md:bottom-0 md:flex">
         {/* Header */}
         <div className="flex items-center gap-x-3 border-b border-gray-200 bg-white p-4 lg:gap-x-4 lg:p-6">
-          {/* Icon */}
-          <div className="bg-main flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm lg:h-12 lg:w-12">
-            <Mic className="h-5 w-5 lg:h-6 lg:w-6" />
-          </div>
-
           {/* Title + Subtitle */}
           <div className="flex min-w-0 flex-col">
-            <h1 className="text-main truncate text-lg font-semibold lg:text-xl">
-              Goocast.
-            </h1>
+            <div className="flex items-center gap-2">
+              <OptimizedImage
+                src={logo}
+                alt="goocast"
+                className="w-36 object-fill py-2"
+              />
+            </div>
             <span className="text-xs text-gray-600 lg:text-sm">
               {t("easy-podcasting-for-everyone")}
             </span>

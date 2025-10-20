@@ -327,7 +327,7 @@ export default function BookingConfirmation() {
               </h2>
               <div>
                 <PDFDownloadLink
-                  document={<BookingReceiptPDF booking={bookingData} />}
+                  document={<BookingReceiptPDF booking={bookingData} t={t} lng={lng} />}
                   fileName="booking-receipt.pdf"
                 >
                   {({ loading }) => (

@@ -12,28 +12,28 @@ export default function LanguageSwitcher({ lng, changeLanguage }) {
   return (
     <div
       onClick={toggleLanguage}
-      className="relative flex h-10 w-20 cursor-pointer items-center rounded-full bg-gray-200 px-1 shadow-inner transition-all duration-300"
+      className="relative flex h-8 w-16 cursor-pointer items-center rounded-full bg-gray-200 px-1 shadow-inner transition-all duration-300"
     >
       {/* Labels */}
       <span
-        className={`font-main absolute left-2 text-sm font-semibold transition-colors ${
+        className={`font-main absolute left-2 text-[11px] font-semibold transition-colors ${
           isEnglish ? "text-gray-800" : "text-gray-400"
         }`}
       >
         EN
       </span>
       <span
-        className={`absolute right-2 text-sm font-semibold transition-colors ${
+        className={`font-arabic absolute right-2 text-[11px] font-semibold transition-colors ${
           !isEnglish ? "text-gray-800" : "text-gray-400"
         }`}
       >
-        AR
+        عر
       </span>
 
       {/* Toggle Button */}
       <div
-        className={`absolute top-1 left-1 flex h-8 w-8 transform items-center justify-center rounded-full bg-white shadow-md transition-all duration-300 ${
-          isEnglish ? "translate-x-0" : "translate-x-10"
+        className={`absolute top-1 left-1 flex h-6 w-6 transform items-center justify-center rounded-full bg-white shadow-md transition-all duration-300 ${
+          isEnglish ? "translate-x-0" : "translate-x-8"
         }`}
       >
         {isEnglish ? (
@@ -41,7 +41,7 @@ export default function LanguageSwitcher({ lng, changeLanguage }) {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 60 30"
-            className="h-5 w-5 overflow-hidden rounded-full"
+            className="h-4.5 w-4.5 overflow-hidden rounded-full"
           >
             <clipPath id="s">
               <path d="M0,0 v30 h60 v-30 z" />
@@ -67,7 +67,7 @@ export default function LanguageSwitcher({ lng, changeLanguage }) {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 60 30"
-            className="h-5 w-5 overflow-hidden rounded-full"
+            className="h-4.5 w-4.5 overflow-hidden rounded-full"
           >
             <rect width="60" height="10" y="0" fill="#ce1126" />
             <rect width="60" height="10" y="10" fill="#fff" />

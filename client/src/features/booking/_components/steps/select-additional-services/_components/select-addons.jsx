@@ -46,6 +46,7 @@ export default function AddOns() {
       tracking,
       lng,
     });
+
   const priceFormat = usePriceFormat();
 
   if (isLoading) return <Loading />;

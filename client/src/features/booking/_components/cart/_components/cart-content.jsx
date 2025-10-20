@@ -3,6 +3,9 @@ import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 
+import { Loader } from "lucide-react";
+import { tracking } from "@/utils/gtm";
+
 import useLocalization from "@/context/localization-provider/localization-context";
 import useDataFormat from "@/hooks/useDateFormat";
 import useCartCalculations from "@/hooks/use-cart-calculations";
@@ -26,6 +29,8 @@ export default function CartContent() {
     bookingData,
     getBookingField,
     setBookingField,
+    handleSubmit,
+    formik,
   } = useBooking();
 
   const { subtotal, discountAmount, totalAfterDiscount } = useCartCalculations({
@@ -42,7 +47,7 @@ export default function CartContent() {
       {/* Title */}
       <h2 className="my-2 py-2 text-lg font-bold">{t("reservation-summary")}</h2>
 
-      {/* Studio sections  */}
+      {/* Studio Section */}
       <StudioSection
         studio={bookingData.studio}
         date={formatDate(bookingData.date)}
@@ -69,13 +74,12 @@ export default function CartContent() {
 
       {/* Subtotal & Discount */}
       <div className="my-2 space-y-2 border-t border-b border-gray-200 py-2">
-        {/* Sub title Section */}
         <div className="text-md flex justify-between">
           <span>{t("subtotal")}</span>
           <span>{priceFormat(subtotal)}</span>
         </div>
 
-        {/* If has discount  */}
+        {/* If has discount */}
         {discountAmount > 0 && (
           <div className="flex justify-between text-sm text-green-600">
             <span>
@@ -92,16 +96,16 @@ export default function CartContent() {
         <p className="text-md text-gray-500">{priceFormat(totalAfterDiscount)}</p>
       </div>
 
-      {/* Add discount */}
+      {/* Apply Discount */}
       <ApplyDiscount
         getBookingField={getBookingField}
         setBookingField={setBookingField}
       />
 
-      {/* Actions  in select additional serves*/}
-      {currentStep === 4 && (
-        <div className="mt-4">
-          {/* Go to payment info */}
+      {/* Action Buttons */}
+      <div className="mt-4">
+        {/* Step 4 → Go to Payment */}
+        {currentStep === 4 && (
           <button
             disabled={hasError()}
             onClick={handleNextStep}
@@ -109,28 +113,48 @@ export default function CartContent() {
           >
             <span>{t("proceed-to-payment")}</span>
           </button>
+        )}
 
-          {/* Back to select date */}
+        {/* Step 5 → Complete Booking */}
+        {currentStep === 5 && (
           <button
-            onClick={handlePrevStep}
-            className="text-md mx-auto flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-[8px] font-semibold"
+            type="button"
+            disabled={hasError() || formik.isSubmitting}
+            onClick={
+              !formik.isSubmitting
+                ? () => {
+                    handleSubmit();
+                    tracking("create_booking", {
+                      totalPrice: bookingData.totalPrice,
+                    });
+                  }
+                : undefined
+            }
+            className={`text-md mx-auto my-2 flex w-full flex-col items-center justify-center rounded-lg px-4 py-[8px] font-semibold transition-all duration-200 md:flex-row ${
+              hasError() || formik.isSubmitting
+                ? "cursor-not-allowed bg-gray-100 text-gray-300"
+                : "bg-main text-white hover:opacity-90"
+            }`}
           >
-            <span>{t("back")}</span>
-          </button>
-        </div>
-      )}
-
-      {/* Footer in payment info */}
-      {/* {currentStep === 5 && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-3">
-          <p className="text-xs text-green-700">
-            🔒
-            {t(
-              "your-booking-is-secured-with-ssl-encryption-and-protected-by-our-privacy-policy",
+            {formik.isSubmitting ? (
+              <div className="flex items-center gap-2">
+                <Loader />
+                <span>{t("processing-0")}</span>
+              </div>
+            ) : (
+              <span>{t("complete-booking")}</span>
             )}
-          </p>
-        </div>
-      )} */}
+          </button>
+        )}
+
+        {/* Back Button */}
+        <button
+          onClick={handlePrevStep}
+          className="text-md mx-auto flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-[8px] font-semibold"
+        >
+          <span>{t("back")}</span>
+        </button>
+      </div>
     </div>
   );
 }

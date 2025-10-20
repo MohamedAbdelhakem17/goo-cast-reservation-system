@@ -442,5 +442,15 @@
   "terms-and-conditions": "شروط",
   "privacy-policy": "سياسة الخصوصية",
   "find-us-at": "تجدنا في",
-  "invalid-email-address": "عنوان البريد الإلكتروني غير صالح"
+  "invalid-email-address": "عنوان البريد الإلكتروني غير صالح",
+  "book": "أحجز",
+  "booking-receipt": "إيصال الحجز",
+  "receipt-number": "رقم الإيصال",
+  "client-information": "بيانات العميل",
+  "booking-details": "تفاصيل الحجز",
+  "brand": "العلامة التجارية",
+  "package": "الباقة",
+  "quantity": "الكمية",
+  "addons-price": "سعر الإضافات",
+  "thank-you": "شكرًا لحجزك معنا!"
 }

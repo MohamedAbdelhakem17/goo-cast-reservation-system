@@ -10,9 +10,8 @@ export const useAddOnsManager = ({
   // Update addons Quantity
   const handleAddOnChange = useCallback(
     (id, name, quantity, price) => {
-      let updatedAddOns = [...bookingData.selectedAddOns];
-      const index = updatedAddOns.findIndex((addon) => addon._id === id);
-
+      let updatedAddOns = [...(bookingData.selectedAddOns || [])];
+      const index = updatedAddOns.findIndex((addon) => addon.id === id);
       if (quantity === 0 && index !== -1) {
         updatedAddOns.splice(index, 1);
       } else if (index !== -1) {
@@ -23,7 +22,7 @@ export const useAddOnsManager = ({
         };
       } else {
         updatedAddOns.push({
-          _id: id,
+          id,
           name,
           quantity,
           price,
@@ -33,13 +32,13 @@ export const useAddOnsManager = ({
 
       setBookingField("selectedAddOns", updatedAddOns);
     },
-    [bookingData?.selectedAddOns],
+    [bookingData?.selectedAddOns, setBookingField],
   );
 
   // Return Quantity
   const getQuantity = useCallback(
     (id) => {
-      const found = bookingData?.selectedAddOns.find((item) => item._id === id);
+      const found = bookingData?.selectedAddOns.find((item) => item.id === id);
       return found ? found.quantity : 0;
     },
     [bookingData?.selectedAddOns],

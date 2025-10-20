@@ -30,9 +30,10 @@ export default function useCartCalculations({ bookingData, setBookingField }) {
     ]);
 
   useEffect(() => {
+    setBookingField("totalAddOnsPrice", totalAddOnPrice);
     setBookingField("totalPrice", subtotal);
     setBookingField("totalPriceAfterDiscount", totalAfterDiscount);
-  }, [subtotal, totalAfterDiscount, setBookingField]);
+  }, [totalAddOnPrice, subtotal, totalAfterDiscount, setBookingField]);
 
   return {
     totalAddOnPrice,

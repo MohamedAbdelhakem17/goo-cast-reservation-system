@@ -49,6 +49,7 @@ const prepareBookingData = async (body, user, isEdit = false) => {
   const pkg = await PackageModel.findById(
     selectedPackage?.id || selectedPackage
   );
+
   if (!pkg)
     throw new AppError(
       404,
@@ -102,7 +103,7 @@ const prepareBookingData = async (body, user, isEdit = false) => {
 
   if (Array.isArray(selectedAddOns) && selectedAddOns.length > 0) {
     const addOnDocs = await Promise.all(
-      selectedAddOns.map((a) => AddOnModel.findById(a._id))
+      selectedAddOns.map((a) => AddOnModel.findById(a.id))
     );
 
     for (let i = 0; i < selectedAddOns.length; i++) {

@@ -7,7 +7,7 @@ import { Loading, ErrorFeedback, OptimizedImage } from "@/components/common";
 import ImagePreviewModal from "./_components/image-preview-modal";
 import { useGetStudio } from "@/apis/public/studio.api";
 import useLocalization from "@/context/localization-provider/localization-context";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 
 export default function SelectStudio() {
   const { t, lng } = useLocalization();
@@ -147,8 +147,8 @@ export default function SelectStudio() {
                 </div>
 
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     selectStudio({
@@ -158,13 +158,19 @@ export default function SelectStudio() {
                     });
                     handleNextStep();
                   }}
-                  className={`mt-4 rounded-lg px-4 py-2 font-semibold transition ${
+                  className={`text-md mx-auto mt-6 flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold transition ${
                     isActive
                       ? "bg-main text-white"
                       : "border-2 border-gray-200 bg-black text-white"
                   }`}
                 >
-                  {isActive ? t("next") : t("select")}
+                  {isActive ? (
+                    <>
+                      <Check className="mث-2 h-4 w-4" /> {t("next")}
+                    </>
+                  ) : (
+                    t("book")
+                  )}
                 </motion.button>
               </div>
             </motion.div>
