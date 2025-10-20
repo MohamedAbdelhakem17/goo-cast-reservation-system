@@ -2,17 +2,50 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Delius&display=swap");
 
-/* Arabic Font - Local */
-@import "./assets/fonts/ping-font/font.css";
+/* Arabic font  */
+@font-face {
+  font-family: "PingAR LT";
+  src: url("./assets/fonts/ping-font/PingAR+LT-Black.otf") format("opentype");
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: "PingAR LT";
+  src: url("./assets/fonts/ping-font/PingAR+LT-Light.otf") format("opentype");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "PingAR LT";
+  src: url("./assets/fonts/ping-font/PingAR+LT-Regular.otf") format("opentype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "PingAR LT";
+  src: url("./assets/fonts/ping-font/PingAR+LT-Medium.otf") format("opentype");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "PingAR LT";
+  src: url("./assets/fonts/ping-font/PingAR+LT-Bold.otf") format("opentype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "PingAR LT";
+  src: url("./assets/fonts/ping-font/PingAR+LT-Black.otf") format("opentype");
+  font-weight: 900;
+}
 
 /* Tailwind Base */
 @import "tailwindcss";
 
-/* Theme Variables */
 @theme {
   --font-main: "Montserrat", sans-serif;
   --font-sub: "Delius", cursive;
-  --font-arabic: "PingAR LT", sans-serif;
+  --font-arabic: "PingAR LT";
 
   --color-main: #ff0000;
 }
