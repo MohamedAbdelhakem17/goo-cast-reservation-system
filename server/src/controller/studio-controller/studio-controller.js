@@ -62,7 +62,6 @@ exports.studioImageUpload = uploadMultipleImages([
 //     next();
 // };
 
-
 exports.imageManipulation = async (req, res, next) => {
   try {
     const uploadDir = path.join(__dirname, "../../../uploads/studio");
@@ -118,8 +117,14 @@ exports.imageManipulation = async (req, res, next) => {
 
 // gat all studios
 exports.getAllStudios = asyncHandler(async (req, res) => {
-  const studios = await StudioModel.find();
+  const { status } = req.query;
 
+  let filter = {};
+  if (status !== undefined) {
+    filter.is_active = status === "true";
+  }
+
+  const studios = await StudioModel.find(filter);
   if (studios.length === 0) {
     res.status(404).json({
       status: HTTP_STATUS_TEXT.FAIL,
@@ -168,6 +173,7 @@ exports.createStudio = asyncHandler(async (req, res) => {
 // update a studio
 exports.updateStudio = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  console.log(req.body);
   const studio = await StudioModel.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true,
@@ -215,5 +221,37 @@ exports.changePrice = asyncHandler(async (req, res) => {
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: studio,
     message: "Studio price updated successfully",
+  });
+});
+
+exports.toggleStudioStatus = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { is_active } = req.body;
+
+  if (typeof is_active !== "boolean") {
+    return next(
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "`is_active` must be a boolean.")
+    );
+  }
+
+  const updatedStudio = await StudioModel.findByIdAndUpdate(
+    id,
+    { is_active },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!updatedStudio) {
+    return next(
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No Studio found with this ID")
+    );
+  }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: updatedStudio,
+    message: `Studio status updated to ${is_active ? "Active" : "Inactive"}`,
   });
 });

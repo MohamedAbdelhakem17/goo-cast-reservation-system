@@ -22,10 +22,15 @@ const StudioModel = require("../../models/studio-model/studio-model");
 
 const saveOpportunityInGoHighLevel = require("../../utils/save-opportunity-in-go-high-level");
 const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
+const {
+  createCalendarEvent,
+  deleteCalenderEvent,
+  updateCalenderEvent,
+} = require("../../utils/google-calendar-integration.js");
 
 const { getCategoryMinHour } = require("../../utils/get-category-hour.js");
 const { getFreeSlots } = require("../../utils/get-free-slots.js");
-const createBookingLogic = require("./create-booking-logic .js");
+const prepareBookingData = require("./prepare-booking-data.js");
 
 // old code For getting available slots
 {
@@ -54,14 +59,14 @@ const createBookingLogic = require("./create-booking-logic .js");
   //         },
   //     });
   //     if (bookings.length === 0) {
-//         //
+  //         //
   //     }
   //     const bookedSlots = bookings.map(book => {
   //         const start = timeToMinutes(book.timeSlot);
   //         const end = start + (book.duration * 60);
   //         return { start, end };
   //     });
-//     //
+  //     //
   //     // Calculate available slots
   //     const availableSlots = [];
   //     // Check available slots within the studio's working hours
@@ -136,43 +141,7 @@ const createBookingLogic = require("./create-booking-logic .js");
 // });
 
 // get fully booked dates for a studio
-const print = (val, lab) => {
-};
-
-// Get Full Booked Date
-const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
-  const slots = [];
-  for (
-    let time = startMinutes;
-    time + slotDuration <= endMinutes;
-    time += slotDuration
-  ) {
-    slots.push(time);
-  }
-  return slots;
-};
-
-const isDurationAvailable = (
-  bookedSlots,
-  totalSlots,
-  requiredDurationSlots
-) => {
-  const availableSlots = totalSlots.filter(
-    (slot) => !bookedSlots.includes(slot)
-  );
-
-  let consecutive = 0;
-  for (let i = 0; i < availableSlots.length; i++) {
-    if (i === 0 || availableSlots[i] === availableSlots[i - 1] + 60) {
-      consecutive++;
-      if (consecutive >= requiredDurationSlots) return true;
-    } else {
-      consecutive = 1;
-    }
-  }
-
-  return false;
-};
+const print = (val, lab) => {};
 
 // Get Fully Booked Dates Based on Required Duration
 // exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
@@ -226,50 +195,65 @@ const isDurationAvailable = (
 // });
 
 exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
-  const requiredDuration = parseInt(req.query.duration) || 0;
-  const requiredDurationMinutes = requiredDuration * 60;
+  const requiredDuration = parseInt(req.query.duration) || 0; // بالساعات
+  const requiredDurationMinutes = requiredDuration * 60; // بالدقايق
 
   const studios = await StudioModel.find();
-
   if (!studios || studios.length === 0) {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "No studios found"));
   }
 
-  const bookings = await BookingModel.find();
+  const today = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(today.getMonth() + 1);
 
+  // هات الحجوزات للشهر الجاي
+  const bookings = await BookingModel.aggregate([
+    {
+      $match: {
+        date: { $gte: today, $lte: nextMonth },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+          studio: "$studio",
+        },
+        bookings: { $push: { startSlot: "$startSlot", endSlot: "$endSlot" } },
+      },
+    },
+  ]);
+
+  // ترتيب البيانات حسب اليوم والاستوديو
   const groupedByDate = {};
-
-  for (const booking of bookings) {
-    const day = booking.date.toISOString().split("T")[0];
-    if (!groupedByDate[day]) groupedByDate[day] = [];
-    groupedByDate[day].push(booking);
+  for (const b of bookings) {
+    const day = b._id.day;
+    if (!groupedByDate[day]) groupedByDate[day] = {};
+    groupedByDate[day][b._id.studio.toString()] = b.bookings;
   }
 
   const fullyBookedDates = [];
 
-  for (const [day, dayBookings] of Object.entries(groupedByDate)) {
+  // شيك على كل يوم
+  for (const [day, dayStudios] of Object.entries(groupedByDate)) {
     let dayFullyBooked = true;
 
     for (const studio of studios) {
-      const studioBookings = dayBookings.filter(
-        (b) => b.studio.toString() === studio._id.toString()
-      );
+      const studioBookings = dayStudios[studio._id.toString()] || [];
 
-      const bookedSlots = [];
-      for (const booking of studioBookings) {
-        for (let i = booking.startSlot; i < booking.endSlot; i += 30) {
-          bookedSlots.push(i);
-        }
-      }
+      // مثل: [[540, 600], [660, 720]] => intervals بالدقايق
+      const intervals = studioBookings.map((b) => [b.startSlot, b.endSlot]);
 
       const startOfDay = timeToMinutes(studio.startTime);
       const endOfDay = timeToMinutes(studio.endTime);
-      const totalSlots = getTimeSlots(startOfDay, endOfDay);
 
-      const isAvailable = isDurationAvailable(
-        bookedSlots,
-        totalSlots,
-        requiredDurationMinutes / 60
+      // اتأكد هل في فترة متاحة كفاية
+      const isAvailable = hasFreeInterval(
+        intervals,
+        startOfDay,
+        endOfDay,
+        requiredDurationMinutes
       );
 
       if (isAvailable) {
@@ -288,6 +272,65 @@ exports.getFullyBookedDates = asyncHandler(async (req, res, next) => {
     data: fullyBookedDates,
   });
 });
+
+// ✅ دالة تشيك إذا في فترة فاضية كفاية
+function hasFreeInterval(intervals, startOfDay, endOfDay, requiredMinutes) {
+  if (requiredMinutes === 0) return true;
+
+  // رتّب الـintervals حسب البداية
+  intervals.sort((a, b) => a[0] - b[0]);
+
+  let prevEnd = startOfDay;
+
+  for (const [s, e] of intervals) {
+    // في فجوة بين prevEnd و بداية الـbooking الحالي؟
+    if (s - prevEnd >= requiredMinutes) return true;
+    prevEnd = Math.max(prevEnd, e);
+  }
+
+  // بعد آخر booking لحد نهاية اليوم
+  if (endOfDay - prevEnd >= requiredMinutes) return true;
+
+  return false;
+}
+
+// Helpers
+const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
+  const slots = [];
+  for (
+    let time = startMinutes;
+    time + slotDuration <= endMinutes;
+    time += slotDuration
+  ) {
+    slots.push(time);
+  }
+  return slots;
+};
+
+const isDurationAvailable = (
+  bookedSlots,
+  totalSlots,
+  requiredDurationMinutes,
+  slotDuration = 30
+) => {
+  const requiredSlots = Math.ceil(requiredDurationMinutes / slotDuration);
+
+  const availableSlots = totalSlots.filter(
+    (slot) => !bookedSlots.includes(slot)
+  );
+
+  let consecutive = 0;
+  for (let i = 0; i < availableSlots.length; i++) {
+    if (i === 0 || availableSlots[i] === availableSlots[i - 1] + slotDuration) {
+      consecutive++;
+      if (consecutive >= requiredSlots) return true;
+    } else {
+      consecutive = 1;
+    }
+  }
+
+  return false;
+};
 
 exports.getAvailableStudios = asyncHandler(async (req, res, next) => {
   const studios = await StudioModel.find();
@@ -476,11 +519,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   // ✅ Validation
   if (!studioId || !date || !duration) {
     return next(
-      new AppError(
-        400,
-        HTTP_STATUS_TEXT.FAIL,
-        "date and duration are required"
-      )
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "date and duration are required")
     );
   }
 
@@ -948,57 +987,58 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
   });
 });
 
-// Change booking status
+// Update booking status and handle related actions (email, calendar, opportunity)
 exports.changeBookingStatus = asyncHandler(async (req, res) => {
   const id = req.params.id || req.body.id;
-
   const { status } = req.body;
 
-  if (!status) {
-    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Status is required");
+  // Validate provided status
+  const allowedStatuses = ["pending", "approved", "rejected"];
+  if (!status || !allowedStatuses.includes(status)) {
+    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid or missing status");
   }
 
-  if (status !== "pending" && status !== "approved" && status !== "rejected") {
-    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid status");
-  }
-
-  const booking = await BookingModel.findByIdAndUpdate(
-    id,
-    { status },
-    {
-      new: true,
-      runValidators: true,
-    }
-  ).populate("studio", "name");
-
-  if (!booking) {
+  // Find booking before updating to trigger Mongoose hooks if needed
+  const booking = await BookingModel.findById(id).populate("studio", "name");
+  if (!booking)
     throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
+
+  booking.status = status;
+  await booking.save();
+
+  const { opportunityID, eventID } = booking;
+
+  try {
+    // If booking is approved
+    if (status === "approved") {
+      await changeOpportunityStatus(opportunityID, "won");
+
+      // Send approval email to customer
+      await sendEmail({
+        to: booking.personalInfo.email,
+        subject: "Booking Approved",
+        message: changeBookingStatusEmail({ type: "approved", data: booking }),
+      });
+    }
+
+    // If booking is rejected
+    if (status === "rejected") {
+      await deleteCalenderEvent(eventID);
+      await changeOpportunityStatus(opportunityID, "lost");
+
+      // Send rejection email to customer
+      await sendEmail({
+        to: booking.personalInfo.email,
+        subject: "Booking Rejected",
+        message: changeBookingStatusEmail({ type: "rejected", data: booking }),
+      });
+    }
+  } catch (err) {
+    // Log any side effect errors (email, calendar, etc.)
+    console.error("Status change side effects failed:", err.message);
   }
 
-  const opportunityID = booking.opportunityID;
-
-  if (status === "approved") {
-    changeOpportunityStatus(opportunityID, "won");
-    // Send email to user
-    const mailOptions = {
-      to: booking.personalInfo.email,
-      subject: "Booking Approved",
-      message: changeBookingStatusEmail({ type: "approved", data: booking }),
-    };
-    await sendEmail(mailOptions);
-  }
-
-  if (status === "rejected") {
-    changeOpportunityStatus(opportunityID, "lost");
-    // Send email to user
-    const mailOptions = {
-      to: booking.personalInfo.email,
-      subject: "Booking Rejected",
-      message: changeBookingStatusEmail({ type: "rejected", data: booking }),
-    };
-    await sendEmail(mailOptions);
-  }
-
+  // Send response back to client
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: booking,
@@ -1148,7 +1188,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   //             booking
   //         });
   //     } catch (error) {
-//
+  //
   //         throw new AppError(500, HTTP_STATUS_TEXT.FAIL, "Failed to send confirmation email, booking not saved");
   //     }
   // });
@@ -1325,111 +1365,209 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   // });
 }
 
-// Create New Booking
+// Create Booking
 exports.createBooking = asyncHandler(async (req, res) => {
-  const user_id = req.isAuthenticated() ? req.user._id : undefined;
+  const user = req.isAuthenticated() ? req.user : undefined;
+
+  const {
+    tempBooking,
+    studio,
+    pkg,
+    addOns,
+    bookingDate,
+    personalInfo,
+    totalAddOnsPriceFromDb,
+    startSlot,
+    endSlot,
+    totalPriceAfterDiscount,
+    duration,
+  } = await prepareBookingData(req.body, user, false);
+
+  const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name?.en} | ${pkg.session_type?.en}`;
+
+  const emailBookingData = {
+    studio: {
+      name: studio.name?.en,
+      image: studio.thumbnail,
+    },
+    personalInfo,
+    selectedAddOns: {
+      totalPrice: totalAddOnsPriceFromDb,
+      items: addOns,
+    },
+    selectedPackage: pkg.name?.en,
+    date: bookingDate,
+    startSlot,
+    endSlot,
+    duration,
+    totalPrice: tempBooking.totalPrice,
+    totalPriceAfterDiscount,
+    bookingId: tempBooking._id,
+  };
+
+  const emailOptions = {
+    to: personalInfo.email,
+    subject: bookingTitle,
+    message: bookingConfirmationEmailBody(emailBookingData),
+  };
+
+  const userData = {
+    name: personalInfo.fullName,
+    email: personalInfo.email,
+    phone: personalInfo.phone,
+  };
+
+  const opportunityData = {
+    name: bookingTitle,
+    price: totalPriceAfterDiscount,
+    sessionType: pkg.session_type,
+    duration,
+    studioName: studio.name,
+    bookingId: tempBooking._id,
+  };
+
+  const appointmentData = {
+    startTime: combineDateAndTime(bookingDate, startSlot),
+    endTime: combineDateAndTime(bookingDate, endSlot),
+    title: bookingTitle,
+    notes: personalInfo.fullName,
+    studioId: studio._id,
+  };
+
+  const eventData = {
+    summary: bookingTitle,
+    start: {
+      dateTime: combineDateAndTime(bookingDate, startSlot),
+      timeZone: "Africa/Cairo",
+    },
+    end: {
+      dateTime: combineDateAndTime(bookingDate, endSlot),
+      timeZone: "Africa/Cairo",
+    },
+    attendees: [{ email: personalInfo.email }],
+  };
+
+  let opportunityID;
+  let eventID;
+
   try {
-    const {
-      tempBooking,
-      studio,
-      pkg,
-      selectedAddOns,
-      bookingDate,
+    opportunityID = await saveOpportunityInGoHighLevel(
+      userData,
+      opportunityData,
+      appointmentData
+    );
+
+    eventID = await createCalendarEvent(eventData, {
+      username: personalInfo.fullName,
+      duration,
+      package: pkg?.name?.en,
+    });
+
+    await sendEmail(emailOptions);
+  } catch (err) {
+    throw new AppError(
+      500,
+      HTTP_STATUS_TEXT.FAIL,
+      "Failed to create opportunity or send email"
+    );
+  }
+
+  tempBooking.opportunityID = opportunityID;
+  tempBooking.eventID = eventID;
+
+  const booking = await tempBooking.save();
+
+  res.status(201).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    message: "Booking created successfully",
+    booking,
+  });
+});
+
+// UPDATE BOOKING
+exports.updateBooking = asyncHandler(async (req, res) => {
+  const bookingId = req.params.id;
+
+  // Ensure the booking exists
+  const existingBooking = await BookingModel.findById(bookingId);
+  if (!existingBooking)
+    throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
+
+  // Recalculate booking data using the same logic
+  const {
+    bookingData,
+    studio,
+    pkg,
+    bookingDate,
+    personalInfo,
+    startSlot,
+    endSlot,
+    totalPriceAfterDiscount,
+    duration,
+  } = await prepareBookingData({ ...req.body, bookingId }, null, true);
+
+  // Update the booking
+  const updatedBooking = await BookingModel.findByIdAndUpdate(
+    bookingId,
+    bookingData,
+    { new: true }
+  );
+
+  // 🔹 Check if calendar event needs to be updated
+  const eventChanged =
+    existingBooking?.startSlot !== startSlot ||
+    existingBooking?.endSlot !== endSlot ||
+    existingBooking?.bookingDate?.toISOString() !==
+      new Date(bookingDate).toISOString();
+
+  if (existingBooking.eventID && eventChanged) {
+    try {
+      // Prepare the event data
+      const eventData = {
+        summary: `Booking - ${studio.name?.en}`,
+        description: `Updated booking for ${personalInfo.name} (${personalInfo.email})`,
+        start: { dateTime: new Date(startSlot).toISOString() },
+        end: { dateTime: new Date(endSlot).toISOString() },
+      };
+
+      // Call Google Calendar update function
+      await updateCalenderEvent(existingBooking.googleEventId, eventData);
+    } catch (err) {
+      console.warn("⚠️ Failed to update Google Calendar event:", err.message);
+    }
+  }
+
+  // 🔹 Optional: send update email
+  if (eventChanged) {
+    const emailData = {
+      studio: { name: studio.name?.en, image: studio.thumbnail },
       personalInfo,
-      addOnsTotalPriceFromDb,
+      date: bookingDate,
       startSlot,
       endSlot,
-      totalPriceAfterDiscount,
       duration,
-    } = await createBookingLogic(req.body, user_id);
-
-    const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name} | ${pkg.session_type}`;
-    const emailBookingData = {
-      studio: {
-        name: studio.name,
-        image: studio.thumbnail,
-      },
-      personalInfo: {
-        fullName: personalInfo.fullName,
-        email: personalInfo.email,
-        phone: personalInfo.phone,
-      },
-      selectedAddOns: {
-        totalPrice: addOnsTotalPriceFromDb,
-        items: selectedAddOns,
-      },
-      selectedPackage: pkg.name,
-      date: bookingDate,
-      startSlot: startSlot,
-      endSlot: endSlot,
-      duration: duration,
-      totalPrice: tempBooking.totalPrice,
-      totalPriceAfterDiscount: totalPriceAfterDiscount,
-      bookingId: tempBooking._id,
+      totalPriceAfterDiscount,
+      bookingId: updatedBooking._id,
     };
 
     const emailOptions = {
       to: personalInfo.email,
-      subject: bookingTitle,
-      message: bookingConfirmationEmailBody(emailBookingData),
+      subject: `Booking Updated | ${studio.name?.en}`,
+      message: bookingConfirmationEmailBody(emailData),
     };
 
-    const userData = {
-      name: personalInfo.fullName,
-      email: personalInfo.email,
-      phone: personalInfo.phone,
-    };
-
-    const opportunityData = {
-      name: bookingTitle,
-      // Goocast | Full Name | Service Name | Session
-      price: totalPriceAfterDiscount,
-      sessionType: pkg.session_type,
-      duration: duration,
-      studioName: studio.name,
-      bookingId: tempBooking._id,
-    };
-
-    const appointmentData = {
-      startTime: combineDateAndTime(bookingDate, startSlot),
-      endTime: combineDateAndTime(bookingDate, endSlot),
-      title: bookingTitle,
-      notes: personalInfo.fullName || personalInfo.name,
-      studioId: studio._id,
-    };
-
-    let opportunityID;
-// return
     try {
-      opportunityID = await saveOpportunityInGoHighLevel(
-        userData,
-        opportunityData,
-        appointmentData
-      );
       await sendEmail(emailOptions);
     } catch (err) {
-      throw new AppError(
-        500,
-        HTTP_STATUS_TEXT.FAIL,
-        "Failed to create opportunity, booking not saved"
-      );
+      console.warn("⚠️ Failed to send update email:", err.message);
     }
-
-    tempBooking.opportunityID = opportunityID;
-    const booking = await tempBooking.save();
-
-    res.status(201).json({
-      status: HTTP_STATUS_TEXT.SUCCESS,
-      message: "Booking created successfully and sent confirmation email",
-      booking,
-    });
-  } catch (error) {
-    throw new AppError(
-      500,
-      HTTP_STATUS_TEXT.FAIL,
-      error.message || "Failed to complete booking process"
-    );
   }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    message: "Booking updated successfully",
+    booking: updatedBooking,
+  });
 });
 
 // Create Booking With GHL
@@ -1488,5 +1626,23 @@ exports.getUserBookings = asyncHandler(async (req, res, next) => {
     status: HTTP_STATUS_TEXT.SUCCESS,
     message: "Bookings fetched successfully",
     data: bookings,
+  });
+});
+
+// Get single booking
+exports.getSingleBooking = asyncHandler(async (req, res) => {
+  // get exist Booking
+  const { id } = req.params;
+  const existBooking = await BookingModel.findById(id);
+
+  // if Booking not exist
+  if (!existBooking) {
+    throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "This booking not exist");
+  }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    message: "Bookings retrieve successfully",
+    data: existBooking,
   });
 });

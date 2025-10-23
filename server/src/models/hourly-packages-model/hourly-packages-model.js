@@ -3,21 +3,42 @@ const mongoose = require("mongoose");
 const HourlyPackageSchema = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: [true, "Please provide a name"],
-      trim: true,
+      ar: {
+        type: String,
+        required: [true, "Please provide a name"],
+        trim: true,
+      },
+      en: {
+        type: String,
+        required: [true, "Please provide a name"],
+        trim: true,
+      },
     },
 
     target_audience: {
-      type: [String],
-      required: [true, "Please provide details"],
-      set: (arr) => arr.map((s) => s.trim()),
+      ar: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+      en: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
     },
 
     description: {
-      type: String,
-      required: [true, "Please provide a description"],
-      trim: true,
+      ar: {
+        type: String,
+        required: [true, "Please provide a description"],
+        trim: true,
+      },
+      en: {
+        type: String,
+        required: [true, "Please provide a description"],
+        trim: true,
+      },
     },
 
     category: {
@@ -27,17 +48,31 @@ const HourlyPackageSchema = new mongoose.Schema(
     },
 
     details: {
-      type: [String],
-      required: [true, "Please provide details"],
-      set: (arr) => arr.map((s) => s.trim()),
+      ar: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+      en: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
     },
 
     post_session_benefits: {
-      type: [String],
-      required: [true, "Please provide details"],
-      set: (arr) => arr.map((s) => s.trim()),
+      ar: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+      en: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
     },
-    
+
     icon: String,
 
     price: {
@@ -63,7 +98,14 @@ const HourlyPackageSchema = new mongoose.Schema(
     },
 
     session_type: {
-      type: String,
+      en: { type: String },
+      ar: { type: String },
+    },
+
+    is_active: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
@@ -94,36 +136,3 @@ HourlyPackageSchema.post("init", (doc) => {
 });
 
 module.exports = mongoose.model("HourlyPackage", HourlyPackageSchema);
-
-// Old Price Code
-{
-  // prices: {
-  // twoHours: {
-  // type: Number,
-  // required: [true, "Please provide a price"],
-  // min: [0, "Price must be a positive number"],
-  // },
-  // halfDay: {
-  // type: Number,
-  // required: [true, "Please provide a price"],
-  // min: [0, "Price must be a positive number"],
-  // },
-  // fullDay: {
-  // type: Number,
-  // required: [true, "Please provide a price"],
-  // min: [0, "Price must be a positive number"],
-  // },
-  // },
-  // savings: {
-  // halfDay: {
-  // type: Number,
-  // required: [true, "Please provide a saving"],
-  // min: [0, "Saving must be a positive number"],
-  // },
-  // fullDay: {
-  // type: Number,
-  // required: [true, "Please provide a saving"],
-  // min: [0, "Saving must be a positive number"],
-  // },
-  // },
-}

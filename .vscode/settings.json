@@ -1,5 +1,5 @@
 {
-    "cSpell.words": [
-        "Goocast"
-    ]
+  "cSpell.words": ["blurhash", "Goocast", "hourlypackages", "xmark"],
+  "i18n-ally.localesPaths": ["client/i18n", "client/i18n/messages"],
+  "i18n-ally.keystyle": "nested"
 }

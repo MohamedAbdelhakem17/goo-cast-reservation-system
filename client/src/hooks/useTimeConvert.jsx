@@ -1,16 +1,34 @@
+import useLocalization from "@/context/localization-provider/localization-context";
+
 export default function useTimeConvert() {
-    return (time) => {
-        const [hourStr, minute] = time?.split(":") || [];
+  let lng = "en";
 
-        const hour = parseInt(hourStr, 10);
+  try {
+    const localization = useLocalization();
+    if (localization && localization.lng) {
+      lng = localization.lng;
+    }
+  } catch (err) {
+    lng = "en";
+  }
 
-        if (isNaN(hour) || !minute) {
-            return "";
-        }
+  const toArabicDigits = (num) =>
+    num.toString().replace(/[0-9]/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
 
-        const hour12 = hour % 12 || 12;
-        const amPm = hour < 12 ? "AM" : "PM";
+  return (time) => {
+    const [hourStr, minute] = time?.split(":") || [];
 
-        return `${hour12}:${minute} ${amPm}`;
-    };
+    const hour = parseInt(hourStr, 10);
+    if (isNaN(hour) || !minute) return "";
+
+    const hour12 = hour % 12 || 12;
+
+    if (lng === "ar") {
+      const amPm = hour < 12 ? "صباحًا" : "مساءً";
+      return `${toArabicDigits(hour12)}:${toArabicDigits(minute)} ${amPm}`;
+    } else {
+      const amPm = hour < 12 ? "AM" : "PM";
+      return `${hour12}:${minute} ${amPm}`;
+    }
+  };
 }

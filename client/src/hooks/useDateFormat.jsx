@@ -1,17 +1,29 @@
+import useLocalization from "@/context/localization-provider/localization-context";
+
 export default function useDateFormat() {
-    return (date) => {
-        if (!date) return ""; 
+  let lng = "en";
+  try {
+    const localization = useLocalization();
+    if (localization && localization.lng) {
+      lng = localization.lng;
+    }
+  } catch (err) {
+    lng = "en";
+  }
 
-        const parsedDate = new Date(date);
+  return (date) => {
+    if (!date) return "";
 
-        if (isNaN(parsedDate.getTime())) {
-            return ""; 
-        }
+    const parsedDate = new Date(date);
 
-        return parsedDate.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short", 
-            day: "numeric",
-        });
-    };
+    if (isNaN(parsedDate.getTime())) {
+      return "";
+    }
+
+    return parsedDate.toLocaleDateString(`${lng}-EG`, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 }
