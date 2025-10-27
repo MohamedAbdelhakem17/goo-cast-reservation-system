@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axios-instance";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetFullyBookedDates = (duration) => {
   const { data, isLoading, error } = useQuery({
@@ -55,6 +55,7 @@ export const useCreateBooking = () => {
 
       return data;
     },
+    retry: 0,
   });
 
   return { createBooking, isPending, error, data };
