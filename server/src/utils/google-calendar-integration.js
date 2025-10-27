@@ -45,6 +45,7 @@ exports.createCalendarEvent = async (
     const eventId = data?.id;
     return eventId;
   } catch (err) {
+    console.log(err);
     throw new Error(err);
   }
 };
