@@ -76,7 +76,7 @@ const bookingConfirmationEmailBody = (booking) => {
         <p style="margin:4px 0 0; font-size:14px;">
           Time Slot: <strong>${booking.startSlot || "N/A"} - ${booking.endSlot || "N/A"}</strong>
         </p>
-        <p style="margin:4px 0 0; font-size:14px; color:#6b7280;">Duration: ${booking.duration || 0} hours</p>
+        <p style="margin:4px 0 0; font-size:14px; color:#6b7280;">Duration: ${booking?.duration || 0} hours</p>
       </div>
 
       <!-- Package -->
