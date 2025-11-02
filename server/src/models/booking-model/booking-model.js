@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
-
-const {
-  PAYMENT_METHOD,
-  BOOKING_PIPELINE,
-} = require("../../config/system-variables");
+const { validate } = require("../hourly-packages-model/hourly-packages-model");
+const { PAYMENT_METHOD } = require("../../config/system-variables");
 
 const bookingSchema = new mongoose.Schema(
   {
@@ -84,8 +81,8 @@ const bookingSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: Object.values(BOOKING_PIPELINE),
-      default: BOOKING_PIPELINE.NEW,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
 
     totalPrice: {
@@ -131,10 +128,12 @@ const bookingSchema = new mongoose.Schema(
 
     opportunityID: {
       type: String,
+      required: true,
     },
 
     eventID: {
       type: String,
+      required: true,
     },
 
     totalPriceAfterDiscount: {
