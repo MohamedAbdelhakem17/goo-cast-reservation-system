@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const uri =
-  "mongodb+srv://abdelhakem:gUWwV4BpMRv8z9f2@dottopia.gjvd3.mongodb.net/goocast";
+  "mongodb://goocast_app:G00cast$app_2025@mongo.dottopia.com:27017/goocast?authSource=goocast";
 
 async function updateAllCollections() {
   await mongoose.connect(uri);
