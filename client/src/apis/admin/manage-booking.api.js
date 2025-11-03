@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axiosInstance from "@/utils/axios-instance";
 import { API_BASE_URL } from "@/constants/config";
+import axiosInstance from "@/utils/axios-instance";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const fetchBookings = async (filters) => {
-  const { status, studioId, date, page = 1, limit = 10 } = filters;
+  const { status, studioId, date, page = 1, limit = 1000 } = filters;
   const params = new URLSearchParams();
   if (status) params.append("status", status);
   if (studioId) params.append("studioId", studioId);
