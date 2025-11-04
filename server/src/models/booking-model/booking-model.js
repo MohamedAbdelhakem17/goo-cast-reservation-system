@@ -128,12 +128,10 @@ const bookingSchema = new mongoose.Schema(
 
     opportunityID: {
       type: String,
-      required: true,
     },
 
     eventID: {
       type: String,
-      required: true,
     },
 
     totalPriceAfterDiscount: {
