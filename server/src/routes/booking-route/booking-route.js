@@ -24,7 +24,7 @@ router
   .post(bookingController.getAvailableEndSlots);
 
 router.route("/").post(bookingController.createBooking);
-router.route("/create/ghl").post(bookingController.ghlCreateBooking);
+// router.route("/create/ghl").post(bookingController.ghlCreateBooking);
 
 router.route("/change-status/ghl").put(bookingController.changeBookingStatus);
 
