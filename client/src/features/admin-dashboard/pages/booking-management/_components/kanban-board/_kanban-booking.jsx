@@ -1,5 +1,4 @@
-// _kanban-booking.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import KanbanColumn from "./_kanban-column";
@@ -15,53 +14,54 @@ const COLUMNS = [
   { id: "canceled", label: "Canceled" },
 ];
 
-export default function BookingKanban({ bookings, onUpdateBooking }) {
+export default function BookingKanban({ bookings = [], onUpdateBooking }) {
   const [localBookings, setLocalBookings] = useState(bookings);
   const [draggedBookingId, setDraggedBookingId] = useState(null);
   const [hoverColumn, setHoverColumn] = useState(null);
 
-  // لما الريكويست يتم بنجاح أو يفشل
+  useEffect(() => {
+    setLocalBookings(bookings);
+  }, [bookings]);
+
   const handleDrop = async (bookingId, newStatus) => {
-    const prevBookings = [...localBookings];
-
-    // ✅ تحديث فوري للواجهة
-    const updated = localBookings.map((b) =>
-      b._id === bookingId ? { ...b, status: newStatus } : b,
+    // Optimistic UI
+    setLocalBookings((prev) =>
+      prev.map((b) => (b._id === bookingId ? { ...b, status: newStatus } : b)),
     );
-    setLocalBookings(updated);
 
-    try {
-      await onUpdateBooking(bookingId, newStatus);
-      alert("✅ Status updated successfully!");
-    } catch (err) {
-      alert("❌ Failed to update status!");
-      setLocalBookings(prevBookings); // 🔁 إرجاع الحالة القديمة
+    if (onUpdateBooking) {
+      try {
+        await onUpdateBooking(bookingId, newStatus);
+      } catch (err) {
+        setLocalBookings(bookings);
+        console.error("Update failed:", err);
+      }
     }
+
+    setDraggedBookingId(null);
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex h-screen flex-col bg-zinc-50">
-        <div className="flex-1 overflow-x-auto overflow-y-hidden">
-          <div className="flex h-full min-w-max gap-6 px-6 py-2">
-            {COLUMNS.map((column) => {
-              const columnBookings = localBookings.filter((b) => b.status === column.id);
+      <div className="w-full overflow-x-auto bg-zinc-50 py-4">
+        <div className="inline-flex gap-4 px-6 pb-4">
+          {COLUMNS.map((column) => {
+            const columnBookings = localBookings.filter((b) => b.status === column.id);
 
-              return (
-                <KanbanColumn
-                  key={column.id}
-                  status={column.id}
-                  label={column.label}
-                  bookings={columnBookings}
-                  onDrop={handleDrop}
-                  draggedBookingId={draggedBookingId}
-                  setDraggedBookingId={setDraggedBookingId}
-                  hoverColumn={hoverColumn}
-                  setHoverColumn={setHoverColumn}
-                />
-              );
-            })}
-          </div>
+            return (
+              <KanbanColumn
+                key={column.id}
+                status={column.id}
+                label={column.label}
+                bookings={columnBookings}
+                onDrop={handleDrop}
+                draggedBookingId={draggedBookingId}
+                setDraggedBookingId={setDraggedBookingId}
+                hoverColumn={hoverColumn}
+                setHoverColumn={setHoverColumn}
+              />
+            );
+          })}
         </div>
       </div>
     </DndProvider>

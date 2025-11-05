@@ -1,5 +1,5 @@
-import { SelectInput, Input } from "@/components/common";
 import { useGetStudio } from "@/apis/public/studio.api";
+import { Input, SelectInput } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function HeaderAndFilter({ filters, onFilterChange }) {
@@ -31,7 +31,7 @@ export default function HeaderAndFilter({ filters, onFilterChange }) {
   ];
 
   return (
-    <div className="mb-6 space-y-4 lg:flex lg:items-center lg:justify-between lg:space-y-0">
+    <div className="mb-6 space-y-4 lg:flex lg:items-center lg:justify-center lg:space-y-0">
       {/* Title */}
       <h1 className="text-2xl font-bold text-gray-800">{t("booking-management")}</h1>
 

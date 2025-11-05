@@ -6,23 +6,16 @@ import { useDrag } from "react-dnd";
 
 export default function KanbanCard({ booking, isGhost = false, setDraggedBookingId }) {
   const formatDate = useDataFormat();
-  const formatTime = useTimeConvert();
   const formatPrice = usePriceFormat();
+  const formatTime = useTimeConvert();
 
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: "booking",
-      /**
-       * ✅ استخدم item كدالة لو محتاج تمرر بيانات ديناميكية
-       */
       item: () => {
-        // عند بدء السحب
         if (setDraggedBookingId) setDraggedBookingId(booking._id);
         return { id: booking._id };
       },
-      /**
-       * ✅ end تفضل شغالة عادي
-       */
       end: () => {
         if (setDraggedBookingId) setDraggedBookingId(null);
       },
@@ -30,8 +23,10 @@ export default function KanbanCard({ booking, isGhost = false, setDraggedBooking
         isDragging: monitor.isDragging(),
       }),
     }),
-    [booking, setDraggedBookingId],
+    [booking._id, setDraggedBookingId],
   );
+
+  if (!booking._id && !isGhost) return null;
 
   return (
     <div
@@ -39,7 +34,7 @@ export default function KanbanCard({ booking, isGhost = false, setDraggedBooking
       className={`group mx-auto my-3 cursor-pointer rounded-2xl border border-zinc-200 bg-white p-5 transition-all duration-200 hover:border-zinc-300 hover:shadow-lg ${
         isGhost ? "border-dashed opacity-40" : ""
       } ${isDragging ? "scale-[0.97] opacity-50" : ""}`}
-      style={{ width: "330px" }}
+      style={{ width: "300px" }}
     >
       <div className="mb-4 flex items-start justify-between">
         <span className="text-[11px] font-medium tracking-wide text-zinc-400">
@@ -55,6 +50,9 @@ export default function KanbanCard({ booking, isGhost = false, setDraggedBooking
           <Calendar className="h-4 w-4 text-zinc-500" />
           <span className="font-medium text-zinc-700">{formatDate(booking.date)}</span>
         </div>
+        <p className="text-sm text-zinc-600">
+          {booking.studio.name.en} - {formatPrice(booking.totalPrice)}
+        </p>
         <p className="text-sm text-zinc-600">
           {formatTime(booking.startSlot)} — {formatTime(booking.endSlot)}
         </p>
