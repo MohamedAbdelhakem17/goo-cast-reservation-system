@@ -681,8 +681,19 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   const id = req.params.id || req.body.id;
   const { status } = req.body;
 
+  const BOOKING_PIPELINE = Object.freeze({
+    NEW: "new",
+    PENDING_PAYMENT: "pending-payment",
+    PAID: "paid",
+    SCHEDULED: "scheduled",
+    IN_STUDIO: "in-studio",
+    COMPLETED: "completed",
+    NEEDS_EDIT: "needs-edit",
+    CANCELED: "canceled",
+  });
+
   // Validate provided status
-  const allowedStatuses = ["pending", "approved", "rejected"];
+  const allowedStatuses = Object.values(BOOKING_PIPELINE);
   if (!status || !allowedStatuses.includes(status)) {
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid or missing status");
   }

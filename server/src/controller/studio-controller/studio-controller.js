@@ -120,7 +120,7 @@ exports.getAllStudios = asyncHandler(async (req, res) => {
   const { status } = req.query;
 
   let filter = {};
-  if (status !== undefined) {
+  if (status === undefined) {
     filter.is_active = status === "true";
   }
 
