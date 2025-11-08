@@ -8,6 +8,8 @@ import useLocalization from "@/context/localization-provider/localization-contex
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import BookingInfoModel from "@/features/booking/_components/booking-info-model";
 import { useQueryClient } from "@tanstack/react-query";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import BookingKanban from "./_components/kanban-board/_kanban-booking";
 
 export default function BookingManagement() {
@@ -74,17 +76,19 @@ export default function BookingManagement() {
   // document.body.style.overflowX = "hidden";
 
   return (
-    <div className="grid h-screen max-w-screen grid-cols-1 grid-rows-[auto_1fr] overflow-hidden bg-gray-50">
+    <div className="grid h-[calc(100vh-70px)] max-w-screen grid-cols-1 grid-rows-[auto_1fr] overflow-hidden bg-gray-50">
       {/* Add Booking Button */}
       <Link
         to={"add"}
-        className="bg-main text-canter my-3 ms-auto block w-fit rounded-md px-4 py-2 text-center text-lg font-bold text-white"
+        className="bg-main text-canter my-1 ms-auto block w-fit rounded-md px-3 py-2 text-center text-sm font-bold text-white"
       >
         {t("create-new-booking")}
       </Link>
 
       {/* Kanban Board */}
-      <BookingKanban bookings={bookings} onUpdateBooking={handleStatusChange} />
+      <DndProvider backend={HTML5Backend}>
+        <BookingKanban bookings={bookings} onUpdateBooking={handleStatusChange} />
+      </DndProvider>
 
       {/* Model */}
       {selectedBooking && (

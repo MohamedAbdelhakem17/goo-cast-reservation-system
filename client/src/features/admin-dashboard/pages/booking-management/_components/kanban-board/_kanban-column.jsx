@@ -27,8 +27,9 @@ export default function KanbanColumn({
   const draggedBooking = bookings.find((b) => b._id === draggedBookingId);
 
   return (
-    <div className="flex max-w-[350px] min-w-[350px] flex-col">
-      <div className="rounded-t-xl border border-b-0 border-zinc-200 bg-white px-4 py-4 shadow-sm">
+    <div className="flex max-w-[350px] min-w-[350px] flex-col rounded-xl border border-zinc-200 bg-white shadow-sm">
+      {/* Header */}
+      <div className="rounded-t-xl border-b border-zinc-200 bg-white px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-[15px] font-semibold text-zinc-800">{label}</span>
@@ -42,12 +43,10 @@ export default function KanbanColumn({
         </div>
       </div>
 
+      {/* Content */}
       <div
         ref={drop}
-        className={`min-h-[calc(100vh-310px)] flex-1 space-y-3 overflow-x-hidden overflow-y-auto rounded-b-xl border border-t-0 border-zinc-200 bg-zinc-50 px-3 py-4 transition-all ${
-          isOver ? "border-blue-300 bg-blue-50" : ""
-        }`}
-        style={{ height: "calc(100vh - 200px)" }}
+        className={`h-[calc(100vh-200px)] flex-1 space-y-3 overflow-x-hidden overflow-y-auto px-3 py-4 transition-all ${isOver ? "border border-blue-300 bg-blue-50" : "bg-gray-200/50"} `}
       >
         {bookings.map((booking) => (
           <KanbanCard
