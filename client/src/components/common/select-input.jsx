@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 export default function SelectInput({
   label,
@@ -34,7 +34,7 @@ export default function SelectInput({
 
       {/* Trigger */}
       <div
-        className="relative cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-3 text-gray-700 shadow-sm transition focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500 hover:border-rose-400"
+        className="relative cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm transition focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500 hover:border-rose-400"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <span className={selectedOption ? "text-gray-900" : "text-gray-400"}>

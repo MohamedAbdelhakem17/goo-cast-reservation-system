@@ -4,16 +4,20 @@ import KanbanColumn from "./_kanban-column";
 
 const COLUMNS = [
   { id: "new", label: "New" },
-  { id: "pending-payment", label: "Pending Payment" },
+  // { id: "pending-payment", label: "Pending Payment" },
   { id: "paid", label: "Paid" },
-  { id: "scheduled", label: "Scheduled" },
-  { id: "in-studio", label: "In Studio" },
+  // { id: "scheduled", label: "Scheduled" },
+  // { id: "in-studio", label: "In Studio" },
   { id: "completed", label: "Completed" },
-  { id: "needs-edit", label: "Needs Edit" },
+  // { id: "needs-edit", label: "Needs Edit" },
   { id: "canceled", label: "Canceled" },
 ];
 
-export default function BookingKanban({ bookings = [], onUpdateBooking }) {
+export default function BookingKanban({
+  bookings = [],
+  onUpdateBooking,
+  setSelectedBooking,
+}) {
   const [localBookings, setLocalBookings] = useState(bookings);
   const [draggedBookingId, setDraggedBookingId] = useState(null);
   const [hoverColumn, setHoverColumn] = useState(null);
@@ -35,7 +39,7 @@ export default function BookingKanban({ bookings = [], onUpdateBooking }) {
       try {
         await onUpdateBooking(bookingId, newStatus);
       } catch (err) {
-        setLocalBookings(bookings);  
+        setLocalBookings(bookings);
         console.error("Update failed:", err);
       }
     }
@@ -125,6 +129,7 @@ export default function BookingKanban({ bookings = [], onUpdateBooking }) {
                 setDraggedBookingId={setDraggedBookingId}
                 hoverColumn={hoverColumn}
                 setHoverColumn={setHoverColumn}
+                setSelectedBooking={setSelectedBooking}
               />
             );
           })}

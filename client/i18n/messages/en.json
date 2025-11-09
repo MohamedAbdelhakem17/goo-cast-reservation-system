@@ -179,10 +179,6 @@
   "date-0": "Date",
   "this-booking": "this booking?",
   "all-studios": "All Studios",
-  "all-bookings": "All Bookings",
-  "pending-0": "Pending",
-  "approved-0": "Approved",
-  "rejected": "Rejected",
   "booking-management": "Booking Management",
   "time-0": "Time",
   "persons": "Persons",
@@ -436,7 +432,7 @@
   "add-admin": "Add Admin",
   "edit-admin-data": "Edit Admin Data",
   "add-new-admin": "Add new admin",
-  "create-new-booking": "Create New Booking",
+  "create-new-booking": "New Booking",
   "update-booking-data": "Update Booking Data",
   "select-package": "Select Package",
   "comment": "addational comments",
@@ -469,5 +465,10 @@
   "package": "Package",
   "quantity": "Quantity",
   "addons-price": "Add-ons Price",
-  "thank-you": "Thank you for booking with us!"
+  "thank-you": "Thank you for booking with us!",
+  "new": "New",
+  "paid": "Paid",
+  "completed": "Completed",
+  "canceled": "Canceled",
+  "search-by-id": "Serach"
 }

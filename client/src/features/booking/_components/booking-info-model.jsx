@@ -1,12 +1,12 @@
-import { motion } from "framer-motion";
+import useLocalization from "@/context/localization-provider/localization-context";
 import useDateFormat from "@/hooks/useDateFormat";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import BookingReceiptPDF from "./booking-receipt-pdf";
-import useLocalization from "@/context/localization-provider/localization-context";
-import { useMemo } from "react";
 import { Buffer } from "buffer";
+import { motion } from "framer-motion";
+import { useMemo } from "react";
+import BookingReceiptPDF from "./booking-receipt-pdf";
 window.Buffer = Buffer;
 
 const statusClasses = {
@@ -195,16 +195,33 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
                   value={priceFormat(selectedBooking?.totalPackagePrice || 0)}
                 />
               )}
+
               {selectedBooking?.totalAddOnsPrice > 0 && (
                 <Line
                   label={t("add-ons-price")}
                   value={priceFormat(selectedBooking?.totalAddOnsPrice)}
                 />
               )}
+
+              {selectedBooking?.totalPriceAfterDiscount < selectedBooking?.totalPrice && (
+                <Line
+                  label={t("discount")}
+                  value={`${priceFormat(
+                    (selectedBooking?.totalPrice || 0) -
+                      (selectedBooking?.totalPriceAfterDiscount || 0),
+                  )} -`}
+                  className="text-red-600"
+                />
+              )}
+
               <div className="mt-1 border-t border-gray-200 pt-3">
                 <Line
                   label={t("total-price-0")}
-                  value={priceFormat(selectedBooking?.totalPrice || 0)}
+                  value={priceFormat(
+                    selectedBooking?.totalPriceAfterDiscount ||
+                      selectedBooking?.totalPrice ||
+                      0,
+                  )}
                   bold
                   main
                 />

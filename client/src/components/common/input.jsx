@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import ErrorFeedback from "./error-feedback";
 import { Calendar } from "lucide-react";
+import { useState } from "react";
+import ErrorFeedback from "./error-feedback";
 
 const Input = ({
   label,
@@ -26,7 +26,7 @@ const Input = ({
   const isArabic = /^[\u0600-\u06FF]/.test(value);
 
   return (
-    <div className={`relative mb-8 ${className}`}>
+    <div className={`relative mb-2 ${className}`}>
       <motion.label
         initial={{ x: 0, opacity: 0.9 }}
         animate={

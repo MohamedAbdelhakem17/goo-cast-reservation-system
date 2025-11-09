@@ -9,6 +9,7 @@ export default function KanbanColumn({
   setDraggedBookingId,
   hoverColumn,
   setHoverColumn,
+  setSelectedBooking,
 }) {
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -23,11 +24,15 @@ export default function KanbanColumn({
     [status, onDrop],
   );
 
-  const totalValue = bookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+  const totalValue = bookings.reduce(
+    (sum, b) => sum + (b?.totalPriceAfterDiscount || a?.totalPrice || 0),
+    0,
+  );
+
   const draggedBooking = bookings.find((b) => b._id === draggedBookingId);
 
   return (
-    <div className="flex max-w-[350px] min-w-[350px] flex-col rounded-xl border border-zinc-200 bg-white shadow-sm">
+    <div className="flex h-[80vh] max-w-[370px] min-w-[370px] flex-col rounded-xl border border-zinc-200 bg-white shadow-sm">
       {/* Header */}
       <div className="rounded-t-xl border-b border-zinc-200 bg-white px-4 py-4">
         <div className="flex items-center justify-between">
@@ -53,6 +58,7 @@ export default function KanbanColumn({
             key={booking._id}
             booking={booking}
             setDraggedBookingId={setDraggedBookingId}
+            setSelectedBooking={setSelectedBooking}
           />
         ))}
 

@@ -173,10 +173,6 @@
   "loading": "جاري التحميل",
   "this-booking": "هذا الحجز؟",
   "all-studios": "كل الاستوديوهات",
-  "all-bookings": "كل الحجوزات",
-  "pending-0": "قيد الانتظار",
-  "approved-0": "موافق عليه",
-  "rejected": "مرفوض",
   "booking-management": "إدارة الحجوزات",
   "reject": "رفض",
   "phone": "رقم الهاتف",
@@ -420,7 +416,7 @@
   "add-new-admin": "أضف مسؤول جديد",
   "add-admin": "إضافة المسؤول",
   "edit-admin-data": "تحرير بيانات المسؤول",
-  "create-new-booking": "إنشاء حجز جديد",
+  "create-new-booking": "حجز جديد",
   "update-booking-data": "تحديث بيانات الحجز",
   "comment": "تعليقات إضافية",
   "please-select-a-studio-and-package-first": "يرجى اختيار الاستوديو ,والخدمة أولاً",
@@ -452,5 +448,10 @@
   "package": "الباقة",
   "quantity": "الكمية",
   "addons-price": "سعر الإضافات",
-  "thank-you": "شكرًا لحجزك معنا!"
+  "thank-you": "شكرًا لحجزك معنا!",
+  "new": "جديد",
+  "paid": "مدفوع",
+  "completed": "مكتمل",
+  "canceled": "تم الإلغاء",
+  "search-by-id": "سيراتش"
 }
