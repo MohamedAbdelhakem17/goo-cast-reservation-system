@@ -12,6 +12,8 @@ const {
 
 const { calculateSlotPrices } = require("../../utils/priceCalculator.js");
 const { getAllDay, timeToMinutes } = require("../../utils/time-mange.js");
+const userProfileModel = require("../../models/user-profile-model/user-profile-model.js");
+const determineUserTags = require("../../utils/tag-engine.js");
 
 const prepareBookingData = async (body, user, isEdit = false) => {
   const {
@@ -22,7 +24,7 @@ const prepareBookingData = async (body, user, isEdit = false) => {
     endSlot,
     duration,
     persons,
-    package: selectedPackage,
+    selectedPackage,
     selectedAddOns,
     personalInfo,
     totalPrice: totalPriceFromClient,
@@ -30,6 +32,31 @@ const prepareBookingData = async (body, user, isEdit = false) => {
     coupon_code,
     paymentMethod,
   } = body;
+
+  // User Profile
+  const userBooked = await userProfileModel.findOne({
+    $or: [{ email: personalInfo.email }, { phone: personalInfo.phone }],
+  });
+
+  let userId;
+
+  if (userBooked) {
+    userBooked.tags = determineUserTags(userBooked);
+    await userBooked.save();
+    userId = userBooked._id;
+  } else {
+    const newUser = await userProfileModel.create({
+      firstName: personalInfo.firstName,
+      lastName: personalInfo.lastName,
+      email: personalInfo.email,
+      phone: personalInfo.phone,
+    });
+
+    newUser.tags = determineUserTags(newUser);
+    await newUser.save();
+
+    userId = newUser._id;
+  }
 
   // Parse booking date and time
   const bookingDate = new Date(date);
@@ -50,6 +77,7 @@ const prepareBookingData = async (body, user, isEdit = false) => {
     selectedPackage?.id || selectedPackage
   );
 
+  console.log(pkg, { pkg: selectedPackage });
   if (!pkg)
     throw new AppError(
       404,
@@ -182,14 +210,15 @@ const prepareBookingData = async (body, user, isEdit = false) => {
     addOns: addOnDetails,
     totalAddOnsPrice: totalAddOnsPriceFromDb,
     totalPackagePrice: packagePrice,
-    personalInfo,
+    personalInfo: userId,
+    extraComments: personalInfo.comments,
     totalPrice,
     totalPriceAfterDiscount,
     paymentMethod: paymentMethod || PAYMENT_METHOD.CASH,
   };
 
   if (!isEdit) {
-    bookingData.status = "pending";
+    bookingData.status = "new";
     bookingData.createdBy = Admin;
     bookingData.isGuest = isGuest;
   }
