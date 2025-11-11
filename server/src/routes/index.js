@@ -1,37 +1,53 @@
-const AuthRouter = require("./auth-route/auth-route");
-const StudioRouter = require("./studio-route/studio-route");
-const AddOnRouter = require("./add-on-route/add-on-route");
-const HourlyPackageRouter = require("./hourly-package-route/hourly-package-route");
-const BookingRouter = require("./booking-route/booking-route");
-const AnalyticsRouter = require("./analytics-route/analytics-route");
-const PriceRuleRouter = require("./price-rule-route/price-rule-route");
-const PriceExceptionRouter = require("./price-exception-route/price-exception-route");
-const CategoryRouter = require("./category-route/category-route");
-const UserRouter = require("./user-route/user-route");
-const AdminRouter = require("./admin-route/admin-route");
-const CouponRouter = require("./coupon-route/coupon-route");
-const ReviewController = require("../controller/review-controller/review-controller");
-const FaqRouter = require("./faq-route/faq-route");
-const NewsLetterRouter = require("./newsletter-route/newsletter-route");
+const routes = [
+  { path: "/api/v1/auth", router: require("./auth-route/auth-route") },
+  { path: "/api/v1/studio", router: require("./studio-route/studio-route") },
+  { path: "/api/v1/add-ons", router: require("./add-on-route/add-on-route") },
+  {
+    path: "/api/v1/hourly-packages",
+    router: require("./hourly-package-route/hourly-package-route"),
+  },
+  {
+    path: "/api/v1/bookings",
+    router: require("./booking-route/booking-route"),
+  },
+  {
+    path: "/api/v1/analytics",
+    router: require("./analytics-route/analytics-route"),
+  },
+  {
+    path: "/api/v1/price-rules",
+    router: require("./price-rule-route/price-rule-route"),
+  },
+  {
+    path: "/api/v1/price-exceptions",
+    router: require("./price-exception-route/price-exception-route"),
+  },
+  {
+    path: "/api/v1/categories",
+    router: require("./category-route/category-route"),
+  },
+  { path: "/api/v1/user", router: require("./user-route/user-route") },
+  { path: "/api/v1/admin", router: require("./admin-route/admin-route") },
+  { path: "/api/v1/coupon", router: require("./coupon-route/coupon-route") },
+  { path: "/api/v1/faq", router: require("./faq-route/faq-route") },
+  {
+    path: "/api/v1/subscribe",
+    router: require("./newsletter-route/newsletter-route"),
+  },
+  {
+    path: "/api/v1/user-profile",
+    router: require("./user-profile-route/user-profile-route"),
+  },
+];
 
 const amountRoutes = (app) => {
-  app.use("/api/v1/auth", AuthRouter);
-  app.use("/api/v1/studio", StudioRouter);
-  app.use("/api/v1/add-ons", AddOnRouter);
-  app.use("/api/v1/hourly-packages", HourlyPackageRouter);
-  app.use("/api/v1/bookings", BookingRouter);
-  app.use("/api/v1/analytics", AnalyticsRouter);
-  app.use("/api/v1/price-rules", PriceRuleRouter);
-  app.use("/api/v1/price-exceptions", PriceExceptionRouter);
-  app.use("/api/v1/categories", CategoryRouter);
-  app.use("/api/v1/user", UserRouter);
-  app.use("/api/v1/admin", AdminRouter);
-  app.use("/api/v1/coupon", CouponRouter);
-  app.use("/api/v1/faq", FaqRouter);
-  app.use("/api/v1/subscribe", NewsLetterRouter);
+  routes.forEach(({ path, router }) => app.use(path, router));
 
-  // google reviews
-  app.use("/api/v1/reviews", ReviewController.getPlaceReviews);
+  // Google reviews
+  app.use(
+    "/api/v1/reviews",
+    require("../controller/review-controller/review-controller").getPlaceReviews
+  );
 
   // Error handling and sending email
   app.use(
@@ -39,5 +55,7 @@ const amountRoutes = (app) => {
     require("./email-error").SendEmailRoute
   );
 };
+
+module.exports = amountRoutes;
 
 module.exports = amountRoutes;

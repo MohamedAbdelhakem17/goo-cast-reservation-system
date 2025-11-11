@@ -1,13 +1,13 @@
-import { useFormik } from "formik";
-import { useMemo, useCallback } from "react";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { useNavigate } from "react-router-dom";
 import { useCreateBooking } from "@/apis/public/booking.api";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import {
   getBookingInitialValues,
   getBookingValidationSchema,
 } from "@/utils/schemas/booking.schema";
+import { useFormik } from "formik";
+import { useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function useBookingFormik() {
   // Localization
@@ -39,11 +39,14 @@ export default function useBookingFormik() {
       coupon_code: values.couponCode,
       totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
       personalInfo: {
-        ...values.personalInfo,
-        fullName: `${values.personalInfo.firstName} ${values.personalInfo.lastName}`,
+        firstName: values.personalInfo.firstName,
+        lastName: values.personalInfo.lastName,
+        email: values.personalInfo.email,
+        phone: values.personalInfo.phone,
       },
+      extraComments: values.personalInfo.extraComments,
     };
-
+    return (console, log(payload));
     createBooking(payload, {
       onSuccess: (res) => {
         localStorage.setItem(

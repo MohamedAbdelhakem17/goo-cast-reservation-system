@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 //
 // ────────────────────────────────────────────────
-//   User Activity Subschema
+//   User Activity Sub schema
 // ────────────────────────────────────────────────
 //
 const userActivitySchema = new mongoose.Schema(
@@ -23,13 +23,13 @@ const userActivitySchema = new mongoose.Schema(
     },
     nextBooking: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "bookings",
+      ref: "Booking",
       default: null,
     },
     allUserBooking: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "bookings",
+        ref: "Booking",
         default: null,
       },
     ],
@@ -76,6 +76,7 @@ const userProfileSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
       match: [/^01[0-2,5]{1}[0-9]{8}$/, "Invalid Egyptian phone number"],
     },
 
@@ -103,7 +104,7 @@ const userProfileSchema = new mongoose.Schema(
       default: () => ({}),
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 //
@@ -155,6 +156,31 @@ userProfileSchema.methods.recordBooking = function (
     this.userActivity.allUserBooking.push(bookingId);
   }
 };
+
+userProfileSchema.pre(/^find/, function (next) {
+  this.populate([
+    {
+      path: "userActivity.allUserBooking",
+      select: "totalPrice totalPriceAfterDiscount studio package duration date",
+      populate: [
+        { path: "studio", select: "name thumbnail" },
+        { path: "package", select: "name price" },
+      ],
+      options: { noUserPopulate: true },
+    },
+    {
+      path: "userActivity.nextBooking",
+      select:
+        "totalPrice totalPriceAfterDiscount studio package duration date startSlot endSlot",
+      populate: [
+        { path: "studio", select: "name thumbnail" },
+        { path: "package", select: "name price" },
+      ],
+      options: { noUserPopulate: true },
+    },
+  ]);
+  next();
+});
 
 //
 // ────────────────────────────────────────────────

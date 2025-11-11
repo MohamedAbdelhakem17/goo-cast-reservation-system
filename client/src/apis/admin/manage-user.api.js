@@ -44,3 +44,36 @@ export function useMangeWorkSpace() {
 
   return { mangeWorkSpace, error, isPending, isSuccess };
 }
+
+export function useGetAllUserProfiles() {
+  const {
+    data: users,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["users-profile"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/user-profile");
+      return data;
+    },
+  });
+
+  return { users, isLoading, error };
+}
+
+export function useGetUserProfile(id) {
+  const {
+    data: userProfile,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["user-profile", id],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/user-profile/" + id);
+      return data;
+    },
+    enabled: !!id,
+  });
+
+  return { userProfile, isLoading, error };
+}

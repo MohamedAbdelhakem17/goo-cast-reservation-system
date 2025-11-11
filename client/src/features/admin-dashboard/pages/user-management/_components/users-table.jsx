@@ -1,6 +1,8 @@
-import { Table } from "@/components/common";
-import useDateFormat from "@/hooks/useDateFormat";
 import useLocalization from "@/context/localization-provider/localization-context";
+import useDateFormat from "@/hooks/useDateFormat";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import { MailPlus, Phone, View } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function UsersTables({
   users,
@@ -9,90 +11,101 @@ export default function UsersTables({
   setIsAddWorkSpaceOpen,
 }) {
   const { t } = useLocalization();
+  const priceFormat = usePriceFormat();
+
   const TABLE_HEAD = [
     t("name-0"),
     t("email"),
-    t("status-0"),
-    t("created-at"),
-    t("workspace"),
+    t("phone"),
+    t("total-spent"),
+    t("booking-numbers"),
     t("actions"),
   ];
   const dateFormat = useDateFormat();
 
   return (
     <>
-      <Table headers={TABLE_HEAD}>
-        {users?.map((user) => (
-          <tr key={user._id} className="hover:bg-gray-50">
-            <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
-            <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <span
-                className={`rounded px-2 py-1 text-xs font-medium ${
-                  user.active
-                    ? "bg-green-100 text-green-800"
-                    : "bg-gray-100 text-gray-600"
-                }`}
-              >
-                {user.active ? t("active-0") : t("inactive")}
-              </span>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">{dateFormat(user.createdAt)}</td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              {user.workspace ? (
-                <a
-                  href={user.workspace.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm break-all text-blue-500 underline"
+      <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <table className="min-w-full divide-y divide-gray-200 text-sm text-gray-700">
+          <thead className="bg-gray-50">
+            <tr>
+              {TABLE_HEAD.map((head) => (
+                <th
+                  key={head}
+                  className="px-6 py-3 text-left font-semibold tracking-wider text-gray-600 uppercase"
                 >
-                  {user.workspace.name}
-                </a>
-              ) : (
-                <span className="text-sm text-gray-400">{t("no-workspace")}</span>
-              )}
-            </td>
-            <td className="flex items-center justify-center gap-4 p-2">
-              {user.workspace ? (
-                <>
-                  {/* Edit */}
-                  <button
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setIsAddOpen(true);
-                      formik.setValues({
-                        name: user.workspace.name,
-                        link: user.workspace.link,
-                      });
-                    }}
-                  >
-                    <i className="fas fa-edit text-sm text-gray-600" />
-                  </button>
+                  {head}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-                  {/* Delete */}
-                  <button onClick={() => deleteWorkspace(user)}>
-                    <i className="fas fa-trash text-sm text-red-500" />
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setIsAddWorkSpaceOpen(true);
-                    formik.resetForm();
-                  }}
-                  className="bg-main/90 border-main rounded border px-2 py-1 text-sm text-white"
+          <tbody className="divide-y divide-gray-100">
+            {users?.map((user) => (
+              <tr key={user._id} className="transition-colors hover:bg-gray-50">
+                <td className="px-6 py-4 font-medium text-gray-800">{user.fullName}</td>
+
+                <td className="px-6 py-4">
+                  {user.email ? (
+                    <a
+                      href={`mailto:${user.email}`}
+                      className="hover:text-main inline-flex items-center gap-2 text-gray-700 transition"
+                    >
+                      <MailPlus className="group-hover:text-main h-4 w-4 text-gray-400" />
+                      <span>{user.email}</span>
+                    </a>
+                  ) : (
+                    <span className="text-gray-400 italic">N/A</span>
+                  )}
+                </td>
+
+                <td className="px-6 py-4">
+                  {user.phone ? (
+                    <a
+                      href={`tel:${user.phone}`}
+                      className="hover:text-main inline-flex items-center gap-2 text-gray-700 transition"
+                    >
+                      <Phone className="group-hover:text-main h-4 w-4 text-gray-400" />
+                      <span>{user.phone}</span>
+                    </a>
+                  ) : (
+                    <span className="text-gray-400 italic">N/A</span>
+                  )}
+                </td>
+
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {priceFormat(user.userActivity.totalSpent)}
+                </td>
+
+                <td className="px-6 py-4 text-center">
+                  {user.userActivity.totalBookingTimes}
+                </td>
+
+                <td className="px-6 py-4 text-center">
+                  <Link
+                    to={`${user._id}`}
+                    className="text-main hover:text-main/80 inline-flex items-center gap-2 font-medium transition"
+                  >
+                    View
+                    <View className="h-4 w-4" />
+                  </Link>
+                </td>
+              </tr>
+            ))}
+
+            {users?.length === 0 && (
+              <tr>
+                <td
+                  colSpan={TABLE_HEAD.length}
+                  className="py-6 text-center text-gray-500"
                 >
-                  <i className="fas fa-plus me-1" /> {t("add-workspace")}
-                </button>
-              )}
-            </td>
-          </tr>
-        ))}
-      </Table>
-      {users?.length === 0 && (
-        <div className="py-6 text-center text-gray-500">{t("no-users-found")}</div>
-      )}
+                  {t("no-users-found")}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

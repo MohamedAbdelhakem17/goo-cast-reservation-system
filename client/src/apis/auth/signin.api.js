@@ -1,10 +1,11 @@
+import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useMutation } from "@tanstack/react-query";
 
+import useLocalization from "@/context/localization-provider/localization-context";
 import { useAuth } from "../../context/Auth-Context/AuthContext";
 import axiosInstance from "../../utils/axios-instance";
-import useLocalization from "@/context/localization-provider/localization-context";
+import SYSTEM_ROLES from "../../utils/constant/system-roles.constant";
 
 const useSigninForm = (onSuccessCallback) => {
   const { t } = useLocalization();
@@ -24,7 +25,11 @@ const useSigninForm = (onSuccessCallback) => {
     onSuccess: (data) => {
       dispatch({ type: "LOGIN", payload: data });
 
-      location.href = "/";
+      if ([SYSTEM_ROLES.ADMIN, SYSTEM_ROLES.MANAGER].includes(data.role)) {
+        location.href = "/admin-dashboard";
+      } else {
+        location.href = "/";
+      }
 
       if (onSuccessCallback) onSuccessCallback();
     },

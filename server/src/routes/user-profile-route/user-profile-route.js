@@ -16,27 +16,23 @@ const { USER_ROLE, POLICIES_ROLES } = require("../../config/system-variables");
 // ────────────────────────────────
 //  Controllers
 // ────────────────────────────────
-const analyticsController = require("../../controller/analytics-controller/analytics-controller");
+const UserProfileController = require("../../controller/user-profile-controller/user-profile-controller");
 
 // ────────────────────────────────
-//  Public Routes
+//  Routes
 // ────────────────────────────────
-router.route("/").post(analyticsController.addAnalytics);
 
-// ────────────────────────────────
-//  Protected Routes (Admin & Manager)
-// ────────────────────────────────
 router.use(
   protectRoute,
   allowTo(USER_ROLE.ADMIN, USER_ROLE.MANAGER),
-  allowPolicy(POLICIES_ROLES.MANAGE_DASHBOARD)
+  allowPolicy(POLICIES_ROLES.MANAGE_CRM)
 );
 
-// Get dashboard stats
-router.route("/dashboard-stats").get(analyticsController.getDashboardStats);
+// Get all users profiles
+router.route("/").get(UserProfileController.getAllUsersProfiles);
 
-// Get all analytics
-router.route("/").get(analyticsController.getAnalytics);
+// Get single user profile by ID
+router.route("/:id").get(UserProfileController.getUserProfile);
 
 // ────────────────────────────────
 //  Export Router

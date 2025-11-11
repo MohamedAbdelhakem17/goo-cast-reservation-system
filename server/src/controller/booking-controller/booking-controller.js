@@ -18,6 +18,7 @@ const sendEmail = require("../../utils/send-email");
 const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
 const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model");
+const userProfileModel = require("../../models/user-profile-model/user-profile-model");
 
 const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
 
@@ -749,6 +750,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
 // Create Booking
 exports.createBooking = asyncHandler(async (req, res) => {
   const user = req.isAuthenticated() ? req.user : undefined;
+  console.log(req.body);
 
   const {
     tempBooking,
@@ -765,8 +767,18 @@ exports.createBooking = asyncHandler(async (req, res) => {
   } = await prepareBookingData(req.body, user, false);
 
   // Save data in database
+
   const booking = await tempBooking.save();
 
+  const bookedUser = await userProfileModel.findById(booking.personalInfo);
+
+  await bookedUser.recordBooking(
+    booking._id,
+    booking.createdAt,
+    booking.totalPriceAfterDiscount || booking.totalPrice
+  );
+
+  await bookedUser.save();
   // return response for user
   res.status(201).json({
     status: "success",

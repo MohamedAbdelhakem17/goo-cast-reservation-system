@@ -65,23 +65,14 @@ const bookingSchema = new mongoose.Schema(
     ],
 
     personalInfo: {
-      fullName: {
-        type: String,
-        required: true,
-      },
-      phone: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        match: /.+\@.+\..+/,
-      },
-      brand: {
-        type: String,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserProfile",
+      required: true,
     },
 
+    extraComment: {
+      type: String,
+    },
     status: {
       type: String,
       enum: Object.values(BOOKING_PIPELINE),
@@ -152,6 +143,10 @@ const bookingSchema = new mongoose.Schema(
 );
 
 bookingSchema.pre(/^find/, function (next) {
+  const opts = this.getOptions();
+
+  if (opts && opts.noUserPopulate) return next();
+
   this.populate([
     {
       path: "studio",
@@ -168,6 +163,10 @@ bookingSchema.pre(/^find/, function (next) {
     {
       path: "createdBy",
       select: "fullName",
+    },
+    {
+      path: "personalInfo",
+      select: "firstName lastName email phone fullName",
     },
   ]);
   next();

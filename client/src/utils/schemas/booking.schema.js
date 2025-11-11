@@ -1,5 +1,5 @@
-import * as Yup from "yup";
 import { DateTime } from "luxon";
+import * as Yup from "yup";
 
 export const getBookingInitialValues = (data = null) => {
   //  get start date
@@ -24,8 +24,8 @@ export const getBookingInitialValues = (data = null) => {
       lastName: "",
       phone: "",
       email: "",
-      brand: "",
     },
+    extraComment: "",
     totalPackagePrice: 0,
     totalPrice: 0,
     totalPriceAfterDiscount: 0,
@@ -74,8 +74,8 @@ export const getBookingInitialValues = (data = null) => {
       lastName: lastNameParts.join(" ") || "",
       phone: booking.personalInfo?.phone || "",
       email: booking.personalInfo?.email || "",
-      brand: booking.personalInfo?.brand || "",
     },
+    extraComment: "",
     totalPackagePrice: booking.totalPackagePrice || 0,
     totalPrice: booking.totalPrice || 0,
     totalPriceAfterDiscount: booking.totalPriceAfterDiscount || 0,
@@ -109,9 +109,9 @@ export const getBookingValidationSchema = (t) =>
         .matches(/^01(0|1|2|5)[0-9]{8}$/, t("phone-number-is-not-valid"))
         .required(t("phone-is-required")),
       email: Yup.string().email(t("invalid-email")).required(t("email-is-required")),
-      brand: Yup.string().optional(),
     }),
 
+    extraComments: Yup.string().optional(),
     totalPrice: Yup.number().required("Total price is required"),
     totalPriceAfterDiscount: Yup.number()
       .required("Discounted price is required")
