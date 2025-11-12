@@ -1,3 +1,4 @@
+import useLocalization from "@/context/localization-provider/localization-context";
 import useDateFormat from "@/hooks/useDateFormat";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import {
@@ -7,14 +8,20 @@ import {
   Mail,
   MessageCircle,
   Phone,
+  Ticket,
   User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function UserProfileHeader({ customer }) {
+  // Translation
+  const { t } = useLocalization();
+
+  // Hooks
   const dateFormat = useDateFormat();
   const priceFormat = usePriceFormat();
 
+  // Variables
   const email = customer?.email;
   const phone = customer?.phone;
   const whatsappNumber = phone ? `https://wa.me/+20${phone.replace(/^0/, "")}` : null;
@@ -28,7 +35,7 @@ export default function UserProfileHeader({ customer }) {
           to="/admin-dashboard/users"
           className="inline-flex items-center justify-center rounded-md p-2 transition hover:bg-gray-100"
         >
-          <ArrowLeft className="h-5 w-5 text-gray-700" />
+          <ArrowLeft className="h-5 w-5 text-gray-700 rtl:-scale-100" />
         </Link>
 
         {/* User Info */}
@@ -61,22 +68,38 @@ export default function UserProfileHeader({ customer }) {
           <div className="mt-3 flex flex-col flex-wrap gap-4 text-sm text-gray-600 sm:flex-row">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
-              <span>Owner: {customer?.owner || "N/A"}</span>
+              <span>
+                {t("owner-name", {
+                  name: customer?.owner || "N/A",
+                })}
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
-              <span>Last activity: {dateFormat(customer?.lastBookingTime) || "N/A"}</span>
+              <span>
+                {t("last-activity", {
+                  date: dateFormat(customer.lastBookingTime),
+                })}{" "}
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
-              <span>LTV: {priceFormat(customer?.totalSpent || 0)}</span>
+              <span>
+                {t("spent-price", {
+                  price: priceFormat(customer?.totalSpent || 0),
+                })}
+              </span>
             </div>
 
-            <div>
-              {customer?.totalBookingTimes ?? 0} booking
-              {customer?.totalBookingTimes !== 1 ? "s" : ""}
+            <div className="flex items-center gap-2">
+              <Ticket className="h-4 w-4" />
+              <span>
+                {t("booking-count", {
+                  count: customer?.totalBookingTimes ?? 0,
+                })}
+              </span>
             </div>
           </div>
         </div>
@@ -89,7 +112,7 @@ export default function UserProfileHeader({ customer }) {
               className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium transition hover:bg-gray-50"
             >
               <Mail className="h-4 w-4" />
-              Email
+              {t("email")}
             </a>
           )}
 
@@ -99,7 +122,7 @@ export default function UserProfileHeader({ customer }) {
               className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium transition hover:bg-gray-50"
             >
               <Phone className="h-4 w-4" />
-              Call
+              {t("call")}
             </a>
           )}
 
@@ -111,7 +134,7 @@ export default function UserProfileHeader({ customer }) {
               className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium transition hover:bg-gray-50"
             >
               <MessageCircle className="h-4 w-4" />
-              WhatsApp
+              {t("whatsapp")}
             </a>
           )}
         </div>

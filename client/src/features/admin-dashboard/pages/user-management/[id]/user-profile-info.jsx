@@ -2,6 +2,7 @@ import { useGetUserProfile } from "@/apis/admin/manage-user.api";
 import { Loading } from "@/components/common";
 import { useParams } from "react-router-dom";
 import UserProfileHeader from "./_components/user-profile-header";
+import UserProfileTabs from "./_components/user-profile-tabs";
 
 export default function UserProfileInfo() {
   const { id } = useParams();
@@ -19,11 +20,11 @@ export default function UserProfileInfo() {
   }
 
   const user = userProfile?.data;
-  const { totalSpent, lastBookingTime, totalBookingTimes, allUserBooking, nextBooking } =
-    user?.userActivity || {};
+  const { totalSpent, lastBookingTime, totalBookingTimes } = user?.userActivity || {};
 
   return (
     <section>
+      {/* Header  */}
       <UserProfileHeader
         customer={{
           avatar: user?.avatar,
@@ -37,6 +38,11 @@ export default function UserProfileInfo() {
           totalBookingTimes,
         }}
       />
+
+      {/* Tabs  */}
+      <UserProfileTabs user={user} />
+
+      {/* Content */}
     </section>
   );
 }

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axios-instance";
+import { useQuery } from "@tanstack/react-query";
 
 export const useGetStudio = (status) => {
   const url =

@@ -161,7 +161,8 @@ userProfileSchema.pre(/^find/, function (next) {
   this.populate([
     {
       path: "userActivity.allUserBooking",
-      select: "totalPrice totalPriceAfterDiscount studio package duration date",
+      select:
+        "totalPrice totalPriceAfterDiscount studio status package duration date",
       populate: [
         { path: "studio", select: "name thumbnail" },
         { path: "package", select: "name price" },
@@ -171,7 +172,7 @@ userProfileSchema.pre(/^find/, function (next) {
     {
       path: "userActivity.nextBooking",
       select:
-        "totalPrice totalPriceAfterDiscount studio package duration date startSlot endSlot",
+        "totalPrice status totalPriceAfterDiscount studio package duration date startSlot endSlot",
       populate: [
         { path: "studio", select: "name thumbnail" },
         { path: "package", select: "name price" },

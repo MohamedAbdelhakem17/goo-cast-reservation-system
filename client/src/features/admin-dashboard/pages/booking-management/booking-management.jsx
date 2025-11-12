@@ -87,7 +87,7 @@ export default function BookingManagement() {
   };
 
   return (
-    <div className="grid max-w-screen grid-cols-1 grid-rows-[auto_1fr] bg-gray-50">
+    <div className="grid max-w-screen grid-cols-1 grid-rows-[auto_1fr]">
       <div className="border-b border-gray-200">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
