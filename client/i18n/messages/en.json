@@ -495,5 +495,9 @@
   "email-address": "Email Address",
   "send-email": "Send Email",
   "call-now": "Call Now",
-  "tags": "Tags"
+  "tags": "Tags",
+  "switch-to-table": "Switch to table  ",
+  "switch-to-kanban": "Switch to  kanban",
+  "bookings-pipeline": "Bookings",
+  "change-status": "Change Status"
 }

@@ -478,5 +478,9 @@
   "email-address": "عنوان البريد الإلكتروني",
   "send-email": "إرسال البريد الإلكتروني",
   "call-now": "اتصل الآن",
-  "tags": "العلامات"
+  "tags": "العلامات",
+  "switch-to-kanban": "قم بالتبديل إلى كانبان",
+  "switch-to-table": "التبديل إلى الجدول",
+  "bookings-pipeline": "الحجوزات",
+  "change-status": "تغيير الحالة"
 }

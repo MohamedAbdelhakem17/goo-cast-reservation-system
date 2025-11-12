@@ -34,7 +34,7 @@ export default function KanbanCard({
     [booking._id, setDraggedBookingId],
   );
 
-  const bookingTitle = `#${booking._id?.slice(0, 6)} - Goocast - ${booking?.package?.name?.en}`;
+  const bookingTitle = `#${booking._id?.slice(0, 6)} - ${booking?.personalInfo?.fullName || "_"} - ${booking?.package?.name?.en}`;
 
   if (!booking._id && !isGhost) return null;
 

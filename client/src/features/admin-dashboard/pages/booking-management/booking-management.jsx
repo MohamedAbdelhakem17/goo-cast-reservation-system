@@ -1,26 +1,34 @@
-import { useGetBookings } from "@/apis/admin/manage-booking.api";
+import { useChangeBookingStatus, useGetBookings } from "@/apis/admin/manage-booking.api";
 import { Loading } from "@/components/common";
-import { useEffect, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-
-import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import BookingInfoModel from "@/features/booking/_components/booking-info-model";
 import { useQueryClient } from "@tanstack/react-query";
+import { Kanban, Table2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { Link, useSearchParams } from "react-router-dom";
 
+import DisplayBookingData from "./_components/display-booking-data";
 import HeaderAndFilter from "./_components/header-and-filter";
 import BookingKanban from "./_components/kanban-board/_kanban-booking";
+import Pagination from "./_components/pagination";
 
 export default function BookingManagement() {
   const { t } = useLocalization();
-  const ITEMS_PER_PAGE = 1000;
+  const { addToast } = useToast();
+  const queryClient = useQueryClient();
+
+  const [displayType, setDisplayType] = useState(() => {
+    const storedType = localStorage.getItem("display-type");
+    return storedType || "kanban";
+  });
+
+  const ITEMS_PER_PAGE = displayType === "kanban" ? 1000 : 10;
   const currentPageRef = useRef(1);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Initial filters including searchId
   const initialFilters = {
     status: searchParams.get("status") || "",
     studioId: searchParams.get("studioId") || "",
@@ -33,28 +41,67 @@ export default function BookingManagement() {
   const [filters, setFilters] = useState(initialFilters);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  // Update URL params when filters change
+  // replace handleChangeDisplay with this:
+  const handleChangeDisplay = () => {
+    setDisplayType((prev) => {
+      const newType = prev === "kanban" ? "table" : "kanban";
+      localStorage.setItem("display-type", newType);
+
+      setFilters((prevFilters) => {
+        if (newType === "kanban") {
+          return {
+            ...prevFilters,
+            page: 1,
+            limit: 1000,
+          };
+        } else {
+          return {
+            ...prevFilters,
+            page: currentPageRef.current || 1,
+            limit: 10,
+          };
+        }
+      });
+
+      return newType;
+    });
+  };
+
   useEffect(() => {
     const params = {};
     if (filters.status) params.status = filters.status;
     if (filters.studioId) params.studioId = filters.studioId;
     if (filters.date) params.date = filters.date;
     if (filters.searchId) params.searchId = filters.searchId;
-    if (filters.page > 1) params.page = filters.page;
+
+    if (displayType === "table") {
+      if (filters.page > 1) params.page = filters.page;
+    }
 
     setSearchParams(params);
-  }, [filters, setSearchParams]);
+  }, [
+    filters.status,
+    filters.studioId,
+    filters.date,
+    filters.searchId,
+    filters.page,
+    displayType,
+    setSearchParams,
+  ]);
 
-  const { data: bookingsData, isLoading } = useGetBookings({
+  const {
+    data: bookingsData,
+    isLoading,
+    error,
+  } = useGetBookings({
     ...filters,
-    // Optional: could filter client-side instead of API
   });
 
-  // Filter bookings client-side by first 6 chars of ID
   const bookings = bookingsData?.data?.bookings || [];
   const filteredBookings = bookings.filter((b) =>
     filters.searchId ? b._id.slice(0, 6).includes(filters.searchId) : true,
   );
+  const totalPages = Math.ceil((bookingsData?.data?.total || 0) / ITEMS_PER_PAGE);
 
   const handleFilterChange = (newFilters) => {
     currentPageRef.current = 1;
@@ -68,9 +115,15 @@ export default function BookingManagement() {
     });
   };
 
+  const handlePageChange = (newPage) => {
+    currentPageRef.current = newPage;
+    setFilters({
+      ...filters,
+      page: currentPageRef.current,
+    });
+  };
+
   const { changeStatus } = useChangeBookingStatus();
-  const { addToast } = useToast();
-  const queryClient = useQueryClient();
 
   const handleStatusChange = (id, status) => {
     changeStatus(
@@ -87,14 +140,31 @@ export default function BookingManagement() {
   };
 
   return (
-    <div className="grid max-w-screen grid-cols-1 grid-rows-[auto_1fr]">
-      <div className="border-b border-gray-200">
+    <div className="grid max-w-screen grid-cols-1 grid-rows-[auto_1fr] py-3 md:py-0">
+      <div className="rounded-t-md border-b border-gray-200 bg-white px-4 py-2 shadow-sm">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
-          <h1 className="text-xl font-medium">Bookings Pipeline</h1>
+          <div className="flex items-center gap-3">
+            {/* Booking display */}
+            <button
+              onClick={handleChangeDisplay}
+              type="button"
+              className="bg-main hover:bg-main/90 border-main flex size-9 items-center justify-center rounded-lg border text-white shadow-sm transition-colors"
+              title={
+                displayType === "kanban" ? t("switch-to-table") : t("switch-to-kanban")
+              }
+            >
+              {displayType === "kanban" ? <Table2 size={18} /> : <Kanban size={18} />}
+            </button>
+
+            <h1 className="text-lg font-semibold text-gray-800">
+              {t("bookings-pipeline")}
+            </h1>
+          </div>
+
           <Link
-            to={"add"}
-            className="bg-main text-canter my-.5 ms-auto block w-fit rounded-md px-2 py-1 text-center text-sm font-semibold text-white"
+            to="add"
+            className="bg-main hover:bg-main/90 rounded-md px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors"
           >
             {t("create-new-booking")}
           </Link>
@@ -104,20 +174,45 @@ export default function BookingManagement() {
         <HeaderAndFilter filters={filters} onFilterChange={handleFilterChange} />
       </div>
 
-      {/* Kanban Board */}
+      {/* Main content */}
       {isLoading ? (
         <Loading />
       ) : (
-        <DndProvider backend={HTML5Backend}>
-          <BookingKanban
-            bookings={filteredBookings}
-            onUpdateBooking={handleStatusChange}
-            setSelectedBooking={setSelectedBooking}
-          />
-        </DndProvider>
+        <>
+          {displayType === "kanban" && (
+            <DndProvider backend={HTML5Backend}>
+              <BookingKanban
+                bookings={filteredBookings}
+                onUpdateBooking={handleStatusChange}
+                setSelectedBooking={setSelectedBooking}
+              />
+            </DndProvider>
+          )}
+
+          {displayType === "table" && (
+            <>
+              <DisplayBookingData
+                bookingsData={bookings}
+                isLoading={isLoading}
+                error={error}
+                setSelectedBooking={setSelectedBooking}
+              />
+
+              {totalPages > 1 && (
+                <Pagination
+                  ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                  currentPage={currentPageRef.current}
+                  totalPages={totalPages}
+                  handlePageChange={handlePageChange}
+                  bookingsData={bookings}
+                />
+              )}
+            </>
+          )}
+        </>
       )}
 
-      {/* Modal */}
+      {/* Booking details modal */}
       {selectedBooking && (
         <BookingInfoModel
           selectedBooking={selectedBooking}

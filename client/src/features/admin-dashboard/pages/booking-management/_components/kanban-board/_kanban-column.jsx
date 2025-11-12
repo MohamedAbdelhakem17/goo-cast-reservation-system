@@ -51,7 +51,7 @@ export default function KanbanColumn({
       {/* Content */}
       <div
         ref={drop}
-        className={`h-[calc(100vh-200px)] flex-1 space-y-3 overflow-x-hidden overflow-y-auto px-3 py-4 transition-all ${isOver ? "border border-blue-300 bg-blue-50" : "bg-gray-200/50"} `}
+        className={`h-[calc(100vh-200px)] flex-1 space-y-3 overflow-x-hidden overflow-y-auto px-2 py-4 transition-all ${isOver ? "border border-blue-300 bg-blue-50" : "bg-gray-200/50"} `}
       >
         {bookings.map((booking) => (
           <KanbanCard
