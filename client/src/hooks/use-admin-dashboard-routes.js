@@ -49,10 +49,10 @@ export default function c() {
       ],
     },
     {
-      name: t("back-to-website"),
+      name: t("preview-website"),
       icon: Globe,
       roles: ["admin", "manager"],
-      items: [{ name: t("back-to-website"), path: "/", icon: Globe }],
+      items: [{ name: t("preview-website"), path: "/", icon: Globe }],
     },
   ];
 

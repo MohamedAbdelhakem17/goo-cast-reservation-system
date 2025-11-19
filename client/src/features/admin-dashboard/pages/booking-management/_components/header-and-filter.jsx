@@ -8,14 +8,33 @@ export default function HeaderAndFilter({ filters, onFilterChange }) {
   const { t, lng } = useLocalization();
   const { data: studiosData } = useGetStudio();
 
+  // -------------------------------
+  // Handle Filters
+  // -------------------------------
   const handleFilterChange = (field, value) => {
-    const newFilters = {
+    const key = field === "studio" ? "studioId" : field;
+
+    const updatedFilters = {
       ...filters,
-      [field === "studio" ? "studioId" : field]: value === "all" ? "" : value,
+      [key]: value === "all" ? "" : value,
     };
-    onFilterChange(newFilters);
+
+    // Reset date when selecting range
+    if (key === "range") {
+      updatedFilters.date = "";
+    }
+
+    // Reset range when selecting manual date
+    if (key === "date") {
+      updatedFilters.range = "";
+    }
+
+    onFilterChange(updatedFilters);
   };
 
+  // -------------------------------
+  // Options
+  // -------------------------------
   const statusOptions = [
     { value: "", label: t("all") },
     { value: "new", label: t("new") },
@@ -30,6 +49,12 @@ export default function HeaderAndFilter({ filters, onFilterChange }) {
       value: studio._id,
       label: studio.name?.[lng],
     })) || []),
+  ];
+
+  const ranges = [
+    { label: t("today"), value: "today" },
+    { label: t("this-week"), value: "this-week" },
+    { label: t("this-month"), value: "this-month" },
   ];
 
   return (
@@ -61,16 +86,17 @@ export default function HeaderAndFilter({ filters, onFilterChange }) {
           className="w-full min-w-[250px] py-0.5 lg:w-auto"
         />
 
+        {/* Date Picker */}
         <div className="relative mb-6">
           <input
             id="date"
             name="date"
+            type="date"
             value={filters.date}
             onChange={(e) => handleFilterChange("date", e.target.value)}
-            type="date"
-            className="w-full min-w-[180px] rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-gray-700 placeholder-gray-400 shadow-sm transition-all duration-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 lg:w-auto"
-            placeholder="Select date"
+            className="w-full min-w-[180px] rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-gray-700 shadow-sm transition-all duration-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 lg:w-auto"
           />
+
           {filters.date && (
             <button
               onClick={() => handleFilterChange("date", "")}
@@ -82,6 +108,27 @@ export default function HeaderAndFilter({ filters, onFilterChange }) {
             </button>
           )}
         </div>
+      </div>
+
+      {/* -------- Range Filters with Active State -------- */}
+      <div className="flex items-center gap-2">
+        {ranges.map((item) => {
+          const active = filters.range === item.value;
+
+          return (
+            <button
+              key={item.value}
+              onClick={() => handleFilterChange("range", item.value)}
+              className={`rounded-md px-3 py-1.5 text-sm font-semibold transition-all ${
+                active
+                  ? "bg-main text-white shadow-md"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        })}
       </div>
     </>
   );

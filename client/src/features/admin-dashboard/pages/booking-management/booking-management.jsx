@@ -1,8 +1,7 @@
 import { useChangeBookingStatus, useGetBookings } from "@/apis/admin/manage-booking.api";
-import { Loading } from "@/components/common";
+import { BookingDrawer, Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import BookingInfoModel from "@/features/booking/_components/booking-info-model";
 import { useQueryClient } from "@tanstack/react-query";
 import { Kanban, Table2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -33,6 +32,7 @@ export default function BookingManagement() {
     status: searchParams.get("status") || "",
     studioId: searchParams.get("studioId") || "",
     date: searchParams.get("date") || "",
+    range: searchParams.get("range") || "",
     searchId: searchParams.get("searchId") || "",
     page: Number(searchParams.get("page")) || 1,
     limit: ITEMS_PER_PAGE,
@@ -69,13 +69,15 @@ export default function BookingManagement() {
 
   useEffect(() => {
     const params = {};
+
     if (filters.status) params.status = filters.status;
     if (filters.studioId) params.studioId = filters.studioId;
     if (filters.date) params.date = filters.date;
+    if (filters.range) params.range = filters.range;
     if (filters.searchId) params.searchId = filters.searchId;
 
-    if (displayType === "table") {
-      if (filters.page > 1) params.page = filters.page;
+    if (displayType === "table" && filters.page > 1) {
+      params.page = filters.page;
     }
 
     setSearchParams(params);
@@ -83,6 +85,7 @@ export default function BookingManagement() {
     filters.status,
     filters.studioId,
     filters.date,
+    filters.range,
     filters.searchId,
     filters.page,
     displayType,
@@ -105,14 +108,16 @@ export default function BookingManagement() {
 
   const handleFilterChange = (newFilters) => {
     currentPageRef.current = 1;
-    setFilters({
-      ...filters,
+
+    setFilters((prev) => ({
+      ...prev,
       status: newFilters.status === "all" ? "" : newFilters.status,
       studioId: newFilters.studioId,
       date: newFilters.date,
+      range: newFilters.range || "",
       searchId: newFilters.searchId || "",
       page: currentPageRef.current,
-    });
+    }));
   };
 
   const handlePageChange = (newPage) => {
@@ -214,10 +219,16 @@ export default function BookingManagement() {
 
       {/* Booking details modal */}
       {selectedBooking && (
-        <BookingInfoModel
-          selectedBooking={selectedBooking}
-          setSelectedBooking={setSelectedBooking}
+        <BookingDrawer
+          open={Boolean(selectedBooking)}
+          onClose={() => setSelectedBooking(null)}
+          bookingId={selectedBooking?._id}
+          direction={"ltr"}
         />
+        // <BookingInfoModel
+        //   selectedBooking={selectedBooking}
+        //   setSelectedBooking={setSelectedBooking}
+        // />
       )}
     </div>
   );

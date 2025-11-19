@@ -106,7 +106,6 @@
   "booking": "Booking",
   "coupon": "Coupon",
   "customers": "Customers",
-  "back-to-website": "Back to Website",
   "easy-podcasting-for-everyone-0": "Easy podcasting for everyone",
   "delete": "Delete",
   "confirm-delete": "Confirm Delete",
@@ -499,5 +498,8 @@
   "switch-to-table": "Switch to table  ",
   "switch-to-kanban": "Switch to  kanban",
   "bookings-pipeline": "Bookings",
-  "change-status": "Change Status"
+  "change-status": "Change Status",
+  "preview-website": "preview website",
+  "this-week": "This Week",
+  "this-month": "This Month"
 }

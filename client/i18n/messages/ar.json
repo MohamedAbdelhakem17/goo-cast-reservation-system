@@ -102,7 +102,6 @@
   "price": "السعر",
   "booking": "الحجوزات",
   "customers": "العملاء",
-  "back-to-website": "العودة للموقع",
   "coupon": "الكوبونات",
   "logout": "تسجيل الخروج",
   "delete": "حذف",
@@ -482,5 +481,8 @@
   "switch-to-kanban": "قم بالتبديل إلى كانبان",
   "switch-to-table": "التبديل إلى الجدول",
   "bookings-pipeline": "الحجوزات",
-  "change-status": "تغيير الحالة"
+  "change-status": "تغيير الحالة",
+  "preview-website": "الرجوع للموقع",
+  "this-month": "هذا الشهر",
+  "this-week": "هذا الاسبوع"
 }
