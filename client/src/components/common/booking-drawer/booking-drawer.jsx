@@ -19,7 +19,11 @@ export default function BookingDrawer({ open, onClose, bookingId, direction = "l
       label: "Details",
       element: <DetailsTab booking={bookingData} />,
     },
-    activity: { id: "activity", label: "Activity", element: <ActivityTab /> },
+    activity: {
+      id: "activity",
+      label: "Activity",
+      element: <ActivityTab bookingId={bookingId} />,
+    },
     contact: {
       id: "contact",
       label: "Contact",

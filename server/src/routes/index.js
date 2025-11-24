@@ -30,6 +30,7 @@ const routes = [
   { path: "/api/v1/admin", router: require("./admin-route/admin-route") },
   { path: "/api/v1/coupon", router: require("./coupon-route/coupon-route") },
   { path: "/api/v1/faq", router: require("./faq-route/faq-route") },
+  { path: "/api/v1/logs", router: require("./audit-route/audit-route") },
   {
     path: "/api/v1/subscribe",
     router: require("./newsletter-route/newsletter-route"),

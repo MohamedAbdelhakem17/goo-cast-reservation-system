@@ -7,6 +7,7 @@ const router = express.Router();
 const allowTo = require("../../middleware/allow-to-middleware");
 const protectRoute = require("../../middleware/protect.middleware");
 const allowPolicy = require("../../middleware/check-permission.middleware");
+const { audit } = require("../../middleware/audit-middleware");
 
 // ────────────────────────────────
 //  Constants
@@ -14,9 +15,10 @@ const allowPolicy = require("../../middleware/check-permission.middleware");
 const { USER_ROLE, POLICIES_ROLES } = require("../../config/system-variables");
 
 // ────────────────────────────────
-//  Controllers
+//  Controllers and Models
 // ────────────────────────────────
 const bookingController = require("../../controller/booking-controller/booking-controller");
+const bookingModels = require("../../models/booking-model/booking-model");
 
 // ────────────────────────────────
 //  Public Routes
@@ -59,13 +61,13 @@ router.use(
 router
   .route("/")
   .get(bookingController.getAllBookings)
-  .put(bookingController.changeBookingStatus);
+  .put(audit(bookingModels), bookingController.changeBookingStatus);
 
 // Get / update single booking
 router
   .route("/:id")
   .get(bookingController.getSingleBooking)
-  .put(bookingController.updateBooking);
+  .put(audit(bookingModels), bookingController.updateBooking);
 
 // ────────────────────────────────
 //  Export Router
