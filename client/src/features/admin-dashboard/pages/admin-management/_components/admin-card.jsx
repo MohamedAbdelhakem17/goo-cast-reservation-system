@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
 import { useChangeAdminsStatus } from "@/apis/admin/manage-admin.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useQueryClient } from "@tanstack/react-query";
-import useLocalization from "@/context/localization-provider/localization-context";
+import { motion } from "framer-motion";
+import { Shield, User, UserCheck, UserCheck2, UserMinus } from "lucide-react";
 
 export default function AdminCard({ admin }) {
   // Localizations
@@ -32,6 +33,17 @@ export default function AdminCard({ admin }) {
     );
   };
 
+  const getRoleIcon = (role) => {
+    switch (role) {
+      case "Admin":
+        return <Shield className="h-4 w-4 text-red-500" />;
+      case "Manager":
+        return <UserCheck className="h-4 w-4 text-blue-500" />;
+      default:
+        return <User className="h-4 w-4 text-gray-400" />;
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -41,7 +53,7 @@ export default function AdminCard({ admin }) {
       }`}
     >
       <div className="mb-5 flex items-center justify-between">
-        {/* Name and Email */}
+        {/* Name, Email and Role */}
         <div>
           <h3
             className={`text-lg font-semibold ${
@@ -56,11 +68,18 @@ export default function AdminCard({ admin }) {
           >
             {admin.email}
           </a>
+          {/* User Role with Lucide Icon */}
+          <p className="mt-1 flex items-center gap-1 text-sm text-gray-500">
+            {getRoleIcon(admin.role)}
+            {admin.role}
+          </p>
         </div>
 
         {/* Status with Dot */}
         <div
-          className={`"\py-.5 flex items-center gap-2 rounded-md border ${admin.active ? "border-red-500" : "border-gray-500"} px-2`}
+          className={`flex items-center gap-2 rounded-md border px-2 py-0.5 ${
+            admin.active ? "border-red-500" : "border-gray-500"
+          }`}
         >
           <span
             className={`h-2 w-2 rounded-full ${
@@ -86,13 +105,15 @@ export default function AdminCard({ admin }) {
         } ${isPending ? "cursor-not-allowed opacity-70" : ""}`}
       >
         {isPending ? (
-          <i className="fa-solid fa-spinner fa-spin me-2"></i>
+          <User className="me-2 h-4 w-4 animate-spin" />
         ) : (
-          <i
-            className={`fa-solid ${
-              admin.active ? "fa-user-slash" : "fa-user-check"
-            } me-2`}
-          ></i>
+          <>
+            {admin.active ? (
+              <UserMinus className="me-2 h-4 w-4" />
+            ) : (
+              <UserCheck2 className="me-2 h-4 w-4" />
+            )}
+          </>
         )}
         {admin.active ? "Deactivate Admin" : "Activate Admin"}
       </button>

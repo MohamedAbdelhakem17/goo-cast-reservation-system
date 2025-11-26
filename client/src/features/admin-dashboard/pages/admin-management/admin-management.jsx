@@ -1,10 +1,10 @@
-import { motion } from "framer-motion";
-import useLocalization from "@/context/localization-provider/localization-context";
-import AdminsForm from "./_components/admins-form";
-import { useState } from "react";
-import { Loading, ErrorFeedback } from "@/components/common";
 import { useGetAdmins } from "@/apis/admin/manage-admin.api";
+import { ErrorFeedback, Loading } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import AdminCard from "./_components/admin-card";
+import AdminsForm from "./_components/admins-form";
 
 export default function AdminManagement() {
   // Localization
@@ -42,7 +42,7 @@ export default function AdminManagement() {
       </motion.div>
 
       {/* Content */}
-      <section className="grid grid-cols-1 items-start gap-4 md:grid-cols-4">
+      <section className="grid grid-cols-1 items-start gap-4 lg:grid-cols-4">
         {/* Form  */}
         <div className="order-1 col-span-1 md:order-2">
           <AdminsForm
@@ -54,7 +54,7 @@ export default function AdminManagement() {
         </div>
 
         {/* Display Data */}
-        <div className="order-2 col-span-1 grid grid-cols-1 gap-4 md:order-1 md:col-span-3 md:grid-cols-2">
+        <div className="order-2 col-span-1 grid grid-cols-1 gap-4 md:order-1 md:grid-cols-2 lg:col-span-3">
           {admins?.data?.map((admin) => (
             <AdminCard admin={admin} key={admin._id} />
           ))}
