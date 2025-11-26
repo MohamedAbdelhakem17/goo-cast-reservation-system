@@ -9,3 +9,5 @@ server/uploads/*/*.jpeg
 
 # Ignore .env file 
 /server/.env.local
+/client/.env.local
+deploy.sh
