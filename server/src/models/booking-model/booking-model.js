@@ -65,21 +65,9 @@ const bookingSchema = new mongoose.Schema(
     ],
 
     personalInfo: {
-      fullName: {
-        type: String,
-        required: true,
-      },
-      phone: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        match: /.+\@.+\..+/,
-      },
-      brand: {
-        type: String,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserProfile",
+      required: true,
     },
 
     extraComment: {
