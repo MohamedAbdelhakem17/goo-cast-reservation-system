@@ -1,58 +1,83 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { Popup, Loading, Table, ResponsiveTable } from "@/components/common";
-import useDataFormat from "@/hooks/useDateFormat";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
-import { useQueryClient } from "@tanstack/react-query";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { CheckCheck, Expand, SquarePen, X } from "lucide-react";
+import { Loading, Popup, ResponsiveTable, Table } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import useDataFormat from "@/hooks/useDateFormat";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import usePriceFormat from "@/hooks/usePriceFormat";
+import { useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, ChevronDown, Expand, SquarePen } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
+// 🔹 Available Status Options
+const COLUMNS = [
+  { id: "new", label: "New" },
+  { id: "paid", label: "Paid" },
+  { id: "completed", label: "Completed" },
+  { id: "canceled", label: "Canceled" },
+];
+
 // 🔹 Actions component
-function BookingAction({
-  isPending,
-  setConfirmPopup,
-  isDesktop,
-  setSelectedBooking,
-  booking,
-  t,
-}) {
+function BookingAction({ setConfirmPopup, setSelectedBooking, booking, t, isDesktop }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {isPending && (
-        <>
-          <button
-            onClick={() => setConfirmPopup({ status: "approved", booking })}
-            className="flex items-center justify-center rounded-lg p-2 text-green-600 hover:bg-green-50 md:p-0 md:hover:bg-transparent"
-          >
-            {isDesktop ? t("approve") : <CheckCheck size={18} />}
-          </button>
-
-          <button
-            onClick={() => setConfirmPopup({ status: "rejected", booking })}
-            className="flex items-center justify-center rounded-lg p-2 text-red-600 hover:bg-red-50 md:p-0 md:hover:bg-transparent"
-          >
-            {isDesktop ? t("reject") : <X size={18} />}
-          </button>
-
-          <Link
-            to={`add?edit=${booking._id}`}
-            className="flex items-center justify-center rounded-lg p-2 text-sky-700 hover:bg-sky-50 md:p-0 md:hover:bg-transparent"
-          >
-            {isDesktop ? t("edit-booking") : <SquarePen size={18} />}
-          </Link>
-        </>
-      )}
-
+    <div className="relative flex flex-wrap items-center gap-2">
+      {/* 🟦 Show Details */}
       <button
         onClick={() => setSelectedBooking(booking)}
         className="flex items-center justify-center rounded-lg p-2 text-blue-600 hover:bg-blue-50 md:p-0 md:hover:bg-transparent"
       >
         {isDesktop ? t("show-info") : <Expand size={18} />}
       </button>
+
+      {/* 🟨 Edit Booking */}
+      <Link
+        to={`add?edit=${booking._id}`}
+        className="flex items-center justify-center rounded-lg p-2 text-sky-700 hover:bg-sky-50 md:p-0 md:hover:bg-transparent"
+      >
+        {isDesktop ? t("edit-booking") : <SquarePen size={18} />}
+      </Link>
+
+      {/* 🟥 Change Status Dropdown */}
+      <div className="relative">
+        <button
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+          className="text-main hover:bg-main/10 flex items-center gap-1 rounded-lg p-2 md:p-0 md:hover:bg-transparent"
+        >
+          {isDesktop ? t("change-status") : <ChevronDown size={18} />}
+        </button>
+
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.ul
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className="absolute right-0 z-20 mt-1 w-40 rounded-lg border border-gray-200 bg-white shadow-md"
+            >
+              {COLUMNS.map((status) => (
+                <li key={status.id}>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setConfirmPopup({ status: status.id, booking });
+                    }}
+                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <span>{t(status.label.toLowerCase())}</span>
+                    {booking.status === status.id && (
+                      <Check size={14} className="text-green-600" />
+                    )}
+                  </button>
+                </li>
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
@@ -108,11 +133,8 @@ export default function DisplayBookingData({
     t("actions"),
   ];
 
-  // 🔹 Loading state
   if (isLoading) return <Loading />;
-
-  // 🔹 Error state
-  if (error) {
+  if (error)
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700">
         <p className="text-sm">
@@ -120,28 +142,23 @@ export default function DisplayBookingData({
         </p>
       </div>
     );
-  }
-
-  // 🔹 Empty state
-  if (!bookingsData || bookingsData.length === 0) {
+  if (!bookingsData?.length)
     return (
       <div className="py-10 text-center text-gray-400">
         {t("no-booking-found-wait-the-first-booking")}
       </div>
     );
-  }
 
-  // 🔹 Data display
   return (
     <>
       <AnimatePresence mode="wait">
         {isDesktop ? (
-          // 💻 Desktop Table
           <motion.div
             key="desktop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            className="py-4"
           >
             <Table headers={TABLE_HEADERS}>
               {bookingsData.map((booking) => (
@@ -154,17 +171,10 @@ export default function DisplayBookingData({
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      {booking.personalInfo.fullName}
+                      {booking.personalInfo?.fullName}
                     </div>
                     <div className="text-sm break-words text-gray-500">
-                      {booking.personalInfo.email}
-                    </div>
-                    <div
-                      className={`text-sm font-bold ${
-                        booking.isGuest ? "text-red-600" : "text-green-600"
-                      }`}
-                    >
-                      {booking.isGuest ? t("guest") : t("member")}
+                      {booking.personalInfo?.email}
                     </div>
                   </td>
 
@@ -191,27 +201,18 @@ export default function DisplayBookingData({
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex rounded-full px-2 text-xs leading-5 font-semibold ${
-                        booking.status === "approved"
-                          ? "bg-green-100 text-green-800"
-                          : booking.status === "rejected"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {booking.status}
+                    <span className="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold text-gray-700">
+                      {booking.status?.replace("-", " ")}
                     </span>
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap">
                     <BookingAction
                       setSelectedBooking={setSelectedBooking}
-                      isDesktop={isDesktop}
                       setConfirmPopup={setConfirmPopup}
-                      isPending={booking.status === "pending"}
                       booking={booking}
                       t={t}
+                      isDesktop={isDesktop}
                     />
                   </td>
                 </motion.tr>
@@ -219,7 +220,7 @@ export default function DisplayBookingData({
             </Table>
           </motion.div>
         ) : (
-          // 📱 Mobile Responsive View
+          // 📱 Mobile
           <motion.div
             key="mobile"
             initial={{ opacity: 0 }}
@@ -241,20 +242,21 @@ export default function DisplayBookingData({
                   { label: t("date-0"), value: formatDate(booking.date) },
                   {
                     label: t("time"),
-                    value: `${convertTo12HourFormat(booking.startSlot)} - ${convertTo12HourFormat(booking.endSlot)}`,
+                    value: `${convertTo12HourFormat(booking.startSlot)} - ${convertTo12HourFormat(
+                      booking.endSlot,
+                    )}`,
                   },
                   { label: t("duration"), value: `${booking.duration} ${t("hour-s")}` },
-                  { label: t("user-name"), value: booking.personalInfo.fullName },
-                  { label: t("user-email"), value: booking.personalInfo.email },
+                  { label: t("user-name"), value: booking.personalInfo?.fullName },
+                  { label: t("user-email"), value: booking.personalInfo?.email },
                 ]}
                 actions={
                   <BookingAction
                     setSelectedBooking={setSelectedBooking}
-                    isDesktop={isDesktop}
                     setConfirmPopup={setConfirmPopup}
-                    isPending={booking.status === "pending"}
                     booking={booking}
                     t={t}
+                    isDesktop={isDesktop}
                   />
                 }
               />
@@ -272,7 +274,11 @@ export default function DisplayBookingData({
               {t("are-you-sure-you-want-to")}
               <span
                 className={`font-bold ${
-                  confirmPopup.status === "approved" ? "text-green-600" : "text-main"
+                  confirmPopup.status === "completed"
+                    ? "text-green-600"
+                    : confirmPopup.status === "canceled"
+                      ? "text-red-600"
+                      : "text-main"
                 } mx-1`}
               >
                 {confirmPopup.status}
@@ -289,7 +295,8 @@ export default function DisplayBookingData({
               </li>
               <li>
                 <strong>{t("time")}:</strong>{" "}
-                {convertTo12HourFormat(confirmPopup.booking.startSlot)}
+                {convertTo12HourFormat(confirmPopup.booking.startSlot)} -{" "}
+                {convertTo12HourFormat(confirmPopup.booking.endSlot)}
               </li>
               <li>
                 <strong>{t("duration")}:</strong> {confirmPopup.booking.duration}{" "}
@@ -308,9 +315,11 @@ export default function DisplayBookingData({
                 onClick={handleStatusChange}
                 disabled={isPending}
                 className={`cursor-pointer rounded-lg px-4 py-2 text-white transition-colors ${
-                  confirmPopup.status === "approved"
+                  confirmPopup.status === "completed"
                     ? "bg-green-600 hover:bg-green-700"
-                    : "bg-main/90 hover:bg-main"
+                    : confirmPopup.status === "canceled"
+                      ? "bg-red-600 hover:bg-red-700"
+                      : "bg-main/90 hover:bg-main"
                 }`}
               >
                 {isPending ? t("loading") : t("confirm")}

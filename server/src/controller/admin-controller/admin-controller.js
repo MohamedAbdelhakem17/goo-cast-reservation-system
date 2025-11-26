@@ -6,11 +6,10 @@ const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
 
 // Get all admins
 exports.getAllAdmins = asyncHandler(async (req, res, next) => {
-  const admins = await AuthModel.find({ role: USER_ROLE.ADMIN }).select([
-    "name",
-    "email",
-    "active",
-  ]);
+  const admins = await AuthModel.find({
+    role: { $in: [USER_ROLE.ADMIN, USER_ROLE.MANAGER] },
+  }).select(["name", "email", "active", "role"]);
+
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: admins,
@@ -19,10 +18,10 @@ exports.getAllAdmins = asyncHandler(async (req, res, next) => {
 
 // Create new Admin
 exports.createAdmin = asyncHandler(async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
+  const { name, email, password, confirmPassword, role } = req.body;
 
   // Validate required fields
-  if (!name || !email || !password || !confirmPassword) {
+  if (!name || !email || !password || !confirmPassword || !role) {
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "All fields are required");
   }
 
@@ -44,7 +43,7 @@ exports.createAdmin = asyncHandler(async (req, res) => {
     email,
     password,
     active: true,
-    role: USER_ROLE.ADMIN,
+    role: role,
   });
 
   if (!newUser) {

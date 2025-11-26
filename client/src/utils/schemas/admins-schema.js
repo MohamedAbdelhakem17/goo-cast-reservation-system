@@ -14,6 +14,7 @@ const useAdminSchema = () => {
     email: InitialValues?.email || "",
     password: InitialValues?.password || "",
     confirmPassword: InitialValues?.confirmPassword || "",
+    role: "",
   });
 
   // Yup validation schema
@@ -24,6 +25,8 @@ const useAdminSchema = () => {
       .trim()
       .email(t("please-enter-a-valid-email-address"))
       .required(t("email-is-required-to-sign-up")),
+
+    role: Yup.string().required(),
 
     password: Yup.string()
       .required(t("password-cannot-be-empty-please-enter-your-password"))

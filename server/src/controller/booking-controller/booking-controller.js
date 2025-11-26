@@ -18,6 +18,7 @@ const sendEmail = require("../../utils/send-email");
 const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
 const BookingModel = require("../../models/booking-model/booking-model");
 const StudioModel = require("../../models/studio-model/studio-model");
+const userProfileModel = require("../../models/user-profile-model/user-profile-model");
 
 const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
 
@@ -613,7 +614,7 @@ exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
 
 // Get all bookings
 exports.getAllBookings = asyncHandler(async (req, res) => {
-  const { status, studioId, date, page = 1, limit = 10 } = req.query;
+  const { status, studioId, date, range, page = 1, limit = 10 } = req.query;
 
   const pageNum = parseInt(page);
   const limitNum = parseInt(limit);
@@ -621,49 +622,98 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
 
   let match = {};
 
+  // Filter by status
   if (status) {
     match.status = status;
   }
 
+  // Filter by studio
   if (studioId) {
     match.studio = new mongoose.Types.ObjectId(studioId);
   }
 
+  // ============================
+  // 📌 Time Range Filters
+  // range = today | this-week | this-month
+  // date  = YYYY-MM-DD (optional)
+  // ============================
+  if (range) {
+    const now = new Date();
+
+    if (range === "today") {
+      const start = new Date(now.setHours(0, 0, 0, 0));
+      const end = new Date(now.setHours(23, 59, 59, 999));
+      match.date = { $gte: start, $lte: end };
+    }
+
+    if (range === "this-week") {
+      const currentDay = now.getDay(); // 0-6
+      const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+
+      const start = new Date(now);
+      start.setDate(now.getDate() + diffToMonday);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(start);
+      end.setDate(start.getDate() + 7);
+      end.setHours(23, 59, 59, 999);
+
+      match.date = { $gte: start, $lte: end };
+    }
+
+    if (range === "this-month") {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+      match.date = { $gte: start, $lte: end };
+    }
+  }
+
+  // ============================
+  // 📌 Filter by specific date YYYY-MM-DD
+  // This overrides range if both exist
+  // ============================
   if (date) {
-    const inputDate = getAllDay(date);
+    const day = new Date(date);
+    const start = new Date(day.setHours(0, 0, 0, 0));
+    const end = new Date(day.setHours(23, 59, 59, 999));
+
     match.date = {
-      $gte: inputDate.startOfDay,
-      $lt: inputDate.endOfDay,
+      $gte: start,
+      $lte: end,
     };
   }
 
+  // Count
   const total = await BookingModel.countDocuments(match);
 
+  // Fetch
   const allBookings = await BookingModel.find(match).sort({ createdAt: -1 });
 
+  // Priority Sorting
   const statusPriority = {
     pending: 0,
     approved: 1,
     rejected: 2,
   };
 
-  const filtered = allBookings.filter((b) => {
-    return true;
-  });
-
-  filtered.sort((a, b) => {
+  allBookings.sort((a, b) => {
     const statusA = statusPriority[a.status] ?? 3;
     const statusB = statusPriority[b.status] ?? 3;
 
-    if (statusA !== statusB) {
-      return statusA - statusB;
-    }
-
+    if (statusA !== statusB) return statusA - statusB;
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
-  // 5. Pagination
-  const paginated = filtered.slice(skip, skip + limitNum);
+  // Pagination
+  const paginated = allBookings.slice(skip, skip + limitNum);
 
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
@@ -681,8 +731,19 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
   const id = req.params.id || req.body.id;
   const { status } = req.body;
 
+  const BOOKING_PIPELINE = Object.freeze({
+    NEW: "new",
+    PENDING_PAYMENT: "pending-payment",
+    PAID: "paid",
+    SCHEDULED: "scheduled",
+    IN_STUDIO: "in-studio",
+    COMPLETED: "completed",
+    NEEDS_EDIT: "needs-edit",
+    CANCELED: "canceled",
+  });
+
   // Validate provided status
-  const allowedStatuses = ["pending", "approved", "rejected"];
+  const allowedStatuses = Object.values(BOOKING_PIPELINE);
   if (!status || !allowedStatuses.includes(status)) {
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid or missing status");
   }
@@ -738,6 +799,7 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
 // Create Booking
 exports.createBooking = asyncHandler(async (req, res) => {
   const user = req.isAuthenticated() ? req.user : undefined;
+  console.log(req.body);
 
   const {
     tempBooking,
@@ -754,8 +816,18 @@ exports.createBooking = asyncHandler(async (req, res) => {
   } = await prepareBookingData(req.body, user, false);
 
   // Save data in database
+
   const booking = await tempBooking.save();
 
+  const bookedUser = await userProfileModel.findById(booking.personalInfo);
+
+  await bookedUser.recordBooking(
+    booking._id,
+    booking.createdAt,
+    booking.totalPriceAfterDiscount || booking.totalPrice
+  );
+
+  await bookedUser.save();
   // return response for user
   res.status(201).json({
     status: "success",

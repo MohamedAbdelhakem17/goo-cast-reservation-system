@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { AnimatePresence } from "framer-motion";
-import useLocalization from "@/context/localization-provider/localization-context";
-import { useFormik } from "formik";
-import { Input } from "@/components/common";
-import useAdminSchema from "@/utils/schemas/admins-schema";
 import { useCreateAdmin } from "@/apis/admin/manage-admin.api";
-import { useQueryClient } from "@tanstack/react-query";
+import { Input, SelectInput } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import SYSTEM_ROLES from "@/utils/constant/system-roles.constant";
+import useAdminSchema from "@/utils/schemas/admins-schema";
+import { useQueryClient } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import { AnimatePresence, motion } from "framer-motion";
 import { Loader } from "lucide-react";
+import { useState } from "react";
 
 export default function AdminsForm({ editingAdmin, onCancel }) {
   // Localizations
@@ -61,6 +61,13 @@ export default function AdminsForm({ editingAdmin, onCancel }) {
     },
   });
 
+  // Variables
+  const rolesOptions = Object.values(SYSTEM_ROLES).map((item) => {
+    return {
+      label: item,
+      value: item,
+    };
+  });
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -68,7 +75,7 @@ export default function AdminsForm({ editingAdmin, onCancel }) {
       transition={{ duration: 0.5, delay: 0.2 }}
     >
       {/* Header */}
-      <div className="overflow-hidden rounded-lg bg-white shadow-md">
+      <div className="rounded-lg bg-white shadow-md">
         <div className="border-main mb-5 border-b p-4">
           <h2 className="text-xl font-semibold">
             {editingAdmin ? t("edit-admin-data") : t("add-admin")}
@@ -162,6 +169,22 @@ export default function AdminsForm({ editingAdmin, onCancel }) {
                     onBlur={formik.handleBlur}
                     errors={formik.errors.confirmPassword}
                     touched={formik.touched.confirmPassword}
+                  />
+                </motion.div>
+
+                {/* User Role */}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.55, duration: 0.4 }}
+                >
+                  <SelectInput
+                    name="role"
+                    value={formik.values.role}
+                    onChange={(e) => formik.setFieldValue("role", e.target.value)}
+                    options={rolesOptions}
+                    placeholder={"Select user role"}
+                    className="col-span-1 md:col-span-2"
                   />
                 </motion.div>
 

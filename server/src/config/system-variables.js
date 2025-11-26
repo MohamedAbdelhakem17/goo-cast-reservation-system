@@ -6,9 +6,9 @@ const HTTP_STATUS_TEXT = Object.freeze({
 });
 
 const USER_ROLE = Object.freeze({
-  USER: "user",
   ADMIN: "admin",
-  SUPER_ADMIN: "super_admin",
+  MANAGER: "manager",
+  USER: "user",
 });
 
 const PAYMENT_METHOD = Object.freeze({
@@ -29,6 +29,12 @@ const BOOKING_PIPELINE = Object.freeze({
 
 const TAX_RATE = 0.14;
 
+const POLICIES_ROLES = Object.freeze({
+  MANAGE_SETTING: "manage:setting",
+  MANAGE_DASHBOARD: "manage:dashboard",
+  MANAGE_CRM: "manage:crm",
+});
+
 // Returns
 module.exports = {
   HTTP_STATUS_TEXT,
@@ -36,4 +42,5 @@ module.exports = {
   PAYMENT_METHOD,
   TAX_RATE,
   BOOKING_PIPELINE,
+  POLICIES_ROLES,
 };

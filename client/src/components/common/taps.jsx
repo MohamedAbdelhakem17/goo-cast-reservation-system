@@ -21,7 +21,7 @@ const Tabs = ({ tabs, activeTabId, onTabChange }) => {
           return (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id)} // Pass the onTabChange function from the parent
+              onClick={() => onTabChange(tab.id)} 
               className={`px-1 md:px-4 py-3 text-sm font-bold relative z-10 transition-colors duration-200 cursor-pointer ${
                 isActive ? "text-white" : "text-gray-500 hover:text-gray-700"
               }`}

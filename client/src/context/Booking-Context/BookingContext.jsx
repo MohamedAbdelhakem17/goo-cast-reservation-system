@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
+import useLocalization from "@/context/localization-provider/localization-context";
 import {
   createContext,
-  useContext,
-  useState,
-  useEffect,
   useCallback,
+  useContext,
+  useEffect,
   useRef,
+  useState,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useBookingFormik from "../Booking-Formik/useBookingFormik";
-import useLocalization from "@/context/localization-provider/localization-context";
 
 const BookingContext = createContext();
 

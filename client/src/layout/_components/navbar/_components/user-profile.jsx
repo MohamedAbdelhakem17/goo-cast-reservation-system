@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "@/context/Auth-Context/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
-import { NavLink } from "react-router-dom";
 import Signout from "@/apis/auth/signout.api";
+import { useAuth } from "@/context/Auth-Context/AuthContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import SYSTEM_ROLES from "../../../../utils/constant/system-roles.constant";
 
 export default function UserProfile() {
   const { t } = useLocalization();
@@ -11,7 +12,6 @@ export default function UserProfile() {
   const { isAuthenticated, user } = useAuth();
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const isAdmin = isAuthenticated && user?.role === "admin";
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -44,13 +44,20 @@ export default function UserProfile() {
             >
               <ul className="py-2">
                 <li>
-                  <NavLink
-                    to={isAdmin ? "/admin-dashboard/" : "/user-dashboard/"}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    {t("dashboard")}
-                  </NavLink>
+                  {isAuthenticated && (
+                    <NavLink
+                      to={
+                        [SYSTEM_ROLES.ADMIN, SYSTEM_ROLES.MANAGER].includes(user?.role)
+                          ? "/admin-dashboard"
+                          : "/user-dashboard"
+                      }
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      {t("dashboard")}
+                    </NavLink>
+                  )}
                 </li>
+
                 <li>
                   <button
                     onClick={handelLogout}

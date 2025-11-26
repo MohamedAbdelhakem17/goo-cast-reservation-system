@@ -126,11 +126,12 @@ exports.getAllStudios = asyncHandler(async (req, res) => {
 
   const studios = await StudioModel.find(filter);
   if (studios.length === 0) {
-    res.status(404).json({
+    return res.status(404).json({
       status: HTTP_STATUS_TEXT.FAIL,
       message: "No studios found",
     });
   }
+
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: studios,

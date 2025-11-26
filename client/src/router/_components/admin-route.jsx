@@ -1,10 +1,13 @@
-import { Route } from "react-router-dom";
 import AdminDashboardLayout from "@/layout/admin-dashboard/admin-dashboard";
-import BookingProvider from "@/context/Booking-Context/BookingContext";
+import { Navigate, Route } from "react-router-dom";
 
 import ProtectedRoute from "./protected-route";
 
 import { lazy } from "react";
+import hasPermission from "../../utils/access-roles";
+
+import SYSTEM_ROLES from "../../utils/constant/system-roles.constant";
+import { useAuth } from "./../../context/Auth-Context/AuthContext";
 
 // Authentication admin
 const Dashboard = lazy(
@@ -61,42 +64,69 @@ const AdminManagement = lazy(
 const UserManagement = lazy(
   () => import("@/features/admin-dashboard/pages/user-management/user-management"),
 );
+const UserProfileInfo = lazy(
+  () => import("@/features/admin-dashboard/pages/user-management/[id]/user-profile-info"),
+);
 const CouponManagement = lazy(
   () => import("@/features/admin-dashboard/pages/coupon-management/coupon-management"),
 );
 
+const adminRoutes = [
+  // Dashboard
+  {
+    path: "",
+    element: <Dashboard />,
+    permission: "manage:dashboard",
+    index: true,
+  },
+
+  // Setting
+  { path: "studio", element: <StudioManagement />, permission: "manage:setting" },
+  { path: "studio/add", element: <AddStudio />, permission: "manage:setting" },
+  { path: "category", element: <CategoryManagement />, permission: "manage:setting" },
+  { path: "price", element: <PriceManagement />, permission: "manage:setting" },
+  { path: "service", element: <ServiceManagement />, permission: "manage:setting" },
+  { path: "service/add", element: <AddService />, permission: "manage:setting" },
+  { path: "addons", element: <AddonsManagement />, permission: "manage:setting" },
+  { path: "addons/add", element: <AddAddons />, permission: "manage:setting" },
+  { path: "admins", element: <AdminManagement />, permission: "manage:setting" },
+  { path: "coupon", element: <CouponManagement />, permission: "manage:setting" },
+
+  // CRM
+  { path: "booking", element: <BookingManagement />, permission: "manage:crm" },
+  { path: "booking/add", element: <AddBooking />, permission: "manage:crm" },
+  { path: "users", element: <UserManagement />, permission: "manage:crm" },
+  { path: "users/:id", element: <UserProfileInfo />, permission: "manage:crm" },
+];
+
 export default function AdminRoute() {
+  const { user } = useAuth();
+
+  const redirectTo = [SYSTEM_ROLES.ADMIN, SYSTEM_ROLES.MANAGER].includes(user?.role)
+    ? "/admin-dashboard"
+    : "/";
+
+  const filteredAdminRoutes = adminRoutes.filter((route) =>
+    hasPermission(user?.role, route.permission),
+  );
+
   return (
     <Route
       path="/admin-dashboard/*"
       element={
-        <ProtectedRoute allowedRoles={["admin"]}>
-          <AdminDashboardLayout />
+        <ProtectedRoute
+          allowedRoles={[SYSTEM_ROLES.ADMIN, SYSTEM_ROLES.MANAGER]}
+          redirectTo={redirectTo}
+        >
+          <AdminDashboardLayout userRole={user?.role} />
         </ProtectedRoute>
       }
     >
-      <Route index={true} element={<Dashboard />} />
-      <Route path="studio" element={<StudioManagement />} />
-      <Route path="category" element={<CategoryManagement />} />
-      <Route path="studio/add" element={<AddStudio />} />
-      <Route path="price" element={<PriceManagement />} />
-      <Route path="service" element={<ServiceManagement />} />
-      <Route path="service/add" element={<AddService />} />
-      <Route path="addons" element={<AddonsManagement />} />
-      <Route path="addons/add" element={<AddAddons />} />
-      <Route path="booking" element={<BookingManagement />} />
-      <Route
-        path="booking/add"
-        element={
-          // <BookingProvider>
-          <AddBooking />
-          // </BookingProvider>
-        }
-      />
-      <Route path="admins" element={<AdminManagement />} />
-      <Route path="users" element={<UserManagement />} />
-      <Route path="coupon" element={<CouponManagement />} />
-      {/* <Route path="analytics" element={<PageAnalytics />} /> */}
+      {filteredAdminRoutes.map(({ path, element, permission, index }) => (
+        <Route key={path || "index"} path={path} index={index} element={element} />
+      ))}
+
+      <Route path="*" element={<Navigate to={redirectTo} replace />} />
     </Route>
   );
 }

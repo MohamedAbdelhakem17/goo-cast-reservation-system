@@ -1,14 +1,13 @@
-import { useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useBooking } from "@/context/Booking-Context/BookingContext";
-import Cart from "@/features/booking/_components/cart/cart";
 import { BookingInput } from "@/components/booking";
-import PaymentOptions from "./_components/payment-way";
-import { BookingLabel } from "@/features/booking/_components";
-import { Loader } from "lucide-react";
-import { tracking } from "@/utils/gtm";
+import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { BookingLabel } from "@/features/booking/_components";
+import Cart from "@/features/booking/_components/cart/cart";
+import { tracking } from "@/utils/gtm";
+import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import Faq from "./../select-additional-services/_components/faq";
+import PaymentOptions from "./_components/payment-way";
 
 const motionProps = {
   initial: { opacity: 0, x: -10 },
@@ -142,7 +141,7 @@ export default function PersonalInformation() {
             <motion.div {...motionProps}>
               <BookingInput
                 type="text"
-                id="brandName"
+                id="extraComment"
                 label={t("special-requests-or-comments")}
                 value={brand}
                 placeholder={t(

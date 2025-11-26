@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Alert, Popup, Loading, EmptyState } from "@/components/common";
-import { PlusCircle } from "lucide-react";
-import { useGetStudio } from "@/apis/public/studio.api";
 import { useDeleteStudio } from "@/apis/admin/manage-studio.api";
+import { useGetStudio } from "@/apis/public/studio.api";
+import { Alert, EmptyState, Loading, Popup } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { AnimatePresence } from "framer-motion";
+import { PlusCircle } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import StudioCard from "./_components/studio-card";
 
 const StudioManagement = () => {

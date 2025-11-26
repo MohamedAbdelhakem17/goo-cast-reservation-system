@@ -1,6 +1,6 @@
 export default function ResponsiveTable({ title, subtitle, fields = [], actions }) {
   return (
-    <div className="my-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
+    <div className="my-4 rounded-lg border border-gray-200 bg-white p-2 transition-shadow hover:shadow-md">
       <div className="mb-3 flex items-start justify-between">
         <div>
           <h4 className="font-semibold text-gray-900">{title}</h4>
@@ -13,10 +13,10 @@ export default function ResponsiveTable({ title, subtitle, fields = [], actions 
         <div className="flex gap-2">{actions}</div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 text-sm">
+      <div className="grid grid-cols-1 gap-3 text-sm">
         {fields.map((field, i) => (
           <div key={i}>
-            <span className="block text-gray-500">{field.label}</span>
+            <span className="block break-words text-gray-500">{field.label}</span>
             <span className="leading-snug break-words text-gray-900">{field.value}</span>
           </div>
         ))}
