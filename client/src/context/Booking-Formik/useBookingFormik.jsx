@@ -46,7 +46,6 @@ export default function useBookingFormik() {
       },
       extraComments: values.personalInfo.extraComments,
     };
-    return (console, log(payload));
     createBooking(payload, {
       onSuccess: (res) => {
         localStorage.setItem(
