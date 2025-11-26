@@ -64,11 +64,11 @@ const bookingSchema = new mongoose.Schema(
       },
     ],
 
-    personalInfo: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UserProfile",
-      required: true,
-    },
+    // personalInfo: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "UserProfile",
+    //   required: true,
+    // },
 
     extraComment: {
       type: String,
@@ -164,10 +164,10 @@ bookingSchema.pre(/^find/, function (next) {
       path: "createdBy",
       select: "fullName",
     },
-    {
-      path: "personalInfo",
-      select: "firstName lastName email phone fullName",
-    },
+    // {
+    //   path: "personalInfo",
+    //   select: "firstName lastName email phone fullName",
+    // },
   ]);
   next();
 });
