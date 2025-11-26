@@ -1,21 +1,21 @@
+import { useGetSingleBooking } from "@/apis/admin/manage-booking.api";
+import { useGetAvailableSlots } from "@/apis/public/booking.api";
+import { BookingInput } from "@/components/booking";
+import { EmptyState, Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { motion } from "framer-motion";
-import { Calendar, UserCheck, FilePlus2, Loader } from "lucide-react";
-import TimeCalendar from "./time";
+import { Calendar, FilePlus2, Loader, UserCheck } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import PaymentOptions from "../../../../booking/_components/steps/personal-information/_components/payment-way";
 import {
+  AdminBookingCart,
   AdminSelectAddon,
   AdminSelectPackage,
-  AdminSelectStudio,
   AdminSelectSlots,
-  AdminBookingCart,
+  AdminSelectStudio,
 } from "./_components";
-import { useGetAvailableSlots } from "@/apis/public/booking.api";
 import useAdminCreateBooking from "./_hook/use-admin-create-booking";
-import PaymentOptions from "../../../../booking/_components/steps/personal-information/_components/payment-way";
-import { BookingInput } from "@/components/booking";
-import { Loading, EmptyState } from "@/components/common";
-import { useGetSingleBooking } from "@/apis/admin/manage-booking.api";
-import { useSearchParams } from "react-router-dom";
+import TimeCalendar from "./time";
 
 const motionProps = {
   initial: { opacity: 0, x: -10 },
@@ -75,7 +75,7 @@ export default function AddBooking() {
         {/* Step 1: Select package */}
         <AdminSelectPackage
           selectPackage={setFieldValue}
-          selectedPackage={values?.selectedPackage.id}
+          selectedPackage={values?.selectedPackage?._id}
           formik={formik}
         />
 
