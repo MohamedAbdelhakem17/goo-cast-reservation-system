@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { validate } = require("../hourly-packages-model/hourly-packages-model");
 const {
   PAYMENT_METHOD,
   BOOKING_PIPELINE,
@@ -73,6 +72,7 @@ const bookingSchema = new mongoose.Schema(
     extraComment: {
       type: String,
     },
+
     status: {
       type: String,
       enum: Object.values(BOOKING_PIPELINE),
@@ -103,6 +103,7 @@ const bookingSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
     startSlotMinutes: { type: Number, required: true },
     endSlotMinutes: { type: Number, required: true },
 
@@ -142,56 +143,38 @@ const bookingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// ------------------------------
+// Compound index to prevent overlapping bookings
+// ------------------------------
+bookingSchema.index(
+  { studio: 1, date: 1, startSlotMinutes: 1, endSlotMinutes: 1 },
+  { unique: true }
+);
+
+// ------------------------------
+// Auto-populate references on find queries
+// ------------------------------
 bookingSchema.pre(/^find/, function (next) {
   const opts = this.getOptions();
-
   if (opts && opts.noUserPopulate) return next();
 
   this.populate([
-    {
-      path: "studio",
-      select: "name thumbnail address basePricePerSlot",
-    },
-    {
-      path: "package",
-      select: "name price",
-    },
-    {
-      path: "addOns.item",
-      select: "name price",
-    },
-    {
-      path: "createdBy",
-      select: "fullName",
-    },
-    {
-      path: "personalInfo",
-      select: "firstName lastName email phone fullName",
-    },
+    { path: "studio", select: "name thumbnail address basePricePerSlot" },
+    { path: "package", select: "name price" },
+    { path: "addOns.item", select: "name price" },
+    { path: "createdBy", select: "fullName" },
+    { path: "personalInfo", select: "firstName lastName email phone fullName" },
   ]);
   next();
 });
 
 bookingSchema.post("save", async function (doc, next) {
   await doc.populate([
-    {
-      path: "studio",
-      select: "name thumbnail address",
-    },
-    {
-      path: "package",
-      select: "name",
-    },
-    {
-      path: "addOns.item",
-      select: "name price",
-    },
-    {
-      path: "createdBy",
-      select: "fullName email",
-    },
+    { path: "studio", select: "name thumbnail address" },
+    { path: "package", select: "name" },
+    { path: "addOns.item", select: "name price" },
+    { path: "createdBy", select: "fullName email" },
   ]);
-
   next();
 });
 

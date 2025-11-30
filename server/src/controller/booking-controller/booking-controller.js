@@ -859,78 +859,36 @@ exports.createBooking = asyncHandler(async (req, res) => {
 exports.updateBooking = asyncHandler(async (req, res) => {
   const bookingId = req.params.id;
 
-  // Ensure the booking exists
   const existingBooking = await BookingModel.findById(bookingId);
   if (!existingBooking)
     throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
 
-  // Recalculate booking data using the same logic
-  const {
-    bookingData,
-    studio,
-    pkg,
-    bookingDate,
-    personalInfo,
-    startSlot,
-    endSlot,
-    totalPriceAfterDiscount,
-    duration,
-  } = await prepareBookingData({ ...req.body, bookingId }, null, true);
+  const updates = await prepareBookingData(req.body, null, true, true); // partialUpdate = true
 
-  // Update the booking
   const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
-    bookingData,
+    { $set: updates },
     { new: true }
   );
 
-  // 🔹 Check if calendar event needs to be updated
   const eventChanged =
-    existingBooking?.startSlot !== startSlot ||
-    existingBooking?.endSlot !== endSlot ||
-    existingBooking?.bookingDate?.toISOString() !==
-      new Date(bookingDate).toISOString();
+    (updates.startSlot && updates.startSlot !== existingBooking.startSlot) ||
+    (updates.endSlot && updates.endSlot !== existingBooking.endSlot) ||
+    (updates.date &&
+      new Date(updates.date).toISOString() !==
+        existingBooking.date.toISOString());
 
-  if (existingBooking.eventID && eventChanged) {
+  if (existingBooking.googleEventId && eventChanged) {
     try {
-      // Prepare the event data
       const eventData = {
-        summary: `Booking - ${studio.name?.en}`,
-        description: `Updated booking for ${personalInfo.name} (${personalInfo.email})`,
-        start: { dateTime: new Date(startSlot).toISOString() },
-        end: { dateTime: new Date(endSlot).toISOString() },
+        summary: `Booking - ${updatedBooking.studio?.name?.en}`,
+        description: `Updated booking for ${updatedBooking.personalInfo?.name}`,
+        start: { dateTime: new Date(updatedBooking.startSlot).toISOString() },
+        end: { dateTime: new Date(updatedBooking.endSlot).toISOString() },
       };
-
-      // Call Google Calendar update function
       await updateCalenderEvent(existingBooking.googleEventId, eventData);
     } catch (err) {
       console.warn("⚠️ Failed to update Google Calendar event:", err.message);
-    }
-  }
-
-  // 🔹 Optional: send update email
-  if (eventChanged) {
-    const emailData = {
-      studio: { name: studio.name?.en, image: studio.thumbnail },
-      personalInfo,
-      date: bookingDate,
-      startSlot,
-      endSlot,
-      duration,
-      totalPriceAfterDiscount,
-      bookingId: updatedBooking._id,
-    };
-
-    const emailOptions = {
-      to: personalInfo.email,
-      subject: `Booking Updated | ${studio.name?.en}`,
-      message: bookingConfirmationEmailBody(emailData),
-    };
-
-    try {
-      await sendEmail(emailOptions);
-    } catch (err) {
-      console.warn("⚠️ Failed to send update email:", err.message);
     }
   }
 

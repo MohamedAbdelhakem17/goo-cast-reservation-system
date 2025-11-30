@@ -15,7 +15,52 @@ const { getAllDay, timeToMinutes } = require("../../utils/time-mange.js");
 const userProfileModel = require("../../models/user-profile-model/user-profile-model.js");
 const determineUserTags = require("../../utils/tag-engine.js");
 
-const prepareBookingData = async (body, user, isEdit = false) => {
+// Helper: merge overlapping intervals
+function mergeIntervals(intervals) {
+  if (!intervals || intervals.length === 0) return [];
+  const sorted = intervals
+    .map(([s, e]) => [Number(s), Number(e)])
+    .filter(([s, e]) => Number.isFinite(s) && Number.isFinite(e) && e > s)
+    .sort((a, b) => a[0] - b[0]);
+
+  const merged = [];
+  for (const [s, e] of sorted) {
+    if (!merged.length) merged.push([s, e]);
+    else {
+      const last = merged[merged.length - 1];
+      if (s <= last[1]) last[1] = Math.max(last[1], e);
+      else merged.push([s, e]);
+    }
+  }
+  return merged;
+}
+
+// Helper: check if a slot overlaps any busy interval
+function overlapsAny(start, end, merged) {
+  for (const [bs, be] of merged) {
+    if (bs < end && be > start) return true;
+    if (bs >= end) return false;
+  }
+  return false;
+}
+
+/**
+ * Prepare booking data for creation or update.
+ * Handles user profile, studio, date/time, packages, add-ons, coupons, payment.
+ *
+ * @param {Object} body - request body containing booking info
+ * @param {Object} user - authenticated user (optional)
+ * @param {boolean} isEdit - true if editing existing booking
+ * @param {boolean} partialUpdate - true if only some fields are updated
+ * @returns {Object} updates object to apply to booking
+ */
+const prepareBookingData = async (
+  body,
+  user,
+  isEdit = false,
+  partialUpdate = false
+) => {
+  const updates = {};
   const {
     bookingId,
     studio: studioId,
@@ -34,218 +79,176 @@ const prepareBookingData = async (body, user, isEdit = false) => {
     paymentMethod,
   } = body;
 
-  // User Profile
-  const userBooked = await userProfileModel.findOne({
-    $or: [{ email: personalInfo.email }, { phone: personalInfo.phone }],
-  });
-
-  let userId;
-
-  if (userBooked) {
-    userBooked.tags = determineUserTags(userBooked);
-    await userBooked.save();
-    userId = userBooked._id;
-  } else {
-    const newUser = await userProfileModel.create({
-      firstName: personalInfo.firstName,
-      lastName: personalInfo.lastName,
-      email: personalInfo.email,
-      phone: personalInfo.phone,
+  // -------------------------------
+  // 1️⃣ Handle personal info (create or update user)
+  // -------------------------------
+  if (personalInfo) {
+    let userId;
+    const userBooked = await userProfileModel.findOne({
+      $or: [{ email: personalInfo.email }, { phone: personalInfo.phone }],
     });
 
-    newUser.tags = determineUserTags(newUser);
-    await newUser.save();
-
-    userId = newUser._id;
-  }
-
-  // Parse booking date and time
-  const bookingDate = new Date(date);
-  const startSlotMinutes = timeToMinutes(startSlot);
-  const endSlotMinutes = timeToMinutes(endSlot);
-
-  // 1. Validate Studio
-  const studio = await StudioModel.findById(studioId?.id || studioId);
-  if (!studio)
-    throw new AppError(
-      404,
-      HTTP_STATUS_TEXT.FAIL,
-      "Studio not found for booking"
-    );
-
-  // 2. Validate Package
-  const pkg = await PackageModel.findById(
-    selectedPackage?.id || selectedPackage
-  );
-
-  console.log(pkg, { pkg: selectedPackage });
-  if (!pkg)
-    throw new AppError(
-      404,
-      HTTP_STATUS_TEXT.FAIL,
-      "Package not found for booking"
-    );
-
-  // 3. Check for booking conflicts (skip self if editing)
-  const { startOfDay, endOfDay } = getAllDay(bookingDate);
-  const conflictQuery = {
-    studio: studio._id,
-    date: { $gte: startOfDay, $lt: endOfDay },
-    startSlotMinutes: { $lt: endSlotMinutes },
-    endSlotMinutes: { $gt: startSlotMinutes },
-  };
-
-  if (isEdit && bookingId) {
-    conflictQuery._id = { $ne: bookingId };
-  }
-
-  const conflictBooking = await BookingModel.exists(conflictQuery);
-
-  if (conflictBooking)
-    throw new AppError(
-      400,
-      HTTP_STATUS_TEXT.FAIL,
-      "This time is already booked"
-    );
-
-  // 4. Calculate package price
-  const slotPrices = await calculateSlotPrices({
-    package: pkg,
-    date: bookingDate,
-    startSlotMinutes,
-    endOfDay: endSlotMinutes,
-    duration,
-    bookedSlots: [],
-  });
-
-  const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
-
-  // 5. Validate and calculate Add-ons
-  const addonsTotalPriceFromClient =
-    selectedAddOns?.reduce(
-      (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
-      0
-    ) || 0;
-
-  let totalAddOnsPriceFromDb = 0;
-  const addOnDetails = [];
-
-  if (Array.isArray(selectedAddOns) && selectedAddOns.length > 0) {
-    const addOnDocs = await Promise.all(
-      selectedAddOns.map((a) => AddOnModel.findById(a.id))
-    );
-
-    for (let i = 0; i < selectedAddOns.length; i++) {
-      const dbAddOn = addOnDocs[i];
-      const clientAddOn = selectedAddOns[i];
-      if (!dbAddOn) continue;
-
-      const addOnPrice = dbAddOn.price * clientAddOn.quantity;
-      totalAddOnsPriceFromDb += addOnPrice;
-
-      addOnDetails.push({
-        item: dbAddOn._id,
-        quantity: clientAddOn.quantity,
-        price: dbAddOn.price,
+    if (userBooked) {
+      userBooked.tags = determineUserTags(userBooked);
+      await userBooked.save();
+      userId = userBooked._id;
+    } else {
+      const newUser = await userProfileModel.create({
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
+        email: personalInfo.email,
+        phone: personalInfo.phone,
       });
+      newUser.tags = determineUserTags(newUser);
+      await newUser.save();
+      userId = newUser._id;
+    }
+
+    updates.personalInfo = userId;
+    if (personalInfo.comments) updates.extraComments = personalInfo.comments;
+  }
+
+  // -------------------------------
+  // 2️⃣ Handle studio/date/time updates
+  // -------------------------------
+  // Updating a booking and checking conflicts across all studios
+  if (studioId || date || startSlot || endSlot) {
+    // Update studio if provided
+    if (studioId) {
+      const studio = await StudioModel.findById(studioId?.id || studioId);
+      if (!studio)
+        throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found");
+      updates.studio = studio._id;
+    }
+
+    // Determine new date and slots
+    const newDate = date || updates.date;
+    const newStartSlot = startSlot || updates.startSlot;
+    const newEndSlot = endSlot || updates.endSlot;
+
+    if (newDate) updates.date = new Date(newDate);
+    if (newStartSlot) updates.startSlot = newStartSlot;
+    if (newEndSlot) updates.endSlot = newEndSlot;
+
+    // Compute minutes and duration if both slots are present
+    if (newStartSlot && newEndSlot) {
+      const startMinutes = timeToMinutes(newStartSlot);
+      const endMinutes = timeToMinutes(newEndSlot);
+
+      updates.startSlotMinutes = startMinutes;
+      updates.endSlotMinutes = endMinutes;
+      updates.duration = (endMinutes - startMinutes) / 60;
+
+      // Conflict check across all studios for the same day
+      const { startOfDay, endOfDay } = getAllDay(updates.date);
+
+      const bookings = await BookingModel.find({
+        date: { $gte: startOfDay, $lt: endOfDay },
+        _id: { $ne: bookingId }, // skip self if editing
+      }).select("startSlotMinutes endSlotMinutes");
+
+      const mergedBusy = mergeIntervals(
+        bookings
+          .map((b) => [b.startSlotMinutes, b.endSlotMinutes])
+          .filter(([s, e]) => s != null && e != null && e > s)
+      );
+
+      if (overlapsAny(startMinutes, endMinutes, mergedBusy)) {
+        throw new AppError(
+          400,
+          HTTP_STATUS_TEXT.FAIL,
+          "This time is already booked in another studio"
+        );
+      }
     }
   }
 
-  if (totalAddOnsPriceFromDb !== addonsTotalPriceFromClient)
-    throw new AppError(
-      400,
-      HTTP_STATUS_TEXT.FAIL,
-      "The add-on price is incorrect"
-    );
+  // -------------------------------
+  // 3️⃣ Handle package/add-ons/coupons
+  // -------------------------------
+  if (selectedPackage || selectedAddOns || coupon_code) {
+    let packagePrice = 0;
+    let totalAddOnsPriceFromDb = 0;
+    const addOnDetails = [];
 
-  // 6. Validate total price
-  const totalPrice = Math.round(packagePrice + totalAddOnsPriceFromDb);
+    // Package
+    if (selectedPackage) {
+      const pkg = await PackageModel.findById(
+        selectedPackage?.id || selectedPackage
+      );
+      if (!pkg)
+        throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Package not found");
+      updates.package = pkg._id;
 
-  if (!isEdit && totalPrice !== totalPriceFromClient)
-    throw new AppError(
-      400,
-      HTTP_STATUS_TEXT.FAIL,
-      "The total price is incorrect"
-    );
+      // Recalculate package price if needed (e.g., slots or date changed)
+      if (!partialUpdate || (partialUpdate && (date || startSlot || endSlot))) {
+        const bookingDate = new Date(newDate);
+        const startSlotMinutes = timeToMinutes(newStartSlot);
+        const endSlotMinutes = timeToMinutes(newEndSlot);
+        const slotPrices = await calculateSlotPrices({
+          package: pkg,
+          date: bookingDate,
+          startSlotMinutes,
+          endOfDay: endSlotMinutes,
+          duration: updates.duration,
+          bookedSlots: [],
+        });
+        packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
+        updates.totalPackagePrice = packagePrice;
+      }
+    }
 
-  // 7. Apply coupon if available
-  const coupon = await CouponModel.findOne({ code: coupon_code });
-  if (!coupon && coupon_code)
-    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Coupon not found");
+    // Add-ons
+    if (Array.isArray(selectedAddOns) && selectedAddOns.length > 0) {
+      const addOnDocs = await Promise.all(
+        selectedAddOns.map((a) => AddOnModel.findById(a.id))
+      );
+      for (let i = 0; i < selectedAddOns.length; i++) {
+        const dbAddOn = addOnDocs[i];
+        const clientAddOn = selectedAddOns[i];
+        if (!dbAddOn) continue;
+        const addOnPrice = dbAddOn.price * clientAddOn.quantity;
+        totalAddOnsPriceFromDb += addOnPrice;
+        addOnDetails.push({
+          item: dbAddOn._id,
+          quantity: clientAddOn.quantity,
+          price: dbAddOn.price,
+        });
+      }
+      updates.addOns = addOnDetails;
+      updates.totalAddOnsPrice = totalAddOnsPriceFromDb;
+    }
 
-  const totalPriceAfterDiscount = coupon?.discount
-    ? Math.round(
-        packagePrice -
-          packagePrice * (coupon.discount / 100) +
-          totalAddOnsPriceFromDb
-      )
-    : totalPrice;
+    // Total price
+    updates.totalPrice = Math.round(packagePrice + totalAddOnsPriceFromDb);
 
-  if (!isEdit && totalPriceAfterDiscount !== totalPriceAfterDiscountFromClient)
-    throw new AppError(
-      400,
-      HTTP_STATUS_TEXT.FAIL,
-      "The total price after Discount is incorrect"
-    );
-
-  // 8. Validate payment method
-  if (paymentMethod && !Object.values(PAYMENT_METHOD).includes(paymentMethod))
-    throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid payment method");
-
-  // 9. Identify user role
-  const isAdmin = user?._id?.role === USER_ROLE.ADMIN;
-  const isGuest = !user?._id;
-  const Admin = isAdmin ? user?._id : null;
-
-  // 10. Prepare booking data
-  const bookingData = {
-    studio: studio._id,
-    date: bookingDate,
-    startSlot,
-    endSlot,
-    startSlotMinutes,
-    endSlotMinutes,
-    duration,
-    persons,
-    extraComment,
-    package: pkg._id,
-    addOns: addOnDetails,
-    totalAddOnsPrice: totalAddOnsPriceFromDb,
-    totalPackagePrice: packagePrice,
-    personalInfo: userId,
-    extraComments: personalInfo.comments,
-    totalPrice,
-    totalPriceAfterDiscount,
-    paymentMethod: paymentMethod || PAYMENT_METHOD.CASH,
-  };
-
-  if (!isEdit) {
-    bookingData.status = "new";
-    bookingData.createdBy = Admin;
-    bookingData.isGuest = isGuest;
+    // Apply coupon if provided
+    if (coupon_code) {
+      const coupon = await CouponModel.findOne({ code: coupon_code });
+      if (!coupon)
+        throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Coupon not found");
+      updates.totalPriceAfterDiscount = coupon.discount
+        ? Math.round(
+            packagePrice -
+              packagePrice * (coupon.discount / 100) +
+              totalAddOnsPriceFromDb
+          )
+        : updates.totalPrice;
+    } else {
+      updates.totalPriceAfterDiscount = updates.totalPrice;
+    }
   }
 
-  // 11. Return either new booking or update data
-  const tempBooking = isEdit
-    ? null // In edit mode we don't create a new model
-    : new BookingModel(bookingData);
+  // -------------------------------
+  // 4️⃣ Handle payment method
+  // -------------------------------
+  if (paymentMethod) {
+    if (!Object.values(PAYMENT_METHOD).includes(paymentMethod))
+      throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid payment method");
+    updates.paymentMethod = paymentMethod;
+  }
 
-  return {
-    tempBooking,
-    bookingData,
-    studio,
-    pkg,
-    addOns: selectedAddOns,
-    totalAddOnsPriceFromDb,
-    bookingDate,
-    personalInfo,
-    startSlot,
-    endSlot,
-    totalPriceAfterDiscount,
-    startSlotMinutes,
-    endSlotMinutes,
-    duration,
-  };
+  return updates;
 };
 
 module.exports = prepareBookingData;
