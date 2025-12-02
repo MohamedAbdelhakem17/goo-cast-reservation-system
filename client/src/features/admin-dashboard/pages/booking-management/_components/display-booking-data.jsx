@@ -9,7 +9,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronDown, Expand, SquarePen } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 // 🔹 Available Status Options
 const COLUMNS = [
@@ -20,7 +19,14 @@ const COLUMNS = [
 ];
 
 // 🔹 Actions component
-function BookingAction({ setConfirmPopup, setSelectedBooking, booking, t, isDesktop }) {
+function BookingAction({
+  setConfirmPopup,
+  setSelectedBooking,
+  booking,
+  t,
+  isDesktop,
+  setUpdateBooking,
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -34,12 +40,13 @@ function BookingAction({ setConfirmPopup, setSelectedBooking, booking, t, isDesk
       </button>
 
       {/* 🟨 Edit Booking */}
-      <Link
+      <button
+        onClick={() => setUpdateBooking(booking)}
         to={`add?edit=${booking._id}`}
         className="flex items-center justify-center rounded-lg p-2 text-sky-700 hover:bg-sky-50 md:p-0 md:hover:bg-transparent"
       >
         {isDesktop ? t("edit-booking") : <SquarePen size={18} />}
-      </Link>
+      </button>
 
       {/* 🟥 Change Status Dropdown */}
       <div className="relative">
@@ -88,6 +95,7 @@ export default function DisplayBookingData({
   isLoading,
   error,
   setSelectedBooking,
+  setUpdateBooking,
 }) {
   const { t, lng } = useLocalization();
   const formatDate = useDataFormat();
@@ -212,6 +220,7 @@ export default function DisplayBookingData({
                       setConfirmPopup={setConfirmPopup}
                       booking={booking}
                       t={t}
+                      setUpdateBooking={setUpdateBooking}
                       isDesktop={isDesktop}
                     />
                   </td>

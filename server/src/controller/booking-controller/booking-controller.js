@@ -27,7 +27,8 @@ const {
   updateCalenderEvent,
 } = require("../../utils/google-calendar-integration.js");
 
-const prepareBookingData = require("./prepare-booking-data.js");
+const prepareCreateBookingData = require("./prepare-create-booking-data.js");
+const prepareEditBookingData = require("./prepare-edit-booking-data.js");
 
 // Service
 const {
@@ -455,7 +456,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
 
   // working window for this studio
-  const startOfDayMinutes = timeToMinutes(studio.startTime || "12:00");
+  const startOfDayMinutes = timeToMinutes(studio.startTime || "09:00");
   const endOfDayMinutes = timeToMinutes(studio.endTime || "20:00");
   if (
     startOfDayMinutes === null ||
@@ -813,7 +814,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
     endSlot,
     totalPriceAfterDiscount,
     duration,
-  } = await prepareBookingData(req.body, user, false);
+  } = await prepareCreateBookingData(req.body, user, false);
 
   // Save data in database
 
@@ -855,15 +856,31 @@ exports.createBooking = asyncHandler(async (req, res) => {
   });
 });
 
-// UPDATE BOOKING
 exports.updateBooking = asyncHandler(async (req, res) => {
   const bookingId = req.params.id;
-
   const existingBooking = await BookingModel.findById(bookingId);
   if (!existingBooking)
     throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
 
-  const updates = await prepareBookingData(req.body, null, true, true); // partialUpdate = true
+  const updates = await prepareEditBookingData(req.body, existingBooking);
+
+  // Optional: check overlapping bookings
+  const bookings = await BookingModel.find({
+    date: existingBooking.date,
+    _id: { $ne: bookingId },
+  }).select("startSlotMinutes endSlotMinutes");
+  const mergedBusy = mergeIntervals(
+    bookings.map((b) => [b.startSlotMinutes, b.endSlotMinutes])
+  );
+  if (
+    overlapsAny(updates.startSlotMinutes, updates.endSlotMinutes, mergedBusy)
+  ) {
+    throw new AppError(
+      400,
+      HTTP_STATUS_TEXT.FAIL,
+      "This time is already booked"
+    );
+  }
 
   const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
@@ -871,6 +888,7 @@ exports.updateBooking = asyncHandler(async (req, res) => {
     { new: true }
   );
 
+  // Update Google Calendar if needed
   const eventChanged =
     (updates.startSlot && updates.startSlot !== existingBooking.startSlot) ||
     (updates.endSlot && updates.endSlot !== existingBooking.endSlot) ||
@@ -880,11 +898,24 @@ exports.updateBooking = asyncHandler(async (req, res) => {
 
   if (existingBooking.googleEventId && eventChanged) {
     try {
+      const startDateTime = new Date(
+        updatedBooking.date.toISOString().split("T")[0] +
+          "T" +
+          updatedBooking.startSlot +
+          ":00"
+      );
+      const endDateTime = new Date(
+        updatedBooking.date.toISOString().split("T")[0] +
+          "T" +
+          updatedBooking.endSlot +
+          ":00"
+      );
+
       const eventData = {
         summary: `Booking - ${updatedBooking.studio?.name?.en}`,
         description: `Updated booking for ${updatedBooking.personalInfo?.name}`,
-        start: { dateTime: new Date(updatedBooking.startSlot).toISOString() },
-        end: { dateTime: new Date(updatedBooking.endSlot).toISOString() },
+        start: { dateTime: startDateTime.toISOString() },
+        end: { dateTime: endDateTime.toISOString() },
       };
       await updateCalenderEvent(existingBooking.googleEventId, eventData);
     } catch (err) {

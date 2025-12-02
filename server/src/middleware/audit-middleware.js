@@ -7,7 +7,6 @@ exports.audit = (model) => {
     let isUpdate = false;
     let isDelete = false;
     let id = req.params.id || req.body.id;
-    // console.log(req.params);
 
     if (req.method === "PUT" || req.method === "PATCH") {
       oldDoc = await model.findById(id).lean();
@@ -31,7 +30,25 @@ exports.audit = (model) => {
       let changes = {};
 
       if (action === "update" && oldDoc) {
-        changes = getDiff(oldDoc, req.body);
+        let newDoc = null;
+        try {
+          newDoc = await model
+            .findById(id)
+            .populate([
+              {
+                path: "studio",
+                select: "name thumbnail address basePricePerSlot",
+              },
+              { path: "package", select: "name price" },
+              { path: "addOns.item", select: "name price" },
+            ])
+            .lean();
+        } catch (error) {
+          console.error("Error fetching updated document:", error);
+          newDoc = req.body;
+        }
+
+        changes = getDiff(oldDoc, newDoc);
       }
 
       if (action === "create") {
@@ -42,7 +59,6 @@ exports.audit = (model) => {
         changes = "Delete old object";
       }
 
-      // سجل Audit Log
       await Audit.create({
         actor: req.user?.id,
         action,

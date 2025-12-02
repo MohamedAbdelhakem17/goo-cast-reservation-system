@@ -70,6 +70,15 @@ export default function BookingDrawer({ open, onClose, bookingId, direction = "l
     }
   }, [open]);
 
+  // Effect
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   // Variables
   const bookingTitle = `#${bookingId?.slice(0, 6)} - ${bookingData?.personalInfo?.fullName || "goocast"} - ${bookingData?.package?.name?.en}`;
 
