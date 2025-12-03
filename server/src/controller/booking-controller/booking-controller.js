@@ -6,7 +6,11 @@ const {
   minutesToTime,
   getAllDay,
 } = require("../../utils/time-mange");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
+const {
+  HTTP_STATUS_TEXT,
+  USER_ROLE,
+} = require("../../config/system-variables");
+
 const AppError = require("../../utils/app-error");
 
 const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
@@ -17,8 +21,10 @@ const sendEmail = require("../../utils/send-email");
 // Models
 const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
 const BookingModel = require("../../models/booking-model/booking-model");
+const AuditModel = require("../../models/audit-model/audit-model.js");
 const StudioModel = require("../../models/studio-model/studio-model");
 const userProfileModel = require("../../models/user-profile-model/user-profile-model");
+const userModel = require("../../models/user-model/user-model.js");
 
 const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
 
@@ -800,7 +806,6 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
 // Create Booking
 exports.createBooking = asyncHandler(async (req, res) => {
   const user = req.isAuthenticated() ? req.user : undefined;
-  console.log(req.body);
 
   const {
     tempBooking,
@@ -816,9 +821,19 @@ exports.createBooking = asyncHandler(async (req, res) => {
     duration,
   } = await prepareCreateBookingData(req.body, user, false);
 
-  // Save data in database
+  // Get Assign User
+  const manager = await userModel
+    .findOne({ role: USER_ROLE.MANAGER })
+    .select("_id");
 
+  console.log({ manager });
+
+  tempBooking.assignTo = manager._id;
+
+  // Save data in database
   const booking = await tempBooking.save();
+
+  console.log(booking);
 
   const bookedUser = await userProfileModel.findById(booking.personalInfo);
 
@@ -829,6 +844,23 @@ exports.createBooking = asyncHandler(async (req, res) => {
   );
 
   await bookedUser.save();
+  await AuditModel.create({
+    actor: req.user?.id || "system",
+    action: "create",
+    model: BookingModel.modelName,
+    targetId: booking?._id,
+    changes: {
+      key: "Create",
+      old: "",
+      new: `Create new Booking at ${booking.date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })}`,
+    },
+    ip: req.ip,
+  });
+
   // return response for user
   res.status(201).json({
     status: "success",

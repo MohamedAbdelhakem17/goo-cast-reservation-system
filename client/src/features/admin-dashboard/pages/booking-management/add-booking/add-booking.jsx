@@ -1,11 +1,8 @@
-import { useGetSingleBooking } from "@/apis/admin/manage-booking.api";
 import { useGetAvailableSlots } from "@/apis/public/booking.api";
 import { BookingInput } from "@/components/booking";
-import { EmptyState, Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { motion } from "framer-motion";
 import { Calendar, FilePlus2, Loader, UserCheck } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
 import PaymentOptions from "../../../../booking/_components/steps/personal-information/_components/payment-way";
 import {
   AdminBookingCart,
@@ -25,17 +22,11 @@ const motionProps = {
 
 export default function AddBooking() {
   const { t } = useLocalization();
-  const [searchParams] = useSearchParams();
-  const bookingId = searchParams.get("edit");
-  const isEdit = Boolean(bookingId);
-
-  // Fetch booking data if in edit mode
-  const { singleBooking, isLoading } = useGetSingleBooking(bookingId);
 
   // Fetch available slots
   const { getSlots, data: slots, isPending } = useGetAvailableSlots();
 
-  // Custom booking hook (create/update)
+  // Custom booking hook (create only)
   const {
     formik,
     values,
@@ -43,7 +34,7 @@ export default function AddBooking() {
     getFieldValue,
     handleSubmit,
     isPending: isProcessing,
-  } = useAdminCreateBooking({ data: singleBooking?.data, isEdit, bookingId });
+  } = useAdminCreateBooking({ data: null, isEdit: false, bookingId: null });
 
   // Helper to get nested error message
   const getFieldError = (field) => {
@@ -54,12 +45,6 @@ export default function AddBooking() {
   // Destructure personal info for cleaner usage
   const { firstName, lastName, phone, email, brand } = values.personalInfo;
 
-  if (isLoading) return <Loading />;
-
-  if (isEdit && singleBooking === undefined) {
-    return <EmptyState />;
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -69,13 +54,13 @@ export default function AddBooking() {
       <div className="space-y-5 md:p-1">
         {/* Page header */}
         <h2 className="border-main mb-8 rounded-md border-b pb-4 text-center text-3xl font-bold text-gray-800">
-          {isEdit ? t("update-booking-data") : t("create-new-booking")}
+          {t("create-new-booking")}
         </h2>
 
         {/* Step 1: Select package */}
         <AdminSelectPackage
           selectPackage={setFieldValue}
-          selectedPackage={values?.selectedPackage?._id}
+          selectedPackage={values?.selectedPackage?.id}
           formik={formik}
         />
 
@@ -102,12 +87,10 @@ export default function AddBooking() {
 
         {/* Step 4: Choose time slots */}
         <AdminSelectSlots
-          isEdit={isEdit}
           slots={slots}
           isPending={isPending}
           setFieldValue={setFieldValue}
           values={values}
-          currentSlot={singleBooking?.data?.startSlot}
         />
 
         {/* Step 5: Select add-ons */}
@@ -216,12 +199,12 @@ export default function AddBooking() {
           {isProcessing ? (
             <>
               <Loader className="animate-spin" />
-              {t(isEdit ? "updating-booking" : "creating-booking")}
+              {t("creating-booking")}
             </>
           ) : (
             <>
               <FilePlus2 />
-              {t(isEdit ? "update-booking" : "create-booking")}
+              {t("create-booking")}
             </>
           )}
         </button>

@@ -35,6 +35,7 @@ export default function BookingEditModal({ booking, closeModal, activeTab = "det
     date: booking.date || "",
     startSlot: booking.startSlot || "",
     duration: booking.duration || 1,
+    assignTo: booking.assignTo?._id || null,
   };
 
   const formik = useFormik({

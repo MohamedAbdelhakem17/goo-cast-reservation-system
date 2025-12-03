@@ -1,4 +1,5 @@
 import { useGetAddons } from "@/apis/admin/manage-addons.api";
+import { useGetAdmins } from "@/apis/admin/manage-admin.api";
 import { useGetAllPackages } from "@/apis/admin/manage-package.api";
 import { useGetStudio } from "@/apis/public/studio.api";
 import { Input, SelectInput } from "@/components/common";
@@ -11,6 +12,7 @@ export default function DetailsTab({ values, setFieldValue }) {
   const { data: studios } = useGetStudio(true);
   const { packages } = useGetAllPackages(true);
   const { addons } = useGetAddons(true);
+  const { admins } = useGetAdmins();
 
   // Helpers for selectedAddOns (array)
   const selectedAddOns = values.selectedAddOns || [];
@@ -148,6 +150,20 @@ export default function DetailsTab({ values, setFieldValue }) {
         </div>
       </div>
 
+      {/* Booking Status */}
+      <SelectInput
+        label="Assign To"
+        value={values.assignTo || null}
+        className="!mb-0 w-full [&>div]:rounded-xl [&>div]:px-4 [&>div]:py-3"
+        onChange={(e) => setFieldValue("assignTo", e.target.value)}
+        name="assignTo"
+        options={
+          admins?.data?.map((a) => ({
+            label: a.name,
+            value: a._id,
+          })) || [{ label: "loading", value: "" }]
+        }
+      />
       {/* Booking Status */}
       <SelectInput
         label="Payment Status"

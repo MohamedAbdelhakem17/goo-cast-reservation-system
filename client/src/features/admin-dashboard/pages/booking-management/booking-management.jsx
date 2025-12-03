@@ -42,6 +42,7 @@ export default function BookingManagement() {
   const [filters, setFilters] = useState(initialFilters);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [selectedBookingToEdit, setSelectedBookingToEdit] = useState(null);
+  const [activeTab, setActiveTap] = useState("details");
 
   // replace handleChangeDisplay with this:
   const handleChangeDisplay = () => {
@@ -228,6 +229,7 @@ export default function BookingManagement() {
           onClose={() => setSelectedBooking(null)}
           bookingId={selectedBooking?._id}
           direction={"ltr"}
+          setActiveTap={setActiveTap}
         />
       )}
 
@@ -235,6 +237,7 @@ export default function BookingManagement() {
       {selectedBookingToEdit && (
         <BookingEditModal
           booking={selectedBookingToEdit}
+          activeTab={activeTab}
           closeModal={() => {
             setSelectedBookingToEdit(null);
           }}

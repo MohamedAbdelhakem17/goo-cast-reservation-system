@@ -55,6 +55,7 @@ const prepareBookingDataForEdit = async (body, existingBooking) => {
     selectedAddOns,
     coupon_code,
     date,
+    assignTo,
     studio,
   } = body;
 
@@ -63,6 +64,13 @@ const prepareBookingDataForEdit = async (body, existingBooking) => {
   // -------------------------------
   if (date) {
     updates.date = date;
+  }
+
+  // -------------------------------
+  // Handle assignTo update
+  // -------------------------------
+  if (assignTo) {
+    updates.assignTo = assignTo;
   }
 
   // -------------------------------

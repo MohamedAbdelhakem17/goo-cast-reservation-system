@@ -3,6 +3,7 @@ import useDateFormat from "@/hooks/useDateFormat";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { Calendar, Mail } from "lucide-react";
 import BookingReceiptPDF from "../../../features/booking/_components/booking-receipt-pdf";
 
 export default function DetailsTab({ booking }) {
@@ -15,6 +16,29 @@ export default function DetailsTab({ booking }) {
   if (!booking) return null;
   return (
     <div className="p-2">
+      {/* Actions */}
+      <div className="mb-4 grid grid-cols-3 gap-2">
+        <button
+          className="text-main hover:bg-main/90 border-main flex items-center justify-center rounded-xl border-1 px-6 py-1 transition hover:text-white"
+          onClick={() => {
+            console.log("Click");
+          }}
+        >
+          <Calendar className="mr-2 h-4 w-4" />
+          Reschedule
+        </button>
+
+        <button className="text-main hover:bg-main/90 border-main flex items-center justify-center rounded-xl border-1 px-6 py-1 transition hover:text-white">
+          <Mail className="mr-2 h-4 w-4" />
+          Send Confirmation
+        </button>
+
+        <button className="text-main hover:bg-main/90 border-main flex items-center justify-center rounded-xl border-1 px-6 py-1 transition hover:text-white">
+          Cancel Booking
+        </button>
+      </div>
+
+      {/* Content */}
       <div className="space-y-2">
         {/* Summary */}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

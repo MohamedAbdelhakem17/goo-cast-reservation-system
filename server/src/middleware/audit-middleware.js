@@ -23,7 +23,7 @@ exports.audit = (model) => {
     res.json = async function (data) {
       let action = "";
 
-      if (req.method === "POST") action = "create";
+      // if (req.method === "POST") action = "create";
       if (isUpdate) action = "update";
       if (isDelete) action = "delete";
 
@@ -51,16 +51,28 @@ exports.audit = (model) => {
         changes = getDiff(oldDoc, newDoc);
       }
 
-      if (action === "create") {
-        changes = "Create new object";
-      }
+      // if (action === "create") {
+      //   changes = [
+      //     {
+      //       key: "create",
+      //       old: null,
+      //       new: `${model.modelName} created`,
+      //     },
+      //   ];
+      // }
 
       if (action === "delete" && oldDoc) {
-        changes = "Delete old object";
+        changes = [
+          {
+            key: "delete",
+            old: oldDoc,
+            new: `${model.modelName} deleted`,
+          },
+        ];
       }
 
       await Audit.create({
-        actor: req.user?.id,
+        actor: req.user?.id || "system",
         action,
         model: model.modelName,
         targetId: id || (data?._id ?? null),

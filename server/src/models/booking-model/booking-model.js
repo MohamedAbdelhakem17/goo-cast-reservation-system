@@ -69,6 +69,12 @@ const bookingSchema = new mongoose.Schema(
       required: true,
     },
 
+    assignTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
     extraComment: {
       type: String,
     },
@@ -162,8 +168,9 @@ bookingSchema.pre(/^find/, function (next) {
     { path: "studio", select: "name thumbnail address basePricePerSlot" },
     { path: "package", select: "name price" },
     { path: "addOns.item", select: "name price" },
-    { path: "createdBy", select: "fullName" },
+    { path: "createdBy", select: "name email " },
     { path: "personalInfo", select: "firstName lastName email phone fullName" },
+    { path: "assignTo", select: "name email" },
   ]);
   next();
 });

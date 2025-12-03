@@ -133,6 +133,9 @@ export default function ActivityTab({ bookingId }) {
               }
               return `Add-ons were updated`;
 
+            case "Create":
+              return newValue;
+
             default:
               const displayOld = oldValue ?? "—";
               const displayNew = newValue ?? "—";
