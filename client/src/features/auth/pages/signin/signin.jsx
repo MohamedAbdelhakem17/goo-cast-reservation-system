@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { Input, Button, ErrorFeedback } from "@/components/common";
 import signinForm from "@/apis/auth/signin.api";
+import { Button, ErrorFeedback, Input } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const Signin = ({ closeModal, changeForm }) => {
   const { t } = useLocalization();
@@ -110,7 +110,7 @@ const Signin = ({ closeModal, changeForm }) => {
 
             {/* Submit Button */}
             <Button isPending={isPending} className="w-full">
-              {t("sing-in")}
+              {t("sign-in")}
             </Button>
 
             {/* Server Error */}
