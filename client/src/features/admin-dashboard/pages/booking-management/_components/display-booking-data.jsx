@@ -1,5 +1,6 @@
 import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
 import { Loading, Popup, ResponsiveTable, Table } from "@/components/common";
+import BOOKING_STATUS, { STATUS_VALUE } from "@/constants/booking-status.constant";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import useDataFormat from "@/hooks/useDateFormat";
@@ -65,7 +66,7 @@ function BookingAction({
               exit={{ opacity: 0, y: -5 }}
               className="absolute right-0 z-20 mt-1 w-40 rounded-lg border border-gray-200 bg-white shadow-md"
             >
-              {COLUMNS.map((status) => (
+              {BOOKING_STATUS.map((status) => (
                 <li key={status.id}>
                   <button
                     onClick={() => {
@@ -118,7 +119,7 @@ export default function DisplayBookingData({
 
   const handleStatusChange = () => {
     changeStatus(
-      { id: confirmPopup.booking._id, status: confirmPopup.status },
+      { id: confirmPopup.booking._id, status: STATUS_VALUE[confirmPopup.status] },
       {
         onSuccess: ({ message }) => {
           addToast(message || t("status-changed-successfully"), "success");

@@ -7,17 +7,29 @@ import ActivityTab from "./activity-tab";
 import ContactTab from "./contact-tab";
 import DetailsTab from "./details-tab";
 
-export default function BookingDrawer({ open, onClose, bookingId, direction = "ltr" }) {
+export default function BookingDrawer({
+  open,
+  onClose,
+  bookingId,
+  direction = "ltr",
+  setSelectedBookingToEdit,
+  setActiveTab: changeAppointmentTab,
+}) {
   // Query
   const { singleBooking, isLoading } = useGetSingleBooking(bookingId);
   const bookingData = singleBooking?.data;
+
+  const handleOpenModal = (tab) => {
+    changeAppointmentTab(tab);
+    setSelectedBookingToEdit(bookingData);
+  };
 
   // TABS as object
   const TABS = {
     details: {
       id: "details",
       label: "Details",
-      element: <DetailsTab booking={bookingData} />,
+      element: <DetailsTab booking={bookingData} handleOpenModal={handleOpenModal} />,
     },
     activity: {
       id: "activity",
