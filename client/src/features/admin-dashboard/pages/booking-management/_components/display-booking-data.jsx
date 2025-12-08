@@ -1,5 +1,6 @@
 import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
 import { Loading, Popup, ResponsiveTable, Table } from "@/components/common";
+import BOOKING_STATUS, { STATUS_VALUE } from "@/constants/booking-status.constant";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import useDataFormat from "@/hooks/useDateFormat";
@@ -9,7 +10,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronDown, Expand, SquarePen } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 // 🔹 Available Status Options
 const COLUMNS = [
@@ -20,7 +20,14 @@ const COLUMNS = [
 ];
 
 // 🔹 Actions component
-function BookingAction({ setConfirmPopup, setSelectedBooking, booking, t, isDesktop }) {
+function BookingAction({
+  setConfirmPopup,
+  setSelectedBooking,
+  booking,
+  t,
+  isDesktop,
+  setUpdateBooking,
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -34,12 +41,13 @@ function BookingAction({ setConfirmPopup, setSelectedBooking, booking, t, isDesk
       </button>
 
       {/* 🟨 Edit Booking */}
-      <Link
+      <button
+        onClick={() => setUpdateBooking(booking)}
         to={`add?edit=${booking._id}`}
         className="flex items-center justify-center rounded-lg p-2 text-sky-700 hover:bg-sky-50 md:p-0 md:hover:bg-transparent"
       >
         {isDesktop ? t("edit-booking") : <SquarePen size={18} />}
-      </Link>
+      </button>
 
       {/* 🟥 Change Status Dropdown */}
       <div className="relative">
@@ -58,7 +66,7 @@ function BookingAction({ setConfirmPopup, setSelectedBooking, booking, t, isDesk
               exit={{ opacity: 0, y: -5 }}
               className="absolute right-0 z-20 mt-1 w-40 rounded-lg border border-gray-200 bg-white shadow-md"
             >
-              {COLUMNS.map((status) => (
+              {BOOKING_STATUS.map((status) => (
                 <li key={status.id}>
                   <button
                     onClick={() => {
@@ -88,6 +96,7 @@ export default function DisplayBookingData({
   isLoading,
   error,
   setSelectedBooking,
+  setUpdateBooking,
 }) {
   const { t, lng } = useLocalization();
   const formatDate = useDataFormat();
@@ -110,7 +119,7 @@ export default function DisplayBookingData({
 
   const handleStatusChange = () => {
     changeStatus(
-      { id: confirmPopup.booking._id, status: confirmPopup.status },
+      { id: confirmPopup.booking._id, status: STATUS_VALUE[confirmPopup.status] },
       {
         onSuccess: ({ message }) => {
           addToast(message || t("status-changed-successfully"), "success");
@@ -212,6 +221,7 @@ export default function DisplayBookingData({
                       setConfirmPopup={setConfirmPopup}
                       booking={booking}
                       t={t}
+                      setUpdateBooking={setUpdateBooking}
                       isDesktop={isDesktop}
                     />
                   </td>

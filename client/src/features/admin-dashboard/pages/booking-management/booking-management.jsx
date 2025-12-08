@@ -10,6 +10,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Link, useSearchParams } from "react-router-dom";
 
 import DisplayBookingData from "./_components/display-booking-data";
+import BookingEditModal from "./_components/edit-booking/booking-edit-modal";
 import HeaderAndFilter from "./_components/header-and-filter";
 import BookingKanban from "./_components/kanban-board/_kanban-booking";
 import Pagination from "./_components/pagination";
@@ -40,6 +41,8 @@ export default function BookingManagement() {
 
   const [filters, setFilters] = useState(initialFilters);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedBookingToEdit, setSelectedBookingToEdit] = useState(null);
+  const [activeTab, setActiveTab] = useState("details");
 
   // replace handleChangeDisplay with this:
   const handleChangeDisplay = () => {
@@ -190,6 +193,7 @@ export default function BookingManagement() {
                 bookings={filteredBookings}
                 onUpdateBooking={handleStatusChange}
                 setSelectedBooking={setSelectedBooking}
+                setUpdateBooking={setSelectedBookingToEdit}
               />
             </DndProvider>
           )}
@@ -201,6 +205,7 @@ export default function BookingManagement() {
                 isLoading={isLoading}
                 error={error}
                 setSelectedBooking={setSelectedBooking}
+                setUpdateBooking={setSelectedBookingToEdit}
               />
 
               {totalPages > 1 && (
@@ -224,11 +229,20 @@ export default function BookingManagement() {
           onClose={() => setSelectedBooking(null)}
           bookingId={selectedBooking?._id}
           direction={"ltr"}
+          setActiveTab={setActiveTab}
+          setSelectedBookingToEdit={setSelectedBookingToEdit}
         />
-        // <BookingInfoModel
-        //   selectedBooking={selectedBooking}
-        //   setSelectedBooking={setSelectedBooking}
-        // />
+      )}
+
+      {/* Edit Modal */}
+      {selectedBookingToEdit && (
+        <BookingEditModal
+          booking={selectedBookingToEdit}
+          activeTab={activeTab}
+          closeModal={() => {
+            setSelectedBookingToEdit(null);
+          }}
+        />
       )}
     </div>
   );

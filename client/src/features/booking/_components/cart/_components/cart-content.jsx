@@ -1,20 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { useBooking } from "@/context/Booking-Context/BookingContext";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
-import { useBooking } from "@/context/Booking-Context/BookingContext";
 
-import { Loader } from "lucide-react";
 import { tracking } from "@/utils/gtm";
+import { Loader } from "lucide-react";
 
-import useLocalization from "@/context/localization-provider/localization-context";
-import useDataFormat from "@/hooks/useDateFormat";
-import useCartCalculations from "@/hooks/use-cart-calculations";
 import {
-  PackageSection,
   AddOnsSection,
-  StudioSection,
   ApplyDiscount,
+  PackageSection,
+  StudioSection,
 } from "@/components/booking";
+import useLocalization from "@/context/localization-provider/localization-context";
+import useCartCalculations from "@/hooks/use-cart-calculations";
+import useDataFormat from "@/hooks/useDateFormat";
 
 export default function CartContent() {
   // Localization
@@ -130,7 +130,7 @@ export default function CartContent() {
                   }
                 : undefined
             }
-            className={`text-md mx-auto my-2 flex w-full flex-col items-center justify-center rounded-lg px-4 py-[8px] font-semibold transition-all duration-200 md:flex-row ${
+            className={`text-md mx-auto my-2 flex w-full flex-col items-center justify-center rounded-lg px-4 py-[8px] font-semibold transition-all duration-200 disabled:bg-green-50 md:flex-row ${
               hasError() || formik.isSubmitting
                 ? "cursor-not-allowed bg-gray-100 text-gray-300"
                 : "bg-main text-white hover:opacity-90"

@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { motion } from "framer-motion";
-import { useCalendar } from "../../../../../features/booking/_components/steps/select-date-time/_hooks/useCalendar";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useCalendar } from "../../../../../features/booking/_components/steps/select-date-time/_hooks/useCalendar";
 
 export default function TimeCalendar({
   duration,
@@ -34,14 +34,14 @@ export default function TimeCalendar({
   // Functions
   const handleIncrement = () => {
     const newValue = Math.min(10, currentDuration + 1);
-    const totalPricePackage = newValue * +bookingData.totalPackagePrice;
+    const totalPricePackage = newValue * +bookingData.selectedPackage?.price;
     setFieldValue("duration", newValue);
     setFieldValue("totalPackagePrice", totalPricePackage);
   };
 
   const handleDecrement = () => {
     const newValue = Math.max(1, currentDuration - 1);
-    const totalPricePackage = newValue * +bookingData.totalPackagePrice;
+    const totalPricePackage = newValue * +bookingData.selectedPackage?.price;
     setFieldValue("duration", newValue);
     setFieldValue("totalPackagePrice", totalPricePackage);
   };

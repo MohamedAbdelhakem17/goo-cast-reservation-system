@@ -8,6 +8,7 @@ const {
   HTTP_STATUS_TEXT,
   PAYMENT_METHOD,
   USER_ROLE,
+  BOOKING_PIPELINE,
 } = require("../../config/system-variables.js");
 
 const { calculateSlotPrices } = require("../../utils/priceCalculator.js");
@@ -15,7 +16,7 @@ const { getAllDay, timeToMinutes } = require("../../utils/time-mange.js");
 const userProfileModel = require("../../models/user-profile-model/user-profile-model.js");
 const determineUserTags = require("../../utils/tag-engine.js");
 
-const prepareBookingData = async (body, user, isEdit = false) => {
+const prepareEditBookingData = async (body, user, isEdit = false) => {
   const {
     bookingId,
     studio: studioId,
@@ -193,8 +194,7 @@ const prepareBookingData = async (body, user, isEdit = false) => {
     throw new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid payment method");
 
   // 9. Identify user role
-  const isAdmin = user?._id?.role === USER_ROLE.ADMIN;
-  const isGuest = !user?._id;
+  const isAdmin = user?.role === USER_ROLE.ADMIN;
   const Admin = isAdmin ? user?._id : null;
 
   // 10. Prepare booking data
@@ -207,7 +207,6 @@ const prepareBookingData = async (body, user, isEdit = false) => {
     endSlotMinutes,
     duration,
     persons,
-    extraComment,
     package: pkg._id,
     addOns: addOnDetails,
     totalAddOnsPrice: totalAddOnsPriceFromDb,
@@ -217,13 +216,9 @@ const prepareBookingData = async (body, user, isEdit = false) => {
     totalPrice,
     totalPriceAfterDiscount,
     paymentMethod: paymentMethod || PAYMENT_METHOD.CASH,
+    status: BOOKING_PIPELINE.NEW,
+    createdBy: Admin,
   };
-
-  if (!isEdit) {
-    bookingData.status = "new";
-    bookingData.createdBy = Admin;
-    bookingData.isGuest = isGuest;
-  }
 
   // 11. Return either new booking or update data
   const tempBooking = isEdit
@@ -248,4 +243,4 @@ const prepareBookingData = async (body, user, isEdit = false) => {
   };
 };
 
-module.exports = prepareBookingData;
+module.exports = prepareEditBookingData;

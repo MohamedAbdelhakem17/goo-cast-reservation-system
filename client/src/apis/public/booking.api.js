@@ -41,7 +41,7 @@ export const useGetAvailableSlots = () => {
   return { getSlots, data, isPending, error };
 };
 
-export const useCreateBooking = () => {
+export const useCreateBooking = (role) => {
   const {
     mutate: createBooking,
     isPending,
@@ -51,7 +51,8 @@ export const useCreateBooking = () => {
     mutationKey: ["create-book"],
 
     mutationFn: async (payload) => {
-      const { data } = await axiosInstance.post(`/bookings`, payload);
+      const url = role === "admin" ? "/bookings/admin/create" : "/bookings";
+      const { data } = await axiosInstance.post(url, payload);
 
       return data;
     },

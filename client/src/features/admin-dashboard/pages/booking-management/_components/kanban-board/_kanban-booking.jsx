@@ -1,17 +1,18 @@
+import BOOKING_STATUS, { STATUS_VALUE } from "@/constants/booking-status.constant";
 import { useEffect, useRef, useState } from "react";
 import { useDragDropManager } from "react-dnd";
 import KanbanColumn from "./_kanban-column";
 
-const COLUMNS = [
-  { id: "new", label: "New" },
-  // { id: "pending-payment", label: "Pending Payment" },
-  { id: "paid", label: "Paid" },
-  // { id: "scheduled", label: "Scheduled" },
-  // { id: "in-studio", label: "In Studio" },
-  { id: "completed", label: "Completed" },
-  // { id: "needs-edit", label: "Needs Edit" },
-  { id: "canceled", label: "Canceled" },
-];
+// const COLUMNS = [
+//   { id: "new", label: "New" },
+//   // { id: "pending-payment", label: "Pending Payment" },
+//   { id: "paid", label: "Paid" },
+//   // { id: "scheduled", label: "Scheduled" },
+//   // { id: "in-studio", label: "In Studio" },
+//   { id: "completed", label: "Completed" },
+//   // { id: "needs-edit", label: "Needs Edit" },
+//   { id: "canceled", label: "Canceled" },
+// ];
 
 export default function BookingKanban({
   bookings = [],
@@ -37,7 +38,7 @@ export default function BookingKanban({
 
     if (onUpdateBooking) {
       try {
-        await onUpdateBooking(bookingId, newStatus);
+        await onUpdateBooking(bookingId, STATUS_VALUE[newStatus]);
       } catch (err) {
         setLocalBookings(bookings);
         console.error("Update failed:", err);
@@ -115,7 +116,7 @@ export default function BookingKanban({
     <div className="h-full w-full overflow-hidden py-4">
       <div className="h-full overflow-x-auto overflow-y-hidden px-2" ref={containerRef}>
         <div className="inline-flex h-full gap-4 pb-4">
-          {COLUMNS.map((column) => {
+          {BOOKING_STATUS.map((column) => {
             const columnBookings = localBookings.filter((b) => b.status === column.id);
 
             return (
