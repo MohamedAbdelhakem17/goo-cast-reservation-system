@@ -6,6 +6,8 @@ import useDateFormat from "@/hooks/useDateFormat";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { useQueryClient } from "@tanstack/react-query";
+
 import { Calendar, Edit, Mail } from "lucide-react";
 import BookingReceiptPDF from "../../../features/booking/_components/booking-receipt-pdf";
 
@@ -17,6 +19,7 @@ export default function DetailsTab({ booking, handleOpenModal }) {
   const convertTo12HourFormat = useTimeConvert();
 
   const { changeStatus } = useChangeBookingStatus();
+  const queryClient = useQueryClient();
   const { addToast } = useToast();
 
   const handleStatusChange = (id, status) => {
