@@ -16,19 +16,22 @@ import BookingKanban from "./_components/kanban-board/_kanban-booking";
 import Pagination from "./_components/pagination";
 
 export default function BookingManagement() {
+  // Translation
   const { t } = useLocalization();
-  const { addToast } = useToast();
-  const queryClient = useQueryClient();
 
+  // State
   const [displayType, setDisplayType] = useState(() => {
     const storedType = localStorage.getItem("display-type");
     return storedType || "kanban";
   });
-
-  const ITEMS_PER_PAGE = displayType === "kanban" ? 1000 : 10;
-  const currentPageRef = useRef(1);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedBookingToEdit, setSelectedBookingToEdit] = useState(null);
+  const [activeTab, setActiveTab] = useState("details");
+  // Navigation
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // consent
+  const ITEMS_PER_PAGE = displayType === "kanban" ? 1000 : 10;
   const initialFilters = {
     status: searchParams.get("status") || "",
     studioId: searchParams.get("studioId") || "",
@@ -39,12 +42,63 @@ export default function BookingManagement() {
     limit: ITEMS_PER_PAGE,
   };
 
+  // Ref
+  const currentPageRef = useRef(1);
   const [filters, setFilters] = useState(initialFilters);
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [selectedBookingToEdit, setSelectedBookingToEdit] = useState(null);
-  const [activeTab, setActiveTab] = useState("details");
 
-  // replace handleChangeDisplay with this:
+  // Hooks
+  const { addToast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Query
+  const {
+    data: bookingsData,
+    isLoading,
+    error,
+  } = useGetBookings({
+    ...filters,
+  });
+
+  // Mutation
+  const { changeStatus } = useChangeBookingStatus();
+
+  // Functions
+  const handleFilterChange = (newFilters) => {
+    currentPageRef.current = 1;
+
+    setFilters((prev) => ({
+      ...prev,
+      status: newFilters.status === "all" ? "" : newFilters.status,
+      studioId: newFilters.studioId,
+      date: newFilters.date,
+      range: newFilters.range || "",
+      searchId: newFilters.searchId || "",
+      page: currentPageRef.current,
+    }));
+  };
+
+  const handlePageChange = (newPage) => {
+    currentPageRef.current = newPage;
+    setFilters({
+      ...filters,
+      page: currentPageRef.current,
+    });
+  };
+
+  const handleStatusChange = (id, status) => {
+    changeStatus(
+      { id, status },
+      {
+        onSuccess: ({ message }) => {
+          addToast(message || t("status-changed-successfully"), "success");
+          queryClient.invalidateQueries({ queryKey: ["get-bookings"] });
+        },
+        onError: ({ response }) =>
+          addToast(response?.data?.message || t("something-went-wrong"), "error"),
+      },
+    );
+  };
+
   const handleChangeDisplay = () => {
     setDisplayType((prev) => {
       const newType = prev === "kanban" ? "table" : "kanban";
@@ -70,6 +124,16 @@ export default function BookingManagement() {
     });
   };
 
+  // Variables
+  const bookings = bookingsData?.data?.bookings || [];
+
+  const filteredBookings = bookings.filter((b) =>
+    filters.searchId ? b._id.slice(0, 6).includes(filters.searchId) : true,
+  );
+
+  const totalPages = Math.ceil((bookingsData?.data?.total || 0) / ITEMS_PER_PAGE);
+
+  // Effect
   useEffect(() => {
     const params = {};
 
@@ -95,60 +159,9 @@ export default function BookingManagement() {
     setSearchParams,
   ]);
 
-  const {
-    data: bookingsData,
-    isLoading,
-    error,
-  } = useGetBookings({
-    ...filters,
-  });
-
-  const bookings = bookingsData?.data?.bookings || [];
-  const filteredBookings = bookings.filter((b) =>
-    filters.searchId ? b._id.slice(0, 6).includes(filters.searchId) : true,
-  );
-  const totalPages = Math.ceil((bookingsData?.data?.total || 0) / ITEMS_PER_PAGE);
-
-  const handleFilterChange = (newFilters) => {
-    currentPageRef.current = 1;
-
-    setFilters((prev) => ({
-      ...prev,
-      status: newFilters.status === "all" ? "" : newFilters.status,
-      studioId: newFilters.studioId,
-      date: newFilters.date,
-      range: newFilters.range || "",
-      searchId: newFilters.searchId || "",
-      page: currentPageRef.current,
-    }));
-  };
-
-  const handlePageChange = (newPage) => {
-    currentPageRef.current = newPage;
-    setFilters({
-      ...filters,
-      page: currentPageRef.current,
-    });
-  };
-
-  const { changeStatus } = useChangeBookingStatus();
-
-  const handleStatusChange = (id, status) => {
-    changeStatus(
-      { id, status },
-      {
-        onSuccess: ({ message }) => {
-          addToast(message || t("status-changed-successfully"), "success");
-          queryClient.invalidateQueries({ queryKey: ["get-bookings"] });
-        },
-        onError: ({ response }) =>
-          addToast(response?.data?.message || t("something-went-wrong"), "error"),
-      },
-    );
-  };
-
   return (
     <div className="grid max-w-screen grid-cols-1 grid-rows-[auto_1fr] py-3 md:py-0">
+      {/* Booking Header */}
       <div className="rounded-t-md border-b border-gray-200 bg-white px-4 py-2 shadow-sm">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
@@ -187,6 +200,7 @@ export default function BookingManagement() {
         <Loading />
       ) : (
         <>
+          {/* Kanban display */}
           {displayType === "kanban" && (
             <DndProvider backend={HTML5Backend}>
               <BookingKanban
@@ -198,8 +212,10 @@ export default function BookingManagement() {
             </DndProvider>
           )}
 
+          {/* Table Display data */}
           {displayType === "table" && (
             <>
+              {/* Data */}
               <DisplayBookingData
                 bookingsData={bookings}
                 isLoading={isLoading}
@@ -208,6 +224,7 @@ export default function BookingManagement() {
                 setUpdateBooking={setSelectedBookingToEdit}
               />
 
+              {/* Pagination */}
               {totalPages > 1 && (
                 <Pagination
                   ITEMS_PER_PAGE={ITEMS_PER_PAGE}

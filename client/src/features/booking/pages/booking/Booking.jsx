@@ -1,13 +1,13 @@
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { useEffect } from "react";
 import BookingLayout from "@/layout/booking-layout/booking-layout";
+import { useEffect } from "react";
 
 import {
+  PersonalInformation,
+  SelectAdditionalServices,
   SelectDateTime,
   SelectPackage,
   SelectStudio,
-  SelectAdditionalServices,
-  PersonalInformation,
 } from "../../_components/steps";
 
 export default function Booking() {
