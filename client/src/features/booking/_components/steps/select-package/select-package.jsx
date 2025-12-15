@@ -166,11 +166,15 @@ export default function SelectPackage() {
       slug: pkg.category.slug,
       price: pkg.price,
     });
+    setBookingField(
+      "totalPackagePrice",
+      Number(pkg.price) * Number(bookingData?.duration),
+    );
 
     tracking("add_to_cart", { package_name: pkg.name?.[lng], price: pkg.price });
 
     // reset dependent fields
-    ["startSlot", "endSlot", "studio"].forEach((f) => setBookingField(f, null));
+    // ["startSlot", "endSlot", "studio"].forEach((f) => setBookingField(f, null));
 
     if (next) handleNextStep();
   };
@@ -200,5 +204,3 @@ export default function SelectPackage() {
     </>
   );
 }
-
-/* 4,000 */

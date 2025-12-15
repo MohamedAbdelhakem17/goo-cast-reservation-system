@@ -16,9 +16,9 @@ export default function Booking() {
 
   // Variables
   const stepComponents = {
-    1: <SelectPackage />,
-    2: <SelectStudio />,
-    3: <SelectDateTime />,
+    1: <SelectStudio />,
+    2: <SelectDateTime />,
+    3: <SelectPackage />,
     4: <SelectAdditionalServices />,
     5: <PersonalInformation />,
   };

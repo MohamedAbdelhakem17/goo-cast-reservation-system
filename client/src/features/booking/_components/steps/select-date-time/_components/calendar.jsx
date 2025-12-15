@@ -34,7 +34,6 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
 
   // Functions
   const handleDayClick = (day, currentDate, isBlocked) => {
-    console.log(bookingData);
     switch (true) {
       case isBlocked:
         return;
@@ -69,14 +68,12 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     const newValue = Math.min(8, currentDuration + 1);
     const totalPricePackage = newValue * +bookingData.totalPackagePrice;
     setBookingField("duration", newValue);
-    setBookingField("totalPackagePrice", totalPricePackage);
   };
 
   const handleDecrement = () => {
     const newValue = Math.max(1, currentDuration - 1);
     const totalPricePackage = newValue * +bookingData.totalPackagePrice;
     setBookingField("duration", newValue);
-    setBookingField("totalPackagePrice", totalPricePackage);
   };
 
   // Variables

@@ -826,8 +826,6 @@ exports.createBooking = asyncHandler(async (req, res) => {
     .findOne({ role: USER_ROLE.MANAGER })
     .select("_id");
 
-  console.log({ manager });
-
   tempBooking.assignTo = manager._id;
 
   // Save data in database
@@ -845,7 +843,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
 
   await bookedUser.save();
   await AuditModel.create({
-    actor: req.user?.id || "system",
+    actor: req.user?.id ? req.user?.id : null,
     action: "create",
     model: BookingModel.modelName,
     targetId: booking?._id,
