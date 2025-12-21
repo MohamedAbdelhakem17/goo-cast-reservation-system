@@ -1,6 +1,7 @@
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { NavigationButtons, Stepper } from "@/features/booking/_components";
 import BookingHeader from "@/layout/_components/booking-header/booking-header";
+import { trackBookingStep } from "@/utils/gtm";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
