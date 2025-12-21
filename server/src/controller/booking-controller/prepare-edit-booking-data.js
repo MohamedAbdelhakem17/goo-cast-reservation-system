@@ -57,6 +57,7 @@ const prepareBookingDataForEdit = async (body, existingBooking) => {
     date,
     assignTo,
     studio,
+    totalPrice,
   } = body;
 
   // -------------------------------
@@ -202,6 +203,14 @@ const prepareBookingDataForEdit = async (body, existingBooking) => {
       updates.totalPriceAfterDiscount = updates.totalPrice;
     }
   } else {
+    updates.totalPriceAfterDiscount = updates.totalPrice;
+  }
+
+  // -------------------------------
+  // Handle Direct update Total Price
+  // -------------------------------
+  if (totalPrice) {
+    updates.totalPrice = totalPrice;
     updates.totalPriceAfterDiscount = updates.totalPrice;
   }
 
