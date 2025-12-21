@@ -57,6 +57,9 @@ router.use(
   allowPolicy(POLICIES_ROLES.MANAGE_CRM)
 );
 
+// Admin create booking
+router.route("/admin/create").post(bookingController.createBooking);
+
 // Get all bookings
 router
   .route("/")

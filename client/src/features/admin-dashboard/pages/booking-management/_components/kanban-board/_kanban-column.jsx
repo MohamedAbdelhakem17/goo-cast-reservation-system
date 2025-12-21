@@ -25,7 +25,7 @@ export default function KanbanColumn({
   );
 
   const totalValue = bookings.reduce(
-    (sum, b) => sum + (b?.totalPriceAfterDiscount || a?.totalPrice || 0),
+    (sum, b) => sum + (b?.totalPriceAfterDiscount || b?.totalPrice || 0),
     0,
   );
 

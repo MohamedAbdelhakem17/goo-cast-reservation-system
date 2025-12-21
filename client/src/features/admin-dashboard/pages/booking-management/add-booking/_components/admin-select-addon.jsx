@@ -1,10 +1,9 @@
-import React from "react";
-import useLocalization from "@/context/localization-provider/localization-context";
-import { PackagePlus, Trash } from "lucide-react";
-import usePriceFormat from "@/hooks/usePriceFormat";
-import { useAddOnsManager } from "@/hooks/use-addons-manger";
-import { Loading } from "@/components/common";
 import { useGetAddons } from "@/apis/admin/manage-addons.api";
+import { Loading } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { useAddOnsManager } from "@/hooks/use-addons-manger";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import { PackagePlus, Trash } from "lucide-react";
 
 export default function AdminSelectAddon({ bookingData, setBookingField }) {
   // Localization

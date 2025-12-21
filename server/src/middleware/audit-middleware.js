@@ -7,7 +7,6 @@ exports.audit = (model) => {
     let isUpdate = false;
     let isDelete = false;
     let id = req.params.id || req.body.id;
-    // console.log(req.params);
 
     if (req.method === "PUT" || req.method === "PATCH") {
       oldDoc = await model.findById(id).lean();
@@ -24,27 +23,56 @@ exports.audit = (model) => {
     res.json = async function (data) {
       let action = "";
 
-      if (req.method === "POST") action = "create";
+      // if (req.method === "POST") action = "create";
       if (isUpdate) action = "update";
       if (isDelete) action = "delete";
 
       let changes = {};
 
       if (action === "update" && oldDoc) {
-        changes = getDiff(oldDoc, req.body);
+        let newDoc = null;
+        try {
+          newDoc = await model
+            .findById(id)
+            .populate([
+              {
+                path: "studio",
+                select: "name thumbnail address basePricePerSlot",
+              },
+              { path: "package", select: "name price" },
+              { path: "addOns.item", select: "name price" },
+            ])
+            .lean();
+        } catch (error) {
+          console.error("Error fetching updated document:", error);
+          newDoc = req.body;
+        }
+
+        changes = getDiff(oldDoc, newDoc);
       }
 
-      if (action === "create") {
-        changes = "Create new object";
-      }
+      // if (action === "create") {
+      //   changes = [
+      //     {
+      //       key: "create",
+      //       old: null,
+      //       new: `${model.modelName} created`,
+      //     },
+      //   ];
+      // }
 
       if (action === "delete" && oldDoc) {
-        changes = "Delete old object";
+        changes = [
+          {
+            key: "delete",
+            old: oldDoc,
+            new: `${model.modelName} deleted`,
+          },
+        ];
       }
 
-      // سجل Audit Log
       await Audit.create({
-        actor: req.user?.id,
+        actor: req.user?.id || "system",
         action,
         model: model.modelName,
         targetId: id || (data?._id ?? null),

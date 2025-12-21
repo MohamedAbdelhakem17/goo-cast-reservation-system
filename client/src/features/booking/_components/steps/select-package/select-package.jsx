@@ -1,13 +1,13 @@
 "use client";
-import { useState, memo } from "react";
-import { motion } from "framer-motion";
-import { Check, Dot } from "lucide-react";
+import { useGetAllPackages } from "@/apis/admin/manage-package.api";
+import { OptimizedImage } from "@/components/common";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
-import { useGetAllPackages } from "@/apis/admin/manage-package.api";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { tracking } from "@/utils/gtm";
-import { OptimizedImage } from "@/components/common";
+import { motion } from "framer-motion";
+import { Check, Dot } from "lucide-react";
+import { memo, useState } from "react";
 import BookingLabel from "../../booking-label";
 
 // ----------------------
@@ -126,9 +126,7 @@ const PackageCard = memo(({ pkg, isActive, onSelect }) => {
               onSelect(pkg, true);
             }}
             className={`text-md mx-auto mt-6 flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold transition ${
-              isActive
-                ? "bg-main text-white"
-                : "border-2 border-gray-200 bg-black text-white"
+              isActive ? "bg-main text-white" : "border-main text-main border-2 bg-white"
             }`}
           >
             {isActive ? (
@@ -168,11 +166,15 @@ export default function SelectPackage() {
       slug: pkg.category.slug,
       price: pkg.price,
     });
+    setBookingField(
+      "totalPackagePrice",
+      Number(pkg.price) * Number(bookingData?.duration),
+    );
 
     tracking("add_to_cart", { package_name: pkg.name?.[lng], price: pkg.price });
 
     // reset dependent fields
-    ["startSlot", "endSlot", "studio"].forEach((f) => setBookingField(f, null));
+    // ["startSlot", "endSlot", "studio"].forEach((f) => setBookingField(f, null));
 
     if (next) handleNextStep();
   };
@@ -202,5 +204,3 @@ export default function SelectPackage() {
     </>
   );
 }
-
-/* 4,000 */

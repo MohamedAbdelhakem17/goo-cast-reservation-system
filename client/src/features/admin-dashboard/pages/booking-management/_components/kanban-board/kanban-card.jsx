@@ -48,7 +48,7 @@ export default function KanbanCard({
       onClick={() => setSelectedBooking(booking)}
     >
       <div className="mb-4 flex items-start justify-between">
-        <span className="text-[11px] font-medium tracking-wide text-zinc-400">
+        <span className="text-sm font-medium tracking-wide text-zinc-400">
           {bookingTitle}
         </span>
         {/* <button className="flex h-7 w-7 items-center justify-center rounded-md transition hover:bg-zinc-100">
@@ -120,12 +120,12 @@ export default function KanbanCard({
         <div className="flex items-center gap-2">
           {/* User avatar */}
           <span className="grid size-5 place-items-center rounded-full bg-red-600 text-xs font-semibold text-white">
-            {booking.personalInfo?.fullName?.slice(0, 1)}
+            {booking.assignTo?.name?.slice(0, 1) || "S"}
           </span>
 
           {/* User name */}
           <span className="text-xs font-medium text-zinc-700 capitalize">
-            {booking.personalInfo?.fullName}
+            {booking.assignTo?.name || "Some one"}
           </span>
         </div>
 

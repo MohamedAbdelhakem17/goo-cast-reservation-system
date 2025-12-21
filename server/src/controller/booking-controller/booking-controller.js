@@ -6,7 +6,11 @@ const {
   minutesToTime,
   getAllDay,
 } = require("../../utils/time-mange");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
+const {
+  HTTP_STATUS_TEXT,
+  USER_ROLE,
+} = require("../../config/system-variables");
+
 const AppError = require("../../utils/app-error");
 
 const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
@@ -17,8 +21,10 @@ const sendEmail = require("../../utils/send-email");
 // Models
 const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
 const BookingModel = require("../../models/booking-model/booking-model");
+const AuditModel = require("../../models/audit-model/audit-model.js");
 const StudioModel = require("../../models/studio-model/studio-model");
 const userProfileModel = require("../../models/user-profile-model/user-profile-model");
+const userModel = require("../../models/user-model/user-model.js");
 
 const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
 
@@ -27,7 +33,8 @@ const {
   updateCalenderEvent,
 } = require("../../utils/google-calendar-integration.js");
 
-const prepareBookingData = require("./prepare-booking-data.js");
+const prepareCreateBookingData = require("./prepare-create-booking-data.js");
+const prepareEditBookingData = require("./prepare-edit-booking-data.js");
 
 // Service
 const {
@@ -455,7 +462,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
 
   // working window for this studio
-  const startOfDayMinutes = timeToMinutes(studio.startTime || "12:00");
+  const startOfDayMinutes = timeToMinutes(studio.startTime || "09:00");
   const endOfDayMinutes = timeToMinutes(studio.endTime || "20:00");
   if (
     startOfDayMinutes === null ||
@@ -799,7 +806,6 @@ exports.changeBookingStatus = asyncHandler(async (req, res) => {
 // Create Booking
 exports.createBooking = asyncHandler(async (req, res) => {
   const user = req.isAuthenticated() ? req.user : undefined;
-  console.log(req.body);
 
   const {
     tempBooking,
@@ -813,11 +819,19 @@ exports.createBooking = asyncHandler(async (req, res) => {
     endSlot,
     totalPriceAfterDiscount,
     duration,
-  } = await prepareBookingData(req.body, user, false);
+  } = await prepareCreateBookingData(req.body, user, false);
+
+  // Get Assign User
+  const manager = await userModel
+    .findOne({ role: USER_ROLE.MANAGER })
+    .select("_id");
+
+  tempBooking.assignTo = manager._id;
 
   // Save data in database
-
   const booking = await tempBooking.save();
+
+  console.log(booking);
 
   const bookedUser = await userProfileModel.findById(booking.personalInfo);
 
@@ -828,6 +842,23 @@ exports.createBooking = asyncHandler(async (req, res) => {
   );
 
   await bookedUser.save();
+  await AuditModel.create({
+    actor: req.user?.id ? req.user?.id : null,
+    action: "create",
+    model: BookingModel.modelName,
+    targetId: booking?._id,
+    changes: {
+      key: "Create",
+      old: "",
+      new: `Create new Booking at ${booking.date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })}`,
+    },
+    ip: req.ip,
+  });
+
   // return response for user
   res.status(201).json({
     status: "success",
@@ -855,82 +886,70 @@ exports.createBooking = asyncHandler(async (req, res) => {
   });
 });
 
-// UPDATE BOOKING
 exports.updateBooking = asyncHandler(async (req, res) => {
   const bookingId = req.params.id;
-
-  // Ensure the booking exists
   const existingBooking = await BookingModel.findById(bookingId);
   if (!existingBooking)
     throw new AppError(404, HTTP_STATUS_TEXT.FAIL, "Booking not found");
 
-  // Recalculate booking data using the same logic
-  const {
-    bookingData,
-    studio,
-    pkg,
-    bookingDate,
-    personalInfo,
-    startSlot,
-    endSlot,
-    totalPriceAfterDiscount,
-    duration,
-  } = await prepareBookingData({ ...req.body, bookingId }, null, true);
+  const updates = await prepareEditBookingData(req.body, existingBooking);
 
-  // Update the booking
+  // Optional: check overlapping bookings
+  const bookings = await BookingModel.find({
+    date: existingBooking.date,
+    _id: { $ne: bookingId },
+  }).select("startSlotMinutes endSlotMinutes");
+  const mergedBusy = mergeIntervals(
+    bookings.map((b) => [b.startSlotMinutes, b.endSlotMinutes])
+  );
+  if (
+    overlapsAny(updates.startSlotMinutes, updates.endSlotMinutes, mergedBusy)
+  ) {
+    throw new AppError(
+      400,
+      HTTP_STATUS_TEXT.FAIL,
+      "This time is already booked"
+    );
+  }
+
   const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
-    bookingData,
+    { $set: updates },
     { new: true }
   );
 
-  // 🔹 Check if calendar event needs to be updated
+  // Update Google Calendar if needed
   const eventChanged =
-    existingBooking?.startSlot !== startSlot ||
-    existingBooking?.endSlot !== endSlot ||
-    existingBooking?.bookingDate?.toISOString() !==
-      new Date(bookingDate).toISOString();
+    (updates.startSlot && updates.startSlot !== existingBooking.startSlot) ||
+    (updates.endSlot && updates.endSlot !== existingBooking.endSlot) ||
+    (updates.date &&
+      new Date(updates.date).toISOString() !==
+        existingBooking.date.toISOString());
 
-  if (existingBooking.eventID && eventChanged) {
+  if (existingBooking.googleEventId && eventChanged) {
     try {
-      // Prepare the event data
-      const eventData = {
-        summary: `Booking - ${studio.name?.en}`,
-        description: `Updated booking for ${personalInfo.name} (${personalInfo.email})`,
-        start: { dateTime: new Date(startSlot).toISOString() },
-        end: { dateTime: new Date(endSlot).toISOString() },
-      };
+      const startDateTime = new Date(
+        updatedBooking.date.toISOString().split("T")[0] +
+          "T" +
+          updatedBooking.startSlot +
+          ":00"
+      );
+      const endDateTime = new Date(
+        updatedBooking.date.toISOString().split("T")[0] +
+          "T" +
+          updatedBooking.endSlot +
+          ":00"
+      );
 
-      // Call Google Calendar update function
+      const eventData = {
+        summary: `Booking - ${updatedBooking.studio?.name?.en}`,
+        description: `Updated booking for ${updatedBooking.personalInfo?.name}`,
+        start: { dateTime: startDateTime.toISOString() },
+        end: { dateTime: endDateTime.toISOString() },
+      };
       await updateCalenderEvent(existingBooking.googleEventId, eventData);
     } catch (err) {
       console.warn("⚠️ Failed to update Google Calendar event:", err.message);
-    }
-  }
-
-  // 🔹 Optional: send update email
-  if (eventChanged) {
-    const emailData = {
-      studio: { name: studio.name?.en, image: studio.thumbnail },
-      personalInfo,
-      date: bookingDate,
-      startSlot,
-      endSlot,
-      duration,
-      totalPriceAfterDiscount,
-      bookingId: updatedBooking._id,
-    };
-
-    const emailOptions = {
-      to: personalInfo.email,
-      subject: `Booking Updated | ${studio.name?.en}`,
-      message: bookingConfirmationEmailBody(emailData),
-    };
-
-    try {
-      await sendEmail(emailOptions);
-    } catch (err) {
-      console.warn("⚠️ Failed to send update email:", err.message);
     }
   }
 

@@ -1,20 +1,86 @@
+import { useChangeBookingStatus } from "@/apis/admin/manage-booking.api";
+import { STATUS_VALUE } from "@/constants/booking-status.constant";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import useDateFormat from "@/hooks/useDateFormat";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { Calendar, Edit, Mail } from "lucide-react";
 import BookingReceiptPDF from "../../../features/booking/_components/booking-receipt-pdf";
 
-export default function DetailsTab({ booking }) {
+export default function DetailsTab({ booking, handleOpenModal }) {
   const { lng, t } = useLocalization();
 
   const formatDate = useDateFormat();
   const priceFormat = usePriceFormat();
   const convertTo12HourFormat = useTimeConvert();
 
+  const { changeStatus } = useChangeBookingStatus();
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
+
+  const handleStatusChange = (id, status) => {
+    changeStatus(
+      { id, status },
+      {
+        onSuccess: ({ message }) => {
+          addToast(message || t("status-changed-successfully"), "success");
+          queryClient.invalidateQueries({ queryKey: ["get-bookings"] });
+        },
+        onError: ({ response }) =>
+          addToast(response?.data?.message || t("something-went-wrong"), "error"),
+      },
+    );
+  };
+
   if (!booking) return null;
   return (
     <div className="p-2">
+      {/* Actions */}
+      <div className="mb-4 grid grid-cols-2 gap-2">
+        <button
+          className="text-main hover:bg-main/90 border-main flex items-center justify-center rounded-xl border-1 px-6 py-2 transition hover:text-white"
+          onClick={() => {
+            handleOpenModal("appointment");
+          }}
+        >
+          <Calendar className="mr-2 h-4 w-4" />
+          Reschedule
+        </button>
+        <button
+          className="text-main hover:bg-main/90 border-main flex items-center justify-center rounded-xl border-1 px-6 py-2 transition hover:text-white"
+          onClick={() => {
+            handleOpenModal("details");
+          }}
+        >
+          <Edit className="mr-2 h-4 w-4" />
+          Edit
+        </button>
+
+        <button
+          className="text-main hover:bg-main/90 border-main flex items-center justify-center rounded-xl border-1 px-6 py-2 transition hover:text-white"
+          onClick={() => {
+            handleStatusChange(booking._id, STATUS_VALUE.completed);
+          }}
+        >
+          <Mail className="mr-2 h-4 w-4" />
+          Send Confirmation
+        </button>
+
+        <button
+          className="text-main hover:bg-main/90 border-main flex items-center justify-center rounded-xl border-1 px-6 py-2 transition hover:text-white"
+          onClick={() => {
+            handleStatusChange(booking._id, STATUS_VALUE.canceled);
+          }}
+        >
+          Cancel Booking
+        </button>
+      </div>
+
+      {/* Content */}
       <div className="space-y-2">
         {/* Summary */}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

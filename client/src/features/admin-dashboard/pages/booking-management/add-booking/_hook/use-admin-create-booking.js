@@ -1,25 +1,28 @@
-import { useMemo, useCallback, useEffect } from "react";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { useNavigate } from "react-router-dom";
+import { useUpdateBooking } from "@/apis/admin/manage-booking.api";
 import { useCreateBooking } from "@/apis/public/booking.api";
+import { useAuth } from "@/context/Auth-Context/AuthContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import {
   getBookingInitialValues,
   getBookingValidationSchema,
 } from "@/utils/schemas/booking.schema";
-import { useFormik } from "formik";
-import { useUpdateBooking } from "@/apis/admin/manage-booking.api";
 import { useQueryClient } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import { useCallback, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function useAdminCreateBooking({ data, isEdit, bookingId = null }) {
   // Localization
   const { t } = useLocalization();
 
+  const { user } = useAuth();
+
   // Navigation
   const navigate = useNavigate();
 
   // Mutation
-  const { createBooking, isPending: creating } = useCreateBooking();
+  const { createBooking, isPending: creating } = useCreateBooking(user?.role);
   const { isPending: updating, updateBooking } = useUpdateBooking();
 
   // Hooks
