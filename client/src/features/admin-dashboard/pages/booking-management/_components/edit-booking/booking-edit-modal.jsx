@@ -1,6 +1,8 @@
 import { useUpdateBooking } from "@/apis/admin/manage-booking.api";
 import { Button, Taps } from "@/components/common";
+import { useAuth } from "@/context/Auth-Context/AuthContext";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import SYSTEM_ROLES from "@/utils/constant/system-roles.constant";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { motion } from "framer-motion";
@@ -8,6 +10,7 @@ import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import AppointmentTab from "./edit-booking-tabs-content/appointment-tab";
 import DetailsTab from "./edit-booking-tabs-content/details-tab";
+import PriceTab from "./edit-booking-tabs-content/price-tab";
 
 export default function BookingEditModal({ booking, closeModal, activeTab = "details" }) {
   // State
@@ -19,6 +22,7 @@ export default function BookingEditModal({ booking, closeModal, activeTab = "det
   // Hooks
   const { addToast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   // Formik and  validation
   const initialValues = {
@@ -36,6 +40,7 @@ export default function BookingEditModal({ booking, closeModal, activeTab = "det
     startSlot: booking.startSlot || "",
     duration: booking.duration || 1,
     assignTo: booking.assignTo?._id || null,
+    totalPrice: booking?.totalPrice,
   };
 
   const formik = useFormik({
@@ -74,6 +79,13 @@ export default function BookingEditModal({ booking, closeModal, activeTab = "det
     { id: "appointment", label: "Appointment" },
   ];
 
+  if (user.role === SYSTEM_ROLES.ADMIN) {
+    TabsOptions.push({
+      id: "editPrice",
+      label: "Edit Price",
+    });
+  }
+
   const tabContent = {
     details: <DetailsTab {...formik} />,
     appointment: (
@@ -81,6 +93,12 @@ export default function BookingEditModal({ booking, closeModal, activeTab = "det
         {...formik}
         studio={booking?.studio?.id}
         duration={booking.duration}
+      />
+    ),
+    editPrice: (
+      <PriceTab
+        totalPrice={formik.values.totalPrice}
+        setFieldValue={formik.setFieldValue}
       />
     ),
   };

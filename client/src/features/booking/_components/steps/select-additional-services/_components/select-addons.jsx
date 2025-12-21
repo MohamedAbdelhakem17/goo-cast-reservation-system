@@ -1,12 +1,11 @@
-import { motion } from "framer-motion";
+import { useGetAddons } from "@/apis/admin/manage-addons.api";
+import { Loading } from "@/components/common";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { useCallback } from "react";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { useAddOnsManager } from "@/hooks/use-addons-manger";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { tracking } from "@/utils/gtm";
-import { Loading } from "@/components/common";
-import useLocalization from "@/context/localization-provider/localization-context";
-import { useGetAddons } from "@/apis/admin/manage-addons.api";
-import { useAddOnsManager } from "@/hooks/use-addons-manger";
+import { motion } from "framer-motion";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -98,7 +97,7 @@ export default function AddOns() {
               <div className="mt-2">
                 {quantity === 0 ? (
                   <button
-                    className="text-md w-full rounded-lg bg-black px-4 py-2 font-semibold text-white transition-all duration-200 hover:bg-gray-800"
+                    className="text-md border-main hover:bg-main text-main w-full rounded-lg border-2 bg-white px-4 py-2 font-semibold transition-all duration-200 hover:text-white"
                     onClick={() => handleIncrement(addon._id, addon.name, addon.price)}
                   >
                     {t("add-to-cart")}

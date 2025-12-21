@@ -33,7 +33,7 @@ export default function ActivityTab({ bookingId }) {
 
   const activities = data.data
     .map((item) => {
-      const actorDisplay = `${item.actor.name} (${item.actor.role})`;
+      const actorDisplay = `${item.actor?.name || "System"} (${item.actor?.role || "system"})`;
       const description = `${actorDisplay} ${item.action.toLowerCase()} ${item.model}`;
 
       // Filter out empty changes (changes with only _id)

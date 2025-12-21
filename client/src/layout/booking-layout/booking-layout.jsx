@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { NavigationButtons, Stepper } from "@/features/booking/_components";
 import BookingHeader from "@/layout/_components/booking-header/booking-header";
-import { BookingFooter } from "./booking-footer";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 // Container fade animation
 const containerVariants = {
@@ -31,6 +31,7 @@ const itemVariants = {
 
 export default function BookingLayout({ children, currentStep }) {
   const location = useLocation();
+  const { stepLabels } = useBooking();
 
   // 🔁 Scroll to top whenever ?step changes in the URL
   useEffect(() => {
@@ -44,6 +45,18 @@ export default function BookingLayout({ children, currentStep }) {
       });
     }
   }, [location.search]); // triggers every time query string changes
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const stepSlug = params.get("step");
+
+    if (!currentStep || !stepSlug) return;
+
+    trackBookingStep(currentStep, {
+      step_slug: stepSlug,
+      page_path: location.pathname,
+    });
+  }, [currentStep, location.search]);
 
   return (
     <div className="min-h-screen">

@@ -1,13 +1,10 @@
-import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
-import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { useState } from "react";
+import { DurationInput } from "@/components/booking";
 import { Loading } from "@/components/common";
-import Duration from "./duration";
+import { useBooking } from "@/context/Booking-Context/BookingContext";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DateTime } from "luxon";
 import { useCalendar } from "../_hooks/useCalendar";
-import useLocalization from "@/context/localization-provider/localization-context";
-import useLockBodyScroll from "@/hooks/use-lock-body-scroll";
-import { DurationInput } from "@/components/booking";
 
 export default function Calendar({ openToggle, getAvailableSlots }) {
   // Localization
@@ -71,14 +68,12 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     const newValue = Math.min(8, currentDuration + 1);
     const totalPricePackage = newValue * +bookingData.totalPackagePrice;
     setBookingField("duration", newValue);
-    setBookingField("totalPackagePrice", totalPricePackage);
   };
 
   const handleDecrement = () => {
     const newValue = Math.max(1, currentDuration - 1);
     const totalPricePackage = newValue * +bookingData.totalPackagePrice;
     setBookingField("duration", newValue);
-    setBookingField("totalPackagePrice", totalPricePackage);
   };
 
   // Variables

@@ -162,6 +162,7 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
   // 6. Validate total price
   const totalPrice = Math.round(packagePrice + totalAddOnsPriceFromDb);
 
+  console.log({ totalPrice, totalPriceFromClient });
   if (!isEdit && totalPrice !== totalPriceFromClient)
     throw new AppError(
       400,

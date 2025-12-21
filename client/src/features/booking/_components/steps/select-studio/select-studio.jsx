@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { useBooking } from "@/context/Booking-Context/BookingContext";
-import BookingLabel from "../../booking-label";
-import { tracking } from "@/utils/gtm";
-import { Loading, ErrorFeedback, OptimizedImage } from "@/components/common";
-import ImagePreviewModal from "./_components/image-preview-modal";
 import { useGetStudio } from "@/apis/public/studio.api";
+import { ErrorFeedback, Loading, OptimizedImage } from "@/components/common";
+import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { tracking } from "@/utils/gtm";
+import { motion } from "framer-motion";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import BookingLabel from "../../booking-label";
+import ImagePreviewModal from "./_components/image-preview-modal";
 
 export default function SelectStudio() {
   const { t, lng } = useLocalization();
@@ -161,7 +161,7 @@ export default function SelectStudio() {
                   className={`text-md mx-auto mt-6 flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold transition ${
                     isActive
                       ? "bg-main text-white"
-                      : "border-2 border-gray-200 bg-black text-white"
+                      : "border-main text-main border-2 bg-white"
                   }`}
                 >
                   {isActive ? (

@@ -1,13 +1,13 @@
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { useEffect } from "react";
 import BookingLayout from "@/layout/booking-layout/booking-layout";
+import { useEffect } from "react";
 
 import {
+  PersonalInformation,
+  SelectAdditionalServices,
   SelectDateTime,
   SelectPackage,
   SelectStudio,
-  SelectAdditionalServices,
-  PersonalInformation,
 } from "../../_components/steps";
 
 export default function Booking() {
@@ -16,9 +16,9 @@ export default function Booking() {
 
   // Variables
   const stepComponents = {
-    1: <SelectPackage />,
-    2: <SelectStudio />,
-    3: <SelectDateTime />,
+    1: <SelectStudio />,
+    2: <SelectDateTime />,
+    3: <SelectPackage />,
     4: <SelectAdditionalServices />,
     5: <PersonalInformation />,
   };

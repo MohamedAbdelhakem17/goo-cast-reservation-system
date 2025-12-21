@@ -20,17 +20,17 @@ export default function BookingProvider({ children }) {
   const { t } = useLocalization();
   // Constants
   const STEP_LABELS = [
-    t("select-service"),
     t("select-studio"),
     t("date-and-time"),
+    t("select-service"),
     t("additional-services"),
     t("payment-info"),
   ];
   const TOTAL_STEPS = STEP_LABELS.length;
   const STEP_FIELDS = {
-    1: ["selectedPackage"],
-    2: ["studio"],
-    3: ["date", "startSlot", "duration"],
+    1: ["studio"],
+    2: ["date", "startSlot", "duration"],
+    3: ["selectedPackage"],
     4: ["selectedAddOns"],
     5: [
       "personalInfo.firstName",
