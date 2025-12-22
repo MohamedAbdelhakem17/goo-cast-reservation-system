@@ -9,6 +9,7 @@ const {
 const {
   HTTP_STATUS_TEXT,
   USER_ROLE,
+  BOOKING_PIPELINE,
 } = require("../../config/system-variables");
 
 const AppError = require("../../utils/app-error");
@@ -505,6 +506,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   // fetch bookings across ALL studios for that date
   const bookings = await BookingModel.find({
     date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
+    status: { $ne: BOOKING_PIPELINE.CANCELED },
   }).select("startSlotMinutes endSlotMinutes");
 
   // normalize booking intervals into minutes
@@ -737,17 +739,6 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
 exports.changeBookingStatus = asyncHandler(async (req, res) => {
   const id = req.params.id || req.body.id;
   const { status } = req.body;
-
-  const BOOKING_PIPELINE = Object.freeze({
-    NEW: "new",
-    PENDING_PAYMENT: "pending-payment",
-    PAID: "paid",
-    SCHEDULED: "scheduled",
-    IN_STUDIO: "in-studio",
-    COMPLETED: "completed",
-    NEEDS_EDIT: "needs-edit",
-    CANCELED: "canceled",
-  });
 
   // Validate provided status
   const allowedStatuses = Object.values(BOOKING_PIPELINE);
