@@ -11,7 +11,7 @@ export const getBookingInitialValues = (data = null) => {
 
   //  Default form structure
   const defaultValues = {
-    studio: { id: null, name: "", image: "", price: 0 },
+    studio: { id: null, name: "", image: "", price: 0, recording_seats: 1 },
     date: getDefaultDate(),
     startSlot: null,
     endSlot: null,
@@ -54,6 +54,7 @@ export const getBookingInitialValues = (data = null) => {
       name: booking.studio?.name || {},
       image: booking.studio?.thumbnail || "",
       price: booking.studio?.basePricePerSlot || 0,
+      recording_seats: booking.studio?.recording_seats | 1,
     },
     date: booking.date ? new Date(booking.date) : getDefaultDate(),
     startSlot: booking.startSlot || null,
