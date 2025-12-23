@@ -484,5 +484,10 @@
   "change-status": "تغيير الحالة",
   "preview-website": "الرجوع للموقع",
   "this-month": "هذا الشهر",
-  "this-week": "هذا الاسبوع"
+  "this-week": "هذا الاسبوع",
+  "select-session-duration": "حدد مدة الجلسة",
+  "number-of-people": "عدد الأشخاص",
+  "person": "شخص",
+  "people": "من الناس ",
+  "maximum-allowed": "الحد الأقصى المسموح به:"
 }

@@ -1,14 +1,14 @@
-import { DurationInput } from "@/components/booking";
 import { Loading } from "@/components/common";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DateTime } from "luxon";
 import { useCalendar } from "../_hooks/useCalendar";
+import CounterInput from "./counter-input";
 
 export default function Calendar({ openToggle, getAvailableSlots }) {
   // Localization
-  const { lng } = useLocalization();
+  const { lng, t } = useLocalization();
   //hooks
   const { setBookingField, bookingData } = useBooking();
   const {
@@ -76,17 +76,49 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     setBookingField("duration", newValue);
   };
 
+  const handleIncrementPerson = () => {
+    const newValue = Math.min(8, currentPersonCount + 1);
+    const totalPricePackage = newValue * +bookingData.totalPackagePrice;
+    setBookingField("persons", newValue);
+  };
+
+  const handleDecrementPerson = () => {
+    const newValue = Math.max(1, currentPersonCount - 1);
+    const totalPricePackage = newValue * +bookingData.totalPackagePrice;
+    setBookingField("persons", newValue);
+  };
+
   // Variables
   const currentDuration = bookingData.duration || 1;
+  const currentPersonCount = bookingData.persons || 1;
+  const maxPersonCount = bookingData.studio.recording_seats;
 
   return (
     <div className="mx-auto w-full bg-white">
       {/* Header */}
-      <div className="p-3">
-        <DurationInput
-          handleDecrement={handleDecrement}
-          duration={currentDuration}
-          handleIncrement={handleIncrement}
+      <div className="mb-6 grid grid-cols-1 gap-4 md:mb-8 md:grid-cols-2 md:gap-6">
+        <CounterInput
+          label={t("duration-0")}
+          value={currentDuration}
+          unit={t("hour")}
+          unitPlural={t("hours")}
+          min={1}
+          max={8}
+          helperText={t("select-session-duration")}
+          increment={handleIncrement}
+          decrement={handleDecrement}
+        />
+
+        <CounterInput
+          label={t("number-of-people")}
+          value={currentPersonCount}
+          unit={t("person")}
+          unitPlural={t("people")}
+          min={1}
+          max={maxPersonCount}
+          helperText={`${t("maximum-allowed")} ${maxPersonCount} ${t("people")}`}
+          increment={handleIncrementPerson}
+          decrement={handleDecrementPerson}
         />
       </div>
 
@@ -137,7 +169,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
             {calendarDays.map((day, index) => (
               <div
                 key={index}
-                className={`relative h-10 border-r border-b border-gray-200 last:border-e-0 lg:h-16 ${
+                className={`relative h-10 border-r border-b border-gray-200 last:border-e-0 lg:h-14 ${
                   day.blocked
                     ? "cursor-not-allowed bg-gray-50"
                     : "cursor-pointer bg-white transition-colors hover:bg-blue-50"
