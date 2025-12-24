@@ -11,12 +11,12 @@ export const getBookingInitialValues = (data = null) => {
 
   //  Default form structure
   const defaultValues = {
-    studio: { id: null, name: "", image: "", price: 0 },
+    studio: { id: null, name: "", image: "", price: 0, recording_seats: 1 },
     date: getDefaultDate(),
     startSlot: null,
     endSlot: null,
     duration: 1,
-    persons: 1,
+    persons: 0,
     selectedPackage: {},
     selectedAddOns: [],
     personalInfo: {
@@ -54,12 +54,13 @@ export const getBookingInitialValues = (data = null) => {
       name: booking.studio?.name || {},
       image: booking.studio?.thumbnail || "",
       price: booking.studio?.basePricePerSlot || 0,
+      recording_seats: booking.studio?.recording_seats | 1,
     },
     date: booking.date ? new Date(booking.date) : getDefaultDate(),
     startSlot: booking.startSlot || null,
     endSlot: booking.endSlot || null,
     duration: booking.duration || 1,
-    persons: booking.persons || 1,
+    persons: booking.persons || 0,
     selectedPackage: booking.package || {},
     selectedAddOns:
       booking.addOns?.map((a) => ({
@@ -75,6 +76,7 @@ export const getBookingInitialValues = (data = null) => {
       phone: booking.personalInfo?.phone || "",
       email: booking.personalInfo?.email || "",
     },
+
     extraComment: "",
     totalPackagePrice: booking.totalPackagePrice || 0,
     totalPrice: booking.totalPrice || 0,

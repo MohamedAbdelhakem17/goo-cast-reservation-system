@@ -155,6 +155,7 @@ export default function SelectStudio() {
                       id: studio._id,
                       name: studio.name,
                       image: studio.thumbnail,
+                      recording_seats: studio.recording_seats,
                     });
                     handleNextStep();
                   }}
