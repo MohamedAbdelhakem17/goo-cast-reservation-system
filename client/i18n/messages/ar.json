@@ -488,6 +488,7 @@
   "select-session-duration": "حدد مدة الجلسة",
   "number-of-people": "عدد الأشخاص",
   "person": "شخص",
-  "people": "من الناس ",
-  "maximum-allowed": "الحد الأقصى المسموح به:"
+  "people": "شخص",
+  "maximum-allowed": "الحد الأقصى المسموح به:",
+  "please-select-number-of-people": "الرجاء تحديد عدد الأشخاص أولاً"
 }

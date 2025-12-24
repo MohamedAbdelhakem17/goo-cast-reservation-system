@@ -506,5 +506,6 @@
   "number-of-people": "Number of People",
   "person": "person",
   "people": "people",
-  "maximum-allowed": "Maximum allowed:"
+  "maximum-allowed": "Maximum allowed:",
+  "please-select-number-of-people": "Please select number of people first"
 }

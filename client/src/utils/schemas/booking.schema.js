@@ -16,7 +16,7 @@ export const getBookingInitialValues = (data = null) => {
     startSlot: null,
     endSlot: null,
     duration: 1,
-    persons: 1,
+    persons: 0,
     selectedPackage: {},
     selectedAddOns: [],
     personalInfo: {
@@ -60,7 +60,7 @@ export const getBookingInitialValues = (data = null) => {
     startSlot: booking.startSlot || null,
     endSlot: booking.endSlot || null,
     duration: booking.duration || 1,
-    persons: booking.persons || 1,
+    persons: booking.persons || 0,
     selectedPackage: booking.package || {},
     selectedAddOns:
       booking.addOns?.map((a) => ({
@@ -76,6 +76,7 @@ export const getBookingInitialValues = (data = null) => {
       phone: booking.personalInfo?.phone || "",
       email: booking.personalInfo?.email || "",
     },
+
     extraComment: "",
     totalPackagePrice: booking.totalPackagePrice || 0,
     totalPrice: booking.totalPrice || 0,
