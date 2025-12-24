@@ -501,5 +501,11 @@
   "change-status": "Change Status",
   "preview-website": "preview website",
   "this-week": "This Week",
-  "this-month": "This Month"
+  "this-month": "This Month",
+  "select-session-duration": "Select session duration",
+  "number-of-people": "Number of People",
+  "person": "person",
+  "people": "people",
+  "maximum-allowed": "Maximum allowed:",
+  "please-select-number-of-people": "Please select number of people first"
 }

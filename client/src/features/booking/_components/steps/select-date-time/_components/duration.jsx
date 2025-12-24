@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Clock } from "lucide-react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { AnimatePresence, motion } from "framer-motion";
+import { Clock } from "lucide-react";
+import { useState } from "react";
 
 export default function Duration({ isOpen, setIsOpen }) {
   const { t, lng } = useLocalization();

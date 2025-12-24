@@ -45,7 +45,7 @@ fi
 
 print_section "Building frontend..."
 # Capture the build output and print it
-BUILD_OUTPUT=$(npm run build -- --base=/goocast/ 2>&1)
+BUILD_OUTPUT=$(npm run build  2>&1)
 BUILD_STATUS=$?
 
 # Print the build output for debugging purposes
