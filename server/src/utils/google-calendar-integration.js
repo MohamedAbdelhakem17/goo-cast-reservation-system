@@ -14,7 +14,7 @@ const calendar = google.calendar({ version: "v3", auth });
 // Create event
 exports.createCalendarEvent = async (
   eventData,
-  { duration, username, package }
+  { duration, username, package, studio }
 ) => {
   try {
     // Event Data
@@ -24,7 +24,8 @@ exports.createCalendarEvent = async (
       description: `Booking for studio in GooCast Studio
         Customer: ${username || "N/A"}
         Package: ${package || "N/A"}
-        Duration: ${duration || 0} hours`,
+        Duration: ${duration || 0} hours
+        Studio: ${studio}`,
 
       reminders: {
         useDefault: false,
