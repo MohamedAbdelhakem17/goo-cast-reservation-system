@@ -24,11 +24,11 @@ exports.runBookingIntegrations = async ({ booking, integrationData }) => {
   } = integrationData;
 
   if (!duration || !startSlot || !endSlot) {
-    console.error("❌ Required integration fields missing:", integrationData);
+    console.error("Required integration fields missing:", integrationData);
     return;
   }
 
-  const bookingTitle = `Goocast | ${personalInfo.fullName} | ${pkg.name?.en} | ${pkg.session_type?.en}`;
+  const bookingTitle = `Goocast | ${personalInfo.firstName} ${personalInfo.lastName} | ${pkg.name?.en} | ${pkg.session_type?.en}`;
 
   const emailBookingData = {
     studio: {
@@ -57,7 +57,7 @@ exports.runBookingIntegrations = async ({ booking, integrationData }) => {
   };
 
   const userData = {
-    name: personalInfo.fullName,
+    name: `${personalInfo.firstName} ${personalInfo.lastName}`,
     email: personalInfo.email,
     phone: personalInfo.phone,
   };
@@ -67,7 +67,7 @@ exports.runBookingIntegrations = async ({ booking, integrationData }) => {
     price: totalPriceAfterDiscount,
     sessionType: pkg.session_type,
     duration,
-    studioName: studio.name,
+    studioName: studio.name?.en,
     bookingId: booking._id,
   };
 
@@ -75,7 +75,7 @@ exports.runBookingIntegrations = async ({ booking, integrationData }) => {
     startTime: combineDateAndTime(bookingDate, startSlot),
     endTime: combineDateAndTime(bookingDate, endSlot),
     title: bookingTitle,
-    notes: personalInfo.fullName,
+    notes: `${personalInfo.firstName} ${personalInfo.lastName}`,
     studioId: studio._id,
   };
 
@@ -104,7 +104,8 @@ exports.runBookingIntegrations = async ({ booking, integrationData }) => {
     booking.opportunityID = opportunityID;
 
     eventID = await createCalendarEvent(eventData, {
-      username: personalInfo.fullName,
+      username: `${personalInfo.firstName} ${personalInfo.lastName}`,
+      studio: studio?.name?.en,
       duration,
       package: pkg?.name?.en,
     });

@@ -822,8 +822,6 @@ exports.createBooking = asyncHandler(async (req, res) => {
   // Save data in database
   const booking = await tempBooking.save();
 
-  console.log(booking);
-
   const bookedUser = await userProfileModel.findById(booking.personalInfo);
 
   await bookedUser.recordBooking(
@@ -833,6 +831,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
   );
 
   await bookedUser.save();
+
   await AuditModel.create({
     actor: req.user?.id ? req.user?.id : null,
     action: "create",
