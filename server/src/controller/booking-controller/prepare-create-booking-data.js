@@ -79,7 +79,6 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
     selectedPackage?.id || selectedPackage
   );
 
-  console.log(pkg, { pkg: selectedPackage });
   if (!pkg)
     throw new AppError(
       404,
@@ -162,7 +161,6 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
   // 6. Validate total price
   const totalPrice = Math.round(packagePrice + totalAddOnsPriceFromDb);
 
-  console.log({ totalPrice, totalPriceFromClient });
   if (!isEdit && totalPrice !== totalPriceFromClient)
     throw new AppError(
       400,
