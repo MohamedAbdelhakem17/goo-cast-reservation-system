@@ -1,24 +1,23 @@
+import useLocalization from "@/context/localization-provider/localization-context";
+import useDateFormat from "@/hooks/useDateFormat";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import useTimeConvert from "@/hooks/useTimeConvert";
+import { trackBookingStep } from "@/utils/gtm";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { motion } from "framer-motion";
 import {
-  Check,
-  Download,
-  MapPin,
   Calendar,
+  Check,
   Clock,
-  User,
-  Phone,
-  Mail,
   CreditCard,
+  Download,
+  Mail,
+  MapPin,
+  Phone,
+  User,
 } from "lucide-react";
+import { lazy, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import usePriceFormat from "@/hooks/usePriceFormat";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import useDateFormat from "@/hooks/useDateFormat";
-import { lazy, useMemo } from "react";
-import { useEffect } from "react";
-import { tracking } from "@/utils/gtm";
-import useTimeConvert from "@/hooks/useTimeConvert";
-import useLocalization from "@/context/localization-provider/localization-context";
 
 const BookingReceiptPDF = lazy(() => import("./../../_components/booking-receipt-pdf"));
 
@@ -82,6 +81,8 @@ export default function BookingConfirmation() {
     return bookingData?.totalPackagePrice + bookingData?.totalAddOnsPrice;
   }, [bookingData?.totalPackagePrice, bookingData?.totalAddOnsPrice]);
 
+  const purchaseTracked = useRef(false);
+
   useEffect(() => {
     return () => {
       localStorage.removeItem("bookingStep");
@@ -96,27 +97,54 @@ export default function BookingConfirmation() {
   ]);
 
   useEffect(() => {
-    if (bookingData?.totalPrice) {
-      tracking("purchase", {
-        value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
-        currency: "EGP",
-        transaction_id: bookingData._id,
-        contents: [
-          {
-            id: bookingData?.package?._id,
-            quantity: 1,
-            item_price: bookingData.totalPackagePrice,
-          },
-          ...bookingData.addOns.map((addOn) => ({
-            id: addOn.item,
-            quantity: addOn.quantity,
-            item_price: addOn.price,
-          })),
-        ],
-        content_type: "product",
-      });
-    }
-  }, []);
+    if (!bookingData?.totalPrice) return;
+    if (purchaseTracked.current) return;
+
+    purchaseTracked.current = true;
+
+    trackBookingStep("purchase", {
+      step_slug: "Complete purchase",
+      value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
+      currency: "EGP",
+      transaction_id: bookingData._id,
+      contents: [
+        bookingData?.package && {
+          id: bookingData.package._id,
+          quantity: 1,
+          item_price: bookingData.totalPackagePrice,
+        },
+        ...bookingData.addOns.map((addOn) => ({
+          id: addOn.item,
+          quantity: addOn.quantity,
+          item_price: addOn.price,
+        })),
+      ].filter(Boolean),
+      content_type: "product",
+    });
+  }, [bookingData]);
+
+  // useEffect(() => {
+  //   if (bookingData?.totalPrice) {
+  //     tracking("purchase", {
+  //       value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
+  //       currency: "EGP",
+  //       transaction_id: bookingData._id,
+  //       contents: [
+  //         {
+  //           id: bookingData?.package?._id,
+  //           quantity: 1,
+  //           item_price: bookingData.totalPackagePrice,
+  //         },
+  //         ...bookingData.addOns.map((addOn) => ({
+  //           id: addOn.item,
+  //           quantity: addOn.quantity,
+  //           item_price: addOn.price,
+  //         })),
+  //       ],
+  //       content_type: "product",
+  //     });
+  //   }
+  // }, []);
 
   return (
     <div className="my-4 min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
