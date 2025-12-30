@@ -1,10 +1,9 @@
 // components/BookingReceiptPDF.jsx
-import React from "react";
-import { Page, Text, View, Document, StyleSheet, Image } from "@react-pdf/renderer";
-import usePriceFormat from "@/hooks/usePriceFormat";
 import useDateFormat from "@/hooks/useDateFormat";
-import logo from "./logo.png";
+import usePriceFormat from "@/hooks/usePriceFormat";
 import useTimeConvert from "@/hooks/useTimeConvert";
+import { Document, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import logo from "./logo.png";
 
 // Styles
 const styles = StyleSheet.create({
@@ -88,12 +87,12 @@ const BookingReceiptPDF = ({ booking }) => {
           {/* Client Info */}
           <View style={styles.col}>
             <Text style={styles.sectionTitle}>Client Information</Text>
-            <Text>Name: {booking.personalInfo.fullName}</Text>
+            <Text>
+              Name: {booking.personalInfo.firstName} {booking.personalInfo.lastName}
+            </Text>
             <Text>Email: {booking.personalInfo.email}</Text>
             <Text>Phone: {booking.personalInfo.phone}</Text>
-            {booking.personalInfo.brand && (
-              <Text>Brand: {booking.personalInfo.brand}</Text>
-            )}
+            {booking.extraComment && <Text>Comment: {booking.extraComment}</Text>}
           </View>
 
           {/* Booking Details */}
