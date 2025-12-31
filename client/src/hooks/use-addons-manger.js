@@ -49,7 +49,7 @@ export const useAddOnsManager = ({
     (id, name, price) => {
       const currentQty = getQuantity(id);
       if (tracking) {
-        tracking("add_to_cart", {
+        tracking("add-addon", {
           addon_name: name?.[lng] || name,
           addon_price: price,
           addon_quantity: currentQty + 1,
@@ -65,11 +65,11 @@ export const useAddOnsManager = ({
     (id, name, price) => {
       const currentQty = getQuantity(id);
       if (tracking) {
-        tracking("remove_from_cart", {
-          addon_name: name?.[lng] || name,
-          addon_price: price,
-          addon_quantity: 1,
-        });
+        // tracking("remove_from_cart", {
+        //   addon_name: name?.[lng] || name,
+        //   addon_price: price,
+        //   addon_quantity: 1,
+        // });
       }
       if (currentQty > 0) {
         handleAddOnChange(id, name, currentQty - 1, price);
