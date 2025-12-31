@@ -171,7 +171,7 @@ export default function SelectPackage() {
       Number(pkg.price) * Number(bookingData?.duration),
     );
 
-    tracking("add_to_cart", { package_name: pkg.name?.[lng], price: pkg.price });
+    tracking("add-package", { package_name: pkg.name?.[lng], price: pkg.price });
 
     // reset dependent fields
     // ["startSlot", "endSlot", "studio"].forEach((f) => setBookingField(f, null));
