@@ -72,8 +72,9 @@ export default function SelectStudio() {
                   id: studio._id,
                   name: studio.name,
                   image: studio.thumbnail,
+                  recording_seats: studio.recording_seats,
                 });
-                tracking("add_to_cart", { studio_name: studio.name?.[lng] });
+                tracking("add-studio", { studio_name: studio.name?.[lng] });
               }}
             >
               {/* Image with next/prev controls */}
@@ -157,6 +158,8 @@ export default function SelectStudio() {
                       image: studio.thumbnail,
                       recording_seats: studio.recording_seats,
                     });
+                    tracking("add-studio", { studio_name: studio.name?.[lng] });
+
                     handleNextStep();
                   }}
                   className={`text-md mx-auto mt-6 flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold transition ${
