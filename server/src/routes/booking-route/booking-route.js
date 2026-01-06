@@ -36,6 +36,7 @@ router
   .post(bookingController.getAvailableEndSlots);
 
 router.route("/").post(bookingController.createBooking);
+router.route("/n8n").post(bookingController.n8nBooking);
 
 router.route("/change-status/ghl").put(bookingController.changeBookingStatus);
 

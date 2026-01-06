@@ -71,24 +71,24 @@ export default function BookingLayout({ children, currentStep }) {
       <div className="mx-auto mb-3 w-full px-3 md:px-4 lg:max-w-4xl lg:px-6 xl:max-w-6xl">
         <motion.div
           className="rounded-xl bg-white"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          // initial={{ opacity: 0 }}
+          // animate={{ opacity: 1 }}
+          // exit={{ opacity: 0 }}
+          // transition={{ duration: 0.2 }}
         >
           <AnimatePresence mode="wait" custom={currentStep}>
             <motion.div
               key={currentStep}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              // initial={{ opacity: 0 }}
+              // animate={{ opacity: 1 }}
+              // exit={{ opacity: 0 }}
+              // transition={{ duration: 0.2 }}
             >
               <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
+                // variants={containerVariants}
+                // initial="hidden"
+                // animate="visible"
+                // exit="exit"
                 className="items-start space-y-2 md:space-y-2 lg:grid lg:grid-cols-1 lg:gap-6"
               >
                 <motion.div variants={itemVariants} className="rounded-lg">
