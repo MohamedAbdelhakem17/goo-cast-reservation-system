@@ -10,6 +10,7 @@ const {
   HTTP_STATUS_TEXT,
   USER_ROLE,
   BOOKING_PIPELINE,
+  PAYMENT_METHOD,
 } = require("../../config/system-variables");
 
 const AppError = require("../../utils/app-error");
@@ -21,6 +22,7 @@ const sendEmail = require("../../utils/send-email");
 
 // Models
 const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
+const AddonsModel = require("../../models/add-on-model/add-on-model.js");
 const BookingModel = require("../../models/booking-model/booking-model");
 const AuditModel = require("../../models/audit-model/audit-model.js");
 const StudioModel = require("../../models/studio-model/studio-model");
@@ -42,6 +44,7 @@ const {
   runBookingIntegrations,
 } = require("../../services/booking-Integration-service.js");
 
+const determineUserTags = require("../../utils/tag-engine.js");
 // Helpers
 const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
   const slots = [];
@@ -984,3 +987,357 @@ exports.getSingleBooking = asyncHandler(async (req, res) => {
     data: existBooking,
   });
 });
+
+// Booking with n8n
+exports.n8nBooking = asyncHandler(async (req, res) => {
+  // ========================================
+  // 1. Extract data from request
+  // ========================================
+  const {
+    studioId,
+    packageId,
+    selectedAddOns, // string format: "id1,id2,id3"
+    email,
+    phone,
+    firstName,
+    lastName,
+    extraComment,
+    totalPrice,
+    duration,
+    persons,
+    date,
+    paymentMethod,
+  } = req.body;
+
+  // ========================================
+  // 2. Validate required fields
+  // ========================================
+  const requiredFields = {
+    studioId,
+    packageId,
+    email,
+    phone,
+    firstName,
+    lastName,
+    totalPrice,
+    duration,
+    persons,
+    date,
+  };
+
+  const missingFields = Object.entries(requiredFields)
+    .filter(
+      ([_, value]) => value === undefined || value === null || value === ""
+    )
+    .map(([key]) => key);
+
+  if (missingFields.length > 0) {
+    return res.status(400).json({
+      success: HTTP_STATUS_TEXT.FAIL,
+      message: `Missing required fields: ${missingFields.join(", ")}`,
+    });
+  }
+
+  // ========================================
+  // 3. Verify studio exists
+  // ========================================
+  const studio = await StudioModel.findById(studioId);
+  if (!studio) {
+    return res.status(404).json({
+      success: HTTP_STATUS_TEXT.FAIL,
+      message: "Studio not found. Please select another one.",
+    });
+  }
+
+  // ========================================
+  // 4. Verify package exists
+  // ========================================
+  const pkg = await PackageModel.findById(packageId);
+  if (!pkg) {
+    return res.status(404).json({
+      success: HTTP_STATUS_TEXT.FAIL,
+      message: "Package not found. Please select another one.",
+    });
+  }
+
+  // ========================================
+  // 5. Verify add-ons
+  // ========================================
+  let selectedAddOnsData = [];
+  let addOnIds = [];
+
+  if (selectedAddOns) {
+    // Convert string to array of IDs
+    addOnIds = selectedAddOns
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
+
+    if (addOnIds.length > 0) {
+      selectedAddOnsData = await AddonsModel.find({
+        _id: { $in: addOnIds },
+      });
+
+      if (selectedAddOnsData.length !== addOnIds.length) {
+        return res.status(404).json({
+          success: HTTP_STATUS_TEXT.FAIL,
+          message: "One or more add-ons not found.",
+        });
+      }
+    }
+  }
+
+  // ========================================
+  // 6. Calculate time and dates
+  // ========================================
+  const bookingDate = new Date(date);
+
+  // Validate date format
+  if (isNaN(bookingDate.getTime())) {
+    return res.status(400).json({
+      success: HTTP_STATUS_TEXT.FAIL,
+      message: "Invalid date format",
+    });
+  }
+
+  // Helper function to convert time to minutes
+  function timeToMinutes(timeStr) {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+
+  // Helper function to convert minutes to time
+  function minutesToTime(minutes) {
+    const h = Math.floor(minutes / 60) % 24;
+    const m = minutes % 60;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+  }
+
+  const startSlot = bookingDate.toISOString().slice(11, 16);
+  const startSlotMinutes = timeToMinutes(startSlot);
+  const endSlotMinutes = startSlotMinutes + duration * 60;
+  const endSlot = minutesToTime(endSlotMinutes);
+
+  // ========================================
+  // 7. Check for time slot conflicts
+  // ========================================
+  const { startOfDay, endOfDay } = getAllDay(bookingDate);
+
+  const conflictQuery = {
+    studio: studioId,
+    date: { $gte: startOfDay, $lt: endOfDay },
+    startSlotMinutes: { $lt: endSlotMinutes },
+    endSlotMinutes: { $gt: startSlotMinutes },
+  };
+
+  const conflictBooking = await BookingModel.exists(conflictQuery);
+
+  if (conflictBooking) {
+    throw new AppError(
+      400,
+      HTTP_STATUS_TEXT.FAIL,
+      "This time slot is already booked"
+    );
+  }
+
+  // ========================================
+  // 8. Calculate prices
+  // ========================================
+
+  // Calculate package price
+  const slotPrices = await calculateSlotPrices({
+    package: pkg,
+    date: bookingDate,
+    startSlotMinutes,
+    endOfDay: endSlotMinutes,
+    duration,
+    bookedSlots: [],
+  });
+
+  const packagePrice = slotPrices[slotPrices.length - 1].totalPrice;
+
+  // Calculate add-ons price with quantity
+  let totalAddOnsPrice = 0;
+  const addOnDetails = [];
+
+  if (addOnIds.length > 0) {
+    // Count occurrences of each add-on ID
+    const addOnCounts = {};
+    addOnIds.forEach((id) => {
+      addOnCounts[id] = (addOnCounts[id] || 0) + 1;
+    });
+
+    // Calculate price for each unique add-on
+    for (const addOn of selectedAddOnsData) {
+      const addOnId = addOn._id.toString();
+      const quantity = addOnCounts[addOnId] || 1;
+      const unitPrice = addOn.price || 0;
+      const totalPriceForAddOn = unitPrice * quantity;
+
+      totalAddOnsPrice += totalPriceForAddOn;
+
+      addOnDetails.push({
+        item: addOn._id,
+        quantity: quantity,
+        price: totalPriceForAddOn,
+      });
+    }
+  }
+
+  // Calculate total price
+  const calculatedTotalPrice = Math.round(packagePrice + totalAddOnsPrice);
+
+  // Verify price sent by client
+  if (totalPrice !== calculatedTotalPrice) {
+    return res.status(400).json({
+      success: HTTP_STATUS_TEXT.FAIL,
+      message: `Price mismatch. Expected: ${calculatedTotalPrice}, Received: ${totalPrice}`,
+    });
+  }
+
+  // ========================================
+  // 9. Manage user profile
+  // ========================================
+  let userProfile = await userProfileModel.findOne({
+    $or: [{ email }, { phone }],
+  });
+
+  if (userProfile) {
+    // Update tags for existing user
+    userProfile.tags = determineUserTags(userProfile);
+    await userProfile.save();
+  } else {
+    // Create new user
+    userProfile = await userProfileModel.create({
+      firstName,
+      lastName,
+      email,
+      phone,
+    });
+
+    userProfile.tags = determineUserTags(userProfile);
+    await userProfile.save();
+  }
+
+  // ========================================
+  // 10. Get assigned manager
+  // ========================================
+  const manager = await userModel
+    .findOne({ role: USER_ROLE.MANAGER })
+    .select("_id");
+
+  // ========================================
+  // 11. Create booking data
+  // ========================================
+  const bookingData = {
+    studio: studio._id,
+    date: bookingDate,
+    startSlot,
+    endSlot,
+    startSlotMinutes,
+    endSlotMinutes,
+    duration,
+    persons,
+    package: pkg._id,
+    addOns: addOnDetails,
+    totalAddOnsPrice,
+    totalPackagePrice: packagePrice,
+    personalInfo: userProfile._id,
+    extraComments: extraComment || "",
+    totalPrice: calculatedTotalPrice,
+    totalPriceAfterDiscount: calculatedTotalPrice, // Can be modified based on discounts
+    paymentMethod: paymentMethod || PAYMENT_METHOD.CASH,
+    status: BOOKING_PIPELINE.NEW,
+    assignTo: manager?._id || null,
+    createdBy: req.user?.id || null, // Use current user instead of Admin
+  };
+
+  // ========================================
+  // 12. Save booking to database
+  // ========================================
+  const booking = await BookingModel.create(bookingData);
+
+  // ========================================
+  // 13. Update user record
+  // ========================================
+  await userProfile.recordBooking(
+    booking._id,
+    booking.createdAt,
+    booking.totalPriceAfterDiscount || booking.totalPrice
+  );
+
+  await userProfile.save();
+
+  // ========================================
+  // 14. Create audit log
+  // ========================================
+  await AuditModel.create({
+    actor: req.user?.id || null,
+    action: "create",
+    model: BookingModel.modelName,
+    targetId: booking._id,
+    changes: {
+      key: "Create",
+      old: "",
+      new: `Created new booking at ${booking.date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })}`,
+    },
+    ip: req.ip,
+  });
+
+  // ========================================
+  // 15. Send response
+  // ========================================
+  res.status(201).json({
+    status: "success",
+    message: "Booking created successfully",
+    data: {
+      booking,
+    },
+  });
+
+  // ========================================
+  // 16. Run integrations in background
+  // ========================================
+  process.nextTick(() => {
+    runBookingIntegrations({
+      booking,
+      integrationData: {
+        studio,
+        package: pkg,
+        addOns: selectedAddOnsData,
+        bookingDate,
+        personalInfo: {
+          firstName,
+          lastName,
+          email,
+          phone,
+          comments: extraComment,
+        },
+        totalAddOnsPrice,
+        startSlot,
+        endSlot,
+        totalPriceAfterDiscount: calculatedTotalPrice,
+        duration,
+      },
+    });
+  });
+});
+
+// {
+//   "studioId":  "68487d7e5a067463a3298a64",
+//   "packageId": "681c9c7499ea41aecd27ad76",
+//   "selectedAddOns":"67fe85767663f45575657bea,67fe85767663f45575657bea,67fe85767663f45575657bea"
+//   "email": "mohamed.abdelhakem3200@gmail.com"
+//   "phone": "01009474429",
+//   "firstName": "Mohamed",
+//   "lastName": "Abdelhakem",
+//   "extraComment":"6910ad0b675bdddd4f421ded",
+//   "totalPrice": 8500,
+//   "duration": 1,
+//   "persons": 1,
+//   "date": "2025-11-10T10:00:00.000Z",
+// }
