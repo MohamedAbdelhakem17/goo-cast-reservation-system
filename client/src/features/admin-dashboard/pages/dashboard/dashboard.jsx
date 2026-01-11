@@ -1,16 +1,15 @@
-import { motion } from "framer-motion";
 import { useGetDashboardStats } from "@/apis/admin/analytics.api";
-import { Loading, ErrorFeedback } from "@/components/common";
+import { ErrorFeedback, Loading } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
+import useNumberFormat from "@/hooks/use-number-format";
 import usePriceFormat from "@/hooks/usePriceFormat";
-import MatrixCard from "./_components/matrix-card";
-import { Building2, Calendar, DollarSign, Mic } from "lucide-react";
-import StatCard from "./_components/stat-card";
-import UpcomingBooking from "./_components/upcoming-booking";
+import { motion } from "framer-motion";
+import { Building2, Calendar, Clock, DollarSign, Mic } from "lucide-react";
 import PeakBookingHours from "./_components/peak-booking-hours";
 import RevenueTrends from "./_components/revenue-trends";
 import ServiceDistribution from "./_components/service-distribution";
-import useLocalization from "@/context/localization-provider/localization-context";
-import useNumberFormat from "@/hooks/use-number-format";
+import StatCard from "./_components/stat-card";
+import UpcomingBooking from "./_components/upcoming-booking";
 
 const Dashboard = () => {
   // Localizations
@@ -33,6 +32,7 @@ const Dashboard = () => {
     topStudio,
     totalBookings,
     totalRevenue,
+    totalBookedHours,
     upcomingBookings,
   } = statistics?.data || {};
 
@@ -62,46 +62,55 @@ const Dashboard = () => {
 
       {/* Main content */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Matrixes */}
-        {/* Total booking */}
-        <StatCard
-          title={t("total-bookings")}
-          icon={Calendar}
-          value={numberFormat(totalBookings.value)}
-          description={t("booking-growth", {
-            growth: numberFormat(totalBookings.growth),
-          })}
-        />
+        <div className="col-span-full grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Matrixes */}
+          {/* Total booking */}
+          <StatCard
+            title={t("total-bookings")}
+            icon={Calendar}
+            value={numberFormat(totalBookings.value)}
+            description={t("booking-growth", {
+              growth: numberFormat(totalBookings.growth),
+            })}
+          />
 
-        {/* Total Revenue */}
-        <StatCard
-          title={t("total-revenue")}
-          icon={DollarSign}
-          value={priceFormat(totalRevenue.value)}
-          description={t("total-revenue-growth", {
-            growth: numberFormat(totalRevenue.growth),
-          })}
-        />
+          {/* Total Revenue */}
+          <StatCard
+            title={t("total-revenue")}
+            icon={DollarSign}
+            value={priceFormat(totalRevenue.value)}
+            description={t("total-revenue-growth", {
+              growth: numberFormat(totalRevenue.growth),
+            })}
+          />
 
-        {/* Top service */}
-        <StatCard
-          title={t("top-service")}
-          icon={Mic}
-          value={topService.name?.[lng]}
-          description={t("top-service-percentage", {
-            percentage: numberFormat(topService.percentage),
-          })}
-        />
+          {/* Top service */}
+          <StatCard
+            title={t("top-service")}
+            icon={Mic}
+            value={topService.name?.[lng]}
+            description={t("top-service-percentage", {
+              percentage: numberFormat(topService.percentage),
+            })}
+          />
 
-        {/* Top studio */}
-        <StatCard
-          title={t("top-studio")}
-          icon={Building2}
-          value={`${topStudio.name?.[lng]}`}
-          description={t("top-studio-utilization", {
-            percentage: numberFormat(topStudio.percentage),
-          })}
-        />
+          {/* Top studio */}
+          <StatCard
+            title={t("top-studio")}
+            icon={Building2}
+            value={`${topStudio.name?.[lng]}`}
+            description={t("top-studio-utilization", {
+              percentage: numberFormat(topStudio.percentage),
+            })}
+          />
+
+          <StatCard
+            title={"total Hour Booked"}
+            icon={Clock}
+            value={`${Number(totalBookedHours)} hour`}
+            description={"Total Hours Booking in this month "}
+          />
+        </div>
 
         {/* Charts */}
         {/* Peak booking hours chart */}
