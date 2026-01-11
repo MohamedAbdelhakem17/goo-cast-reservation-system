@@ -1,10 +1,12 @@
 const asyncHandler = require("express-async-handler");
 
 const AppError = require("../../utils/app-error");
+
 const {
   HTTP_STATUS_TEXT,
   BOOKING_PIPELINE,
 } = require("../../config/system-variables");
+
 const AnalyticsModel = require("../../models/analytics-model/analytics-model");
 const BookingModel = require("../../models/booking-model/booking-model");
 
