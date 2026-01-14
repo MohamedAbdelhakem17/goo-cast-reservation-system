@@ -11,7 +11,7 @@ import {
   AdminSelectSlots,
   AdminSelectStudio,
 } from "./_components";
-import SelectUser from "./_components/select-user";
+import PersonalInformation from "./_components/personal-info";
 import useAdminCreateBooking from "./_hook/use-admin-create-booking";
 import TimeCalendar from "./time";
 
@@ -105,7 +105,11 @@ export default function AddBooking() {
 
           <div className="w-full space-y-4 rounded-md border border-gray-100 bg-white p-5 shadow-sm">
             {/* Select User */}
-            <SelectUser setFieldValue={setFieldValue} />
+            <PersonalInformation
+              setFieldValue={setFieldValue}
+              formik={formik}
+              getFieldError={getFieldError}
+            />
 
             {/* Extra Comments */}
             <motion.div {...motionProps}>

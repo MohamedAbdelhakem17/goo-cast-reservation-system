@@ -1,8 +1,9 @@
 import { useGetAllUserProfiles } from "@/apis/admin/manage-user.api";
+import { Button } from "@/components/common";
 import { AnimatePresence, motion } from "framer-motion";
-import { Mail, Phone, User } from "lucide-react";
+import { Mail, Phone, User, UserRoundPlus } from "lucide-react";
 import { useMemo, useState } from "react";
-import Select from "react-select";
+import Select, { components } from "react-select";
 
 const customStyles = {
   control: (base) => ({
@@ -53,7 +54,11 @@ const customStyles = {
   indicatorSeparator: () => ({ display: "none" }),
 };
 
-export default function SelectUser({ setFieldValue, fieldName = "personalInfo" }) {
+export default function SelectUser({
+  setFieldValue,
+  fieldName = "personalInfo",
+  setNewUser,
+}) {
   // stet
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -164,6 +169,8 @@ export default function SelectUser({ setFieldValue, fieldName = "personalInfo" }
       isClearable
       isSearchable
       styles={customStyles}
+      components={{ NoOptionsMessage: CustomNoOptionsMessage }}
+      setNewUser={setNewUser}
       onChange={(selected) => {
         if (!selected) {
           setSelectedUser(null);
@@ -195,3 +202,25 @@ export default function SelectUser({ setFieldValue, fieldName = "personalInfo" }
     />
   );
 }
+
+const CustomNoOptionsMessage = ({ selectProps, ...props }) => {
+  return (
+    <components.NoOptionsMessage {...props}>
+      <div className="flex h-60 flex-col items-center justify-center gap-2.5 py-4">
+        <span>No users found</span>
+        <Button
+          type="button"
+          className="flex cursor-pointer items-center gap-x-2 px-8"
+          onClick={(e) => {
+            e.preventDefault();
+            console.log(selectProps);
+            selectProps.setNewUser(true);
+          }}
+        >
+          <UserRoundPlus />
+          Add
+        </Button>
+      </div>
+    </components.NoOptionsMessage>
+  );
+};
