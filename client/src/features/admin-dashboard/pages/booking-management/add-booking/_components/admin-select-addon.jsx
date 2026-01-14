@@ -35,7 +35,6 @@ export default function AdminSelectAddon({ bookingData, setBookingField }) {
       <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
         {addons?.data.map(({ name, _id, price }) => {
           const quantity = getQuantity(_id);
-          console.log(quantity);
           return (
             <div
               key={_id}

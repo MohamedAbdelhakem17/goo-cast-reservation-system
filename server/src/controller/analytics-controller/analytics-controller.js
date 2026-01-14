@@ -113,6 +113,23 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       ? 0
       : (((totalRevenue - prevRevenue) / prevRevenue) * 100).toFixed(1);
 
+  // ===================== 🏆 Total Hours Booked =====================
+  const totalBookedHoursResult = await BookingModel.aggregate([
+    {
+      $match: {
+        status: BOOKING_PIPELINE.COMPLETED,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalHours: { $sum: "$duration" },
+      },
+    },
+  ]);
+
+  const totalBookedHours = totalBookedHoursResult[0]?.totalHours || 0;
+
   // ===================== 🏆 Top Service =====================
   const topServiceAgg = await BookingModel.aggregate([
     { $match: { package: { $ne: null } } },
@@ -375,6 +392,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
         growth: parseFloat(totalRevenueGrowth),
       },
       topService,
+      totalBookedHours,
       topStudio,
       peakBookingHours,
       serviceDistribution,
