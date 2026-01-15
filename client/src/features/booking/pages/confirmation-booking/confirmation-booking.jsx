@@ -16,8 +16,8 @@ import {
   Phone,
   User,
 } from "lucide-react";
-import { lazy, useEffect, useMemo, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { lazy, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BookingReceiptPDF = lazy(() => import("./../../_components/booking-receipt-pdf"));
 
@@ -67,34 +67,37 @@ const PriceRow = ({ label, value, bold = false }) => (
 export default function BookingConfirmation() {
   // Localization
   const { t, lng } = useLocalization();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const bookingData = JSON.parse(
-    localStorage.getItem("bookingConfirmation"),
-  )?.bookingResponse;
 
+  // Navigation
+  const navigate = useNavigate();
+
+  // Stet
+  const [bookingData, setBookingData] = useState(
+    () =>
+      JSON.parse(localStorage.getItem("bookingConfirmation"))?.bookingResponse || null,
+  );
+
+  // Hooks
   const priceFormat = usePriceFormat();
   const dateFormat = useDateFormat();
   const formatTime = useTimeConvert();
 
+  // Variables
   const subtotal = useMemo(() => {
     return bookingData?.totalPackagePrice + bookingData?.totalAddOnsPrice;
   }, [bookingData?.totalPackagePrice, bookingData?.totalAddOnsPrice]);
 
   const purchaseTracked = useRef(false);
 
+  // Effect
   useEffect(() => {
-    return () => {
-      localStorage.removeItem("bookingStep");
-      localStorage.removeItem("bookingData");
-    };
-  }, [
-    location.pathname,
-    bookingData.totalPrice,
-    bookingData.totalAddOnsPrice,
-    bookingData.totalPackagePrice,
-    bookingData.totalPriceAfterDiscount,
-  ]);
+    localStorage.removeItem("bookingStep");
+    localStorage.removeItem("bookingData");
+  }, []);
+
+  useEffect(() => {
+    if (!bookingData) navigate("/booking", { replace: true });
+  }, [bookingData, navigate]);
 
   useEffect(() => {
     if (!bookingData?.totalPrice) return;
@@ -123,28 +126,7 @@ export default function BookingConfirmation() {
     });
   }, [bookingData]);
 
-  // useEffect(() => {
-  //   if (bookingData?.totalPrice) {
-  //     tracking("purchase", {
-  //       value: Number(bookingData.totalPriceAfterDiscount || bookingData.totalPrice) || 0,
-  //       currency: "EGP",
-  //       transaction_id: bookingData._id,
-  //       contents: [
-  //         {
-  //           id: bookingData?.package?._id,
-  //           quantity: 1,
-  //           item_price: bookingData.totalPackagePrice,
-  //         },
-  //         ...bookingData.addOns.map((addOn) => ({
-  //           id: addOn.item,
-  //           quantity: addOn.quantity,
-  //           item_price: addOn.price,
-  //         })),
-  //       ],
-  //       content_type: "product",
-  //     });
-  //   }
-  // }, []);
+  if (!bookingData) return null;
 
   return (
     <div className="my-4 min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
@@ -409,42 +391,3 @@ export default function BookingConfirmation() {
     </div>
   );
 }
-
-// {
-//   "studio": "68487d7e5a067463a3298a64",
-//   "date": "2025-07-29T09:00:00.000Z",
-//   "startSlot": "12:00",
-//   "endSlot": "17:00",
-//   "duration": 5,
-//   "persons": 1,
-//   "package": "681c9c7499ea41aecd27ad77",
-//   "addOns": [
-//     {
-//       "item": "67fe85767663f45575657beb",
-//       "quantity": 1,
-//       "price": 1000,
-//       "_id": "6886b961aa15dbbf3aa165f6"
-//     }
-//   ],
-//   "personalInfo": {
-//     "fullName": "Mohamed   Abdelhakem",
-//     "phone": "01151680381",
-//     "email": "mohamed.abdelhakem200@gmail.com",
-//     "brand": ""
-//   },
-//   "status": "pending",
-//   "totalPrice": 41000,
-//   "totalAddOnsPrice": 1000,
-//   "totalPackagePrice": 40000,
-//   "isGuest": true,
-//   "startSlotMinutes": 720,
-//   "endSlotMinutes": 1020,
-//   "paymentMethod": "CARD",
-//   "isPaid": false,
-//   "paymentAt": null,
-//   "totalPriceAfterDiscount": 41000,
-//   "_id": "6886b961aa15dbbf3aa165f5",
-//   "createdAt": "2025-07-27T23:42:29.103Z",
-//   "updatedAt": "2025-07-27T23:42:29.103Z",
-//   "__v": 0
-// }

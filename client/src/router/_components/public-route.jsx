@@ -1,6 +1,6 @@
-import { Route } from "react-router-dom";
-import MainLayout from "@/layout/main-layout/main-layout";
 import BookingProvider from "@/context/Booking-Context/BookingContext";
+import MainLayout from "@/layout/main-layout/main-layout";
+import { Route } from "react-router-dom";
 
 import { lazy } from "react";
 

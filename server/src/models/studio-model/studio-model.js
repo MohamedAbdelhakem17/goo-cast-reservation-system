@@ -224,8 +224,3 @@ studioSchema.virtual("bookingsCount", {
 });
 
 module.exports = mongoose.model("Studio", studioSchema);
-
-// email
-// type of email
-// system Hr
-// SSTP api
