@@ -64,7 +64,7 @@ export default function SelectStudio() {
           return (
             <motion.div
               key={studio._id}
-              className={`flex flex-col overflow-hidden rounded-2xl border bg-gray-50 shadow-md transition-colors duration-300 ${
+              className={`relative flex flex-col overflow-hidden rounded-2xl border bg-gray-50 shadow-md transition-colors duration-300 ${
                 isActive ? "border-main border-2" : "border-gray-100"
               }`}
               onClick={() => {
@@ -77,6 +77,13 @@ export default function SelectStudio() {
                 tracking("add-studio", { studio_name: studio.name?.[lng] });
               }}
             >
+              {/* Flag */}
+              {studio.isMostPopular && (
+                <span className="bg-main shadow-main absolute -end-10 top-7 rotate-45 px-10 py-1 text-xs font-bold text-white shadow-sm">
+                  Most Popular
+                </span>
+              )}
+
               {/* Image with next/prev controls */}
               <div className="relative w-full overflow-hidden">
                 <OptimizedImage
