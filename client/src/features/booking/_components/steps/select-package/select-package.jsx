@@ -3,11 +3,12 @@ import { useGetAllPackages } from "@/apis/admin/manage-package.api";
 import { OptimizedImage } from "@/components/common";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
 import { Check, Dot } from "lucide-react";
-import { memo, useState } from "react";
+import { memo } from "react";
 import BookingLabel from "../../booking-label";
 
 // ----------------------
@@ -148,17 +149,22 @@ PackageCard.displayName = "PackageCard";
 // Main Component
 // ----------------------
 export default function SelectPackage() {
+  // Translation
   const { t, lng } = useLocalization();
+
+  // Query
   const { packages } = useGetAllPackages(true);
-  const { setBookingField, handleNextStep, bookingData } = useBooking();
 
-  const [selectedPackage, setSelectedPackage] = useState(
-    bookingData.selectedPackage?.id || null,
-  );
+  // Hooks
+  const { setBookingField, handleNextStep, bookingData, formik } = useBooking();
 
+  // State
+  const selectedPackageId = bookingData.selectedPackage?.id || null;
+
+  const { addToast } = useToast();
+
+  // Functions
   const handleSelect = (pkg, next = false) => {
-    setSelectedPackage(pkg._id);
-
     setBookingField("selectedPackage", {
       id: pkg._id,
       name: pkg.name,
@@ -166,17 +172,20 @@ export default function SelectPackage() {
       slug: pkg.category.slug,
       price: pkg.price,
     });
+
     setBookingField(
       "totalPackagePrice",
       Number(pkg.price) * Number(bookingData?.duration),
     );
 
+    formik.setFieldTouched("selectedPackage", true);
+
     tracking("add-package", { package_name: pkg.name?.[lng], price: pkg.price });
 
-    // reset dependent fields
-    // ["startSlot", "endSlot", "studio"].forEach((f) => setBookingField(f, null));
-
-    if (next) handleNextStep();
+    if (next) {
+      addToast("Package selected successfully", "success", 1000);
+      handleNextStep();
+    }
   };
 
   return (
@@ -196,7 +205,7 @@ export default function SelectPackage() {
           <PackageCard
             key={pkg._id}
             pkg={pkg}
-            isActive={selectedPackage === pkg._id}
+            isActive={selectedPackageId === pkg._id}
             onSelect={handleSelect}
           />
         ))}

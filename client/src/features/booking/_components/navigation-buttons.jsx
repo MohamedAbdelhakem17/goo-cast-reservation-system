@@ -26,6 +26,7 @@ export default function NavigationButtons() {
     Object.keys(getBookingField("selectedPackage") || {}).length > 0;
 
   const isDisabled = hasError() || currentStep === TOTAL_STEPS || !isPackageSelected;
+  console.log(hasError());
   const isRTL = lng === "ar";
 
   return (
@@ -69,7 +70,7 @@ export default function NavigationButtons() {
             } disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 ${
               isRTL ? "flex-row-reverse" : ""
             }`}
-            disabled={isDisabled}
+            disabled={hasError()}
             onClick={handleNextStep}
             type="button"
           >

@@ -16,7 +16,7 @@ import {
   Phone,
   User,
 } from "lucide-react";
-import { lazy, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const BookingReceiptPDF = lazy(() => import("./../../_components/booking-receipt-pdf"));
@@ -72,10 +72,8 @@ export default function BookingConfirmation() {
   const navigate = useNavigate();
 
   // Stet
-  const [bookingData, setBookingData] = useState(
-    () =>
-      JSON.parse(localStorage.getItem("bookingConfirmation"))?.bookingResponse || null,
-  );
+  const bookingData =
+    JSON.parse(localStorage.getItem("bookingConfirmation"))?.bookingResponse || null;
 
   // Hooks
   const priceFormat = usePriceFormat();

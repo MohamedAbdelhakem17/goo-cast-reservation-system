@@ -61,7 +61,13 @@ export const getBookingInitialValues = (data = null) => {
     endSlot: booking.endSlot || null,
     duration: booking.duration || 1,
     persons: booking.persons || 0,
-    selectedPackage: booking.package || {},
+    selectedPackage: {
+      category: booking?.selectedPackage.category || null,
+      id: booking?.selectedPackage._id || null,
+      name: booking?.selectedPackage.category || null,
+      price: booking?.selectedPackage.price || 0,
+      slug: booking?.selectedPackage.slug || null,
+    },
     selectedAddOns:
       booking.addOns?.map((a) => ({
         id: a.item?._id || a.item?.id || "",

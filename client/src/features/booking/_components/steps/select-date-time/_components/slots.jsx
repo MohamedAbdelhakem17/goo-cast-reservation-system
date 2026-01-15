@@ -1,13 +1,14 @@
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
-import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { Loading } from "@/components/common";
-import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots";
 import { SlotButton } from "@/components/booking";
-import { tracking } from "@/utils/gtm";
+import { Loading } from "@/components/common";
+import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import useDataFormat from "@/hooks/useDateFormat";
+import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots";
+import { tracking } from "@/utils/gtm";
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
+import { useCallback, useState } from "react";
 
 export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
   // Localization
@@ -18,6 +19,7 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
 
   // Hooks
   const { handleNextStep, bookingData, setBookingField } = useBooking();
+  const { addToast } = useToast();
   const formattedDate = useDataFormat();
 
   // Functions
@@ -42,6 +44,7 @@ export default function Slots({ toggleSidebar, isOpen, setIsOpen, slots }) {
         duration: bookingData.duration,
       });
 
+      addToast("Select data and time successfully", "success", 1000);
       handleNextStep();
     },
     [bookingData, setIsOpen, setBookingField, handleNextStep],

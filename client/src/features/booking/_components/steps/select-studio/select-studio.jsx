@@ -2,6 +2,7 @@ import { useGetStudio } from "@/apis/public/studio.api";
 import { ErrorFeedback, Loading, OptimizedImage } from "@/components/common";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,14 +11,24 @@ import BookingLabel from "../../booking-label";
 import ImagePreviewModal from "./_components/image-preview-modal";
 
 export default function SelectStudio() {
+  // Translation
   const { t, lng } = useLocalization();
-  const { setBookingField, bookingData, handleNextStep } = useBooking();
-  const [selectedStudio, setSelectedStudio] = useState(bookingData?.studio?.id || null);
+
+  // State
   const [previewImages, setPreviewImages] = useState([]);
   const [previewIndex, setPreviewIndex] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState({});
+
+  // Hooks
+  const { setBookingField, bookingData, handleNextStep } = useBooking();
+  const [selectedStudio, setSelectedStudio] = useState(bookingData?.studio?.id || null);
+
+  const { addToast } = useToast();
+
+  // Query
   const { data: studiosData, isLoading, error } = useGetStudio(true);
 
+  // Function
   const selectStudio = (studio) => {
     setBookingField("studio", studio);
     setBookingField("startSlot", null);
@@ -40,7 +51,10 @@ export default function SelectStudio() {
     }));
   };
 
+  // Loading Case
   if (isLoading) return <Loading />;
+
+  // Error Case
   if (error)
     return (
       <ErrorFeedback>
@@ -159,6 +173,7 @@ export default function SelectStudio() {
                   whileTap={{ scale: 0.97 }}
                   onClick={(e) => {
                     e.stopPropagation();
+
                     selectStudio({
                       id: studio._id,
                       name: studio.name,
@@ -167,6 +182,7 @@ export default function SelectStudio() {
                     });
                     tracking("add-studio", { studio_name: studio.name?.[lng] });
 
+                    addToast("studio selected successfully", "success", 1000);
                     handleNextStep();
                   }}
                   className={`text-md mx-auto mt-6 flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold transition ${

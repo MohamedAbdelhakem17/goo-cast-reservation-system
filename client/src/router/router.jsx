@@ -22,12 +22,6 @@ export default function AppRouter() {
     window.scrollTo(0, 0, { behavior: "smooth" });
   }, [location.pathname]);
 
-  useEffect(() => {
-    if (location.pathname !== "booking/confirmation") {
-      localStorage.removeItem("bookingConfirmation");
-    }
-  }, [location]);
-
   // Loading Case
   if (loading) return <LoadingScreen />;
 

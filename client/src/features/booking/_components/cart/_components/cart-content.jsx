@@ -13,6 +13,7 @@ import {
   StudioSection,
 } from "@/components/booking";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import useCartCalculations from "@/hooks/use-cart-calculations";
 import useDataFormat from "@/hooks/useDateFormat";
 
@@ -41,6 +42,8 @@ export default function CartContent() {
   const formatTime = useTimeConvert();
   const priceFormat = usePriceFormat();
   const formatDate = useDataFormat();
+
+  const { addToast } = useToast();
 
   return (
     <div className="rounded-lg border border-gray-200 px-5 py-4">
@@ -108,7 +111,12 @@ export default function CartContent() {
         {currentStep === 4 && (
           <button
             disabled={hasError()}
-            onClick={handleNextStep}
+            onClick={() => {
+              if (bookingData?.selectedAddOns?.length !== 0) {
+                addToast("Addons selected successfully", "success", 1000);
+              }
+              handleNextStep();
+            }}
             className="text-md bg-main mx-auto my-2 flex w-full items-center justify-center rounded-lg px-4 py-[8px] font-semibold text-white disabled:bg-gray-100 disabled:text-gray-300"
           >
             <span>{t("proceed-to-payment")}</span>

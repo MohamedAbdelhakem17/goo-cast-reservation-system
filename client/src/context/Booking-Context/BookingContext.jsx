@@ -183,12 +183,44 @@ export default function BookingProvider({ children }) {
   };
 
   // Check if current step has validation errors
+  // const hasError = () => {
+  //   const fields = STEP_FIELDS[currentStep] || [];
+
+  //   return fields.some((field) => {
+  //     const value = getBookingField(field);
+  //     const error = getBookingError(field);
+
+  //     // Check if value is considered empty
+  //     const isEmpty =
+  //       value === undefined ||
+  //       value === null ||
+  //       value === "" ||
+  //       (Array.isArray(value) && value.length === 0);
+
+  //     return isEmpty || Boolean(error);
+  //   });
+  // };
+
   const hasError = () => {
     const fields = STEP_FIELDS[currentStep] || [];
+
+    const getNestedValue = (obj, path) =>
+      path.split(".").reduce((acc, key) => acc?.[key], obj);
+
     return fields.some((field) => {
-      const value = getBookingField(field);
+      const value = getNestedValue(values, field);
       const error = getBookingError(field);
-      return !value || error;
+
+      // Special handling for studio
+      const isEmpty =
+        value === undefined ||
+        value === null ||
+        value === "" ||
+        (Array.isArray(value) && value.length === 0) ||
+        (field === "studio" && (!value || !value.id)) ||
+        (field === "selectedPackage" && (!value || !value.id));
+
+      return isEmpty || Boolean(error);
     });
   };
 
