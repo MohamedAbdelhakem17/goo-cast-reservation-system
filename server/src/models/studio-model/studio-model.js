@@ -216,4 +216,16 @@ function setImage(doc) {
   }
 }
 
+studioSchema.virtual("bookingsCount", {
+  ref: "Booking",
+  localField: "_id",
+  foreignField: "studio",
+  count: true,
+});
+
 module.exports = mongoose.model("Studio", studioSchema);
+
+// email
+// type of email
+// system Hr
+// SSTP api

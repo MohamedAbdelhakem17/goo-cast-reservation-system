@@ -11,6 +11,7 @@ const {
 const AppError = require("../../utils/app-error");
 const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
 const StudioModel = require("../../models/studio-model/studio-model");
+const BookingModel = require("../../models/booking-model/booking-model");
 
 // studio image upload
 exports.studioImageUpload = uploadMultipleImages([
@@ -119,13 +120,72 @@ exports.imageManipulation = async (req, res, next) => {
 exports.getAllStudios = asyncHandler(async (req, res) => {
   const { status } = req.query;
 
-  let filter = {};
+  const matchStage = {};
   if (status !== undefined) {
-    filter.is_active = status === "true";
+    matchStage.is_active = status === "true";
   }
 
-  const studios = await StudioModel.find(filter);
-  if (studios.length === 0) {
+  const studios = await StudioModel.aggregate([
+    { $match: matchStage },
+
+    // Join bookings
+    {
+      $lookup: {
+        from: "bookings",
+        localField: "_id",
+        foreignField: "studio",
+        as: "bookings",
+      },
+    },
+
+    // Count last 30 days bookings
+    {
+      $addFields: {
+        bookingsCount: {
+          $size: {
+            $filter: {
+              input: "$bookings",
+              as: "booking",
+              cond: {
+                $gte: [
+                  "$$booking.createdAt",
+                  new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                ],
+              },
+            },
+          },
+        },
+      },
+    },
+
+    // Find max bookings
+    {
+      $setWindowFields: {
+        output: {
+          maxBookings: { $max: "$bookingsCount" },
+        },
+      },
+    },
+
+    // Flag most popular
+    {
+      $addFields: {
+        isMostPopular: {
+          $eq: ["$bookingsCount", "$maxBookings"],
+        },
+      },
+    },
+
+    // Cleanup
+    {
+      $project: {
+        bookings: 0,
+        maxBookings: 0,
+      },
+    },
+  ]);
+
+  if (!studios.length) {
     return res.status(404).json({
       status: HTTP_STATUS_TEXT.FAIL,
       message: "No studios found",
