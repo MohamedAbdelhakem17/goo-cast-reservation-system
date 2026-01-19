@@ -2,6 +2,7 @@ import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useEffect } from "react";
 
 function NavButton({ children, ...props }) {
   return (
@@ -20,14 +21,16 @@ export default function NavigationButtons() {
     handlePrevStep,
     hasError,
     getBookingField,
+    formik,
   } = useBooking();
 
-  const isPackageSelected =
-    Object.keys(getBookingField("selectedPackage") || {}).length > 0;
-
-  const isDisabled = hasError() || currentStep === TOTAL_STEPS || !isPackageSelected;
-  console.log(hasError());
   const isRTL = lng === "ar";
+
+  useEffect(() => {
+    if (getBookingField("selectedPackage")?.id) {
+      formik.setFieldValue("selectedPackage", getBookingField("selectedPackage"));
+    }
+  }, [getBookingField("selectedPackage")]);
 
   return (
     <>
@@ -63,7 +66,7 @@ export default function NavigationButtons() {
         {/* Next Button */}
         {currentStep !== TOTAL_STEPS && (
           <NavButton
-            className={`flex cursor-pointer items-center gap-1 rounded-md px-4 py-2 ${
+            className={`ms-auto flex cursor-pointer items-center gap-1 rounded-md px-4 py-2 ${
               currentStep === TOTAL_STEPS
                 ? "bg-green-500 text-white hover:bg-green-600"
                 : "bg-main/90 hover:bg-main text-white"

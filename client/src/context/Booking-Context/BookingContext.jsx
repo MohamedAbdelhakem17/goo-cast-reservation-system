@@ -216,7 +216,6 @@ export default function BookingProvider({ children }) {
         value === undefined ||
         value === null ||
         value === "" ||
-        (Array.isArray(value) && value.length === 0) ||
         (field === "studio" && (!value || !value.id)) ||
         (field === "selectedPackage" && (!value || !value.id));
 
