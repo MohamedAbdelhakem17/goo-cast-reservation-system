@@ -5,7 +5,7 @@ import { BookingLabel } from "@/features/booking/_components";
 import Cart from "@/features/booking/_components/cart/cart";
 import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Faq from "./../select-additional-services/_components/faq";
 import PaymentOptions from "./_components/payment-way";
 
@@ -19,6 +19,9 @@ export default function PersonalInformation() {
   // Localization
   const { t } = useLocalization();
 
+  // state
+  const [fullName, setFullName] = useState("");
+
   // Ref
   const inputRef = useRef(null);
 
@@ -31,6 +34,10 @@ export default function PersonalInformation() {
     if (inputRef.current) {
       inputRef.current.focus();
     }
+  }, []);
+
+  useEffect(() => {
+    setFullName(`${firstName} ${lastName}`.trim());
   }, []);
 
   // Variables
@@ -53,8 +60,34 @@ export default function PersonalInformation() {
               {...motionProps}
               className="b-0 m-0 flex w-full flex-col gap-4 lg:flex-row"
             >
-              {/* First name */}
+              {/* Full Name */}
               <BookingInput
+                className="w-full"
+                type="text"
+                id="fullName"
+                label={t("full-name")}
+                placeholder={t("enter-your-full-name")}
+                value={fullName}
+                errors={
+                  getBookingError("personalInfo.firstName") ||
+                  getBookingError("personalInfo.lastName")
+                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFullName(value);
+
+                  const parts = value.trim().split(" ");
+                  const first = parts.shift() || "";
+                  const last = parts.join(" ");
+
+                  setBookingField("personalInfo.firstName", first);
+                  setBookingField("personalInfo.lastName", last);
+                }}
+                inputRef={inputRef}
+              />
+
+              {/* First name */}
+              {/* <BookingInput
                 className="w-full lg:w-1/2"
                 type="text"
                 id="firstName"
@@ -72,10 +105,10 @@ export default function PersonalInformation() {
                 touched={formik.touched.firstName}
                 value={firstName}
                 inputRef={inputRef}
-              />
+              /> */}
 
               {/* Last name */}
-              <BookingInput
+              {/* <BookingInput
                 className="w-full lg:w-1/2"
                 type="text"
                 id="lastName"
@@ -92,7 +125,7 @@ export default function PersonalInformation() {
                 }}
                 touched={formik.touched.lastName}
                 value={lastName}
-              />
+              /> */}
             </motion.div>
 
             {/* Email */}

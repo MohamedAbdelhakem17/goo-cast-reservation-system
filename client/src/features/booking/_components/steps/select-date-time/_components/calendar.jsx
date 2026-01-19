@@ -102,7 +102,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
   return (
     <div className="mx-auto w-full bg-white">
       {/* Counters */}
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+      <div className="mb-6 grid grid-cols-2 gap-6">
         <CounterInput
           label={t("duration-0")}
           value={duration}

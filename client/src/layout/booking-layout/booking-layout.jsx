@@ -68,7 +68,7 @@ export default function BookingLayout({ children, currentStep }) {
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto mb-3 w-full px-3 md:px-4 lg:max-w-4xl lg:px-6 xl:max-w-6xl">
+      <div className="mx-auto mb-1 w-full px-3 md:px-4 lg:max-w-4xl lg:px-6 xl:max-w-6xl">
         <motion.div
           className="rounded-xl bg-white"
           // initial={{ opacity: 0 }}
@@ -89,7 +89,7 @@ export default function BookingLayout({ children, currentStep }) {
                 // initial="hidden"
                 // animate="visible"
                 // exit="exit"
-                className="items-start space-y-2 md:space-y-2 lg:grid lg:grid-cols-1 lg:gap-6"
+                className="items-start space-y-1 md:space-y-2 lg:grid lg:grid-cols-1 lg:gap-6"
               >
                 <motion.div variants={itemVariants} className="rounded-lg">
                   {children}

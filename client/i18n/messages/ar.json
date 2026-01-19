@@ -273,7 +273,7 @@
   "processing-0": "جاري المعالجة",
   "complete-booking": "إتمام الحجز",
   "cash": "نقدي",
-  "pay-at-studio-cash": "الدفع في الاستوديو (نقدي)",
+  "pay-at-studio-cash": "ادفع في الاستوديو (نقدًا)، أنستاباى , فودافون كاش",
   "pay-with-cash-when-you-arrive-at-the-studio": "ادفع نقداً عند وصولك إلى الاستوديو",
   "payment-will-be-processed-securely-through-our-payment-partner-you-will-be-redirected-to-complete-your-payment-after-confirming-your-booking": "سيتم معالجة الدفع بشكل آمن من خلال شريك الدفع. سيتم تحويلك لإتمام الدفع بعد تأكيد حجزك",
   "we-accept-all-major-credit-cards-paypal-and-bank-transfers-less-than-span-greater-than": "نقبل جميع البطاقات الائتمانية الرئيسية وPayPal والتحويل البنكي",
@@ -486,9 +486,10 @@
   "this-month": "هذا الشهر",
   "this-week": "هذا الاسبوع",
   "select-session-duration": "حدد مدة الجلسة",
-  "number-of-people": "عدد الأشخاص",
+  "number-of-people": "الأشخاص",
   "person": "شخص",
   "people": "شخص",
   "maximum-allowed": "الحد الأقصى المسموح به:",
-  "please-select-number-of-people": "الرجاء تحديد عدد الأشخاص أولاً"
+  "please-select-number-of-people": "الرجاء تحديد عدد الأشخاص أولاً",
+  "enter-your-full-name": "أدخل اسمك الكامل"
 }

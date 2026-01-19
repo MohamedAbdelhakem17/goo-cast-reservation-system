@@ -1,7 +1,7 @@
-import React from "react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { Check } from "lucide-react";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { Check } from "lucide-react";
+import React from "react";
 
 export default function Stepper() {
   const { lng, t } = useLocalization();
@@ -20,7 +20,7 @@ export default function Stepper() {
   };
 
   return (
-    <div className="bg-white px-4 py-3 lg:px-8">
+    <div className="bg-white px-4 py-2 lg:px-8">
       {/* Desktop/Tablet View */}
       <div className="mx-auto hidden max-w-5xl scale-[.9] items-center justify-between sm:flex">
         {steps.map((step, index) => (
@@ -72,7 +72,7 @@ export default function Stepper() {
       </div>
 
       {/* Mobile View */}
-      <div className="py-3 sm:hidden">
+      <div className="pt-1 sm:hidden">
         {/* Progress Bar */}
         <div className="mb-4">
           <div className="mb-2 flex items-center justify-between">
@@ -92,7 +92,7 @@ export default function Stepper() {
         </div>
 
         {/* Current Step Display */}
-        <div
+        {/* <div
           className="cursor-pointer rounded-xl border border-[#FF3B30]/20 bg-gradient-to-r from-[#FF3B30]/5 to-[#FF6B60]/5 p-4"
           onClick={handleScroll}
         >
@@ -113,10 +113,10 @@ export default function Stepper() {
               <div className="text-xs text-gray-500">{t("current-step")}</div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Mini Steps Overview */}
-        <div className="mt-4 flex cursor-pointer justify-center space-x-2">
+        {/* <div className="mt-4 flex cursor-pointer justify-center space-x-2">
           {steps.map((step) => (
             <button
               key={step.id}
@@ -129,7 +129,7 @@ export default function Stepper() {
               }`}
             />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
