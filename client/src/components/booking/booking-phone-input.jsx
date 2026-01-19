@@ -29,7 +29,6 @@ const BookingPhoneInput = ({
         inputProps={{
           name: "personalInfo.phone",
           required: true,
-          autoFocus: true,
           onFocus: () => setIsFocused(true),
           onBlur: (e) => {
             setIsFocused(false);
