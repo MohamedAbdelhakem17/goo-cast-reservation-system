@@ -44,6 +44,7 @@
     "react-helmet": "^6.1.0",
     "react-i18next": "^15.7.3",
     "react-lazy-load-image-component": "^1.6.3",
+    "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^7.4.0",
     "react-select": "^5.10.2",
     "react-sticky-el": "^2.1.1",

@@ -1,4 +1,4 @@
-import { BookingInput } from "@/components/booking";
+import { BookingInput, BookingPhoneInput } from "@/components/booking";
 import { Button } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { motion } from "framer-motion";
@@ -91,22 +91,14 @@ export default function AddUserForm({
       </motion.div>
 
       {/* Phone number */}
-      <motion.div {...motionProps}>
-        <BookingInput
-          type="text"
-          id="phoneNumber"
-          value={phone}
+      <motion.div {...motionProps} className="b-0 m-0 w-full">
+        <BookingPhoneInput
           label={t("phone-number")}
-          placeholder={t("enter-your-phone-number")}
-          errors={getFieldError("personalInfo.phone")}
-          onBlur={(e) => {
-            formik.handleBlur(e);
-          }}
-          onChange={(e) => {
-            formik.handleChange(e);
-            setFieldValue("personalInfo.phone", e.target.value);
-          }}
-          touched={formik.touched.phoneNumber}
+          value={phone}
+          onChange={(value) => setFieldValue("personalInfo.phone", value)}
+          onBlur={() => formik.handleBlur({ target: { name: "personalInfo.phone" } })}
+          errors={formik.errors.personalInfo?.phone}
+          touched={formik.touched.personalInfo?.phone}
         />
       </motion.div>
     </>

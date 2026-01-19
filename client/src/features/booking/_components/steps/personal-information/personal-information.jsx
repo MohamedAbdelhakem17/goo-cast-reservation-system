@@ -1,4 +1,4 @@
-import { BookingInput } from "@/components/booking";
+import { BookingInput, BookingPhoneInput } from "@/components/booking";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { BookingLabel } from "@/features/booking/_components";
@@ -6,6 +6,7 @@ import Cart from "@/features/booking/_components/cart/cart";
 import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import "react-phone-input-2/lib/style.css";
 import Faq from "./../select-additional-services/_components/faq";
 import PaymentOptions from "./_components/payment-way";
 
@@ -21,6 +22,7 @@ export default function PersonalInformation() {
 
   // state
   const [fullName, setFullName] = useState("");
+  const [value, setValue] = useState("");
 
   // Ref
   const inputRef = useRef(null);
@@ -150,23 +152,16 @@ export default function PersonalInformation() {
             </motion.div>
 
             {/* Phone number */}
-            <motion.div {...motionProps}>
-              <BookingInput
-                type="text"
-                id="phoneNumber"
-                value={phone}
+            <motion.div {...motionProps} className="b-0 m-0 w-full">
+              <BookingPhoneInput
                 label={t("phone-number")}
-                placeholder={t("enter-your-phone-number")}
-                errors={getBookingError("personalInfo.phone")}
-                onBlur={(e) => {
-                  formik.handleBlur(e);
-                  tracking("user_data", { phone });
-                }}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setBookingField("personalInfo.phone", e.target.value);
-                }}
-                touched={formik.touched.phoneNumber}
+                value={formik.values.personalInfo.phone}
+                onChange={(value) => formik.setFieldValue("personalInfo.phone", value)}
+                onBlur={() =>
+                  formik.handleBlur({ target: { name: "personalInfo.phone" } })
+                }
+                errors={formik.errors.personalInfo?.phone}
+                touched={formik.touched.personalInfo?.phone}
               />
             </motion.div>
 
