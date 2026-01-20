@@ -9,6 +9,7 @@ import {
   SelectPackage,
   SelectStudio,
 } from "../../_components/steps";
+import SummaryBar from "../../_components/summary-bar";
 
 export default function Booking() {
   // Hooks
@@ -33,6 +34,9 @@ export default function Booking() {
   }, []);
 
   return (
-    <BookingLayout currentStep={currentStep}>{stepComponents[currentStep]}</BookingLayout>
+    <BookingLayout currentStep={currentStep}>
+      {stepComponents[currentStep]}
+      <SummaryBar />
+    </BookingLayout>
   );
 }
