@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axios-instance";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetAllCoupons = () => {
   const { data, isLoading, error } = useQuery({
@@ -71,4 +71,33 @@ export const useDeleteCoupon = () => {
   });
 
   return { data, isPending, error, deleteCoupon };
+};
+
+export const useChangeCouponStatus = () => {
+  const {
+    mutate: changeStatus,
+    isPending,
+    error,
+  } = useMutation({
+    mutationKey: ["change-coupon-status"],
+    mutationFn: async ({ payload, id }) => {
+      const { data } = await axiosInstance.put(`/coupon/change-status/${id}`, {
+        isActive: payload,
+      });
+      console.log(data);
+      return data;
+    },
+  });
+  return { isPending, error, changeStatus };
+};
+
+export const useGetAutoApplyCoupon = () => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["auto-apply-coupon"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/coupon/get-auto-apply-coupon");
+      return data;
+    },
+  });
+  return { data, isLoading, error };
 };

@@ -19,6 +19,19 @@ const CouponSchema = new mongoose.Schema(
       required: [true, "Please provide a discount percentage"],
       min: [0, "Discount percentage must be a positive number"],
     },
+    autoApply: {
+      type: Boolean,
+      default: false,
+    },
+    appliesTo: String,
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    priority: {
+      type: Number,
+      default: 0,
+    },
     expires_at: {
       type: Date,
       required: [true, "Please provide an expiration date"],
@@ -46,7 +59,7 @@ const CouponSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Coupon", CouponSchema);

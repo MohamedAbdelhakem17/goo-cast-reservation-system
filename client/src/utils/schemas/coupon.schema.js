@@ -6,6 +6,8 @@ const getInitialValues = (editingCoupon) => ({
   discount: editingCoupon?.discount || "",
   expires_at: editingCoupon?.expires_at?.slice(0, 10) || "",
   max_uses: editingCoupon?.max_uses || "",
+  priority: editingCoupon?.priority || "",
+  autoApply: editingCoupon?.autoApply || false,
 });
 
 const couponValidationSchema = Yup.object({

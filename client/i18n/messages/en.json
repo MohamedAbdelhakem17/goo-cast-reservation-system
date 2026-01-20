@@ -508,5 +508,9 @@
   "people": "people",
   "maximum-allowed": "Maximum allowed:",
   "please-select-number-of-people": "Please select number of people first",
-  "enter-your-full-name": "Enter your full name "
+  "enter-your-full-name": "Enter your full name ",
+  "priority": "Priority",
+  "auto-apply": "Auto Apply",
+  "manual": "manual",
+  "discount-applied-on-package": "discount applied on package"
 }

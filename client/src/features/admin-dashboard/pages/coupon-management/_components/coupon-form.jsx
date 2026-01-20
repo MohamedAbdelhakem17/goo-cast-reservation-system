@@ -1,8 +1,8 @@
-import { Pencil, X, Plus } from "lucide-react";
 import { Button, Input } from "@/components/common";
-import { useFormik } from "formik";
-import { couponValidationSchema, getInitialValues } from "@/utils/schemas/coupon.schema";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { couponValidationSchema, getInitialValues } from "@/utils/schemas/coupon.schema";
+import { useFormik } from "formik";
+import { Pencil, Plus, X } from "lucide-react";
 
 export default function CouponForm({
   editingCoupon,
@@ -124,6 +124,38 @@ export default function CouponForm({
               errors={formik.errors.max_uses}
               touched={formik.touched.max_uses}
             />
+          </div>
+
+          {/* priority */}
+          <div className="space-y-2 sm:col-span-2 lg:col-span-1">
+            <Input
+              id="priority"
+              name="priority"
+              value={formik.values.priority}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="100"
+              type="string"
+              label={t("priority")}
+              errors={formik.errors.priority}
+              touched={formik.touched.priority}
+            />
+          </div>
+
+          {/* Auto Apply */}
+          <div className="flex items-center space-y-2 sm:col-span-2 lg:col-span-1">
+            <label className="flex cursor-pointer items-center gap-2">
+              <input
+                id="autoApply"
+                name="autoApply"
+                type="checkbox"
+                checked={formik.values.autoApply}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="h-4 w-4 rounded border-gray-300"
+              />
+              <span className="text-sm font-medium text-gray-700">{t("auto-apply")}</span>
+            </label>
           </div>
         </div>
 

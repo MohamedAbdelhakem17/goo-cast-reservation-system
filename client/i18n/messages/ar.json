@@ -491,5 +491,9 @@
   "people": "شخص",
   "maximum-allowed": "الحد الأقصى المسموح به:",
   "please-select-number-of-people": "الرجاء تحديد عدد الأشخاص أولاً",
-  "enter-your-full-name": "أدخل اسمك الكامل"
+  "enter-your-full-name": "أدخل اسمك الكامل",
+  "priority": "أولوية",
+  "auto-apply": "تطبيق تلقائي",
+  "manual": "يدوي",
+  "discount-applied-on-package": "الخصم المطبق على الحزمة"
 }

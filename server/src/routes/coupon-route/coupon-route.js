@@ -7,6 +7,7 @@ const allowTo = require("../../middleware/allow-to-middleware");
 const { USER_ROLE } = require("../../config/system-variables");
 
 router.route("/apply-coupon").post(couponController.applyCoupon);
+router.route("/get-auto-apply-coupon").get(couponController.getAutoApplyCoupon);
 
 router.use(protectRoute, allowTo(USER_ROLE.ADMIN));
 
@@ -19,5 +20,7 @@ router
   .route("/:id")
   .delete(couponController.deleteCoupon)
   .put(couponController.updateCoupon);
+
+router.route("/change-status/:id").put(couponController.editCouponActiveState);
 
 module.exports = router;
