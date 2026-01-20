@@ -50,7 +50,7 @@ export default function SummaryBar() {
   return (
     <>
       {/* Separator */}
-      <div className="pb-12 lg:hidden" />
+      <div className="pb-36 lg:hidden" />
 
       {/* Summary bar parent*/}
       <div className="fixed right-0 bottom-[65px] left-0 z-40 md:hidden">
