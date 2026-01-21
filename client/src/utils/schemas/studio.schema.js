@@ -21,6 +21,7 @@ export const getStudioInitialValues = (studio) => {
     startTime: studio?.startTime || "12:00",
     endTime: studio?.endTime || "20:00",
     thumbnail: studio?.thumbnail || null,
+    live_view: studio?.live_view || null,
     imagesGallery: studio?.imagesGallery || [],
     dayOff: studio?.dayOff || [],
     minSlotsPerDay: studio?.minSlotsPerDay || {
@@ -103,6 +104,19 @@ export const validationSchema = Yup.object({
 
   thumbnail: Yup.mixed()
     .required("Thumbnail is required")
+    .test("fileSize", "File too large", (value) => {
+      if (!value) return false;
+      if (typeof value === "string") return true;
+      return value.size <= 5000000;
+    })
+    .test("fileType", "Unsupported file type", (value) => {
+      if (!value) return false;
+      if (typeof value === "string") return true;
+      return ["image/jpeg", "image/png", "image/jpg"].includes(value.type);
+    }),
+
+  live_view: Yup.mixed()
+    .required("Live view is required")
     .test("fileSize", "File too large", (value) => {
       if (!value) return false;
       if (typeof value === "string") return true;

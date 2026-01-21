@@ -495,5 +495,8 @@
   "priority": "أولوية",
   "auto-apply": "تطبيق تلقائي",
   "manual": "يدوي",
-  "discount-applied-on-package": "الخصم المطبق على الحزمة"
+  "discount-applied-on-package": "الخصم المطبق على الحزمة",
+  "live-view": "عرض حي",
+  "remove-live-view": "إزالة العرض المباشر",
+  "studio-selected-successfully": "تم اختيار الاستوديو بنجاح"
 }

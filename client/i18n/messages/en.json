@@ -512,5 +512,8 @@
   "priority": "Priority",
   "auto-apply": "Auto Apply",
   "manual": "manual",
-  "discount-applied-on-package": "discount applied on package"
+  "discount-applied-on-package": "discount applied on package",
+  "live-view": "Live View",
+  "remove-live-view": "Remove Live View",
+  "studio-selected-successfully": "studio selected successfuly"
 }
