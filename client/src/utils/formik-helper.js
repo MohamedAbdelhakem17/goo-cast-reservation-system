@@ -10,11 +10,13 @@ const getFieldError = (field, formik) => {
 
 const hasError = (steps, currentStep, formik) => {
   const fields = steps[currentStep] || [];
+
   return fields.some((field) => {
-    const value = getFieldValue(field, formik);
     const error = getFieldError(field, formik);
-    return !value || error;
+    const touched = formik.touched[field];
+
+    return touched && error;
   });
 };
 
-export { hasError, getFieldValue, getFieldError };
+export { getFieldError, getFieldValue, hasError };

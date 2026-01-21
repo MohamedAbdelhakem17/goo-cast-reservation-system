@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import { Input, SelectInput } from "@/components/common";
 import { useGetAllCategories } from "@/apis/admin/manage-category.api";
+import { Input, SelectInput } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useMemo } from "react";
 
 export default function ShardFields({ formik }) {
   const { lng, t } = useLocalization();
@@ -33,7 +33,7 @@ export default function ShardFields({ formik }) {
   }, [formik.values.image]);
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       {/* English Name */}
       <Input
         type="number"
@@ -45,6 +45,19 @@ export default function ShardFields({ formik }) {
         onBlur={formik.handleBlur}
         errors={formik.touched.price && formik.errors.price}
         placeholder={t("package-price-per-hour")}
+        className="col-span-1 md:col-span-2"
+      />
+
+      {/*  best_for */}
+      <Input
+        label={t("enter-best-for")}
+        id="best_for"
+        name="best_for"
+        value={formik.values.best_for}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        errors={formik.touched.best_for && formik.errors.best_for}
+        placeholder={t("best-for")}
         className="col-span-1 md:col-span-2"
       />
 
@@ -89,6 +102,22 @@ export default function ShardFields({ formik }) {
             </button>
           </div>
         )}
+      </div>
+
+      {/* show_image */}
+      <div className="flex items-center space-y-2 sm:col-span-2 lg:col-span-1">
+        <label className="flex cursor-pointer items-center gap-2">
+          <input
+            id="show_image"
+            name="show_image"
+            type="checkbox"
+            checked={formik.values.show_image}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className="h-4 w-4 rounded border-gray-300"
+          />
+          <span className="text-sm font-medium text-gray-700">{t("show-image")}</span>
+        </label>
       </div>
     </div>
   );

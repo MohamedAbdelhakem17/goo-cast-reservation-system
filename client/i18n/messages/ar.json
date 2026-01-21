@@ -495,5 +495,9 @@
   "priority": "أولوية",
   "auto-apply": "تطبيق تلقائي",
   "manual": "يدوي",
-  "discount-applied-on-package": "الخصم المطبق على الحزمة"
+  "discount-applied-on-package": "الخصم المطبق على الحزمة",
+  "not-included": "العبوة غير متضمنة",
+  "enter-best-for": "الأفضل للرقم",
+  "show-image": "عرض صورة الحزمة",
+  "most-recommended": "الأكثر الموصى بها"
 }

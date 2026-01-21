@@ -99,6 +99,9 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     target_audience,
     price,
     image,
+    not_included,
+    best_for,
+    show_image,
   } = req.body;
 
   if (
@@ -109,8 +112,8 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "Please provide all required fields"
-      )
+        "Please provide all required fields",
+      ),
     );
   }
 
@@ -123,6 +126,9 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     target_audience,
     price,
     image,
+    not_included,
+    best_for,
+    show_image,
   });
 
   res.status(201).json({
@@ -135,22 +141,21 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
 // update hourly package
 exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  console.log(req.body);
   const hourlyPackage = await HourlyPackageModel.findByIdAndUpdate(
     id,
     req.body,
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
   if (!hourlyPackage) {
     return next(
       new AppError(
         404,
         HTTP_STATUS_TEXT.FAIL,
-        "No hourly package found with this ID"
-      )
+        "No hourly package found with this ID",
+      ),
     );
   }
   res.status(200).json({
@@ -169,8 +174,8 @@ exports.deleteHourlyPackage = asyncHandler(async (req, res, next) => {
       new AppError(
         404,
         HTTP_STATUS_TEXT.FAIL,
-        "No hourly package found with this ID"
-      )
+        "No hourly package found with this ID",
+      ),
     );
   }
   res.status(200).json({
@@ -188,7 +193,7 @@ exports.packagePriceMange = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   if (!hourlyPackage) {
@@ -196,8 +201,8 @@ exports.packagePriceMange = asyncHandler(async (req, res, next) => {
       new AppError(
         404,
         HTTP_STATUS_TEXT.FAIL,
-        "No hourly package found with this ID"
-      )
+        "No hourly package found with this ID",
+      ),
     );
   }
 
@@ -218,8 +223,8 @@ exports.getHourlyPackagesByCategory = asyncHandler(async (req, res, next) => {
       new AppError(
         404,
         HTTP_STATUS_TEXT.FAIL,
-        "No hourly package found for this category"
-      )
+        "No hourly package found for this category",
+      ),
     );
   }
 
@@ -236,7 +241,11 @@ exports.toggleHourlyPackagesStatus = asyncHandler(async (req, res, next) => {
 
   if (typeof is_active !== "boolean") {
     return next(
-      new AppError(400, HTTP_STATUS_TEXT.FAIL, "`is_active` must be a boolean.")
+      new AppError(
+        400,
+        HTTP_STATUS_TEXT.FAIL,
+        "`is_active` must be a boolean.",
+      ),
     );
   }
 
@@ -246,12 +255,12 @@ exports.toggleHourlyPackagesStatus = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   if (!updatedPackage) {
     return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No package found with this ID")
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No package found with this ID"),
     );
   }
 

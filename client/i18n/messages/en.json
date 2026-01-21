@@ -512,5 +512,11 @@
   "priority": "Priority",
   "auto-apply": "Auto Apply",
   "manual": "manual",
-  "discount-applied-on-package": "discount applied on package"
+  "discount-applied-on-package": "discount applied on package",
+  "not-included": "Package not included",
+  "enter-not-included": "enter items not included in package",
+  "best-for": "Enter best for number",
+  "enter-best-for": "best for number",
+  "show-image": "Show Package image",
+  "most-recommended": "Most Recommended"
 }

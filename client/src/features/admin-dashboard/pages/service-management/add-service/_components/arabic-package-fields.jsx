@@ -1,6 +1,6 @@
-import { TextArea, Input } from "@/components/common";
-import MultiLangArrayInput from "./multi-lang-array-input";
+import { Input, TextArea } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import MultiLangArrayInput from "./multi-lang-array-input";
 
 export default function ArabicFields({ formik }) {
   const { t } = useLocalization();
@@ -34,6 +34,7 @@ export default function ArabicFields({ formik }) {
       {/* Service Description */}
       <TextArea
         label={t("service-description")}
+        className="col-span-full"
         id="description.ar"
         name="description.ar"
         value={formik.values.description.ar}
@@ -69,6 +70,15 @@ export default function ArabicFields({ formik }) {
         lang={"ar"}
         labelKey={t("details-0")}
         placeholderKey={t("enter-detail")}
+      />
+
+      {/* not included */}
+      <MultiLangArrayInput
+        form={formik}
+        fieldName="not_included"
+        lang={"ar"}
+        labelKey={t("not-included")}
+        placeholderKey={t("enter-not-included")}
       />
     </div>
   );
