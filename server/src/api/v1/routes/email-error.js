@@ -1,4 +1,4 @@
-const sendEmail = require("../utils/send-email");
+const sendEmail = require("../../../utils/send-email");
 
 const SendEmailRoute = (req, res, next) => {
     const err = req.body;
