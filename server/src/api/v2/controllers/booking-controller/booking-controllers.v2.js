@@ -100,6 +100,13 @@ function countOverlaps(start, end, intervals) {
   return count;
 }
 
+/**
+ * Get available time slots for booking
+ * @route POST /api/v2/bookings/available-slots
+ * @param {string} req.body.date - Date in YYYY-MM-DD format
+ * @param {number} req.body.duration - Duration in hours
+ * @returns {Object} Available time slots array
+ */
 exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   const { studioId, date, duration } = req.body;
 
