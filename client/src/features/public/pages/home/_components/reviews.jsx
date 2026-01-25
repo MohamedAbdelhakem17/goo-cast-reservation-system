@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, AlertCircle, MessageCircle } from "lucide-react";
 import StarRating from "@/hooks/useRate";
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "@/constants/config";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertCircle, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Reviews() {
   const [current, setCurrent] = useState(0);
@@ -15,7 +14,7 @@ export default function Reviews() {
   } = useQuery({
     queryKey: ["reviews"],
     queryFn: async () => {
-      const res = await fetch(API_BASE_URL + "/reviews");
+      const res = await fetch("/reviews");
       return res.json();
     },
   });

@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
 import axios from "axios";
-import { API_BASE_URL } from "@/constants/config";
+import { createContext, useContext, useEffect, useReducer } from "react";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -37,7 +36,7 @@ export default function AuthProvider({ children }) {
 
   const isValidSession = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/auth/is-login`, {
+      const response = await axios.get(`/auth/is-login`, {
         withCredentials: true,
       });
       return response.data?.isValid ?? false;

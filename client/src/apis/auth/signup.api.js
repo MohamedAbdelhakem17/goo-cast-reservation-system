@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import useLocalization from "@/context/localization-provider/localization-context";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { API_BASE_URL } from "@/constants/config";
-import useLocalization from "@/context/localization-provider/localization-context";
+import { useFormik } from "formik";
+import { useState } from "react";
+import * as Yup from "yup";
 
 const SignupForm = ({ closeModel }) => {
   const { t } = useLocalization();
@@ -50,7 +49,7 @@ const SignupForm = ({ closeModel }) => {
     error,
   } = useMutation({
     mutationFn: async (data) => {
-      const response = await axios.post(API_BASE_URL + "/auth/signup", data);
+      const response = await axios.post("/auth/signup", data);
       return response.data;
     },
     onError: (err) => {
