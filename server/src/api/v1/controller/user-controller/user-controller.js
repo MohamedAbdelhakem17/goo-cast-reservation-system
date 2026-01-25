@@ -1,10 +1,10 @@
 const asyncHandler = require("express-async-handler");
 
-const AppError = require("../../utils/app-error");
-const { getAllDay } = require("../../utils/time-mange");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
-const AuthModel = require("../../models/user-model/user-model");
-const BookingModel = require("../../models/booking-model/booking-model");
+const AppError = require("../../../../utils/app-error");
+const { getAllDay } = require("../../../../utils/time-mange");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
+const AuthModel = require("../../../../models/user-model/user-model");
+const BookingModel = require("../../../../models/booking-model/booking-model");
 
 // Get User Data
 exports.getUserData = asyncHandler(async (req, res, next) => {

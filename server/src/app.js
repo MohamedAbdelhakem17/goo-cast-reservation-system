@@ -14,7 +14,8 @@ const cors = require("cors");
 
 const databaseConnect = require("./config/database-connection");
 const errorMiddlewareHandler = require("./middleware/error-middleware-handler");
-const amountRoutes = require("./routes/index");
+const AmountRoutesV1 = require("./api/v1/routes/");
+const AmountRoutesV2 = require("./api/v2/routes/");
 const AppError = require("./utils/app-error");
 const { HTTP_STATUS_TEXT } = require("./config/system-variables");
 
@@ -99,7 +100,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // ====== API Routes ======
-amountRoutes(app);
+AmountRoutesV1(app);
+AmountRoutesV2(app);
 
 // ====== Serve Static Uploads ======
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));

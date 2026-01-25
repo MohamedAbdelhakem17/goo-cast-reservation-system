@@ -41,7 +41,7 @@ const routes = [
   },
 ];
 
-const amountRoutes = (app) => {
+const AmountRoutesV1 = (app) => {
   routes.forEach(({ path, router }) => app.use(path, router));
 
   // Google reviews
@@ -57,6 +57,5 @@ const amountRoutes = (app) => {
   );
 };
 
-module.exports = amountRoutes;
+module.exports = AmountRoutesV1;
 
-module.exports = amountRoutes;
