@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const allowTo = require("../../middleware/allow-to-middleware");
+const allowTo = require("../../../../middleware/allow-to-middleware");
 const studioController = require("../../controller/studio-controller/studio-controller");
-const { USER_ROLE } = require("../../config/system-variables");
-const protectRoute = require("../../middleware/protect.middleware");
+const { USER_ROLE } = require("../../../../config/system-variables");
+const protectRoute = require("../../../../middleware/protect.middleware");
 
 router
   .route("/")
@@ -14,7 +14,7 @@ router
     allowTo(USER_ROLE.ADMIN),
     studioController.studioImageUpload,
     studioController.imageManipulation,
-    studioController.createStudio
+    studioController.createStudio,
   );
 
 router
@@ -26,14 +26,14 @@ router
     allowTo(USER_ROLE.ADMIN),
     studioController.studioImageUpload,
     studioController.imageManipulation,
-    studioController.updateStudio
+    studioController.updateStudio,
   );
 
 router.put(
   "/changePrice/:id",
   protectRoute,
   allowTo(USER_ROLE.ADMIN),
-  studioController.changePrice
+  studioController.changePrice,
 );
 
 router.route("/change-status/:id").put(studioController.toggleStudioStatus);

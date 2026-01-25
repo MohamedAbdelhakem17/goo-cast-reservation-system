@@ -3,12 +3,12 @@ const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
 const {
   uploadSingleImage,
-} = require("../../middleware/image-upload-middleware");
-const AddOnModel = require("../../models/add-on-model/add-on-model");
+} = require("../../../../middleware/image-upload-middleware");
+const AddOnModel = require("../../../../models/add-on-model/add-on-model");
 
 exports.addonsImageUpload = uploadSingleImage("image");
 
@@ -17,7 +17,7 @@ exports.addonsImageManipulation = asyncHandler(async (req, res, next) => {
 
   if (!req.file) {
     return next(
-      new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please upload an image")
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please upload an image"),
     );
   }
 
@@ -81,8 +81,8 @@ exports.createAddOn = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "Please provide all required fields"
-      )
+        "Please provide all required fields",
+      ),
     );
   }
 
@@ -95,21 +95,21 @@ exports.createAddOn = asyncHandler(async (req, res, next) => {
         new AppError(
           400,
           HTTP_STATUS_TEXT.FAIL,
-          "Invalid perHourDiscounts format"
-        )
+          "Invalid perHourDiscounts format",
+        ),
       );
     }
   }
 
   if (isFixed && !perHourDiscounts) {
     return next(
-      new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide Discounts Rule")
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide Discounts Rule"),
     );
   }
 
   if (isNaN(price) || price <= 0) {
     return next(
-      new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide a valid price")
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide a valid price"),
     );
   }
 
@@ -138,7 +138,7 @@ exports.updateAddOn = asyncHandler(async (req, res, next) => {
   });
   if (!addOn) {
     return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No add-on found with this ID")
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No add-on found with this ID"),
     );
   }
   res.status(200).json({
@@ -154,7 +154,11 @@ exports.toggleAddOnStatus = asyncHandler(async (req, res, next) => {
 
   if (typeof is_active !== "boolean") {
     return next(
-      new AppError(400, HTTP_STATUS_TEXT.FAIL, "`is_active` must be a boolean.")
+      new AppError(
+        400,
+        HTTP_STATUS_TEXT.FAIL,
+        "`is_active` must be a boolean.",
+      ),
     );
   }
 
@@ -164,12 +168,12 @@ exports.toggleAddOnStatus = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   if (!updatedAddOn) {
     return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No add-on found with this ID")
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No add-on found with this ID"),
     );
   }
 
@@ -186,7 +190,7 @@ exports.deleteAddOn = asyncHandler(async (req, res, next) => {
   const addOn = await AddOnModel.findByIdAndDelete(id);
   if (!addOn) {
     return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No add-on found with this ID")
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No add-on found with this ID"),
     );
   }
   res.status(200).json({

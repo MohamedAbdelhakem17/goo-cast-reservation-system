@@ -3,13 +3,13 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 
-const generateToken = require("../../utils/create-token");
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
-const AuthModel = require("../../models/user-model/user-model");
+const generateToken = require("../../../../utils/create-token");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
+const AuthModel = require("../../../../models/user-model/user-model");
 
-const sendEmail = require("../../utils/send-email");
-const generateEmailTemplate = require("../../utils/generate-email-template");
+const sendEmail = require("../../../../utils/send-email");
+const generateEmailTemplate = require("../../../../utils/generate-email-template");
 
 // create token for activation
 const generateActivationEmail = (userId, email, type) => {
@@ -28,7 +28,7 @@ const generateActivationEmail = (userId, email, type) => {
   return mailOptions;
 };
 
-// sIgnup function to handle user registration
+// signup function to handle user registration
 exports.signup = asyncHandler(async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
 
@@ -50,7 +50,7 @@ exports.signup = asyncHandler(async (req, res) => {
     const mailOptions = generateActivationEmail(
       existingUser._id,
       existingUser.email,
-      "activate"
+      "activate",
     );
     try {
       await sendEmail(mailOptions);
@@ -286,7 +286,7 @@ exports.resendActivationLink = asyncHandler(async (req, res) => {
     throw new AppError(
       500,
       HTTP_STATUS_TEXT.FAIL,
-      "Failed to send activation email"
+      "Failed to send activation email",
     );
   }
 });

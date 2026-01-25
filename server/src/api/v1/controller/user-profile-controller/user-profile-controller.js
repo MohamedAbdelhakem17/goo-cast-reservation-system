@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
-const AppError = require("../../utils/app-error");
-const userProfileModel = require("../../models/user-profile-model/user-profile-model");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
+const AppError = require("../../../../utils/app-error");
+const userProfileModel = require("../../../../models/user-profile-model/user-profile-model");
 
 /**
  * GET all user profiles
@@ -26,7 +26,7 @@ exports.getUserProfile = asyncHandler(async (req, res) => {
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.ERROR,
-      "User ID is required to fetch user profile"
+      "User ID is required to fetch user profile",
     );
   }
 
@@ -36,7 +36,7 @@ exports.getUserProfile = asyncHandler(async (req, res) => {
     throw new AppError(
       404,
       HTTP_STATUS_TEXT.ERROR,
-      "No user profile found for the provided ID"
+      "No user profile found for the provided ID",
     );
   }
 

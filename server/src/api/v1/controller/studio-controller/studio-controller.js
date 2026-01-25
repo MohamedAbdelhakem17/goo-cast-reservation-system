@@ -7,11 +7,11 @@ const path = require("path");
 
 const {
   uploadMultipleImages,
-} = require("../../middleware/image-upload-middleware");
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
-const StudioModel = require("../../models/studio-model/studio-model");
-const BookingModel = require("../../models/booking-model/booking-model");
+} = require("../../../../middleware/image-upload-middleware");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
+const StudioModel = require("../../../../models/studio-model/studio-model");
+const BookingModel = require("../../../../models/booking-model/booking-model");
 
 // studio image upload
 exports.studioImageUpload = uploadMultipleImages([
@@ -95,7 +95,7 @@ exports.imageManipulation = async (req, res, next) => {
             .jpeg({ quality: 90 })
             .toFile(`${uploadDir}/${imageName}`);
           return imageName;
-        })
+        }),
       );
 
       const existingImages = Array.isArray(req.body.existingImages)
@@ -202,7 +202,7 @@ exports.getAllStudios = asyncHandler(async (req, res) => {
 exports.getStudioById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const studio = await StudioModel.findOne(
-    mongoose.Types.ObjectId.isValid(id) ? { _id: id } : { slug: id }
+    mongoose.Types.ObjectId.isValid(id) ? { _id: id } : { slug: id },
   );
   if (!studio) {
     res.status(404).json({
@@ -291,7 +291,11 @@ exports.toggleStudioStatus = asyncHandler(async (req, res, next) => {
 
   if (typeof is_active !== "boolean") {
     return next(
-      new AppError(400, HTTP_STATUS_TEXT.FAIL, "`is_active` must be a boolean.")
+      new AppError(
+        400,
+        HTTP_STATUS_TEXT.FAIL,
+        "`is_active` must be a boolean.",
+      ),
     );
   }
 
@@ -301,12 +305,12 @@ exports.toggleStudioStatus = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   if (!updatedStudio) {
     return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No Studio found with this ID")
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No Studio found with this ID"),
     );
   }
 

@@ -1,20 +1,20 @@
-const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model.js");
-const BookingModel = require("../../models/booking-model/booking-model.js");
-const StudioModel = require("../../models/studio-model/studio-model.js");
-const AddOnModel = require("../../models/add-on-model/add-on-model.js");
-const CouponModel = require("../../models/coupon-model/coupon-model.js");
-const AppError = require("../../utils/app-error.js");
+const PackageModel = require("../../../../models/hourly-packages-model/hourly-packages-model.js");
+const BookingModel = require("../../../../models/booking-model/booking-model.js");
+const StudioModel = require("../../../../models/studio-model/studio-model.js");
+const AddOnModel = require("../../../../models/add-on-model/add-on-model.js");
+const CouponModel = require("../../../../models/coupon-model/coupon-model.js");
+const AppError = require("../../../../utils/app-error.js");
 const {
   HTTP_STATUS_TEXT,
   PAYMENT_METHOD,
   USER_ROLE,
   BOOKING_PIPELINE,
-} = require("../../config/system-variables.js");
+} = require("../../../../config/system-variables.js");
 
-const { calculateSlotPrices } = require("../../utils/priceCalculator.js");
-const { getAllDay, timeToMinutes } = require("../../utils/time-mange.js");
-const userProfileModel = require("../../models/user-profile-model/user-profile-model.js");
-const determineUserTags = require("../../utils/tag-engine.js");
+const { calculateSlotPrices } = require("../../../../utils/priceCalculator.js");
+const { getAllDay, timeToMinutes } = require("../../../../utils/time-mange.js");
+const userProfileModel = require("../../../../models/user-profile-model/user-profile-model.js");
+const determineUserTags = require("../../../../utils/tag-engine.js");
 
 const prepareEditBookingData = async (body, user, isEdit = false) => {
   const {
@@ -71,19 +71,19 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
     throw new AppError(
       404,
       HTTP_STATUS_TEXT.FAIL,
-      "Studio not found for booking"
+      "Studio not found for booking",
     );
 
   // 2. Validate Package
   const pkg = await PackageModel.findById(
-    selectedPackage?.id || selectedPackage
+    selectedPackage?.id || selectedPackage,
   );
 
   if (!pkg)
     throw new AppError(
       404,
       HTTP_STATUS_TEXT.FAIL,
-      "Package not found for booking"
+      "Package not found for booking",
     );
 
   // 3. Check for booking conflicts (skip self if editing)
@@ -105,7 +105,7 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
-      "This time is already booked"
+      "This time is already booked",
     );
 
   // 4. Calculate package price
@@ -124,7 +124,7 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
   const addonsTotalPriceFromClient =
     selectedAddOns?.reduce(
       (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
-      0
+      0,
     ) || 0;
 
   let totalAddOnsPriceFromDb = 0;
@@ -132,7 +132,7 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
 
   if (Array.isArray(selectedAddOns) && selectedAddOns.length > 0) {
     const addOnDocs = await Promise.all(
-      selectedAddOns.map((a) => AddOnModel.findById(a.id))
+      selectedAddOns.map((a) => AddOnModel.findById(a.id)),
     );
 
     for (let i = 0; i < selectedAddOns.length; i++) {
@@ -155,7 +155,7 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
-      "The add-on price is incorrect"
+      "The add-on price is incorrect",
     );
 
   // 6. Validate total price
@@ -165,7 +165,7 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
-      "The total price is incorrect"
+      "The total price is incorrect",
     );
 
   // 7. Apply coupon if available
@@ -177,7 +177,7 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
     ? Math.round(
         packagePrice -
           packagePrice * (coupon.discount / 100) +
-          totalAddOnsPriceFromDb
+          totalAddOnsPriceFromDb,
       )
     : totalPrice;
 
@@ -185,7 +185,7 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
-      "The total price after Discount is incorrect"
+      "The total price after Discount is incorrect",
     );
 
   // 8. Validate payment method

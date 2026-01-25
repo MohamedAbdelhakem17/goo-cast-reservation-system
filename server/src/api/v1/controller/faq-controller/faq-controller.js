@@ -1,16 +1,15 @@
 const asyncHandler = require("express-async-handler");
 
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
 
-const FaqModel = require("../../models/faq-model/faq-model");
+const FaqModel = require("../../../../models/faq-model/faq-model");
 
 exports.getAllFaqs = asyncHandler(async (req, res, next) => {
   const faqs = await FaqModel.find();
   res.status(200).json({
     status: "success",
-    data: [...faqs]
-    ,
+    data: [...faqs],
   });
 });
 
@@ -36,7 +35,7 @@ exports.updateFaq = asyncHandler(async (req, res, next) => {
   const updatedFaq = await FaqModel.findByIdAndUpdate(
     id,
     { question, answer },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   );
 
   if (!updatedFaq) {

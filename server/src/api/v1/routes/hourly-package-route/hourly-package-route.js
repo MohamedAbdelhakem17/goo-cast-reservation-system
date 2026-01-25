@@ -1,7 +1,7 @@
 const express = require("express");
 const hourlyPackageController = require("../../controller/hourly-package-controller/hourly-package-controller");
-const protect = require("../../middleware/protect.middleware");
-const allowTo = require("../../middleware/allow-to-middleware");
+const protect = require("../../../../middleware/protect.middleware");
+const allowTo = require("../../../../middleware/allow-to-middleware");
 
 const router = express.Router();
 router.route("/").get(hourlyPackageController.getAllHourlyPackages); // Get all hourly packages
@@ -21,7 +21,7 @@ router
   .post(
     hourlyPackageController.serviceImageUpload,
     hourlyPackageController.serviceImageManipulation,
-    hourlyPackageController.createHourlyPackage
+    hourlyPackageController.createHourlyPackage,
   ); // Create a new hourly packages
 
 router
@@ -30,7 +30,7 @@ router
   .put(
     hourlyPackageController.serviceImageUpload,
     hourlyPackageController.serviceImageManipulation,
-    hourlyPackageController.updateHourlyPackage
+    hourlyPackageController.updateHourlyPackage,
   ) // Update hourly packages by ID
   .delete(hourlyPackageController.deleteHourlyPackage); // Delete hourly packages by ID
 

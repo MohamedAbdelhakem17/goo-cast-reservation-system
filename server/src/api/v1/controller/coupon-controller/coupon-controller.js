@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
-const checkCouponIsValid = require("../../utils/check-coupon-is-valid");
-const CouponModel = require("../../models/coupon-model/coupon-model");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
+const checkCouponIsValid = require("../../../../utils/check-coupon-is-valid");
+const CouponModel = require("../../../../models/coupon-model/coupon-model");
 
 // get all coupons
 exports.getAllCoupons = asyncHandler(async (req, res) => {

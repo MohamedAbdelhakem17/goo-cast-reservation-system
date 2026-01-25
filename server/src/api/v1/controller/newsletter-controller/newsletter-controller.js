@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
 
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
-const NewsLettersModel = require("../../models/newsletter-model/newsletter-model");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
+const NewsLettersModel = require("../../../../models/newsletter-model/newsletter-model");
 
 // sIgnup function to handle user registration
 exports.subscribe = asyncHandler(async (req, res) => {

@@ -1,10 +1,10 @@
 const asyncHandler = require("express-async-handler");
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
 
-const PriceExceptionModel = require("../../models/price-exception-model/price-exception-model");
-const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
-const { getAllDay } = require("../../utils/time-mange");
+const PriceExceptionModel = require("../../../../models/price-exception-model/price-exception-model");
+const PackageModel = require("../../../../models/hourly-packages-model/hourly-packages-model");
+const { getAllDay } = require("../../../../utils/time-mange");
 
 // Get all price exceptions for one Package
 exports.getAllPriceExceptions = asyncHandler(async (req, res, next) => {
@@ -12,7 +12,9 @@ exports.getAllPriceExceptions = asyncHandler(async (req, res, next) => {
 
   // Check if Package exists
   if (!packageExist) {
-    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "This Package not found"));
+    return next(
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "This Package not found"),
+    );
   }
 
   const priceException = await PriceExceptionModel.find({
@@ -36,8 +38,13 @@ exports.getAllPriceExceptions = asyncHandler(async (req, res, next) => {
 
 // Add New Price exception for one Package
 exports.addNewPriceException = asyncHandler(async (req, res, next) => {
-  const { package, date, isFixedHourly, defaultPricePerSlot, perSlotDiscounts } =
-    req.body;
+  const {
+    package,
+    date,
+    isFixedHourly,
+    defaultPricePerSlot,
+    perSlotDiscounts,
+  } = req.body;
 
   // Check if all required fields are provided
   if (!package || defaultPricePerSlot === undefined || isNaN(new Date(date))) {
@@ -45,8 +52,8 @@ exports.addNewPriceException = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "Please provide all required fields with a valid Date"
-      )
+        "Please provide all required fields with a valid Date",
+      ),
     );
   }
 
@@ -56,8 +63,8 @@ exports.addNewPriceException = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "per Slot Discounts is required when is not Fixed Hourly"
-      )
+        "per Slot Discounts is required when is not Fixed Hourly",
+      ),
     );
   }
 
@@ -77,15 +84,17 @@ exports.addNewPriceException = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "A price Exception already exists for this Package and same date"
-      )
+        "A price Exception already exists for this Package and same date",
+      ),
     );
   }
 
   // Check if studio exists
   const packageExist = await PackageModel.findById(package);
   if (!packageExist) {
-    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "this Package not found"));
+    return next(
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "this Package not found"),
+    );
   }
 
   // Create new price rule
@@ -105,8 +114,13 @@ exports.addNewPriceException = asyncHandler(async (req, res, next) => {
 
 // Edit Price Exception for one package
 exports.editPriceException = asyncHandler(async (req, res, next) => {
-  const { package, date, isFixedHourly, defaultPricePerSlot, perSlotDiscounts } =
-    req.body;
+  const {
+    package,
+    date,
+    isFixedHourly,
+    defaultPricePerSlot,
+    perSlotDiscounts,
+  } = req.body;
 
   // Check if all required fields are provided
   if (
@@ -119,8 +133,8 @@ exports.editPriceException = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "Please provide all required fields with a valid date"
-      )
+        "Please provide all required fields with a valid date",
+      ),
     );
   }
 
@@ -145,20 +159,20 @@ exports.editPriceException = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "A price Exception already exists for this studio and same date"
-      )
+        "A price Exception already exists for this studio and same date",
+      ),
     );
   }
 
   const priceRule = await PriceExceptionModel.findOneAndUpdate(
     { package, dayOfWeek },
     { isFixedHourly, defaultPricePerSlot, perSlotDiscounts },
-    { new: true }
+    { new: true },
   );
 
   if (!priceRule) {
     return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "Price Rule not found")
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "Price Rule not found"),
     );
   }
 
@@ -176,7 +190,7 @@ exports.deletePriceException = asyncHandler(async (req, res, next) => {
   // Check if all required fields are provided
   if (isNaN(new Date(date))) {
     return next(
-      new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide a valid date")
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "Please provide a valid date"),
     );
   }
 
@@ -195,7 +209,7 @@ exports.deletePriceException = asyncHandler(async (req, res, next) => {
   // Check if price rule exists
   if (!priceRule) {
     return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "Price Rule not found")
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "Price Rule not found"),
     );
   }
 

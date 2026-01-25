@@ -5,36 +5,36 @@ const {
   timeToMinutes,
   minutesToTime,
   getAllDay,
-} = require("../../utils/time-mange");
+} = require("../../../../utils/time-mange");
 const {
   HTTP_STATUS_TEXT,
   USER_ROLE,
   BOOKING_PIPELINE,
   PAYMENT_METHOD,
-} = require("../../config/system-variables");
+} = require("../../../../config/system-variables");
 
-const AppError = require("../../utils/app-error");
+const AppError = require("../../../../utils/app-error");
 
-const bookingConfirmationEmailBody = require("../../utils/emails-body/booking-confirmation");
-const changeBookingStatusEmail = require("../../utils/emails-body/booking-change-status");
-const { calculateSlotPrices } = require("../../utils/priceCalculator");
-const sendEmail = require("../../utils/send-email");
+const bookingConfirmationEmailBody = require("../../../../utils/emails-body/booking-confirmation");
+const changeBookingStatusEmail = require("../../../../utils/emails-body/booking-change-status");
+const { calculateSlotPrices } = require("../../../../utils/priceCalculator");
+const sendEmail = require("../../../../utils/send-email");
 
 // Models
-const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
-const AddonsModel = require("../../models/add-on-model/add-on-model.js");
-const BookingModel = require("../../models/booking-model/booking-model");
-const AuditModel = require("../../models/audit-model/audit-model.js");
-const StudioModel = require("../../models/studio-model/studio-model");
-const userProfileModel = require("../../models/user-profile-model/user-profile-model");
-const userModel = require("../../models/user-model/user-model.js");
+const PackageModel = require("../../../../models/hourly-packages-model/hourly-packages-model");
+const AddonsModel = require("../../../../models/add-on-model/add-on-model.js");
+const BookingModel = require("../../../../models/booking-model/booking-model");
+const AuditModel = require("../../../../models/audit-model/audit-model.js");
+const StudioModel = require("../../../../models/studio-model/studio-model");
+const userProfileModel = require("../../../../models/user-profile-model/user-profile-model");
+const userModel = require("../../../../models/user-model/user-model.js");
 
-const changeOpportunityStatus = require("../../utils/changeOpportunityStatus.js");
+const changeOpportunityStatus = require("../../../../utils/changeOpportunityStatus.js");
 
 const {
   deleteCalenderEvent,
   updateCalenderEvent,
-} = require("../../utils/google-calendar-integration.js");
+} = require("../../../../utils/google-calendar-integration.js");
 
 const prepareCreateBookingData = require("./prepare-create-booking-data.js");
 const prepareEditBookingData = require("./prepare-edit-booking-data.js");
@@ -42,9 +42,9 @@ const prepareEditBookingData = require("./prepare-edit-booking-data.js");
 // Service
 const {
   runBookingIntegrations,
-} = require("../../services/booking-Integration-service.js");
+} = require("../../../../services/booking-Integration-service.js");
 
-const determineUserTags = require("../../utils/tag-engine.js");
+const determineUserTags = require("../../../../utils/tag-engine.js");
 // Helpers
 const getTimeSlots = (startMinutes, endMinutes, slotDuration = 30) => {
   const slots = [];
@@ -62,12 +62,12 @@ const isDurationAvailable = (
   bookedSlots,
   totalSlots,
   requiredDurationMinutes,
-  slotDuration = 30
+  slotDuration = 30,
 ) => {
   const requiredSlots = Math.ceil(requiredDurationMinutes / slotDuration);
 
   const availableSlots = totalSlots.filter(
-    (slot) => !bookedSlots.includes(slot)
+    (slot) => !bookedSlots.includes(slot),
   );
 
   let consecutive = 0;
@@ -442,8 +442,8 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "studioId, date and duration are required"
-      )
+        "studioId, date and duration are required",
+      ),
     );
   }
 
@@ -456,8 +456,8 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "duration must be a positive number"
-      )
+        "duration must be a positive number",
+      ),
     );
   }
 
@@ -474,7 +474,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     endOfDayMinutes <= startOfDayMinutes
   ) {
     return next(
-      new AppError(500, HTTP_STATUS_TEXT.FAIL, "Invalid studio working hours")
+      new AppError(500, HTTP_STATUS_TEXT.FAIL, "Invalid studio working hours"),
     );
   }
   const totalDayMinutes = endOfDayMinutes - startOfDayMinutes;
@@ -579,8 +579,8 @@ exports.getAvailableEndSlots = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "studioId, date, startTime, and package are required"
-      )
+        "studioId, date, startTime, and package are required",
+      ),
     );
   }
 
@@ -682,7 +682,7 @@ exports.getAllBookings = asyncHandler(async (req, res) => {
         23,
         59,
         59,
-        999
+        999,
       );
       match.date = { $gte: start, $lte: end };
     }
@@ -830,7 +830,7 @@ exports.createBooking = asyncHandler(async (req, res) => {
   await bookedUser.recordBooking(
     booking._id,
     booking.createdAt,
-    booking.totalPriceAfterDiscount || booking.totalPrice
+    booking.totalPriceAfterDiscount || booking.totalPrice,
   );
 
   await bookedUser.save();
@@ -893,7 +893,7 @@ exports.updateBooking = asyncHandler(async (req, res) => {
     _id: { $ne: bookingId },
   }).select("startSlotMinutes endSlotMinutes");
   const mergedBusy = mergeIntervals(
-    bookings.map((b) => [b.startSlotMinutes, b.endSlotMinutes])
+    bookings.map((b) => [b.startSlotMinutes, b.endSlotMinutes]),
   );
   if (
     overlapsAny(updates.startSlotMinutes, updates.endSlotMinutes, mergedBusy)
@@ -901,14 +901,14 @@ exports.updateBooking = asyncHandler(async (req, res) => {
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
-      "This time is already booked"
+      "This time is already booked",
     );
   }
 
   const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
     { $set: updates },
-    { new: true }
+    { new: true },
   );
 
   // Update Google Calendar if needed
@@ -925,13 +925,13 @@ exports.updateBooking = asyncHandler(async (req, res) => {
         updatedBooking.date.toISOString().split("T")[0] +
           "T" +
           updatedBooking.startSlot +
-          ":00"
+          ":00",
       );
       const endDateTime = new Date(
         updatedBooking.date.toISOString().split("T")[0] +
           "T" +
           updatedBooking.endSlot +
-          ":00"
+          ":00",
       );
 
       const eventData = {
@@ -1027,7 +1027,7 @@ exports.n8nBooking = asyncHandler(async (req, res) => {
 
   const missingFields = Object.entries(requiredFields)
     .filter(
-      ([_, value]) => value === undefined || value === null || value === ""
+      ([_, value]) => value === undefined || value === null || value === "",
     )
     .map(([key]) => key);
 
@@ -1136,7 +1136,7 @@ exports.n8nBooking = asyncHandler(async (req, res) => {
     throw new AppError(
       400,
       HTTP_STATUS_TEXT.FAIL,
-      "This time slot is already booked"
+      "This time slot is already booked",
     );
   }
 
@@ -1263,7 +1263,7 @@ exports.n8nBooking = asyncHandler(async (req, res) => {
   await userProfile.recordBooking(
     booking._id,
     booking.createdAt,
-    booking.totalPriceAfterDiscount || booking.totalPrice
+    booking.totalPriceAfterDiscount || booking.totalPrice,
   );
 
   await userProfile.save();

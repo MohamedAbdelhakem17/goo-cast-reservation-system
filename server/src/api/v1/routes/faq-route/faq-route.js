@@ -1,10 +1,10 @@
 const FqaController = require("../../controller/faq-controller/faq-controller");
 const express = require("express");
 
-const protectRoute = require("../../middleware/protect.middleware");
-const allowTo = require("../../middleware/allow-to-middleware");
+const protectRoute = require("../../../../middleware/protect.middleware");
+const allowTo = require("../../../../middleware/allow-to-middleware");
 
-const { USER_ROLE } = require("../../config/system-variables");
+const { USER_ROLE } = require("../../../../config/system-variables");
 
 const router = express.Router();
 

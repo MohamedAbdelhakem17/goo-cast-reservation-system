@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const HourlyPackageModel = require("../../models/hourly-packages-model/hourly-packages-model");
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
+const HourlyPackageModel = require("../../../../models/hourly-packages-model/hourly-packages-model");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
 
 const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
@@ -10,7 +10,7 @@ const path = require("path");
 
 const {
   uploadSingleImage,
-} = require("../../middleware/image-upload-middleware");
+} = require("../../../../middleware/image-upload-middleware");
 
 exports.serviceImageUpload = uploadSingleImage("image");
 

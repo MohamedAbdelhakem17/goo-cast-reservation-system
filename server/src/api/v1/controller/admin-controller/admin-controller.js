@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
-const AuthModel = require("../../models/user-model/user-model");
-const { USER_ROLE } = require("../../config/system-variables");
-const AppError = require("../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../config/system-variables");
+const AuthModel = require("../../../../models/user-model/user-model");
+const { USER_ROLE } = require("../../../../config/system-variables");
+const AppError = require("../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
 
 // Get all admins
 exports.getAllAdmins = asyncHandler(async (req, res, next) => {
@@ -63,7 +63,7 @@ exports.toggleStudioStatus = asyncHandler(async (req, res, next) => {
 
   if (typeof active !== "boolean") {
     return next(
-      new AppError(400, HTTP_STATUS_TEXT.FAIL, "`status` must be a boolean.")
+      new AppError(400, HTTP_STATUS_TEXT.FAIL, "`status` must be a boolean."),
     );
   }
 
@@ -73,12 +73,12 @@ exports.toggleStudioStatus = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   if (!updatedAdmin) {
     return next(
-      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No Admin found with this ID")
+      new AppError(404, HTTP_STATUS_TEXT.FAIL, "No Admin found with this ID"),
     );
   }
 

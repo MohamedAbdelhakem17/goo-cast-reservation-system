@@ -4,14 +4,17 @@ const router = express.Router();
 // ────────────────────────────────
 //  Middlewares
 // ────────────────────────────────
-const allowTo = require("../../middleware/allow-to-middleware");
-const protectRoute = require("../../middleware/protect.middleware");
-const allowPolicy = require("../../middleware/check-permission.middleware");
+const allowTo = require("../../../../middleware/allow-to-middleware");
+const protectRoute = require("../../../../middleware/protect.middleware");
+const allowPolicy = require("../../../../middleware/check-permission.middleware");
 
 // ────────────────────────────────
 //  Constants
 // ────────────────────────────────
-const { USER_ROLE, POLICIES_ROLES } = require("../../config/system-variables");
+const {
+  USER_ROLE,
+  POLICIES_ROLES,
+} = require("../../../../config/system-variables");
 
 // ────────────────────────────────
 //  Controllers
@@ -25,7 +28,7 @@ const UserProfileController = require("../../controller/user-profile-controller/
 router.use(
   protectRoute,
   allowTo(USER_ROLE.ADMIN, USER_ROLE.MANAGER),
-  allowPolicy(POLICIES_ROLES.MANAGE_CRM)
+  allowPolicy(POLICIES_ROLES.MANAGE_CRM),
 );
 
 // Get all users profiles

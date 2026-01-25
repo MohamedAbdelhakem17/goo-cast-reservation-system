@@ -5,7 +5,7 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const authController = require("../../controller/auth-controller/auth-controller");
-const protectRoute = require("../../middleware/protect.middleware");
+const protectRoute = require("../../../../middleware/protect.middleware");
 
 // Local Auth
 router.post("/login", authController.login);
@@ -27,7 +27,7 @@ router.get("/is-login", authController.isLogin);
 // Google Auth
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", { scope: ["profile", "email"] }),
 );
 
 router.get(
@@ -39,9 +39,7 @@ router.get(
   }),
   (req, res) => {
     res.redirect("/goocast");
-  }
+  },
 );
-
-module.exports = router;
 
 module.exports = router;

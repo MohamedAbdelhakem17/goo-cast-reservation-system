@@ -1,10 +1,10 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const userModel = require("../../../models/user-model/user-model");
-const AppError = require("../../../utils/app-error");
+const userModel = require("../../../../../models/user-model/user-model");
+const AppError = require("../../../../../utils/app-error");
 
 passport.use(
-    // 1 Google  Credentials
+  // 1 Google  Credentials
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
@@ -18,7 +18,11 @@ passport.use(
 
         if (!email) {
           console.warn("Google login failed: No email found in profile.");
-          return done(null, false, new AppError(400, "No email found in profile"));
+          return done(
+            null,
+            false,
+            new AppError(400, "No email found in profile"),
+          );
         }
 
         // Check if user already exists
@@ -27,11 +31,11 @@ passport.use(
         });
 
         if (user) {
-          if(!user.google) {
+          if (!user.google) {
             user.google = profile.id;
             await user.save();
           }
-          
+
           return done(null, user);
         }
 
@@ -43,7 +47,6 @@ passport.use(
           active: true,
         });
 
-
         return done(null, user);
       } catch (err) {
         console.error("Google login error:", {
@@ -53,10 +56,14 @@ passport.use(
           emailTried: profile?.emails?.[0]?.value,
         });
 
-        return done(null, false, new AppError(500, "Failed to login with Google"));
+        return done(
+          null,
+          false,
+          new AppError(500, "Failed to login with Google"),
+        );
       }
-    }
-  )
+    },
+  ),
 );
 
 // Serialize user ID into session

@@ -1,8 +1,8 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const AuthModel = require("../../../models/user-model/user-model");
-const AppError = require("../../../utils/app-error");
-const { HTTP_STATUS_TEXT } = require("../../../config/system-variables");
+const AuthModel = require("../../../../../models/user-model/user-model");
+const AppError = require("../../../../../utils/app-error");
+const { HTTP_STATUS_TEXT } = require("../../../../../config/system-variables");
 
 // Local Strategy
 passport.use(
@@ -17,7 +17,7 @@ passport.use(
         if (!email || !password) {
           return done(
             new AppError(400, HTTP_STATUS_TEXT.FAIL, "All fields are required"),
-            null
+            null,
           );
         }
 
@@ -26,7 +26,7 @@ passport.use(
         if (!user) {
           return done(
             new AppError(404, HTTP_STATUS_TEXT.FAIL, "User not found"),
-            null
+            null,
           );
         }
 
@@ -34,7 +34,7 @@ passport.use(
         if (!user.active) {
           return done(
             new AppError(403, HTTP_STATUS_TEXT.FAIL, "Account not active"),
-            null
+            null,
           );
         }
 
@@ -43,7 +43,7 @@ passport.use(
         if (!isPasswordValid) {
           return done(
             new AppError(401, HTTP_STATUS_TEXT.FAIL, "Invalid credentials"),
-            null
+            null,
           );
         }
 
@@ -54,13 +54,13 @@ passport.use(
           new AppError(
             500,
             HTTP_STATUS_TEXT.FAIL,
-            "Failed to login with Local"
+            "Failed to login with Local",
           ),
-          null
+          null,
         );
       }
-    }
-  )
+    },
+  ),
 );
 
 // Serialize
@@ -78,9 +78,9 @@ passport.deserializeUser(async (id, done) => {
         new AppError(
           404,
           HTTP_STATUS_TEXT.FAIL,
-          "User not found in the system."
+          "User not found in the system.",
         ),
-        null
+        null,
       );
     }
     done(null, user);
@@ -89,9 +89,9 @@ passport.deserializeUser(async (id, done) => {
       new AppError(
         500,
         HTTP_STATUS_TEXT.FAIL,
-        "Could not restore your session."
+        "Could not restore your session.",
       ),
-      null
+      null,
     );
   }
 });

@@ -1,6 +1,6 @@
 const cron = require("node-cron");
 const axios = require("axios");
-const ReviewModel = require("../../models/review-model/review-model");
+const ReviewModel = require("../../../../models/review-model/review-model");
 const asyncHandler = require("express-async-handler");
 
 cron.schedule("0 0 */3 * *", () => {
@@ -31,7 +31,7 @@ async function getPlaceReviews() {
     const result = response.data.result;
 
     const filteredReviews = (result?.reviews || []).filter(
-      (review) => review.text && review.text.trim() !== ""
+      (review) => review.text && review.text.trim() !== "",
     );
 
     result?.reviews ? (result.reviews = filteredReviews) : "";
@@ -50,7 +50,7 @@ async function getPlaceReviews() {
         data: result,
         lastUpdated: now,
       },
-      { upsert: true }
+      { upsert: true },
     );
 
     return { data: result, new: isNew };

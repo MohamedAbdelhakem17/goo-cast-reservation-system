@@ -1,14 +1,14 @@
 const asyncHandler = require("express-async-handler");
 
-const AppError = require("../../utils/app-error");
+const AppError = require("../../../../utils/app-error");
 
 const {
   HTTP_STATUS_TEXT,
   BOOKING_PIPELINE,
-} = require("../../config/system-variables");
+} = require("../../../../config/system-variables");
 
-const AnalyticsModel = require("../../models/analytics-model/analytics-model");
-const BookingModel = require("../../models/booking-model/booking-model");
+const AnalyticsModel = require("../../../../models/analytics-model/analytics-model");
+const BookingModel = require("../../../../models/booking-model/booking-model");
 
 // add analytics
 exports.addAnalytics = asyncHandler(async (req, res, next) => {
@@ -18,8 +18,8 @@ exports.addAnalytics = asyncHandler(async (req, res, next) => {
       new AppError(
         400,
         HTTP_STATUS_TEXT.FAIL,
-        "Please provide all required fields"
-      )
+        "Please provide all required fields",
+      ),
     );
   }
   const analytics = await AnalyticsModel.create({ page, timeSpent, timestamp });
@@ -89,7 +89,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
           $gte: new Date(
             new Date().getFullYear(),
             new Date().getMonth() - 1,
-            1
+            1,
           ),
           $lt: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
         },
@@ -161,7 +161,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       ? {
           name: topServiceAgg[0].name,
           percentage: ((topServiceAgg[0].count / totalBookings) * 100).toFixed(
-            1
+            1,
           ),
         }
       : null;
@@ -197,7 +197,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       ? {
           name: topStudioAgg[0].name,
           percentage: ((topStudioAgg[0].count / totalBookings) * 100).toFixed(
-            1
+            1,
           ),
         }
       : null;
@@ -237,7 +237,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
 
   const totalServiceCount = serviceDistributionRaw.reduce(
     (acc, s) => acc + s.count,
-    0
+    0,
   );
 
   // Get top 3 services
@@ -297,7 +297,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
 
   const totalAddonsCount = addonsDistribution.reduce(
     (acc, a) => acc + a.count,
-    0
+    0,
   );
 
   addonsDistribution = addonsDistribution.map((a) => ({

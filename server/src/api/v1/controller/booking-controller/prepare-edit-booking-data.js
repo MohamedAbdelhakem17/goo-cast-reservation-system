@@ -1,19 +1,19 @@
-const PackageModel = require("../../models/hourly-packages-model/hourly-packages-model.js");
-const BookingModel = require("../../models/booking-model/booking-model.js");
-const StudioModel = require("../../models/studio-model/studio-model.js");
-const AddOnModel = require("../../models/add-on-model/add-on-model.js");
-const CouponModel = require("../../models/coupon-model/coupon-model.js");
-const AppError = require("../../utils/app-error.js");
+const PackageModel = require("../../../../models/hourly-packages-model/hourly-packages-model.js");
+const BookingModel = require("../../../../models/booking-model/booking-model.js");
+const StudioModel = require("../../../../models/studio-model/studio-model.js");
+const AddOnModel = require("../../../../models/add-on-model/add-on-model.js");
+const CouponModel = require("../../../../models/coupon-model/coupon-model.js");
+const AppError = require("../../../../utils/app-error.js");
 const {
   HTTP_STATUS_TEXT,
   PAYMENT_METHOD,
   USER_ROLE,
-} = require("../../config/system-variables.js");
+} = require("../../../../config/system-variables.js");
 
-const { calculateSlotPrices } = require("../../utils/priceCalculator.js");
-const { getAllDay, timeToMinutes } = require("../../utils/time-mange.js");
-const userProfileModel = require("../../models/user-profile-model/user-profile-model.js");
-const determineUserTags = require("../../utils/tag-engine.js");
+const { calculateSlotPrices } = require("../../../../utils/priceCalculator.js");
+const { getAllDay, timeToMinutes } = require("../../../../utils/time-mange.js");
+const userProfileModel = require("../../../../models/user-profile-model/user-profile-model.js");
+const determineUserTags = require("../../../../utils/tag-engine.js");
 
 // Helper: merge overlapping intervals
 function mergeIntervals(intervals) {
@@ -124,7 +124,7 @@ const prepareBookingDataForEdit = async (body, existingBooking) => {
 
   if (selectedPackage || duration) {
     packageDoc = await PackageModel.findById(
-      selectedPackage?.id || selectedPackage || updates.package._id
+      selectedPackage?.id || selectedPackage || updates.package._id,
     );
 
     if (!packageDoc) throw new AppError(404, "Package not found");
@@ -169,7 +169,7 @@ const prepareBookingDataForEdit = async (body, existingBooking) => {
             clientAddOn.id ||
             clientAddOn.item?._id ||
             clientAddOn.item
-          ).toString()
+          ).toString(),
       );
       if (!dbAddOn) continue;
 
@@ -197,7 +197,7 @@ const prepareBookingDataForEdit = async (body, existingBooking) => {
     if (coupon && coupon.discount) {
       const discountAmount = Math.round(packagePrice * (coupon.discount / 100));
       updates.totalPriceAfterDiscount = Math.round(
-        packagePrice - discountAmount + totalAddOnsPriceFromDb
+        packagePrice - discountAmount + totalAddOnsPriceFromDb,
       );
     } else {
       updates.totalPriceAfterDiscount = updates.totalPrice;
