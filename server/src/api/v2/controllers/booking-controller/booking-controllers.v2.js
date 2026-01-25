@@ -1,9 +1,16 @@
 const asyncHandler = require("express-async-handler");
 const StudioModel = require("../../../../models/studio-model/studio-model");
 const BookingModel = require("../../../../models/booking-model/booking-model");
-const { HTTP_STATUS_TEXT } = require("../../../../config/system-variables");
+const {
+  HTTP_STATUS_TEXT,
+  BOOKING_PIPELINE,
+} = require("../../../../config/system-variables");
 const AppError = require("../../../../utils/app-error");
-const { getAllDay, timeToMinutes } = require("../../../../utils/time-mange");
+const {
+  getAllDay,
+  timeToMinutes,
+  minutesToTime,
+} = require("../../../../utils/time-mange");
 const addMostPopularFlag = require("../../../../utils/add-popular-studio");
 
 /**
@@ -56,7 +63,7 @@ exports.getStudiosAvailability = asyncHandler(async (req, res) => {
 
   const result = studios.map((studio) => ({
     ...studio,
-    is_available: /**bookedSet.has(studio._id.toString())**/ true,
+    is_available: !bookedSet.has(studio._id.toString()),
   }));
 
   res.status(200).json({
@@ -65,139 +72,173 @@ exports.getStudiosAvailability = asyncHandler(async (req, res) => {
   });
 });
 
-// exports.getStudiosAvailability = asyncHandler(async (req, res) => {
-//   const { date, startSlot, duration } = req.query;
+function mergeIntervals(intervals) {
+  if (!intervals || intervals.length === 0) return [];
+  const sorted = intervals
+    .map(([s, e]) => [Number(s), Number(e)])
+    .filter(([s, e]) => Number.isFinite(s) && Number.isFinite(e) && e > s)
+    .sort((a, b) => a[0] - b[0]);
 
-//   if (!date || !startSlot) {
-//     throw new AppError(
-//       400,
-//       HTTP_STATUS_TEXT.FAIL,
-//       "date and startSlot are required",
-//     );
-//   }
+  const merged = [];
+  for (const [s, e] of sorted) {
+    if (!merged.length) merged.push([s, e]);
+    else {
+      const last = merged[merged.length - 1];
+      if (s <= last[1]) last[1] = Math.max(last[1], e);
+      else merged.push([s, e]);
+    }
+  }
+  return merged;
+}
 
-//   const requiredDurationMinutes = (Number(duration) || 1) * 60;
+// count how many times [start, end) overlaps with booking intervals
+function countOverlaps(start, end, intervals) {
+  let count = 0;
+  for (const [bs, be] of intervals) {
+    if (bs < end && be > start) count++;
+  }
+  return count;
+}
 
-//   const studios = await StudioModel.find({ status: "active" }).lean();
+exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
+  const { studioId, date, duration } = req.body;
 
-//   const { startOfDay, endOfDay } = getAllDay(date);
+  // basic validation
+  if (/**!studioId ||**/ !date || duration == null) {
+    return next(
+      new AppError(
+        400,
+        HTTP_STATUS_TEXT.FAIL,
+        "studioId, date and duration are required",
+      ),
+    );
+  }
 
-//   const startSlotMinutes = timeToMinutes(startSlot);
-//   const endSlotMinutes = startSlotMinutes + requiredDurationMinutes;
+  const requiredDurationMinutes = Number(duration) * 60;
+  if (
+    !Number.isFinite(requiredDurationMinutes) ||
+    requiredDurationMinutes <= 0
+  ) {
+    return next(
+      new AppError(
+        400,
+        HTTP_STATUS_TEXT.FAIL,
+        "duration must be a positive number",
+      ),
+    );
+  }
 
-//   const bookings = await BookingModel.find({
-//     date: { $gte: startOfDay, $lt: endOfDay },
-//   }).select("studio startSlotMinutes endSlotMinutes startSlot endSlot");
-//   // .lean();
+  // const studio = await StudioModel.findById(studioId);
+  // if (!studio)
+  //   return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
 
-//   console.log("Studios availability bookings:", bookings);
+  // working window for this studio
+  const startOfDayMinutes = timeToMinutes("09:00");
+  const endOfDayMinutes = timeToMinutes("20:00");
+  if (
+    startOfDayMinutes === null ||
+    endOfDayMinutes === null ||
+    endOfDayMinutes <= startOfDayMinutes
+  ) {
+    return next(
+      new AppError(500, HTTP_STATUS_TEXT.FAIL, "Invalid studio working hours"),
+    );
+  }
+  const totalDayMinutes = endOfDayMinutes - startOfDayMinutes;
 
-//   const result = studios.map((studio) => {
-//     const studioBookings = bookings.filter(
-//       (booking) => booking.studio.toString() === studio._id.toString(),
-//     );
+  // if required duration longer than working day -> no slots
+  if (requiredDurationMinutes > totalDayMinutes) {
+    return res.status(200).json({
+      status: HTTP_STATUS_TEXT.SUCCESS,
+      data: [],
+      meta: { totalAvailableSlots: 0 },
+    });
+  }
 
-//     console.log("Studios availability studioBookings:", studioBookings);
+  // date range for DB query — ensure getAllDay returns consistent timezone-aware range
+  const inputDate = getAllDay(date); // { startOfDay: Date, endOfDay: DateExclusive }
+  if (!inputDate || !inputDate.startOfDay || !inputDate.endOfDay) {
+    return next(new AppError(400, HTTP_STATUS_TEXT.FAIL, "Invalid date"));
+  }
 
-//     const isBooked = studioBookings.some((booking) => {
-//       const bookingStart =
-//         booking.startSlotMinutes || timeToMinutes(booking.startSlot);
-//       const bookingEnd =
-//         booking.endSlotMinutes || timeToMinutes(booking.endSlot);
+  const today = new Date();
+  const requestedDate = new Date(date);
+  const isToday = requestedDate.toDateString() === today.toDateString();
 
-//       return bookingStart < endSlotMinutes && bookingEnd > startSlotMinutes;
-//     });
+  // compute min start (for today: next slot)
+  let minStartTimeMinutes = startOfDayMinutes;
+  if (isToday) {
+    const currentMinutes = today.getHours() * 60 + today.getMinutes();
+    const nextSlotMinutes = Math.ceil(currentMinutes / 30) * 30;
+    minStartTimeMinutes = Math.max(startOfDayMinutes, nextSlotMinutes);
+  }
 
-//     return {
-//       ...studio,
-//       isBooked,
-//     };
-//   });
+  // fetch bookings across ALL studios for that date
+  const bookings = await BookingModel.find({
+    date: { $gte: inputDate.startOfDay, $lt: inputDate.endOfDay },
+    status: { $ne: BOOKING_PIPELINE.CANCELED },
+  }).select("startSlotMinutes endSlotMinutes");
 
-//   console.log("Studios availability result:", result);
-//   res.status(200).json({
-//     status: HTTP_STATUS_TEXT.SUCCESS,
-//     data: result,
-//   });
-// });
+  // normalize booking intervals into minutes
+  const rawIntervals = bookings
+    .map((b) => {
+      // prefer numeric minutes fields; fallback to parsing string if necessary
+      const s = Number.isFinite(b.startSlotMinutes)
+        ? b.startSlotMinutes
+        : typeof b.startSlot === "string"
+          ? timeToMinutes(b.startSlot)
+          : NaN;
+      const e = Number.isFinite(b.endSlotMinutes)
+        ? b.endSlotMinutes
+        : typeof b.endSlot === "string"
+          ? timeToMinutes(b.endSlot)
+          : NaN;
+      return [s, e];
+    })
+    .filter(([s, e]) => Number.isFinite(s) && Number.isFinite(e) && e > s);
 
-// exports.getStudiosAvailability = asyncHandler(async (req, res, next) => {
-//   // Extract query parameters
-//   const { date, startSlot, duration } = req.query;
+  // clamp intervals to studio working hours (optional but recommended)
+  const clamped = rawIntervals
+    .map(([s, e]) => [
+      Math.max(s, startOfDayMinutes),
+      Math.min(e, endOfDayMinutes),
+    ])
+    .filter(([s, e]) => e > s);
 
-//   // Validate required query parameters
-//   if (!date || !startSlot) {
-//     throw new AppError(
-//       400,
-//       HTTP_STATUS_TEXT.FAIL,
-//       "Please provide all required query parameters: date, start slot",
-//     );
-//   }
+  // Don't merge intervals - keep them separate to count overlaps
+  // const mergedBusy = mergeIntervals(clamped);
 
-//   // Parse duration (default to 1 hour if not provided)
-//   const requiredDurationMinutes = duration ? Number(duration) * 60 : 60;
+  // iterate candidate starts (step 30)
+  const availableSlots = [];
+  const MAX_BOOKINGS_PER_SLOT = 2; // Allow up to 2 bookings per slot
 
-//   // Get all studios
-//   const studios = await StudioModel.find({ is_active: true });
+  for (
+    let t = minStartTimeMinutes;
+    t <= endOfDayMinutes - requiredDurationMinutes;
+    t += 30
+  ) {
+    const slotStart = t;
+    const slotEnd = t + requiredDurationMinutes;
+    // Check if this slot has less than 2 bookings
+    const overlapCount = countOverlaps(slotStart, slotEnd, clamped);
+    if (overlapCount < MAX_BOOKINGS_PER_SLOT) {
+      availableSlots.push({
+        startTime: minutesToTime(slotStart),
+        startTimeMinutes: slotStart,
+        endTime: minutesToTime(slotEnd),
+        endTimeMinutes: slotEnd,
+      });
+    }
+  }
 
-//   if (studios.length === 0) {
-//     return res.status(404).json({
-//       status: HTTP_STATUS_TEXT.FAIL,
-//       message: "No studios found",
-//     });
-//   }
-
-//   // Get date range for the selected date
-//   const { startOfDay, endOfDay } = getAllDay(date);
-
-//   // Convert start slot to minutes
-//   const startSlotMinutes = timeToMinutes(startSlot);
-//   const endSlotMinutes = startSlotMinutes + requiredDurationMinutes;
-
-//   // Get all bookings for the selected date
-//   const bookings = await BookingModel.find({
-//     date: { $gte: startOfDay, $lt: endOfDay },
-//   })
-//     .select("studio startSlotMinutes endSlotMinutes startSlot endSlot")
-//     .lean();
-
-//   // Check availability for each studio
-//   const studiosWithAvailability = studios.map((studio) => {
-//     // Get bookings for this specific studio
-//     const studioBookings = bookings.filter(
-//       (booking) => booking.studio.toString() === studio._id.toString(),
-//     );
-
-//     // Check if the requested time slot conflicts with any booking
-//     const hasConflict = studioBookings.some((booking) => {
-//       const bookingStart =
-//         booking.startSlotMinutes || timeToMinutes(booking.startSlot);
-//       const bookingEnd =
-//         booking.endSlotMinutes || timeToMinutes(booking.endSlot);
-
-//       // Check for overlap: booking overlaps if it starts before our slot ends
-//       // and ends after our slot starts
-//       return bookingStart < endSlotMinutes && bookingEnd > startSlotMinutes;
-//     });
-
-//     // Add availability flag to studio object
-//     return {
-//       ...studio.toObject(),
-//       isAvailable: !hasConflict,
-//       availabilityTag: hasConflict ? "booked" : "available",
-//     };
-//   });
-
-//   res.status(200).json({
-//     status: HTTP_STATUS_TEXT.SUCCESS,
-//     data: studiosWithAvailability,
-//     meta: {
-//       date,
-//       startSlot,
-//       duration: duration || 1,
-//       totalStudios: studios.length,
-//       availableStudios: studiosWithAvailability.filter((s) => s.isAvailable)
-//         .length,
-//     },
-//   });
-// });
+  return res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: availableSlots,
+    meta: {
+      requestedDate: date,
+      duration,
+      studioWorkingHours: { start: "09:00", end: "20:00" },
+      totalAvailableSlots: availableSlots.length,
+    },
+  });
+});

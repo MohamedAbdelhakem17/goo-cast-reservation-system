@@ -89,6 +89,13 @@ export default function SelectStudio() {
     const isAvailable =
       studio.is_available && studio.recording_seats >= bookingData.persons;
 
+    console.log("Studio availability:", {
+      studioId: studio.name?.[lng],
+      isAvailable,
+      recordingSeats: studio.recording_seats,
+      persons: bookingData.persons,
+    });
+
     return (
       <motion.div
         key={studio._id}

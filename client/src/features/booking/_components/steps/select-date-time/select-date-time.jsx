@@ -1,9 +1,9 @@
-import { useState } from "react";
-import BookingLabel from "../../booking-label";
-import { Calendar, Slots } from "./_components";
 import { useGetAvailableSlots } from "@/apis/public/booking.api";
 import useLocalization from "@/context/localization-provider/localization-context";
 import useLockBodyScroll from "@/hooks/use-lock-body-scroll";
+import { useState } from "react";
+import BookingLabel from "../../booking-label";
+import { Calendar, Slots } from "./_components";
 
 export default function SelectDateTime() {
   // Localization
@@ -17,7 +17,7 @@ export default function SelectDateTime() {
   };
 
   // const { mutate: getAvailableSlots, data: slots } = GetAvailableSlots()
-  const { getSlots, data: slots } = useGetAvailableSlots();
+  const { getSlots, data: slots } = useGetAvailableSlots("v2");
 
   return (
     <>

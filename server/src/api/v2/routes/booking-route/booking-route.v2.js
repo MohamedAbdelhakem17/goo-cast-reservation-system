@@ -7,4 +7,6 @@ router
   .route("/available-studios")
   .get(bookingController.getStudiosAvailability);
 
+router.route("/available-slots").post(bookingController.getAvailableStartSlots);
+
 module.exports = router;

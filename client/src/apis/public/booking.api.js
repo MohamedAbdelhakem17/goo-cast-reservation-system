@@ -22,7 +22,7 @@ export const useGetFullyBookedDates = (duration) => {
   return { data, isLoading, error };
 };
 
-export const useGetAvailableSlots = () => {
+export const useGetAvailableSlots = (version = "v1") => {
   const {
     mutate: getSlots,
     data,
@@ -32,7 +32,9 @@ export const useGetAvailableSlots = () => {
     mutationKey: ["available-slots"],
 
     mutationFn: async (payload) => {
-      const { data } = await axiosInstance.post(`/bookings/available-slots`, payload);
+      const instance = version === "v2" ? axiosInstanceV2 : axiosInstance;
+
+      const { data } = await instance.post(`/bookings/available-slots`, payload);
 
       return data;
     },
