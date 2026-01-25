@@ -41,7 +41,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
   ======================= */
   const MAX_DURATION = 8;
   const MIN_DURATION = 1;
-  const maxPersons = studio?.recording_seats ?? 0;
+  const MAX_PERSONS = 4;
   const isCalendarDisabled = persons === 0;
 
   /* =======================
@@ -91,7 +91,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
   };
 
   const changePersons = (delta) => {
-    const value = Math.min(maxPersons, Math.max(0, persons + delta));
+    const value = Math.min(MAX_PERSONS, Math.max(0, persons + delta));
 
     setBookingField("persons", value);
   };
@@ -121,8 +121,8 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
           unit={t("person")}
           unitPlural={t("people")}
           min={0}
-          max={maxPersons}
-          helperText={`${t("maximum-allowed")} ${maxPersons} ${t("people")}`}
+          max={MAX_PERSONS}
+          helperText={`${t("maximum-allowed")} ${MAX_PERSONS} ${t("people")}`}
           increment={() => changePersons(1)}
           decrement={() => changePersons(-1)}
         />

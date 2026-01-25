@@ -1,4 +1,4 @@
-import axiosInstance from "@/utils/axios-instance";
+import axiosInstance, { axiosInstanceV2 } from "@/utils/axios-instance";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetFullyBookedDates = (duration) => {
@@ -60,4 +60,25 @@ export const useCreateBooking = (role) => {
   });
 
   return { createBooking, isPending, error, data };
+};
+
+export const useGetAvailableStudios = (queryParams) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["available-studios", queryParams],
+
+    queryFn: async () => {
+      const queryString = new URLSearchParams(queryParams).toString();
+
+      const { data } = await axiosInstanceV2(
+        `/bookings/available-studios?${queryString}`,
+      );
+      return data;
+    },
+
+    enabled: !!queryParams.date && !!queryParams.startSlot,
+    cacheTime: 0,
+    staleTime: 0,
+  });
+
+  return { data, isLoading, error };
 };

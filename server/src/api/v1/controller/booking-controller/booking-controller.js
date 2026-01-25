@@ -437,7 +437,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
   const { studioId, date, duration } = req.body;
 
   // basic validation
-  if (!studioId || !date || duration == null) {
+  if (/**!studioId ||**/ !date || duration == null) {
     return next(
       new AppError(
         400,
@@ -461,13 +461,13 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const studio = await StudioModel.findById(studioId);
-  if (!studio)
-    return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
+  // const studio = await StudioModel.findById(studioId);
+  // if (!studio)
+  //   return next(new AppError(404, HTTP_STATUS_TEXT.FAIL, "Studio not found"));
 
   // working window for this studio
-  const startOfDayMinutes = timeToMinutes(studio.startTime || "09:00");
-  const endOfDayMinutes = timeToMinutes(studio.endTime || "20:00");
+  const startOfDayMinutes = timeToMinutes(/** studio.startTime || **/ "09:00");
+  const endOfDayMinutes = timeToMinutes(/** studio.endTime || **/ "20:00");
   if (
     startOfDayMinutes === null ||
     endOfDayMinutes === null ||
@@ -565,7 +565,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     meta: {
       requestedDate: date,
       duration,
-      studioWorkingHours: { start: studio.startTime, end: studio.endTime },
+      studioWorkingHours: { start: "09:00", end: "20:00" },
       totalAvailableSlots: availableSlots.length,
     },
   });
@@ -1326,18 +1326,3 @@ exports.n8nBooking = asyncHandler(async (req, res) => {
     });
   });
 });
-
-// {
-//   "studioId":  "68487d7e5a067463a3298a64",
-//   "packageId": "681c9c7499ea41aecd27ad76",
-//   "selectedAddOns":"67fe85767663f45575657bea,67fe85767663f45575657bea,67fe85767663f45575657bea"
-//   "email": "mohamed.abdelhakem3200@gmail.com"
-//   "phone": "01009474429",
-//   "firstName": "Mohamed",
-//   "lastName": "Abdelhakem",
-//   "extraComment":"6910ad0b675bdddd4f421ded",
-//   "totalPrice": 8500,
-//   "duration": 1,
-//   "persons": 1,
-//   "date": "2025-11-10T10:00:00.000Z",
-// }

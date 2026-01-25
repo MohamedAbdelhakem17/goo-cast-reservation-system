@@ -518,5 +518,8 @@
   "best-for": "Enter best for number",
   "enter-best-for": "best for number",
   "show-image": "Show Package image",
-  "most-recommended": "Most Recommended"
+  "most-recommended": "Most Recommended",
+  "studio-not-available": "Studio not available",
+  "not-enough-seats": "Not enough seats available",
+  "studio-already-booked0": "Studio already booked for the selected time slot"
 }
