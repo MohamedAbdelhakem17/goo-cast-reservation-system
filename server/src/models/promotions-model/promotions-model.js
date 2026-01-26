@@ -3,14 +3,20 @@ const validatePromotionDates = require("../../utils/validate-promotion-dates");
 
 const promotionSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true, trim: true },
+    title: {
+      ar: { type: String, required: true, trim: true },
+      en: { type: String, required: true, trim: true },
+    },
 
     start_date: { type: Date, required: true },
     end_date: { type: Date, required: true },
 
     isEnabled: { type: Boolean, default: true },
 
-    description: { type: String, trim: true },
+    description: {
+      ar: { type: String, trim: true },
+      en: { type: String, trim: true },
+    },
 
     priority: { type: Number, default: 0 },
   },
