@@ -42,7 +42,7 @@ export default function Navbar() {
     <AuthModelProvider>
       {/* Navbar */}
       <nav
-        className={`fixed top-0 left-0 z-50 w-full bg-white transition-all duration-300 ${
+        className={`relative w-full bg-white transition-all duration-300 ${
           scrolled ? "py-2 shadow-lg" : "py-4 shadow-md"
         }`}
       >
