@@ -1,6 +1,13 @@
 import { axiosInstanceV2 } from "@/utils/axios-instance";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
+/**
+ * Custom hook to fetch all active promotions
+ * @returns {Object} Query result object
+ * @returns {Object} data - The response data containing active promotions
+ * @returns {Error} error - Error object if the request fails
+ * @returns {boolean} isLoading - Loading state of the query
+ */
 const useGetActivePromotions = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["active-promotions"],
@@ -14,6 +21,13 @@ const useGetActivePromotions = () => {
   return { data, error, isLoading };
 };
 
+/**
+ * Custom hook to fetch all promotions (active and inactive)
+ * @returns {Object} Query result object
+ * @returns {Object} data - The response data containing all promotions
+ * @returns {Error} error - Error object if the request fails
+ * @returns {boolean} isLoading - Loading state of the query
+ */
 const useGetAllPromotions = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["all-promotions"],
@@ -27,6 +41,13 @@ const useGetAllPromotions = () => {
   return { data, error, isLoading };
 };
 
+/**
+ * Custom hook to add a new promotion
+ * @returns {Object} Mutation result object
+ * @returns {Function} mutate - Function to trigger the mutation with newPromotion data
+ * @returns {boolean} isPending - Loading state of the mutation
+ * @returns {Error} error - Error object if the mutation fails
+ */
 const useAddPromotion = () => {
   const { mutate, isPending, error } = useMutation({
     mutationKey: ["add-promotion"],
@@ -40,6 +61,13 @@ const useAddPromotion = () => {
   return { mutate, isPending, error };
 };
 
+/**
+ * Custom hook to edit an existing promotion
+ * @returns {Object} Mutation result object
+ * @returns {Function} mutate - Function to trigger the mutation with {values, id} object
+ * @returns {boolean} isPending - Loading state of the mutation
+ * @returns {Error} error - Error object if the mutation fails
+ */
 const useEditPromotion = () => {
   const { mutate, isPending, error } = useMutation({
     mutationKey: ["edit-promotion"],
@@ -53,6 +81,13 @@ const useEditPromotion = () => {
   return { mutate, isPending, error };
 };
 
+/**
+ * Custom hook to delete a promotion
+ * @returns {Object} Mutation result object
+ * @returns {Function} mutate - Function to trigger the mutation with promotion id
+ * @returns {boolean} isPending - Loading state of the mutation
+ * @returns {Error} error - Error object if the mutation fails
+ */
 const useDeletePromotion = () => {
   const { mutate, isPending, error } = useMutation({
     mutationKey: ["delete-promotion"],
