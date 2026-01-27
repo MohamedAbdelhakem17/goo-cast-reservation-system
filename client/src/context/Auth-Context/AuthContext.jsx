@@ -1,5 +1,5 @@
-import axios from "axios";
 import { createContext, useContext, useEffect, useReducer } from "react";
+import axiosInstance from "../../utils/axios-instance";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -36,7 +36,7 @@ export default function AuthProvider({ children }) {
 
   const isValidSession = async () => {
     try {
-      const response = await axios.get(`/auth/is-login`, {
+      const response = await axiosInstance.get(`/auth/is-login`, {
         withCredentials: true,
       });
       return response.data?.isValid ?? false;

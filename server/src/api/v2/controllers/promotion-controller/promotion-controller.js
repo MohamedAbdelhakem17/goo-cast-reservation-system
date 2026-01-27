@@ -289,6 +289,7 @@ exports.getActivePromotions = asyncHandler(async (req, res) => {
  *   }
  * }
  */
+
 exports.updatedPromotion = asyncHandler(async (req, res) => {
   // Get promotion ID from request parameters
   const { id } = req.params;

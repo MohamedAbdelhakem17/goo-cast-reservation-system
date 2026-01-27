@@ -5,6 +5,7 @@
     "fontawesome",
     "Goocast",
     "hourlypackages",
+    "nums",
     "xmark"
   ],
   "i18n-ally.localesPaths": ["client/i18n", "client/i18n/messages"],

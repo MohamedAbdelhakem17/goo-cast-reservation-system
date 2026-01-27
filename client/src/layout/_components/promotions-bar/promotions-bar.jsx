@@ -1,4 +1,5 @@
 import { useGetActivePromotions } from "@/apis/admin/manage-promotions.api";
+import useLocalization from "@/context/localization-provider/localization-context";
 import { Clock, Gift, Sparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -58,17 +59,17 @@ function CountdownTimer({ endDate }) {
 }
 
 // Promotion Content Component
-function PromotionContent({ promotion }) {
+function PromotionContent({ promotion, lng }) {
   return (
     <div className="flex flex-1 flex-row gap-3 md:items-center md:gap-3">
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 animate-pulse md:h-5 md:w-5" />
         <span className="text-sm font-bold md:text-base lg:text-lg">
-          {promotion.title}
+          {promotion.title[lng]}
         </span>
       </div>
       <p className="text-xs font-medium md:text-sm lg:text-base">
-        {promotion.description}
+        {promotion.description[lng]}
       </p>
     </div>
   );
@@ -76,6 +77,7 @@ function PromotionContent({ promotion }) {
 
 // Main PromotionsBar Component
 export default function PromotionsBar() {
+  const { t, lng } = useLocalization();
   const { data, isLoading } = useGetActivePromotions();
   const [isVisible, setIsVisible] = useState(true);
 
@@ -99,7 +101,7 @@ export default function PromotionsBar() {
           <div className="hidden animate-bounce md:block">
             <Gift className="h-6 w-6 md:h-7 md:w-7" />
           </div>
-          <PromotionContent promotion={promotion} />
+          <PromotionContent promotion={promotion} lng={lng} />
         </div>
 
         <div className="flex items-center gap-2 md:gap-3">

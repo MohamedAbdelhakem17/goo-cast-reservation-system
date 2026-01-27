@@ -6,6 +6,7 @@ import ProtectedRoute from "./protected-route";
 import { lazy } from "react";
 import hasPermission from "../../utils/access-roles";
 
+import POLICIES_ROLES from "../../utils/constant/system-policies-roles";
 import SYSTEM_ROLES from "../../utils/constant/system-roles.constant";
 import { useAuth } from "./../../context/Auth-Context/AuthContext";
 
@@ -70,33 +71,100 @@ const UserProfileInfo = lazy(
 const CouponManagement = lazy(
   () => import("@/features/admin-dashboard/pages/coupon-management/coupon-management"),
 );
+const PromotionsManagement = lazy(
+  () =>
+    import(
+      "@/features/admin-dashboard/pages/promotions-management/promotions-management"
+    ),
+);
 
 const adminRoutes = [
   // Dashboard
   {
     path: "",
     element: <Dashboard />,
-    permission: "manage:dashboard",
+    permission: POLICIES_ROLES.MANAGE_DASHBOARD,
     index: true,
   },
 
   // Setting
-  { path: "studio", element: <StudioManagement />, permission: "manage:setting" },
-  { path: "studio/add", element: <AddStudio />, permission: "manage:setting" },
-  { path: "category", element: <CategoryManagement />, permission: "manage:setting" },
-  { path: "price", element: <PriceManagement />, permission: "manage:setting" },
-  { path: "service", element: <ServiceManagement />, permission: "manage:setting" },
-  { path: "service/add", element: <AddService />, permission: "manage:setting" },
-  { path: "addons", element: <AddonsManagement />, permission: "manage:setting" },
-  { path: "addons/add", element: <AddAddons />, permission: "manage:setting" },
-  { path: "admins", element: <AdminManagement />, permission: "manage:setting" },
-  { path: "coupon", element: <CouponManagement />, permission: "manage:setting" },
+  {
+    path: "studio",
+    element: <StudioManagement />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "studio/add",
+    element: <AddStudio />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "category",
+    element: <CategoryManagement />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "price",
+    element: <PriceManagement />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "service",
+    element: <ServiceManagement />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "service/add",
+    element: <AddService />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "addons",
+    element: <AddonsManagement />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "addons/add",
+    element: <AddAddons />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "admins",
+    element: <AdminManagement />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "promotions",
+    element: <PromotionsManagement />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
+  {
+    path: "coupons",
+    element: <CouponManagement />,
+    permission: POLICIES_ROLES.MANAGE_SETTING,
+  },
 
   // CRM
-  { path: "booking", element: <BookingManagement />, permission: "manage:crm" },
-  { path: "booking/add", element: <AddBooking />, permission: "manage:crm" },
-  { path: "users", element: <UserManagement />, permission: "manage:crm" },
-  { path: "users/:id", element: <UserProfileInfo />, permission: "manage:crm" },
+  {
+    path: "booking",
+    element: <BookingManagement />,
+    permission: POLICIES_ROLES.MANAGE_CRM,
+  },
+  {
+    path: "booking/add",
+    element: <AddBooking />,
+    permission: POLICIES_ROLES.MANAGE_CRM,
+  },
+  {
+    path: "users",
+    element: <UserManagement />,
+    permission: POLICIES_ROLES.MANAGE_CRM,
+  },
+  {
+    path: "users/:id",
+    element: <UserProfileInfo />,
+    permission: POLICIES_ROLES.MANAGE_CRM,
+  },
 ];
 
 export default function AdminRoute() {

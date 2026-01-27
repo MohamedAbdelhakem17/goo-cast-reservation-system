@@ -6,6 +6,7 @@ import ErrorFeedback from "./error-feedback";
 const Input = ({
   label,
   id,
+  name,
   type = "text",
   value,
   onChange,
@@ -82,6 +83,7 @@ const Input = ({
               : ""
           } ${isArabic && "font-arabic"}`}
           id={id}
+          name={name}
           placeholder={isFocused || !label || isDateType ? placeholder : ""}
           value={value}
           onChange={onChange}
