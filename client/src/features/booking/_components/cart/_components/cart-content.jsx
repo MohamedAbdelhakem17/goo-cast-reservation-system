@@ -46,9 +46,11 @@ export default function CartContent() {
   const { addToast } = useToast();
 
   return (
-    <div className="rounded-lg border border-gray-200 px-5 py-4">
+    <div className="rounded-lg border border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
       {/* Title */}
-      <h2 className="my-2 py-2 text-lg font-bold">{t("reservation-summary")}</h2>
+      <h2 className="my-2 py-2 text-lg font-bold text-gray-900 dark:text-gray-100">
+        {t("reservation-summary")}
+      </h2>
 
       {/* Studio Section */}
       <StudioSection
@@ -76,8 +78,8 @@ export default function CartContent() {
       />
 
       {/* Subtotal & Discount */}
-      <div className="my-2 space-y-2 border-t border-b border-gray-200 py-2">
-        <div className="text-md flex justify-between">
+      <div className="my-2 space-y-2 border-t border-b border-gray-200 py-2 dark:border-gray-700">
+        <div className="text-md flex justify-between text-gray-900 dark:text-gray-100">
           <span>{t("subtotal")}</span>
           <span>{priceFormat(subtotal)}</span>
         </div>
@@ -95,8 +97,10 @@ export default function CartContent() {
 
       {/* Total */}
       <div className="flex items-center justify-between py-1 pt-2">
-        <p className="text-md font-bold">{t("total")}</p>
-        <p className="text-md text-gray-500">{priceFormat(totalAfterDiscount)}</p>
+        <p className="text-md font-bold text-gray-900 dark:text-gray-100">{t("total")}</p>
+        <p className="text-md text-gray-500 dark:text-gray-400">
+          {priceFormat(totalAfterDiscount)}
+        </p>
       </div>
 
       {/* Apply Discount */}
@@ -158,7 +162,7 @@ export default function CartContent() {
         {/* Back Button */}
         <button
           onClick={handlePrevStep}
-          className="text-md mx-auto flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-[8px] font-semibold"
+          className="text-md mx-auto flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-[8px] font-semibold transition-none dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700"
         >
           <span>{t("back")}</span>
         </button>

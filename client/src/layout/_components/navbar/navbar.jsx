@@ -42,8 +42,10 @@ export default function Navbar() {
     <AuthModelProvider>
       {/* Navbar */}
       <nav
-        className={`relative w-full bg-white transition-all duration-300 ${
-          scrolled ? "py-2 shadow-lg" : "py-4 shadow-md"
+        className={`relative w-full bg-white transition-all duration-300 dark:bg-gray-900 ${
+          scrolled
+            ? "py-2 shadow-lg dark:shadow-gray-800"
+            : "py-4 shadow-md dark:shadow-gray-800"
         }`}
       >
         <motion.div

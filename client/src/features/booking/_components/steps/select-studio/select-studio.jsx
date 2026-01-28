@@ -99,8 +99,8 @@ export default function SelectStudio() {
     return (
       <motion.div
         key={studio._id}
-        className={`relative flex flex-col overflow-hidden rounded-2xl border bg-gray-50 shadow-md transition-colors duration-300 ${
-          isActive ? "border-main border-2" : "border-gray-100"
+        className={`relative flex flex-col overflow-hidden rounded-2xl border bg-gray-50 shadow-md transition-colors duration-300 dark:bg-gray-800 ${
+          isActive ? "border-main border-2" : "border-gray-100 dark:border-gray-700"
         }`}
         onClick={() => {
           if (isAvailable) {
@@ -127,9 +127,9 @@ export default function SelectStudio() {
           {!isAvailable && (
             <div className="group relative mx-auto mb-4 w-fit">
               {/* Alert Button */}
-              <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-50 px-4 py-2 shadow-sm ring-1 ring-red-200 transition-all hover:shadow-md hover:ring-red-300">
+              <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-50 px-4 py-2 shadow-sm ring-1 ring-red-200 transition-all hover:shadow-md hover:ring-red-300 dark:bg-red-950 dark:ring-red-900 dark:hover:ring-red-800">
                 <AlertCircle className="h-4 w-4 animate-pulse text-red-500" />
-                <span className="text-xs font-medium text-red-700">
+                <span className="text-xs font-medium text-red-700 dark:text-red-300">
                   {t("studio-not-available")}
                 </span>
               </div>
@@ -148,8 +148,10 @@ export default function SelectStudio() {
           )}
 
           <div>
-            <h3 className="mb-3 text-lg font-bold text-red-600">{studio.name?.[lng]}</h3>
-            <ul className="space-y-2 text-sm text-gray-700">
+            <h3 className="mb-3 text-lg font-bold text-red-600 dark:text-red-400">
+              {studio.name?.[lng]}
+            </h3>
+            <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
               <li>
                 {studio.recording_seats} {t("recording-seats")}
               </li>

@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { motion } from "framer-motion";
 
 const listVariants = {
   hidden: { opacity: 0 },
@@ -24,17 +24,20 @@ export default function Equipment({ equipment }) {
   const { t, lng } = useLocalization();
 
   return (
-    <div className="mx-auto max-w-3xl rounded-xl bg-white px-6 py-8 shadow-sm">
+    <div className="mx-auto max-w-3xl rounded-xl bg-white px-6 py-8 shadow-sm dark:bg-gray-800">
       <div className="mb-4 flex items-center">
         <i className="fa-solid fa-photo-film text-main me-2 text-2xl"></i>
         <motion.h2
-          className="text-2xl font-bold text-gray-800"
+          className="text-2xl font-bold text-gray-800 dark:text-gray-100"
           whileHover={{ scale: 1.02 }}
         >
           {t("equipment")}
         </motion.h2>
       </div>
-      <motion.ul className="space-y-3 text-gray-600" variants={listVariants}>
+      <motion.ul
+        className="space-y-3 text-gray-600 dark:text-gray-400"
+        variants={listVariants}
+      >
         {equipment?.[lng]?.map((rule, index) => (
           <motion.li
             key={index}

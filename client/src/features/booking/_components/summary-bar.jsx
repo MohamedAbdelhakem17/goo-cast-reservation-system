@@ -55,7 +55,7 @@ export default function SummaryBar() {
       {/* Summary bar parent*/}
       <div className="fixed right-0 bottom-[65px] left-0 z-40 md:hidden">
         {/* Container */}
-        <div className="border-main mx-auto flex items-center gap-2 overflow-x-auto border-t bg-white/90 px-4 py-4 text-sm backdrop-blur-lg">
+        <div className="border-main mx-auto flex items-center gap-2 overflow-x-auto border-t bg-white/90 px-4 py-4 text-sm backdrop-blur-lg dark:bg-gray-900/90">
           {/* Display ite,s */}
           {visibleSteps.map((step, index) => {
             const isActive = step.id === currentStep;
@@ -73,7 +73,7 @@ export default function SummaryBar() {
                   className={`max-w-[200px] truncate rounded-full px-3 py-1 transition-all ${
                     isActive
                       ? "bg-main font-semibold text-white"
-                      : "bg-gray-100 text-gray-600"
+                      : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
                   } ${
                     isClickable
                       ? "cursor-pointer hover:bg-black hover:text-white"

@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Description from "./taps-components/description";
-import Facilities from "./taps-components/facilities";
-import Equipment from "./taps-components/equipment";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import Description from "./taps-components/description";
+import Equipment from "./taps-components/equipment";
+import Facilities from "./taps-components/facilities";
 
 export default function Taps({ description, facilities, equipment }) {
   const { t, lng } = useLocalization();
@@ -37,7 +37,7 @@ export default function Taps({ description, facilities, equipment }) {
         }}
         className="mx-auto my-4 w-full max-w-3xl px-4 md:px-0"
       >
-        <div className="border-main/50 relative flex items-center justify-around rounded-lg border-b bg-white shadow-sm">
+        <div className="border-main/50 relative flex items-center justify-around rounded-lg border-b bg-white shadow-sm dark:bg-gray-800">
           {tabs.map((tab) => {
             const isActive = activeTabId === tab.id;
             return (
@@ -45,7 +45,9 @@ export default function Taps({ description, facilities, equipment }) {
                 key={tab.id}
                 onClick={() => setActiveTabId(tab.id)}
                 className={`relative z-10 cursor-pointer px-1 py-3 text-sm font-bold transition-colors duration-200 md:px-4 ${
-                  isActive ? "text-white" : "text-gray-500 hover:text-gray-700"
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 }`}
                 aria-selected={isActive}
                 role="tab"

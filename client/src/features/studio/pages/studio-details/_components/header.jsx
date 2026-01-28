@@ -1,7 +1,6 @@
-import React from "react";
+import useLocalization from "@/context/localization-provider/localization-context";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function Header({ title, location }) {
   const { t, lng } = useLocalization();
@@ -30,7 +29,7 @@ export default function Header({ title, location }) {
       <motion.div variants={item}>
         <Link
           to="/setups"
-          className="hover:text-main group mb-4 font-medium text-gray-600 transition-colors duration-300"
+          className="hover:text-main group mb-4 font-medium text-gray-600 transition-colors duration-300 dark:text-gray-400"
         >
           <motion.div
             whileHover={{ x: -3 }}
@@ -55,7 +54,7 @@ export default function Header({ title, location }) {
       <motion.div variants={item} className="flex flex-wrap items-center gap-x-8 py-1">
         {/* Studio Location */}
         <motion.p
-          className="flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1.5 text-gray-600"
+          className="flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1.5 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
           whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}
         >
           <i className="fa-solid fa-location-dot"></i>

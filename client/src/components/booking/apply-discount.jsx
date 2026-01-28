@@ -17,15 +17,15 @@ function CouponInput({ coupon, setCoupon, onApply, disabled, isPending, t }) {
         placeholder={t("enter-coupon-code")}
         value={coupon}
         onChange={(e) => setCoupon(e.target.value.toUpperCase())}
-        className="focus:border-main focus:ring-main w-full flex-1 rounded-md border-2 border-gray-200 px-3 py-2 text-sm focus:ring-1"
+        className="focus:border-main focus:ring-main w-full flex-1 rounded-md border-2 border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:ring-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
       />
       <button
         disabled={disabled || isPending}
         onClick={onApply}
         className={`rounded-md px-4 py-2 text-sm font-medium transition ${
           disabled || isPending
-            ? "cursor-not-allowed bg-gray-100 opacity-50"
-            : "bg-gray-100 hover:bg-gray-200"
+            ? "cursor-not-allowed bg-gray-100 opacity-50 dark:bg-gray-800"
+            : "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
         }`}
       >
         {isPending ? t("applying") : t("apply")}
