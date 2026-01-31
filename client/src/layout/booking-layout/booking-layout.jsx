@@ -1,6 +1,7 @@
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { NavigationButtons, Stepper } from "@/features/booking/_components";
 import BookingHeader from "@/layout/_components/booking-header/booking-header";
+import PromotionsBar from "@/layout/_components/promotions-bar/promotions-bar";
 import { trackBookingStep } from "@/utils/gtm";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
@@ -60,9 +61,10 @@ export default function BookingLayout({ children, currentStep }) {
   }, [currentStep, location.search]);
 
   return (
-    <div className="min-h-screen">
+    <div className="dark:transparent min-h-screen bg-white dark:bg-transparent">
       {/* Header and Stepper */}
       <div className="sticky top-0 z-[500]">
+        <PromotionsBar />
         <BookingHeader />
         <Stepper />
       </div>
@@ -70,7 +72,7 @@ export default function BookingLayout({ children, currentStep }) {
       {/* Main Content */}
       <div className="mx-auto mb-1 w-full px-3 md:px-4 lg:max-w-4xl lg:px-6 xl:max-w-6xl">
         <motion.div
-          className="rounded-xl bg-white"
+          className="rounded-xl bg-white dark:bg-transparent"
           // initial={{ opacity: 0 }}
           // animate={{ opacity: 1 }}
           // exit={{ opacity: 0 }}

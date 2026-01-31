@@ -36,15 +36,15 @@ export default function NavigationButtons() {
     <>
       {/* <div className="pb-24 lg:hidden" /> */}
       <div
-        className={`fixed right-0 bottom-0 left-0 z-40 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 backdrop-blur-lg lg:hidden`}
+        className={`fixed right-0 bottom-0 left-0 z-40 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 backdrop-blur-lg lg:hidden dark:border-gray-700 dark:bg-gray-900`}
       >
         {/* Previous Button */}
         {currentStep !== 1 && (
           <NavButton
             className={`flex items-center gap-1 rounded-md px-6 py-2 ${
               currentStep === 1
-                ? "cursor-not-allowed bg-gray-200 text-gray-400"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "cursor-not-allowed bg-gray-200 text-gray-400 dark:bg-gray-700 dark:text-gray-500"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             } ${isRTL ? "flex-row-reverse" : ""}`}
             disabled={currentStep === 1}
             onClick={handlePrevStep}

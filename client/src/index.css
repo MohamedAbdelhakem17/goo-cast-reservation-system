@@ -50,6 +50,8 @@
   --color-main: #ff0000;
 }
 
+@variant dark (&:is(.dark *));
+
 .text-color {
   background: linear-gradient(277.14deg, #ff770b 19.91%, #ff0000 95.45%);
   -webkit-background-clip: text;

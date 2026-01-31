@@ -56,7 +56,7 @@ export default function PersonalInformation() {
       {/* Responsive Grid Layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
         {/* === Form Section === */}
-        <div className="col-span-2 w-full rounded-md border border-gray-100 p-4 py-3 shadow-sm">
+        <div className="col-span-2 w-full rounded-md border border-gray-100 bg-white p-4 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <form className="w-full space-y-3 px-5">
             <motion.div
               {...motionProps}
@@ -190,8 +190,8 @@ export default function PersonalInformation() {
           </form>
 
           {/* Payment Section */}
-          <div className="border-t border-gray-200 px-5 pt-4">
-            <h3 className="flex items-center gap-2 font-semibold text-gray-700">
+          <div className="border-t border-gray-200 px-5 pt-4 dark:border-gray-700">
+            <h3 className="flex items-center gap-2 font-semibold text-gray-700 dark:text-gray-300">
               <i className="fa-solid fa-credit-card mr-3"></i>
               {t("payment-method")}
             </h3>
@@ -247,7 +247,7 @@ export default function PersonalInformation() {
 
       {/* === FAQ Section (same width as form) === */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
-        <div className="order-2 col-span-2 w-full rounded-md border border-gray-100 p-4 py-5 shadow-sm lg:order-none">
+        <div className="order-2 col-span-2 w-full rounded-md border border-gray-100 bg-white p-4 py-5 shadow-sm lg:order-none dark:border-gray-700 dark:bg-gray-800">
           <Faq />
         </div>
       </div>

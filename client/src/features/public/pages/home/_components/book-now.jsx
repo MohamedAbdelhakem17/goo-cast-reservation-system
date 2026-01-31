@@ -1,7 +1,6 @@
-import React from "react";
+import useLocalization from "@/context/localization-provider/localization-context";
 import { Calendar, Clock, Mic } from "lucide-react";
 import { Link } from "react-router-dom";
-import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function BookNow() {
   const { t } = useLocalization();
@@ -64,7 +63,7 @@ export default function BookNow() {
         {/* Link */}
         <Link
           to={"/booking"}
-          className="mt-8 inline-block cursor-pointer rounded-full border-white bg-white px-5 py-3 font-semibold text-red-600 hover:bg-red-50"
+          className="mt-8 inline-block cursor-pointer rounded-full border-white bg-white px-5 py-3 font-semibold text-red-600 transition-none hover:bg-red-50 dark:bg-gray-100 dark:hover:bg-gray-200"
         >
           {t("book-your-session-now")}
         </Link>

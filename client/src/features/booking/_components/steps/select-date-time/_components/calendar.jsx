@@ -100,7 +100,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
      Render
   ======================= */
   return (
-    <div className="mx-auto w-full bg-white">
+    <div className="mx-auto w-full bg-white dark:bg-transparent">
       {/* Counters */}
       <div className="mb-6 grid grid-cols-2 gap-6">
         <CounterInput
@@ -133,7 +133,7 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
         <div className="flex items-center gap-4">
           {/* go to last month */}
           <button
-            className="h-8 w-8 disabled:opacity-40"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 dark:text-gray-300 dark:hover:bg-gray-800"
             onClick={() => navigateMonth("prev")}
             disabled={isPrevDisabled}
           >
@@ -141,13 +141,16 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
           </button>
 
           {/* Month */}
-          <h1 className="text-center text-xl font-medium lg:min-w-[140px]">
+          <h1 className="text-center text-xl font-medium text-gray-900 lg:min-w-[140px] dark:text-gray-100">
             {monthNames[currentDate.getMonth()]}{" "}
             {currentDate.getFullYear().toLocaleString(`${lng}-EG`)}
           </h1>
 
           {/* go to next month */}
-          <button className="h-8 w-8" onClick={() => navigateMonth("next")}>
+          <button
+            className="flex h-8 w-8 items-center justify-center rounded-md text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+            onClick={() => navigateMonth("next")}
+          >
             <ChevronRight className={`h-4 w-4 ${lng === "ar" && "-scale-100"}`} />
           </button>
         </div>
@@ -156,8 +159,8 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
       {/* Calendar */}
       <div className="relative">
         {isCalendarDisabled && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40">
-            <p className="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow">
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 dark:bg-gray-900/40">
+            <p className="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow dark:bg-gray-800 dark:text-gray-300">
               {t("please-select-number-of-people")}
             </p>
           </div>
@@ -171,13 +174,13 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
           {isLoading ? (
             <Loading />
           ) : (
-            <div className="overflow-hidden rounded-lg border border-gray-200">
+            <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
               {/* Days header */}
-              <div className="grid grid-cols-7 bg-gray-50">
+              <div className="grid grid-cols-7 bg-gray-50 dark:bg-gray-800">
                 {daysOfWeek.map((day) => (
                   <div
                     key={day}
-                    className="border-r border-gray-200 p-4 text-center text-sm font-medium text-gray-700 last:border-r-0"
+                    className="border-r border-gray-200 p-4 text-center text-sm font-medium text-gray-700 last:border-r-0 dark:border-gray-700 dark:text-gray-300"
                   >
                     {day}
                   </div>
@@ -189,21 +192,19 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
                 {calendarDays.map((day, index) => (
                   <div
                     key={index}
-                    className={`relative h-10 border-r border-b border-gray-200 last:border-e-0 lg:h-16 ${
+                    className={`relative h-10 border-r border-b border-gray-200 transition-colors last:border-e-0 lg:h-16 dark:border-gray-700 ${
                       day.blocked
-                        ? "cursor-not-allowed bg-gray-50"
-                        : "cursor-pointer bg-white transition-colors hover:bg-blue-50"
-                    } ${
-                      (selectedDate ? isSelected(day.date) : isToday(day.date))
-                        ? "ring-main bg-blue-100 ring-2 ring-inset"
-                        : ""
+                        ? "cursor-not-allowed bg-gray-50 dark:bg-gray-800"
+                        : (selectedDate ? isSelected(day.date) : isToday(day.date))
+                          ? "ring-main cursor-pointer bg-blue-100 ring-2 ring-inset hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/40"
+                          : "cursor-pointer bg-white hover:bg-blue-50 dark:bg-gray-900 dark:hover:bg-gray-700"
                     }`}
                     onClick={() => handleDayClick(day)}
                   >
                     {/* Blocked */}
                     {day.blocked && !day.isEmpty && (
                       <div
-                        className="absolute inset-0 opacity-40"
+                        className="absolute inset-0 opacity-40 dark:opacity-60"
                         style={{
                           backgroundImage: `repeating-linear-gradient(
                       45deg,
@@ -221,10 +222,10 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
                       <div
                         className={`absolute top-2 left-2 text-sm font-medium ${
                           day.blocked
-                            ? "text-gray-400"
+                            ? "text-gray-400 dark:text-gray-600"
                             : (selectedDate ? isSelected(day.date) : isToday(day.date))
                               ? "text-main font-bold"
-                              : "text-gray-900"
+                              : "text-gray-900 dark:text-gray-100"
                         }`}
                       >
                         {day.date.toLocaleString(`${lng}-EG`)}

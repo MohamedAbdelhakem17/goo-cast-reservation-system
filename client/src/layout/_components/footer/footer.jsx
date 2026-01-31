@@ -1,9 +1,9 @@
 "use client";
+import { logo } from "@/assets/images";
+import useLocalization from "@/context/localization-provider/localization-context";
+import useQuickBooking from "@/hooks/useQuickBooking";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { logo } from "@/assets/images";
-import useQuickBooking from "@/hooks/useQuickBooking";
-import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function Footer() {
   const { t } = useLocalization();
@@ -60,7 +60,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="from-main/5 relative w-full overflow-hidden bg-gradient-to-b to-gray-100 pt-12 pb-6">
+    <footer className="from-main/5 relative w-full overflow-hidden bg-gradient-to-b to-gray-100 pt-12 pb-6 transition-colors duration-300 dark:from-gray-900 dark:to-gray-950">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div
@@ -114,7 +114,7 @@ export default function Footer() {
               </Link>
             </div>
 
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {t(
                 "egypts-premier-podcast-studio-offering-professional-recording-facilities-and-expert-guidance-for-podcasters",
               )}
@@ -127,7 +127,7 @@ export default function Footer() {
                   href={social.url}
                   target="_blank"
                   aria-label={social.label}
-                  className="hover:bg-main flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors duration-300 hover:text-white"
+                  className="hover:bg-main flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors duration-300 hover:text-white dark:bg-gray-800 dark:text-gray-400"
                   whileHover={{ y: -3, scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -139,7 +139,7 @@ export default function Footer() {
 
           {/* Navigation Links */}
           <motion.div variants={itemVariants} className="space-y-6">
-            <h3 className="relative inline-block text-lg font-bold">
+            <h3 className="relative inline-block text-lg font-bold text-gray-900 dark:text-gray-100">
               {t("navigation")}
               <motion.span
                 className="bg-main absolute -bottom-1 left-0 h-0.5 w-1/2 rounded-full"
@@ -159,7 +159,7 @@ export default function Footer() {
                 >
                   <Link
                     to={link.path}
-                    className="hover:text-main flex items-center gap-2 text-gray-600 transition-colors duration-300"
+                    className="hover:text-main flex items-center gap-2 text-gray-600 transition-colors duration-300 dark:text-gray-400"
                   >
                     <i className="fa-solid fa-chevron-right text-main/70 text-xs"></i>
                     {link.title}
@@ -171,7 +171,7 @@ export default function Footer() {
 
           {/* Newsletter */}
           <motion.div variants={itemVariants} className="space-y-6">
-            <h3 className="relative inline-block text-lg font-bold">
+            <h3 className="relative inline-block text-lg font-bold text-gray-900 dark:text-gray-100">
               {t("stay-updated")}
               <motion.span
                 className="bg-main absolute -bottom-1 left-0 h-0.5 w-1/2 rounded-full"
@@ -181,7 +181,7 @@ export default function Footer() {
                 transition={{ delay: 0.5, duration: 0.6 }}
               ></motion.span>
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {t("subscribe-to-our-newsletter-for-the-latest-updates-and-special-offers")}
             </p>
             <form className="space-y-3">
@@ -189,7 +189,7 @@ export default function Footer() {
                 <input
                   type="email"
                   placeholder={t("your-email-address")}
-                  className="focus:ring-main/20 focus:border-main w-full rounded-lg border border-gray-200 px-4 py-3 transition-all duration-300 focus:ring-2 focus:outline-none"
+                  className="focus:ring-main/20 focus:border-main w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-gray-900 transition-all duration-300 focus:ring-2 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
                   required
                 />
                 <motion.button
@@ -207,7 +207,7 @@ export default function Footer() {
 
         {/* Contact Bar */}
         <motion.div
-          className="flex flex-col items-center justify-between gap-4 border-t border-gray-200 py-6 text-sm text-gray-600 md:flex-row"
+          className="flex flex-col items-center justify-between gap-4 border-t border-gray-200 py-6 text-sm text-gray-600 md:flex-row dark:border-gray-800 dark:text-gray-400"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -242,7 +242,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <motion.div
-          className="border-t border-gray-200 pt-6 text-center text-sm text-gray-500"
+          className="border-t border-gray-200 pt-6 text-center text-sm text-gray-500 dark:border-gray-800 dark:text-gray-400"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

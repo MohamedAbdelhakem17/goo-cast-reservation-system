@@ -193,14 +193,16 @@ export default function Reviews() {
         </motion.div>
 
         <motion.div
-          className="mx-auto max-w-md rounded-xl border border-rose-100 bg-white p-8 text-center shadow-sm"
+          className="mx-auto max-w-md rounded-xl border border-rose-100 bg-white p-8 text-center shadow-sm transition-none dark:border-gray-700 dark:bg-gray-800"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
           <MessageCircle className="mx-auto mb-4 h-16 w-16 text-rose-300" />
-          <h3 className="mb-2 text-xl font-bold text-gray-800">No Reviews Yet</h3>
-          <p className="mb-6 text-gray-600">
+          <h3 className="mb-2 text-xl font-bold text-gray-800 transition-none dark:text-gray-100">
+            No Reviews Yet
+          </h3>
+          <p className="mb-6 text-gray-600 transition-none dark:text-gray-300">
             Be the first to share your experience with our studio!
           </p>
           <button className="rounded-lg bg-rose-500 px-6 py-3 font-medium text-white transition-colors hover:bg-rose-600">

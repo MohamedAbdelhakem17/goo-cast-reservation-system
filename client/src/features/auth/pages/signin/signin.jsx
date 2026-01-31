@@ -29,7 +29,7 @@ const Signin = ({ closeModal, changeForm }) => {
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Close Modal */}
-      <div className="my-2 flex w-full justify-center rounded-t-2xl bg-white/80 p-2">
+      <div className="my-2 flex w-full justify-center rounded-t-2xl bg-white/80 p-2 transition-none dark:bg-gray-800/80">
         <motion.i
           onClick={closeModal}
           whileTap={{ scale: 0.9, shadow: "0px 0px 15px rgba(0,0,0,0.3)" }}
@@ -40,7 +40,7 @@ const Signin = ({ closeModal, changeForm }) => {
 
       {/* Form Container */}
       <motion.div
-        className="relative overflow-hidden rounded-b-2xl bg-white shadow-xl"
+        className="relative overflow-hidden rounded-b-2xl bg-white shadow-xl transition-none dark:bg-gray-800"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -58,14 +58,16 @@ const Signin = ({ closeModal, changeForm }) => {
             transition={{ delay: 0.4, duration: 0.5 }}
             className="mb-6 text-center"
           >
-            <h2 className="mb-2 text-2xl font-bold text-gray-800">{t("welcome-back")}</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="mb-2 text-2xl font-bold text-gray-800 transition-none dark:text-gray-100">
+              {t("welcome-back")}
+            </h2>
+            <p className="text-sm text-gray-600 transition-none dark:text-gray-400">
               {t("enter-your-email-and-password-to-access-your-account")}
             </p>
           </motion.div>
 
           {/* Form */}
-          <form className="space-y-2" onSubmit={formik.handleSubmit}>
+          <form className="space-y-6" onSubmit={formik.handleSubmit}>
             {/* Email Field */}
             <motion.div
               initial={{ opacity: 0, x: -10 }}

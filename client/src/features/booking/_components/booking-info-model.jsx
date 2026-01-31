@@ -46,7 +46,7 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-white shadow-xl md:max-w-[60%]"
+        className="max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-white shadow-xl transition-none md:max-w-[60%] dark:bg-gray-900"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -259,10 +259,12 @@ export default function BookingInfoModel({ selectedBooking, setSelectedBooking }
 
 function InfoCard({ icon, label, value }) {
   return (
-    <div className="rounded-xl bg-gray-50 p-4 text-center">
+    <div className="rounded-xl bg-gray-50 p-4 text-center transition-none dark:bg-gray-800">
       <i className={`fa-solid ${icon} text-main mb-2 text-xl`}></i>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="font-medium">{value || "-"}</p>
+      <p className="text-xs text-gray-500 transition-none dark:text-gray-400">{label}</p>
+      <p className="font-medium break-words transition-none dark:text-gray-100">
+        {value || "-"}
+      </p>
     </div>
   );
 }
@@ -270,11 +272,13 @@ function InfoCard({ icon, label, value }) {
 function Section({ title, icon, children }) {
   return (
     <div>
-      <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800">
+      <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-800 transition-none dark:text-gray-100">
         <i className={`fa-solid ${icon} text-main me-2`}></i>
         {title}
       </h3>
-      <div className="rounded-xl bg-gray-50 p-4">{children}</div>
+      <div className="rounded-xl bg-gray-50 p-4 transition-none dark:bg-gray-800">
+        {children}
+      </div>
     </div>
   );
 }
@@ -282,8 +286,10 @@ function Section({ title, icon, children }) {
 function Field({ label, value }) {
   return (
     <div>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="font-medium break-words">{value || "-"}</p>
+      <p className="text-xs text-gray-500 transition-none dark:text-gray-400">{label}</p>
+      <p className="font-medium break-words transition-none dark:text-gray-100">
+        {value || "-"}
+      </p>
     </div>
   );
 }

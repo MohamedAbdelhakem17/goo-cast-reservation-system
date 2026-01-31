@@ -1,8 +1,8 @@
+import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { OptimizedImage } from "@/components/common";
-import useLocalization from "@/context/localization-provider/localization-context";
 
 export default function StudioCard({ studio }) {
   // Localization
@@ -64,7 +64,7 @@ export default function StudioCard({ studio }) {
 
   return (
     <motion.div
-      className="overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-xl"
+      className="overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-xl dark:bg-gray-800"
       initial={cardAnimation.initial}
       whileInView={cardAnimation.whileInView}
       whileHover={cardAnimation.whileHover}
@@ -101,12 +101,12 @@ export default function StudioCard({ studio }) {
         <div className="border-main flex-1 border-b-3 p-6">
           <div className="flex items-start justify-between">
             {/* Studio Name */}
-            <h3 className="mb-2 text-2xl font-semibold text-gray-800">
+            <h3 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-gray-100">
               {studio.name?.[lng]}
             </h3>
 
             {/* Studio Location */}
-            <p className="mb-3 flex items-center gap-2 text-gray-600">
+            <p className="mb-3 flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <i className="fa-solid fa-location-dot text-rose-500"></i>
               <span>{studio.address?.[lng]}</span>
             </p>
@@ -119,7 +119,7 @@ export default function StudioCard({ studio }) {
                 index <= 3 && (
                   <div className="flex items-center gap-2" key={index}>
                     <i className="fa-solid fa-ticket"></i>
-                    <span className="text-gray-600">{facility}</span>
+                    <span className="text-gray-600 dark:text-gray-400">{facility}</span>
                   </div>
                 ),
             )}

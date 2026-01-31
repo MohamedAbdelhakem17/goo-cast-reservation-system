@@ -71,12 +71,12 @@ const Input = ({
         <input
           ref={inputRef}
           type={isPasswordField && showPasswordToggle ? "text" : type}
-          className={`w-full px-3 py-3 ${isDateType ? "pr-12" : ""} border-0 border-b-2 bg-transparent text-base text-gray-800 placeholder:text-start focus:ring-0 focus:outline-none ${
+          className={`w-full px-3 py-3 ${isDateType ? "pr-12" : ""} border-0 border-b-2 bg-transparent text-base text-gray-800 transition-none placeholder:text-start focus:ring-0 focus:outline-none dark:text-gray-100 ${
             errors && touched
               ? "border-b-red-500"
               : isFocused
                 ? "border-b-[#ed1e26]"
-                : "border-b-gray-300"
+                : "border-b-gray-300 dark:border-b-gray-600"
           } ${
             isDateType
               ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
