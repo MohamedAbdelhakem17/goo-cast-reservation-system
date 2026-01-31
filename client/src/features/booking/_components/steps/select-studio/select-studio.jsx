@@ -3,6 +3,7 @@ import { AlertCircle, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 import { useGetAvailableStudios } from "@/apis/public/booking.api";
+import { useGetStudio } from "@/apis/public/studio.api";
 import { ErrorFeedback, Loading, OptimizedImage } from "@/components/common";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
@@ -11,6 +12,7 @@ import { tracking } from "@/utils/gtm";
 
 import BookingLabel from "../../booking-label";
 import ImagePreviewModal from "./_components/image-preview-modal";
+import StudioCard from "./_components/studio-card";
 
 export default function SelectStudio() {
   const { t, lng } = useLocalization();
@@ -22,27 +24,44 @@ export default function SelectStudio() {
   const [previewImages, setPreviewImages] = useState([]);
   const [previewIndex, setPreviewIndex] = useState(null);
 
+  // Use available studios API if we have booking details, otherwise use all studios
+  const shouldUseAvailableStudios =
+    bookingData.date && bookingData.startSlot && bookingData.duration;
+
   const {
-    data: studiosData,
-    isLoading,
-    error,
-  } = useGetAvailableStudios({
-    date: bookingData.date,
-    startSlot: bookingData.startSlot,
-    duration: bookingData.duration,
-  });
+    data: availableStudiosData,
+    isLoading: isLoadingAvailable,
+    error: errorAvailable,
+  } = useGetAvailableStudios(
+    {
+      date: bookingData.date,
+      startSlot: bookingData.startSlot,
+      duration: bookingData.duration,
+    },
+    { enabled: shouldUseAvailableStudios },
+  );
+
+  const {
+    data: allStudiosData,
+    isLoading: isLoadingAll,
+    error: errorAll,
+  } = useGetStudio(true, { enabled: !shouldUseAvailableStudios });
+
+  const studiosData = shouldUseAvailableStudios ? availableStudiosData : allStudiosData;
+  const isLoading = shouldUseAvailableStudios ? isLoadingAvailable : isLoadingAll;
+  const error = shouldUseAvailableStudios ? errorAvailable : errorAll;
 
   // -----------------------------
   // Image Carousel Handlers
   // -----------------------------
-  const nextImage = (id, images) => {
+  const nextImageCarousel = (id, images) => {
     setCurrentImageIndex((prev) => ({
       ...prev,
       [id]: ((prev[id] || 0) + 1) % images.length,
     }));
   };
 
-  const prevImage = (id, images) => {
+  const prevImageCarousel = (id, images) => {
     setCurrentImageIndex((prev) => ({
       ...prev,
       [id]: (prev[id] || 0) === 0 ? images.length - 1 : (prev[id] || 0) - 1,
@@ -60,13 +79,47 @@ export default function SelectStudio() {
       recording_seats: studio.recording_seats,
     });
 
+    // Keep original functionality
+    setBookingField("startSlot", null);
+    setBookingField("duration", 1);
+    setBookingField("endSlot", null);
+
     tracking("add-studio", { studio_name: studio.name?.[lng] });
 
     if (next) {
-      addToast("studio selected successfully", "success", 1000);
+      addToast(t("studio-selected-successfully"), "success", 1000);
       handleNextStep();
     }
     setSelectedStudio(studio._id);
+  };
+
+  // Legacy handler for external StudioCard component
+  const selectStudioHandler = (studio, next = false) => {
+    setBookingField("studio", studio);
+    setBookingField("startSlot", null);
+    setBookingField("duration", 1);
+    setBookingField("endSlot", null);
+    setSelectedStudio(studio.id);
+    tracking("add-studio", { studio_name: studio.name?.[lng] });
+    if (next) {
+      handleNextStep();
+      addToast(t("studio-selected-successfully"), "success", 1000);
+    }
+  };
+
+  // -----------------------------
+  // Preview Modal Image Navigation
+  // -----------------------------
+  const nextImage = () => {
+    if (previewIndex !== null) {
+      setPreviewIndex((prev) => (prev + 1 < previewImages.length ? prev + 1 : 0));
+    }
+  };
+
+  const prevImage = () => {
+    if (previewIndex !== null) {
+      setPreviewIndex((prev) => (prev - 1 >= 0 ? prev - 1 : previewImages.length - 1));
+    }
   };
 
   // -----------------------------
@@ -81,9 +134,9 @@ export default function SelectStudio() {
     );
 
   // -----------------------------
-  // Studio Card Component
+  // Studio Card Component (Inline)
   // -----------------------------
-  const StudioCard = ({ studio }) => {
+  const InlineStudioCard = ({ studio }) => {
     const allImages = [studio.thumbnail, ...(studio.imagesGallery || [])];
     const isActive = selectedStudio === studio._id;
     const isAvailable =
@@ -118,8 +171,8 @@ export default function SelectStudio() {
           studio={studio}
           images={allImages}
           currentIndex={currentImageIndex[studio._id] || 0}
-          nextImage={nextImage}
-          prevImage={prevImage}
+          nextImage={nextImageCarousel}
+          prevImage={prevImageCarousel}
           setCurrentImageIndex={setCurrentImageIndex}
         />
 
@@ -257,17 +310,29 @@ export default function SelectStudio() {
       />
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {studiosData?.data.map((studio) => (
-          <StudioCard key={studio._id} studio={studio} />
-        ))}
+        {studiosData?.data.map((studio) =>
+          shouldUseAvailableStudios ? (
+            <InlineStudioCard key={studio._id} studio={studio} />
+          ) : (
+            <StudioCard
+              key={studio._id}
+              studio={studio}
+              isActive={selectedStudio === studio._id}
+              onSelect={selectStudioHandler}
+              setPreviewImages={setPreviewImages}
+              setPreviewIndex={setPreviewIndex}
+              handleNextStep={handleNextStep}
+            />
+          ),
+        )}
       </div>
 
       <ImagePreviewModal
         previewImages={previewImages}
         previewIndex={previewIndex}
         setPreviewIndex={setPreviewIndex}
-        nextImage={() => {}}
-        prevImage={() => {}}
+        nextImage={nextImage}
+        prevImage={prevImage}
       />
     </div>
   );

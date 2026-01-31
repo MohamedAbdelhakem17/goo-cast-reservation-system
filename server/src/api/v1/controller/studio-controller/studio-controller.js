@@ -20,8 +20,12 @@ exports.studioImageUpload = uploadMultipleImages([
     maxCount: 1,
   },
   {
+    name: "live_view",
+    maxCount: 1,
+  },
+  {
     name: "imagesGallery",
-    maxCount: 5,
+    maxCount: 10,
   },
 ]);
 // studio image upload Store
@@ -82,6 +86,18 @@ exports.imageManipulation = async (req, res, next) => {
       req.body.thumbnail = thumbnailName;
     } else if (req.body.thumbnailUrl) {
       req.body.thumbnail = req.body.thumbnailUrl;
+    }
+
+    // live_view
+    if (req.files.live_view) {
+      const liveViewName = `studio-${uuidv4()}-${Date.now()}.jpeg`;
+      await sharp(req.files.live_view[0].buffer)
+        .toFormat("jpeg")
+        .jpeg({ quality: 100 })
+        .toFile(`${uploadDir}/${liveViewName}`);
+      req.body.live_view = liveViewName;
+    } else if (req.body.live_viewUrl) {
+      req.body.live_view = req.body.live_viewUrl;
     }
 
     // Gallery
