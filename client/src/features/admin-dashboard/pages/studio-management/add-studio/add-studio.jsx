@@ -1,22 +1,22 @@
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import { getStudioInitialValues, validationSchema } from "@/utils/schemas/studio.schema";
 import { useFormik } from "formik";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { getStudioInitialValues, validationSchema } from "@/utils/schemas/studio.schema";
 
-import useLocalization from "@/context/localization-provider/localization-context";
-import { useState } from "react";
-import { hasError } from "@/utils/formik-helper";
-import FormNavigationButtons from "./../../../_components/form-navigation-buttons";
-import StudioEnglishFields from "./_components/studio-english-fields";
-import StudioArabicFields from "./_components/studio-arabic-fields";
-import StudioShardFields from "./studio-shard-fields";
-import FormStepper from "@/features/admin-dashboard/_components/form-steeper";
-import { AnimatePresence } from "framer-motion";
-import { useUpdateStudio, useAddStudio } from "@/apis/admin/manage-studio.api";
+import { useAddStudio, useUpdateStudio } from "@/apis/admin/manage-studio.api";
 import { useGetOneStudio } from "@/apis/public/studio.api";
 import { EmptyState, Loading } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
+import FormStepper from "@/features/admin-dashboard/_components/form-steeper";
+import { hasError } from "@/utils/formik-helper";
 import { useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import FormNavigationButtons from "./../../../_components/form-navigation-buttons";
+import StudioArabicFields from "./_components/studio-arabic-fields";
+import StudioEnglishFields from "./_components/studio-english-fields";
+import StudioShardFields from "./studio-shard-fields";
 
 const STEP_FIELDS = {
   0: [
@@ -42,6 +42,7 @@ const STEP_FIELDS = {
     "startTime",
     "endTime",
     "thumbnail",
+    "live_view",
     "imagesGallery",
     "dayOff",
     "minSlotsPerDay",
