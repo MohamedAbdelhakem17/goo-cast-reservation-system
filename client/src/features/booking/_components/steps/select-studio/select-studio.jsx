@@ -1,5 +1,14 @@
-import { motion } from "framer-motion";
-import { AlertCircle, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import Image360Preview from "@/components/common/image-360.preview";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertCircle,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Images,
+  Rotate3D,
+  ZoomIn,
+} from "lucide-react";
 import { useState } from "react";
 
 import { useGetAvailableStudios } from "@/apis/public/booking.api";
@@ -23,6 +32,7 @@ export default function SelectStudio() {
   const [currentImageIndex, setCurrentImageIndex] = useState({});
   const [previewImages, setPreviewImages] = useState([]);
   const [previewIndex, setPreviewIndex] = useState(null);
+  const [liveViewMode, setLiveViewMode] = useState({});
 
   // Use available studios API if we have booking details, otherwise use all studios
   const shouldUseAvailableStudios =
@@ -152,8 +162,10 @@ export default function SelectStudio() {
     return (
       <motion.div
         key={studio._id}
-        className={`relative flex flex-col overflow-hidden rounded-2xl border bg-gray-50 shadow-md transition-colors duration-300 dark:bg-gray-800 ${
-          isActive ? "border-main border-2" : "border-gray-100 dark:border-gray-700"
+        className={`relative flex flex-col overflow-hidden rounded-2xl border bg-white shadow-lg transition-all duration-300 dark:bg-gray-900 ${
+          isActive
+            ? "border-main shadow-main/20 dark:shadow-main/40 border-2"
+            : "border-gray-200 hover:shadow-xl dark:border-gray-700"
         }`}
         onClick={() => {
           if (isAvailable) {
@@ -162,7 +174,7 @@ export default function SelectStudio() {
         }}
       >
         {studio.isMostPopular && (
-          <span className="bg-main shadow-main absolute -end-10 top-7 rotate-45 px-10 py-1 text-xs font-bold text-white shadow-sm">
+          <span className="bg-main shadow-main dark:shadow-main/60 absolute -end-10 top-7 rotate-45 px-10 py-1 text-xs font-bold text-white shadow-md">
             Most Popular
           </span>
         )}
@@ -174,14 +186,16 @@ export default function SelectStudio() {
           nextImage={nextImageCarousel}
           prevImage={prevImageCarousel}
           setCurrentImageIndex={setCurrentImageIndex}
+          liveViewMode={liveViewMode}
+          setLiveViewMode={setLiveViewMode}
         />
 
         <div className="flex flex-1 flex-col justify-between p-4">
           {!isAvailable && (
             <div className="group relative mx-auto mb-4 w-fit">
               {/* Alert Button */}
-              <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-50 px-4 py-2 shadow-sm ring-1 ring-red-200 transition-all hover:shadow-md hover:ring-red-300 dark:bg-red-950 dark:ring-red-900 dark:hover:ring-red-800">
-                <AlertCircle className="h-4 w-4 animate-pulse text-red-500" />
+              <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-50 px-4 py-2 shadow-sm ring-1 ring-red-200 transition-all hover:shadow-md hover:ring-red-300 dark:bg-red-900/20 dark:ring-red-800 dark:hover:ring-red-700">
+                <AlertCircle className="h-4 w-4 animate-pulse text-red-500 dark:text-red-400" />
                 <span className="text-xs font-medium text-red-700 dark:text-red-300">
                   {t("studio-not-available")}
                 </span>
@@ -189,9 +203,9 @@ export default function SelectStudio() {
 
               {/* Modern Tooltip on Top */}
               <div className="pointer-events-none absolute -top-11 left-1/2 z-20 mb-2 -translate-x-1/2 scale-95 opacity-0 transition-all duration-200 group-hover:scale-100 group-hover:opacity-100">
-                <div className="relative w-64 rounded-md bg-gray-800 px-3 py-2 text-center text-xs text-white shadow-lg">
+                <div className="relative w-64 rounded-md bg-gray-800 px-3 py-2 text-center text-xs text-white shadow-lg dark:bg-gray-700">
                   {/* Arrow pointing down */}
-                  <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-gray-800"></div>
+                  <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-gray-800 dark:bg-gray-700"></div>
                   {studio.recording_seats < bookingData.persons
                     ? t("not-enough-seats")
                     : t("studio-already-booked")}
@@ -201,16 +215,20 @@ export default function SelectStudio() {
           )}
 
           <div>
-            <h3 className="mb-3 text-lg font-bold text-red-600 dark:text-red-400">
+            <h3 className="text-main mb-3 text-lg font-bold dark:text-red-400">
               {studio.name?.[lng]}
             </h3>
             <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-              <li>
+              <li className="font-medium">
                 {studio.recording_seats} {t("recording-seats")}
               </li>
-              <li>{studio.address?.[lng]}</li>
+              <li className="text-gray-600 dark:text-gray-400">
+                {studio.address?.[lng]}
+              </li>
               {studio.facilities?.[lng].map((text, i) => (
-                <li key={i}>• {text}</li>
+                <li key={i} className="text-gray-600 dark:text-gray-400">
+                  • {text}
+                </li>
               ))}
             </ul>
           </div>
@@ -224,12 +242,12 @@ export default function SelectStudio() {
                 selectStudio(studio, true);
               }
             }}
-            className={`text-md mx-auto mt-6 flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold transition-all duration-200 ${
+            className={`text-md mx-auto mt-6 flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold shadow-sm transition-all duration-200 ${
               !isAvailable
-                ? "cursor-not-allowed border-2 border-gray-300 bg-gray-300 text-gray-500"
+                ? "cursor-not-allowed border-2 border-gray-300 bg-gray-300 text-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400"
                 : isActive
-                  ? "bg-main text-white hover:bg-red-700"
-                  : "border-main text-main border-2 bg-white hover:bg-red-50"
+                  ? "bg-main dark:bg-main text-white shadow-md hover:bg-red-700 dark:hover:bg-red-600"
+                  : "border-main text-main border-2 bg-white hover:bg-red-50 dark:border-red-500 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-red-950/30"
             }`}
             disabled={!isAvailable}
           >
@@ -249,54 +267,130 @@ export default function SelectStudio() {
   // -----------------------------
   // Image Carousel Component
   // -----------------------------
-  const ImageCarousel = ({ studio, images, currentIndex, nextImage, prevImage }) => {
+  const ImageCarousel = ({
+    studio,
+    images,
+    currentIndex,
+    nextImage,
+    prevImage,
+    liveViewMode,
+    setLiveViewMode,
+  }) => {
+    const isLiveMode = liveViewMode[studio._id] || false;
+
+    const handlePreview = (e) => {
+      e.stopPropagation();
+      setPreviewImages(images);
+      setPreviewIndex(currentIndex);
+    };
+
     return (
       <div className="relative w-full overflow-hidden">
-        <OptimizedImage
-          src={images[currentIndex] || "/placeholder.svg"}
-          alt={studio.name?.[lng]}
-          className="h-64 w-full rounded-2xl object-cover p-2 select-none"
-        />
-
-        {/* Next / Prev buttons */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            prevImage(studio._id, images);
-          }}
-          className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white hover:bg-black/60"
-        >
-          <ChevronLeft size={15} />
-        </button>
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            nextImage(studio._id, images);
-          }}
-          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white hover:bg-black/60"
-        >
-          <ChevronRight size={15} />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute right-0 bottom-2 left-0 flex justify-center gap-2 p-3">
-          {images.map((_, i) => (
-            <button
-              key={i}
+        {isLiveMode && studio.live_view ? (
+          <div className="relative h-64 w-full" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="absolute start-2 top-2 z-10 cursor-pointer rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-black dark:bg-white/20 dark:hover:bg-white/30"
               onClick={(e) => {
                 e.stopPropagation();
-                setCurrentImageIndex((prev) => ({
+                setLiveViewMode((prev) => ({
                   ...prev,
-                  [studio._id]: i,
+                  [studio._id]: false,
                 }));
               }}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                i === currentIndex ? "bg-main" : "bg-gray-300"
-              }`}
-            />
-          ))}
-        </div>
+            >
+              <Images className="h-5 w-5" />
+            </div>
+            <Image360Preview image={studio.live_view} />
+          </div>
+        ) : (
+          <div
+            className="group relative w-full overflow-hidden bg-gray-100 dark:bg-gray-800"
+            onClick={handlePreview}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={`${studio._id}-${currentIndex}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="h-64 w-full"
+              >
+                <OptimizedImage
+                  src={images[currentIndex] || "/placeholder.svg"}
+                  alt={studio.name?.[lng]}
+                  className="h-64 w-full rounded-2xl object-cover p-2 select-none"
+                  effect="opacity"
+                  threshold={50}
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Hover overlay */}
+            <div className="absolute top-2 right-2 bottom-4 left-2 flex items-center justify-center rounded-2xl bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-black/60">
+              <ZoomIn className="h-10 w-10 text-white" />
+            </div>
+
+            {/* 360 Badge */}
+            {studio.live_view && (
+              <span
+                className="absolute top-3 left-3 z-20 flex cursor-pointer items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs text-white backdrop-blur-sm transition-all hover:bg-black/80 dark:bg-white/20 dark:hover:bg-white/30"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLiveViewMode((prev) => ({
+                    ...prev,
+                    [studio._id]: true,
+                  }));
+                }}
+              >
+                <Rotate3D size={14} />
+                360°
+              </span>
+            )}
+
+            {/* Next / Prev buttons */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage(studio._id, images);
+              }}
+              className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
+            >
+              <ChevronLeft size={15} />
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage(studio._id, images);
+              }}
+              className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
+            >
+              <ChevronRight size={15} />
+            </button>
+
+            {/* Dots */}
+            <div className="absolute right-0 bottom-2 left-0 flex justify-center gap-2 p-3">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex((prev) => ({
+                      ...prev,
+                      [studio._id]: i,
+                    }));
+                  }}
+                  className={`h-2 w-2 rounded-full transition-colors ${
+                    i === currentIndex
+                      ? "bg-main dark:bg-red-400"
+                      : "bg-gray-300 dark:bg-gray-600"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
