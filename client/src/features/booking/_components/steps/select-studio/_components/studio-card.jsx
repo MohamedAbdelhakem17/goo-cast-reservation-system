@@ -1,6 +1,6 @@
 import { OptimizedImage } from "@/components/common";
 import Image360Preview from "@/components/common/image-360.preview";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight, Images, Rotate3D, ZoomIn } from "lucide-react";
 import { useState } from "react";
 
@@ -50,23 +50,41 @@ export default function StudioCard({
       )}
 
       {isLiveMode && studio.live_view ? (
-        <div className="relative h-64 w-full">
+        <div className="relative h-64 w-full" onClick={(e) => e.stopPropagation()}>
           <div
             className="absolute start-2 top-2 z-10 cursor-pointer rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-black dark:bg-white/20 dark:hover:bg-white/30"
-            onClick={() => setIsLiveMode(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsLiveMode(false);
+            }}
           >
             <Images className="h-5 w-5" />
           </div>
           <Image360Preview image={studio.live_view} />
         </div>
       ) : (
-        <div className="group relative w-full overflow-hidden" onClick={handlePreview}>
-          <OptimizedImage
-            src={allImages[currentIndex] || "/placeholder.svg"}
-            alt={studio.name?.en || "studio"}
-            className="h-64 w-full rounded-2xl object-cover p-2 select-none"
-            loading="lazy"
-          />
+        <div
+          className="group relative w-full overflow-hidden bg-gray-100 dark:bg-gray-800"
+          onClick={handlePreview}
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={`${studio._id}-${currentIndex}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="h-64 w-full"
+            >
+              <OptimizedImage
+                src={allImages[currentIndex] || "/placeholder.svg"}
+                alt={studio.name?.en || "studio"}
+                className="h-64 w-full rounded-2xl object-cover p-2 select-none"
+                effect="opacity"
+                threshold={50}
+              />
+            </motion.div>
+          </AnimatePresence>
 
           {/* Hover overlay */}
           <div className="absolute top-2 right-2 bottom-4 left-2 flex items-center justify-center rounded-2xl bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-black/60">
@@ -76,7 +94,7 @@ export default function StudioCard({
           {/* 360 Badge */}
           {studio.live_view && (
             <span
-              className="absolute top-3 left-3 flex cursor-pointer items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs text-white backdrop-blur-sm transition-all hover:bg-black/80 dark:bg-white/20 dark:hover:bg-white/30"
+              className="absolute top-3 left-3 z-20 flex cursor-pointer items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs text-white backdrop-blur-sm transition-all hover:bg-black/80 dark:bg-white/20 dark:hover:bg-white/30"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsLiveMode(true);

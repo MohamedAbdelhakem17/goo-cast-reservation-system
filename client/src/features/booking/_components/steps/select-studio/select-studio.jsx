@@ -1,5 +1,14 @@
-import { motion } from "framer-motion";
-import { AlertCircle, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import Image360Preview from "@/components/common/image-360.preview";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertCircle,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Images,
+  Rotate3D,
+  ZoomIn,
+} from "lucide-react";
 import { useState } from "react";
 
 import { useGetAvailableStudios } from "@/apis/public/booking.api";
@@ -23,6 +32,7 @@ export default function SelectStudio() {
   const [currentImageIndex, setCurrentImageIndex] = useState({});
   const [previewImages, setPreviewImages] = useState([]);
   const [previewIndex, setPreviewIndex] = useState(null);
+  const [liveViewMode, setLiveViewMode] = useState({});
 
   // Use available studios API if we have booking details, otherwise use all studios
   const shouldUseAvailableStudios =
@@ -176,6 +186,8 @@ export default function SelectStudio() {
           nextImage={nextImageCarousel}
           prevImage={prevImageCarousel}
           setCurrentImageIndex={setCurrentImageIndex}
+          liveViewMode={liveViewMode}
+          setLiveViewMode={setLiveViewMode}
         />
 
         <div className="flex flex-1 flex-col justify-between p-4">
@@ -255,56 +267,130 @@ export default function SelectStudio() {
   // -----------------------------
   // Image Carousel Component
   // -----------------------------
-  const ImageCarousel = ({ studio, images, currentIndex, nextImage, prevImage }) => {
+  const ImageCarousel = ({
+    studio,
+    images,
+    currentIndex,
+    nextImage,
+    prevImage,
+    liveViewMode,
+    setLiveViewMode,
+  }) => {
+    const isLiveMode = liveViewMode[studio._id] || false;
+
+    const handlePreview = (e) => {
+      e.stopPropagation();
+      setPreviewImages(images);
+      setPreviewIndex(currentIndex);
+    };
+
     return (
       <div className="relative w-full overflow-hidden">
-        <OptimizedImage
-          src={images[currentIndex] || "/placeholder.svg"}
-          alt={studio.name?.[lng]}
-          className="h-64 w-full rounded-2xl object-cover p-2 select-none"
-        />
-
-        {/* Next / Prev buttons */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            prevImage(studio._id, images);
-          }}
-          className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
-        >
-          <ChevronLeft size={15} />
-        </button>
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            nextImage(studio._id, images);
-          }}
-          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
-        >
-          <ChevronRight size={15} />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute right-0 bottom-2 left-0 flex justify-center gap-2 p-3">
-          {images.map((_, i) => (
-            <button
-              key={i}
+        {isLiveMode && studio.live_view ? (
+          <div className="relative h-64 w-full" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="absolute start-2 top-2 z-10 cursor-pointer rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-black dark:bg-white/20 dark:hover:bg-white/30"
               onClick={(e) => {
                 e.stopPropagation();
-                setCurrentImageIndex((prev) => ({
+                setLiveViewMode((prev) => ({
                   ...prev,
-                  [studio._id]: i,
+                  [studio._id]: false,
                 }));
               }}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                i === currentIndex
-                  ? "bg-main dark:bg-red-400"
-                  : "bg-gray-300 dark:bg-gray-600"
-              }`}
-            />
-          ))}
-        </div>
+            >
+              <Images className="h-5 w-5" />
+            </div>
+            <Image360Preview image={studio.live_view} />
+          </div>
+        ) : (
+          <div
+            className="group relative w-full overflow-hidden bg-gray-100 dark:bg-gray-800"
+            onClick={handlePreview}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={`${studio._id}-${currentIndex}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="h-64 w-full"
+              >
+                <OptimizedImage
+                  src={images[currentIndex] || "/placeholder.svg"}
+                  alt={studio.name?.[lng]}
+                  className="h-64 w-full rounded-2xl object-cover p-2 select-none"
+                  effect="opacity"
+                  threshold={50}
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Hover overlay */}
+            <div className="absolute top-2 right-2 bottom-4 left-2 flex items-center justify-center rounded-2xl bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-black/60">
+              <ZoomIn className="h-10 w-10 text-white" />
+            </div>
+
+            {/* 360 Badge */}
+            {studio.live_view && (
+              <span
+                className="absolute top-3 left-3 z-20 flex cursor-pointer items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs text-white backdrop-blur-sm transition-all hover:bg-black/80 dark:bg-white/20 dark:hover:bg-white/30"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLiveViewMode((prev) => ({
+                    ...prev,
+                    [studio._id]: true,
+                  }));
+                }}
+              >
+                <Rotate3D size={14} />
+                360°
+              </span>
+            )}
+
+            {/* Next / Prev buttons */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage(studio._id, images);
+              }}
+              className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
+            >
+              <ChevronLeft size={15} />
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage(studio._id, images);
+              }}
+              className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
+            >
+              <ChevronRight size={15} />
+            </button>
+
+            {/* Dots */}
+            <div className="absolute right-0 bottom-2 left-0 flex justify-center gap-2 p-3">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex((prev) => ({
+                      ...prev,
+                      [studio._id]: i,
+                    }));
+                  }}
+                  className={`h-2 w-2 rounded-full transition-colors ${
+                    i === currentIndex
+                      ? "bg-main dark:bg-red-400"
+                      : "bg-gray-300 dark:bg-gray-600"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
