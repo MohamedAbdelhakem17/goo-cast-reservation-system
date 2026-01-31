@@ -65,8 +65,10 @@ export default function AddOns() {
           <motion.div
             key={addon._id}
             variants={cardVariants}
-            className={`flex flex-col justify-between overflow-hidden rounded-2xl border bg-gray-50 shadow-sm transition-transform duration-300 hover:shadow-2xl ${
-              isSelected ? "border-main shadow-main/10" : "border-gray-100"
+            className={`flex flex-col justify-between overflow-hidden rounded-2xl border bg-gray-50 shadow-sm transition-transform duration-300 hover:shadow-2xl dark:bg-gray-800 ${
+              isSelected
+                ? "border-main shadow-main/10"
+                : "border-gray-100 dark:border-gray-700"
             } `}
           >
             {/* === Image === */}
@@ -81,15 +83,17 @@ export default function AddOns() {
             {/* === Info === */}
             <div className="flex flex-grow flex-col gap-y-3 p-4">
               {/* Title */}
-              <h3 className="text-lg font-semibold text-black">{addon.name?.[lng]}</h3>
+              <h3 className="text-lg font-semibold text-black dark:text-gray-100">
+                {addon.name?.[lng]}
+              </h3>
 
               {/* Description */}
-              <p className="flex-grow text-sm leading-relaxed text-gray-600">
+              <p className="flex-grow text-sm leading-relaxed text-gray-600 dark:text-gray-400">
                 {addon.description?.[lng]}
               </p>
 
               {/* Price */}
-              <div className="text-md flex w-fit items-center justify-center rounded-lg p-1 font-bold text-gray-800">
+              <div className="text-md flex w-fit items-center justify-center rounded-lg p-1 font-bold text-gray-800 dark:text-gray-200">
                 {priceFormat(addon.price)}
               </div>
 
@@ -107,7 +111,7 @@ export default function AddOns() {
                     <div className="flex items-center gap-2">
                       <motion.button
                         whileTap={{ scale: 0.9 }}
-                        className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-black"
+                        className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white text-black dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                         onClick={() =>
                           handleDecrement(addon._id, addon.name, addon.price)
                         }
@@ -116,11 +120,13 @@ export default function AddOns() {
                         <i className="fa-solid fa-minus text-sm"></i>
                       </motion.button>
 
-                      <span className="w-8 text-center font-medium">{quantity}</span>
+                      <span className="w-8 text-center font-medium text-gray-900 dark:text-gray-100">
+                        {quantity}
+                      </span>
 
                       <motion.button
                         whileTap={{ scale: 0.9 }}
-                        className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-black"
+                        className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white text-black dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                         onClick={() =>
                           handleIncrement(addon._id, addon.name, addon.price)
                         }
@@ -130,7 +136,7 @@ export default function AddOns() {
                     </div>
 
                     <button
-                      className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                      className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                       onClick={() => handleRemove(addon._id)}
                     >
                       {t("remove")}

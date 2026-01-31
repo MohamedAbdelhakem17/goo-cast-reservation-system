@@ -144,7 +144,7 @@ export default function LoadingScreen() {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-white"
+      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-white transition-none dark:bg-gray-950"
       variants={containerVariants}
       initial="initial"
       animate="animate"

@@ -2,7 +2,6 @@ import { useGetActivePromotions } from "@/apis/admin/manage-promotions.api";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { Clock, Gift, Sparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 // Countdown Timer Component
 function CountdownTimer({ endDate }) {
@@ -39,7 +38,7 @@ function CountdownTimer({ endDate }) {
   }, [endDate]);
 
   return (
-    <div className="flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 backdrop-blur-sm md:gap-3 md:px-5 md:py-2.5">
+    <div className="flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 backdrop-blur-sm md:gap-3 md:px-5 md:py-2.5 dark:bg-white/10">
       <Clock className="h-4 w-4 md:h-5 md:w-5" />
       <div className="flex items-center gap-1.5 text-sm font-bold md:text-base lg:text-lg">
         {timeLeft.days > 0 && (
@@ -88,7 +87,7 @@ export default function PromotionsBar() {
   const promotion = data.data;
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white shadow-lg">
+    <div className="from-main to-main/70 relative overflow-hidden bg-gradient-to-r text-white shadow-lg transition-none">
       {/* Animated background bubbles */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-0 left-0 h-32 w-32 animate-pulse rounded-full bg-white blur-3xl"></div>
@@ -106,13 +105,6 @@ export default function PromotionsBar() {
 
         <div className="flex items-center gap-2 md:gap-3">
           <CountdownTimer endDate={promotion.end_date} />
-
-          <Link
-            to="/booking"
-            className="hidden rounded-full bg-white px-4 py-2 text-xs font-semibold text-purple-600 shadow-lg transition-transform hover:scale-105 hover:shadow-xl md:block md:px-6 md:text-sm"
-          >
-            Book Now
-          </Link>
 
           <button
             onClick={() => setIsVisible(false)}

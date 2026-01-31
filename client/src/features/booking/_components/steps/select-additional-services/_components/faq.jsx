@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import { useGetAllFaqs } from "@/apis/admin/manage-faq.api";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+import { useCallback, useState } from "react";
 
 export default function Faq() {
   const { lng, t } = useLocalization();
@@ -17,28 +17,28 @@ export default function Faq() {
 
   return (
     <div className="mx-auto w-full py-5">
-      <h4 className="mb-3 text-3xl font-semibold text-gray-900">
+      <h4 className="mb-3 text-3xl font-semibold text-gray-900 dark:text-gray-100">
         {t("frequently-asked-questions")}
       </h4>
 
-      <div className="divide-y-2 divide-gray-200">
+      <div className="divide-y-2 divide-gray-200 dark:divide-gray-700">
         {faqs?.data?.map((faq) => {
           const isOpen = openItem === faq._id;
 
           return (
             <motion.div
               key={faq._id}
-              className="overflow-hidden bg-white"
+              className="overflow-hidden bg-white dark:bg-transparent"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
               <button
                 onClick={() => toggleItem(faq._id)}
-                className="flex w-full items-center justify-between py-5 text-left transition-colors duration-200 hover:bg-gray-50 focus:outline-none"
+                className="flex w-full items-center justify-between py-5 text-left transition-colors duration-200 hover:bg-gray-50 focus:outline-none dark:hover:bg-gray-800"
               >
                 <span
-                  className={`block pr-4 font-medium text-gray-900 ${
+                  className={`block pr-4 font-medium text-gray-900 dark:text-gray-100 ${
                     isOpen ? "underline" : ""
                   }`}
                 >
@@ -49,7 +49,7 @@ export default function Faq() {
                   transition={{ duration: 0.2 }}
                   className="flex-shrink-0"
                 >
-                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                  <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 </motion.div>
               </button>
 
@@ -62,7 +62,7 @@ export default function Faq() {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="pb-5 text-sm leading-relaxed text-gray-700">
+                    <div className="pb-5 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                       {faq.answer?.[lng]}
                     </div>
                   </motion.div>

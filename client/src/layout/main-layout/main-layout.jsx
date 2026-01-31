@@ -10,7 +10,7 @@ const MainLayout = () => {
   return (
     <>
       {/* Main Layout */}
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-white text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-100">
         {/* Fixed Header Container: Promotions Bar + Navbar */}
 
         <div className="fixed top-0 left-0 z-50 w-full">

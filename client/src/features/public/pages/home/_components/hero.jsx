@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
+import useLocalization from "@/context/localization-provider/localization-context";
 import useQuickBooking from "@/hooks/useQuickBooking";
 import { trackEvent } from "@/utils/gtm";
-import useLocalization from "@/context/localization-provider/localization-context";
+import { motion } from "framer-motion";
 
 // Animation variants for text elements
 const textVariants = {
@@ -55,7 +55,7 @@ export default function Hero() {
         animate="visible"
         variants={gradientVariants}
       >
-        <div className="absolute inset-0 rounded-md bg-gradient-to-br from-purple-50 via-white to-blue-50 opacity-70"></div>
+        <div className="absolute inset-0 rounded-md bg-gradient-to-br from-purple-50 via-white to-blue-50 opacity-70 transition-none dark:from-gray-900 dark:via-gray-950 dark:to-gray-900"></div>
 
         {/* color in top right corner */}
         <motion.div
@@ -129,7 +129,7 @@ export default function Hero() {
 
         {/* Animated Subtitle */}
         <motion.p
-          className="mb-6 text-xl font-bold text-gray-700 md:text-2xl"
+          className="mb-6 text-xl font-bold text-gray-700 transition-none md:text-2xl dark:text-gray-300"
           custom={2}
           initial="hidden"
           animate="visible"
@@ -140,7 +140,7 @@ export default function Hero() {
 
         {/* Animated Header */}
         <motion.h1
-          className="mb-10 text-3xl font-bold md:text-4xl lg:text-5xl"
+          className="mb-10 text-3xl font-bold text-gray-900 transition-none md:text-4xl lg:text-5xl dark:text-gray-100"
           custom={3}
           initial="hidden"
           animate="visible"
@@ -160,7 +160,7 @@ export default function Hero() {
 
         {/* Booking Box */}
         <motion.div
-          className="bg-opacity-90 mx-auto flex w-full flex-col items-center justify-between gap-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-2xl backdrop-blur-sm md:w-3/4 md:flex-row lg:w-2/3"
+          className="bg-opacity-90 mx-auto flex w-full flex-col items-center justify-between gap-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-2xl backdrop-blur-sm transition-none md:w-3/4 md:flex-row lg:w-2/3 dark:border-gray-700 dark:bg-gray-800"
           variants={boxVariants}
           initial="hidden"
           animate="visible"
@@ -202,10 +202,10 @@ export default function Hero() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1.3, duration: 0.5 }}
             >
-              <span className="m-0 p-0 text-xl font-bold text-gray-800">
+              <span className="m-0 p-0 text-xl font-bold text-gray-800 transition-none dark:text-gray-100">
                 {t("pick-a-date")}
               </span>
-              <span className="m-0 p-0 text-sm text-gray-600">
+              <span className="m-0 p-0 text-sm text-gray-600 transition-none dark:text-gray-400">
                 {t("find-available-studios-for-your-preferred-date")}
               </span>
             </motion.div>

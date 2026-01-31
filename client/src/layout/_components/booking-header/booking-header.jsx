@@ -1,14 +1,15 @@
+import { logo } from "@/assets/images";
+import { LanguageSwitcher, OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 import { Shield, Star, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import { logo } from "@/assets/images";
-import { OptimizedImage, LanguageSwitcher } from "@/components/common";
-import useLocalization from "@/context/localization-provider/localization-context";
+import ToggleTheme from "../../../components/common/toggle-theme";
 
 export default function BookingHeader() {
   const { t, lng, changeLanguage } = useLocalization();
 
   return (
-    <div className="sticky top-0 z-[500] border-b border-gray-300 bg-white text-gray-500">
+    <div className="sticky top-0 z-[500] border-b border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-400">
       <div className="mx-auto w-full px-4 py-4 lg:max-w-6xl lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo and tagline */}
@@ -18,7 +19,7 @@ export default function BookingHeader() {
                 <OptimizedImage src={logo} alt="Goocast" className="w-36" />
               </Link>
             </h1>
-            <p className="mt-1 text-sm md:text-base">
+            <p className="mt-1 text-sm text-gray-600 md:text-base dark:text-gray-400">
               {t("easy-podcasting-for-everyone")}
             </p>
           </div>
@@ -27,6 +28,8 @@ export default function BookingHeader() {
           <div className="flex items-center space-x-4">
             {/* LanguageSwitcher visible on all screens */}
             <LanguageSwitcher lng={lng} changeLanguage={changeLanguage} />
+            {/* Theme Toggle */}
+            <ToggleTheme />
 
             {/* Trust indicators — hidden on mobile */}
             <div className="hidden items-center space-x-6 text-sm md:flex">

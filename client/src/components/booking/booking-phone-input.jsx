@@ -17,7 +17,9 @@ const BookingPhoneInput = ({
   return (
     <div className="relative mb-8">
       {/* Label */}
-      <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        {label}
+      </label>
 
       {/* PhoneInput */}
       <PhoneInput
@@ -44,9 +46,11 @@ const BookingPhoneInput = ({
           borderRadius: "6px",
           border: errors && touched ? "1px solid #f56565" : "1px solid #d1d5db",
           backgroundColor: disabled ? "#f3f4f6" : "#ffffff",
+          color: "#1f2937",
         }}
         buttonStyle={{
           padding: "10px",
+          backgroundColor: "transparent",
         }}
       />
 

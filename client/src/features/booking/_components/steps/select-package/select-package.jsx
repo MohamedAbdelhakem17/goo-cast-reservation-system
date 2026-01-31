@@ -53,12 +53,14 @@ const InfoSection = memo(({ label, items, icon }) => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-      {label && <h6 className="mb-2 font-medium">{label}</h6>}
+      {label && (
+        <h6 className="mb-2 font-medium text-gray-900 dark:text-gray-100">{label}</h6>
+      )}
       <ul className="space-y-4">
         {items[lng].map((benefit, idx) => (
           <motion.li
             key={idx}
-            className="flex items-center gap-2 text-sm text-gray-600"
+            className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 + idx * 0.1 }}
@@ -100,8 +102,10 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
       )}
 
       <div
-        className={`flex h-full flex-col overflow-hidden rounded-3xl border bg-gray-50 p-2 transition-colors duration-300 md:p-4 ${
-          isActive ? "border-main shadow-main/20" : "border-gray-100 shadow-sm"
+        className={`flex h-full flex-col overflow-hidden rounded-3xl border bg-gray-50 p-2 transition-colors duration-300 md:p-4 dark:bg-gray-800 ${
+          isActive
+            ? "border-main shadow-main/20"
+            : "border-gray-100 shadow-sm dark:border-gray-700"
         }`}
       >
         {/* Header */}
@@ -116,15 +120,17 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
 
           <h5 className="text-main text-2xl font-bold">{pkg.name?.[lng]}</h5>
 
-          <p className="my-2 text-3xl font-bold">
+          <p className="my-2 text-3xl font-bold text-gray-900 dark:text-gray-100">
             {priceFormat(pkg.price)}
-            <span className="ms-1 text-sm font-normal text-gray-600">/ {t("hour")}</span>
+            <span className="ms-1 text-sm font-normal text-gray-600 dark:text-gray-400">
+              / {t("hour")}
+            </span>
           </p>
         </div>
 
         {/* Description */}
         <motion.p
-          className="my-2.5 border-b border-gray-300 pb-4 text-sm text-gray-600"
+          className="my-2.5 border-b border-gray-300 pb-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -133,7 +139,7 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
 
         {/* Info Sections */}
         <div className="space-y-4 py-2">
-          <div className="border-b border-gray-300 pb-3">
+          <div className="border-b border-gray-300 pb-3 dark:border-gray-700">
             <InfoSection
               label={t("whats-included")}
               items={pkg.details}

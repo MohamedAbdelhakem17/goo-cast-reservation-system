@@ -18,7 +18,7 @@ const Home = () => {
   }, []);
 
   return (
-    <main className="container mx-auto my-5 py-5">
+    <main className="container mx-auto my-5 py-5 dark:bg-gray-950">
       <Hero />
       <Packages />
       <BookNow />
