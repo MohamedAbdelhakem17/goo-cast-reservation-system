@@ -1,7 +1,8 @@
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader } from "lucide-react";
 import { useEffect } from "react";
 
 function NavButton({ children, ...props }) {
@@ -22,6 +23,8 @@ export default function NavigationButtons() {
     hasError,
     getBookingField,
     formik,
+    handleSubmit,
+    bookingData,
   } = useBooking();
 
   const isRTL = lng === "ar";
@@ -80,15 +83,47 @@ export default function NavigationButtons() {
             {isRTL ? (
               <>
                 <ArrowLeft className="inline-block" />
-                {t("next")}
+                {currentStep === 4 ? t("skip") : t("next")}
               </>
             ) : (
               <>
-                {t("next")}
+                {currentStep === 4 ? t("skip") : t("next")}
                 <ArrowRight className="inline-block" />
               </>
             )}
           </NavButton>
+        )}
+
+        {/* Handle Submit Button */}
+        {currentStep === 5 && (
+          <button
+            type="button"
+            disabled={hasError() || formik.isSubmitting}
+            onClick={
+              !formik.isSubmitting
+                ? () => {
+                    handleSubmit();
+                    tracking("create_booking", {
+                      totalPrice: bookingData.totalPrice,
+                    });
+                  }
+                : undefined
+            }
+            className={`text-md flex w-fit flex-col items-center justify-center rounded-lg px-2 py-[8px] font-semibold transition-all duration-200 disabled:bg-green-50 md:flex-row ${
+              hasError() || formik.isSubmitting
+                ? "cursor-not-allowed bg-gray-100 text-gray-300"
+                : "bg-main text-white hover:opacity-90"
+            }`}
+          >
+            {formik.isSubmitting ? (
+              <div className="flex items-center gap-2">
+                <Loader />
+                <span>{t("processing-0")}</span>
+              </div>
+            ) : (
+              <span>{t("complete-booking")}</span>
+            )}
+          </button>
         )}
       </div>
     </>

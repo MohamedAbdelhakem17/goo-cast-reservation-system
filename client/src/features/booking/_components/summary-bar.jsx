@@ -18,16 +18,16 @@ export default function SummaryBar() {
     () => [
       {
         id: 1,
-        label: "Studio",
-        value: bookingData?.studio?.name?.[lng],
-      },
-      {
-        id: 2,
         label: "Date",
         value:
           bookingData?.date && bookingData?.startSlot
             ? `${dateFormat(bookingData.date)} • ${timeFormat(bookingData.startSlot)}`
             : null,
+      },
+      {
+        id: 2,
+        label: "Studio",
+        value: bookingData?.studio?.name?.[lng],
       },
       {
         id: 3,
@@ -43,7 +43,12 @@ export default function SummaryBar() {
   const visibleSteps = steps.filter((step) => step.value);
 
   // Empty case
-  if (!bookingData?.studio?.id || hiddenSteps.includes(currentStep)) {
+  if (
+    !bookingData.date ||
+    bookingData?.persons === 0 ||
+    !bookingData?.startSlot ||
+    hiddenSteps.includes(currentStep)
+  ) {
     return null;
   }
 
@@ -56,7 +61,7 @@ export default function SummaryBar() {
       <div className="fixed right-0 bottom-[65px] left-0 z-40 md:hidden">
         {/* Container */}
         <div className="border-main mx-auto flex items-center gap-2 overflow-x-auto border-t bg-white/90 px-4 py-4 text-sm backdrop-blur-lg dark:bg-gray-900/90">
-          {/* Display ite,s */}
+          {/* Display items */}
           {visibleSteps.map((step, index) => {
             const isActive = step.id === currentStep;
             const isClickable = step.id < currentStep && !isActive;

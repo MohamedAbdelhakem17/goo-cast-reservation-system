@@ -61,9 +61,13 @@ export default function AddOns() {
         const quantity = getQuantity(addon._id);
         const isSelected = quantity > 0;
 
-        console.log("Rendering addon:", addon.image);
         return (
           <motion.div
+            onClick={() => {
+              if (!isSelected) {
+                handleIncrement(addon._id, addon.name, addon.price);
+              }
+            }}
             key={addon._id}
             variants={cardVariants}
             className={`flex flex-col justify-between overflow-hidden rounded-2xl border bg-gray-50 shadow-sm transition-transform duration-300 hover:shadow-2xl dark:bg-gray-800 ${
@@ -104,7 +108,10 @@ export default function AddOns() {
                 {quantity === 0 ? (
                   <button
                     className="text-md border-main hover:bg-main text-main w-full rounded-lg border-2 bg-white px-4 py-2 font-semibold transition-all duration-200 hover:text-white"
-                    onClick={() => handleIncrement(addon._id, addon.name, addon.price)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleIncrement(addon._id, addon.name, addon.price);
+                    }}
                   >
                     {t("add-to-cart")}
                   </button>
@@ -114,9 +121,10 @@ export default function AddOns() {
                       <motion.button
                         whileTap={{ scale: 0.9 }}
                         className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white text-black dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                        onClick={() =>
-                          handleDecrement(addon._id, addon.name, addon.price)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDecrement(addon._id, addon.name, addon.price);
+                        }}
                         disabled={quantity === 0}
                       >
                         <i className="fa-solid fa-minus text-sm"></i>
@@ -129,9 +137,10 @@ export default function AddOns() {
                       <motion.button
                         whileTap={{ scale: 0.9 }}
                         className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white text-black dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                        onClick={() =>
-                          handleIncrement(addon._id, addon.name, addon.price)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleIncrement(addon._id, addon.name, addon.price);
+                        }}
                       >
                         <i className="fa-solid fa-plus text-sm"></i>
                       </motion.button>
@@ -139,7 +148,10 @@ export default function AddOns() {
 
                     <button
                       className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-                      onClick={() => handleRemove(addon._id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemove(addon._id);
+                      }}
                     >
                       {t("remove")}
                     </button>

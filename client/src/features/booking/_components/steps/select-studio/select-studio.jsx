@@ -63,9 +63,9 @@ export default function SelectStudio() {
       });
 
       // Keep original functionality
-      setBookingField("startSlot", null);
-      setBookingField("duration", 1);
-      setBookingField("endSlot", null);
+      // setBookingField("startSlot", null);
+      // setBookingField("duration", 1);
+      // setBookingField("endSlot", null);
 
       tracking("add-studio", { studio_name: studio.name?.[lng] });
       setSelectedStudio(studio._id);
@@ -82,9 +82,9 @@ export default function SelectStudio() {
         recording_seats: studio.recording_seats,
       });
 
-      setBookingField("startSlot", null);
-      setBookingField("duration", 1);
-      setBookingField("endSlot", null);
+      // setBookingField("startSlot", null);
+      // setBookingField("duration", 1);
+      // setBookingField("endSlot", null);
 
       tracking("add-studio", { studio_name: studio.name?.[lng] });
       setSelectedStudio(studio._id);

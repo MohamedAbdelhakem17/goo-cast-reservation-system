@@ -166,7 +166,7 @@ export default function BookingConfirmation() {
               variants={fadeInUp}
               whileHover={{ y: -2, transition: { duration: 0.2 } }}
             >
-              <div className="mb-4 flex items-center justify-between">
+              <div className="mb-4 flex flex-col items-center justify-between gap-2 sm:flex-row">
                 <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
                   {t("booking-reference")}
                 </h2>
