@@ -146,7 +146,7 @@ const bookingSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // ------------------------------
@@ -154,7 +154,7 @@ const bookingSchema = new mongoose.Schema(
 // ------------------------------
 bookingSchema.index(
   { studio: 1, date: 1, startSlotMinutes: 1, endSlotMinutes: 1 },
-  { unique: true }
+  { unique: true },
 );
 
 // ------------------------------
@@ -167,7 +167,7 @@ bookingSchema.pre(/^find/, function (next) {
   this.populate([
     { path: "studio", select: "name thumbnail address basePricePerSlot" },
     { path: "package", select: "name price" },
-    { path: "addOns.item", select: "name price" },
+    { path: "addOns.item", select: "name price image description" },
     { path: "createdBy", select: "name email " },
     { path: "personalInfo", select: "firstName lastName email phone fullName" },
     { path: "assignTo", select: "name email" },
@@ -179,7 +179,7 @@ bookingSchema.post("save", async function (doc, next) {
   await doc.populate([
     { path: "studio", select: "name thumbnail address" },
     { path: "package", select: "name" },
-    { path: "addOns.item", select: "name price" },
+    { path: "addOns.item", select: "name price image description" },
     { path: "createdBy", select: "fullName email" },
   ]);
   next();

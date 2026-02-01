@@ -61,6 +61,7 @@ export default function AddOns() {
         const quantity = getQuantity(addon._id);
         const isSelected = quantity > 0;
 
+        console.log("Rendering addon:", addon.image);
         return (
           <motion.div
             key={addon._id}
@@ -77,6 +78,7 @@ export default function AddOns() {
                 src={addon.image}
                 alt={addon.name?.[lng]}
                 className="h-full w-full rounded-2xl object-cover transition-transform duration-300 hover:scale-95"
+                loading="lazy"
               />
             </div>
 

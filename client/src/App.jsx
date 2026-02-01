@@ -5,7 +5,8 @@ import AppRouter from "@/router/router";
 import AuthProvider from "./context/Auth-Context/AuthContext";
 import { ToastProvider } from "./context/Toaster-Context/ToasterContext";
 import { LocalizationProvider } from "./context/localization-provider/localization-provider";
-import ThemeProvider from "./context/theme-context/theme-provider";
+import useTheme from "./context/theme-context/theme-context";
+import ThemeProvider, { ThemeHandler } from "./context/theme-context/theme-provider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +40,7 @@ export default function App() {
           <AuthProvider>
             <Router>
               {/* <TrackPageView /> */}
+              <ThemeHandlerWrapper />
               <ToastProvider>
                 <AppRouter />
               </ToastProvider>
@@ -49,4 +51,10 @@ export default function App() {
       </ThemeProvider>
     </QueryClientProvider>
   );
+}
+
+// Wrapper to access theme from context
+function ThemeHandlerWrapper() {
+  const { theme } = useTheme();
+  return <ThemeHandler theme={theme} />;
 }

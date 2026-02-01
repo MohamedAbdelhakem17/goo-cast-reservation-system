@@ -16,7 +16,7 @@ exports.serviceImageUpload = uploadSingleImage("image");
 
 exports.serviceImageManipulation = async (req, res, next) => {
   try {
-    const uploadDir = path.join(__dirname, "../../../uploads/services");
+    const uploadDir = path.join(__dirname, "../../../../../uploads/services");
 
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });

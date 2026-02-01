@@ -75,7 +75,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  })
+  }),
 );
 
 app.use(
@@ -92,7 +92,7 @@ app.use(
       domain: undefined,
       path: "/",
     },
-  })
+  }),
 );
 
 // Passport initialization
@@ -122,8 +122,8 @@ app.use("*", (req, res, next) => {
     new AppError(
       404,
       HTTP_STATUS_TEXT.ERROR,
-      `This route ${req.originalUrl} not found.`
-    )
+      `This route ${req.originalUrl} not found.`,
+    ),
   );
 });
 
@@ -134,7 +134,7 @@ app.use(errorMiddlewareHandler);
 const PORT = process.env.PORT || 7000;
 const server = app.listen(PORT, () => {
   console.log(
-    `🚀 Server running on port: ${PORT} in ${process.env.ENVIRONMENT_MODE} mode`
+    `🚀 Server running on port: ${PORT} in ${process.env.ENVIRONMENT_MODE} mode`,
   );
 });
 
