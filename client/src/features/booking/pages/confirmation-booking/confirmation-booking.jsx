@@ -131,9 +131,9 @@ export default function BookingConfirmation() {
   if (!bookingData) return null;
 
   return (
-    <div className="my-4 min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8 dark:bg-gray-950">
+    <div className="my-4 mt-8 min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8 dark:bg-gray-950">
       <motion.div
-        className="mx-auto max-w-6xl"
+        className="mx-auto mt-4 max-w-6xl space-y-8"
         initial="hidden"
         animate="visible"
         variants={{

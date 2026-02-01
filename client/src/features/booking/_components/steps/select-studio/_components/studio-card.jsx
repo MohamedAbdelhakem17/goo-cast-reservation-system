@@ -43,11 +43,11 @@ export default function StudioCard({
         })
       }
     >
-      {studio.isMostPopular && (
+      {/* {studio.isMostPopular && (
         <span className="bg-main shadow-main dark:shadow-main/60 absolute -end-10 top-7 rotate-45 px-10 py-1 text-xs font-bold text-white shadow-md">
           Most Popular
         </span>
-      )}
+      )} */}
 
       {isLiveMode && studio.live_view ? (
         <div className="relative h-64 w-full" onClick={(e) => e.stopPropagation()}>
