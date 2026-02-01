@@ -49,14 +49,6 @@ export default function SummaryBar() {
     !bookingData?.startSlot ||
     hiddenSteps.includes(currentStep)
   ) {
-    console.log("returning null from summary bar", {
-      date: bookingData.date,
-      persons: bookingData?.persons,
-      startSlot: bookingData?.startSlot,
-      currentStep: currentStep,
-      package: bookingData?.selectedPackage,
-      hiddenSteps: hiddenSteps,
-    });
     return null;
   }
 

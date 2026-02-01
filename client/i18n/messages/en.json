@@ -558,5 +558,6 @@
   "delete-promotion-warning": "This action cannot be undone. The promotion will be permanently deleted.",
   "delete-promotion-confirmation": "delete promotion confirmation",
   "promotion-deleted-successfully": "promotion deleted successfully",
-  "failed-to-delete-promotion": "failed to delete promotion"
+  "failed-to-delete-promotion": "failed to delete promotion",
+  "skip": "Skip"
 }

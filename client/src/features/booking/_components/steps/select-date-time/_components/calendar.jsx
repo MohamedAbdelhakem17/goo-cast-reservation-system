@@ -243,6 +243,8 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
           )}
         </div>
       </div>
+
+      <div className="pb-20 md:hidden" />
     </div>
   );
 }

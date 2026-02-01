@@ -8,7 +8,7 @@ export default function BookingLabel({ title, desc }) {
       </h2>
 
       {/* Description */}
-      <p className="text-lg leading-8 text-gray-800 dark:text-gray-300">{desc}</p>
+      <p className="text-[15px] leading-8 text-gray-800 dark:text-gray-300">{desc}</p>
     </div>
   );
 }
