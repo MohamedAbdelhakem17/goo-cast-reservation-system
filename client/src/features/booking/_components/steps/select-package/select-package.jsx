@@ -60,7 +60,7 @@ const InfoSection = memo(({ label, items, icon }) => {
         {items[lng].map((benefit, idx) => (
           <motion.li
             key={idx}
-            className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+            className="flex items-center gap-2 text-sm text-gray-600 last:pb-4 dark:text-gray-400"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 + idx * 0.1 }}
@@ -164,6 +164,11 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
           <InfoSection
             label={t("after-your-session")}
             items={pkg.post_session_benefits}
+            icon={
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                <Check className="h-3 w-3 text-white" />
+              </div>
+            }
           />
         </div>
 
