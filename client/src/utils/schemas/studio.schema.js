@@ -116,21 +116,20 @@ export const validationSchema = Yup.object({
     }),
 
   live_view: Yup.mixed()
-    .required("Live view is required")
+    .optional()
     .test("fileSize", "File too large", (value) => {
-      if (!value) return false;
+      if (!value) return true;
       if (typeof value === "string") return true;
       return value.size <= 5000000;
     })
     .test("fileType", "Unsupported file type", (value) => {
-      if (!value) return false;
+      if (!value) return true;
       if (typeof value === "string") return true;
       return ["image/jpeg", "image/png", "image/jpg"].includes(value.type);
     }),
 
   imagesGallery: Yup.array()
-    .min(1, "At least one gallery image is required")
-    .max(5, "Maximum 5 images allowed")
+    .optional()
     .test("fileSize", "One or more files are too large", (values) => {
       if (!values) return true;
       return values.every((file) =>
