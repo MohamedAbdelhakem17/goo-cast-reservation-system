@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
 
 export default function ImagePreviewModal({
   previewImages,
@@ -7,6 +8,23 @@ export default function ImagePreviewModal({
   nextImage,
   prevImage,
 }) {
+  // Handle ESC key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setPreviewIndex(null);
+      }
+    };
+
+    if (previewIndex !== null) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [previewIndex, setPreviewIndex]);
+
   if (previewIndex === null || previewImages.length === 0) return null;
 
   return (
@@ -56,6 +74,18 @@ export default function ImagePreviewModal({
             className="absolute right-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/50 text-2xl text-white hover:bg-black/70"
           >
             &gt;
+          </button>
+
+          {/* Close Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setPreviewIndex(null);
+            }}
+            className="absolute top-5 right-5 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/50 text-2xl text-white transition-colors hover:bg-black/70"
+            aria-label="Close preview"
+          >
+            ✕
           </button>
 
           {/* Image counter */}
