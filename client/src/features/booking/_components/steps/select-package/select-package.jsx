@@ -88,28 +88,28 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
     <motion.div
       variants={cardVariants}
       whileHover={{ y: -5 }}
-      className="relative col-span-1 cursor-pointer py-5"
+      className="col-span-1 cursor-pointer overflow-hidden px-3 py-5 md:px-5"
       onClick={() => onSelect(pkg)}
     >
-      {/* Most Recommended Badge */}
-      {recommendationLabel && (
-        <div className="absolute start-1/2 -top-4 z-20 -translate-x-1/2">
-          <div className="from-main to-main/40 flex items-center gap-1 rounded-full bg-gradient-to-r px-4 py-2 text-xs font-semibold text-white shadow-lg backdrop-blur">
-            <span className="size-2 rounded-full bg-white" />
-            {recommendationLabel}
-          </div>
-        </div>
-      )}
-
       <div
-        className={`flex h-full flex-col overflow-hidden rounded-3xl border bg-gray-50 p-2 transition-colors duration-300 md:p-4 dark:bg-gray-800 ${
+        className={`relative flex h-full flex-col overflow-hidden rounded-3xl border bg-gray-50 p-2 transition-colors duration-300 md:p-4 dark:bg-gray-800 ${
           isActive
             ? "border-main shadow-main/20"
             : "border-gray-100 shadow-sm dark:border-gray-700"
         }`}
       >
+        {/* Most Recommended Badge */}
+        {recommendationLabel && (
+          <span
+            className={`bg-main shadow-main dark:shadow-main/60 absolute -end-10 top-7 z-40 ${lng === "ar" ? "-rotate-45" : "rotate-45"} px-10 py-1 text-xs font-bold text-white shadow-md`}
+          >
+            {recommendationLabel}
+          </span>
+        )}
         {/* Header */}
-        <div className="flex flex-col items-start gap-2">
+        <div
+          className={`flex flex-col items-start gap-4 ${recommendationLabel ? "mt-6" : ""}`}
+        >
           {pkg.show_image && (
             <OptimizedImage
               src={pkg.image}
@@ -118,7 +118,9 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
             />
           )}
 
-          <h5 className="text-main text-2xl font-bold">{pkg.name?.[lng]}</h5>
+          <h5 className="text-main line-clamp-2 max-w-[14rem] overflow-hidden text-2xl font-bold break-words">
+            {pkg.name?.[lng]}
+          </h5>
 
           <p className="my-2 text-3xl font-bold text-gray-900 dark:text-gray-100">
             {priceFormat(pkg.price)}
@@ -130,7 +132,7 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
 
         {/* Description */}
         <motion.p
-          className="my-2.5 border-b border-gray-300 pb-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400"
+          className="my-2.5 line-clamp-3 overflow-hidden border-b border-gray-300 pb-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -144,16 +146,16 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
               label={t("whats-included")}
               items={pkg.details}
               icon={
-                <div className="flex size-5 items-center justify-center rounded-full bg-green-500">
-                  <Check className="size-3 text-white" />
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                  <Check className="h-3 w-3 text-white" />
                 </div>
               }
             />
             <InfoSection
               items={pkg.not_included}
               icon={
-                <div className="flex size-5 items-center justify-center rounded-full bg-red-500">
-                  <X className="size-3 text-white" />
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
+                  <X className="h-3 w-3 text-white" />
                 </div>
               }
             />

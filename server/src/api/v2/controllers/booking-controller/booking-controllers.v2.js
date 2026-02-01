@@ -61,10 +61,27 @@ exports.getStudiosAvailability = asyncHandler(async (req, res) => {
 
   const bookedSet = new Set(bookedStudios.map(String));
 
-  const result = studios.map((studio) => ({
-    ...studio,
-    is_available: !bookedSet.has(studio._id.toString()),
-  }));
+  const result = studios.map((studio) => {
+    // Fix image URLs for aggregation results (hooks don't run on aggregation)
+    const baseUrl = process.env.BASE_URL || "";
+
+    return {
+      ...studio,
+      is_available: !bookedSet.has(studio._id.toString()),
+      thumbnail: studio.thumbnail?.startsWith("http")
+        ? studio.thumbnail
+        : `${baseUrl}/uploads/studio/${studio.thumbnail}`,
+      live_view: studio.live_view
+        ? studio.live_view.startsWith("http")
+          ? studio.live_view
+          : `${baseUrl}/uploads/studio/${studio.live_view}`
+        : undefined,
+      imagesGallery:
+        studio.imagesGallery?.map((img) =>
+          img.startsWith("http") ? img : `${baseUrl}/uploads/studio/${img}`,
+        ) || [],
+    };
+  });
 
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,

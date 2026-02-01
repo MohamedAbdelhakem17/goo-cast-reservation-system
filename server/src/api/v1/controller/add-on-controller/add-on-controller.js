@@ -22,7 +22,11 @@ exports.addonsImageManipulation = asyncHandler(async (req, res, next) => {
   }
 
   const imageName = `addons-${uuidv4()}-${Date.now()}.gif`;
-  const filePath = path.join(__dirname, "../../../uploads/addons", imageName);
+  const filePath = path.join(
+    __dirname,
+    "../../../../../uploads/addons",
+    imageName,
+  );
   fs.writeFileSync(filePath, req.file.buffer);
 
   req.body.image = imageName;

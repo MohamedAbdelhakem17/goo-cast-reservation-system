@@ -69,7 +69,7 @@ exports.studioImageUpload = uploadMultipleImages([
 
 exports.imageManipulation = async (req, res, next) => {
   try {
-    const uploadDir = path.join(__dirname, "../../../uploads/studio");
+    const uploadDir = path.join(__dirname, "../../../../../uploads/studio");
 
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
@@ -197,6 +197,39 @@ exports.getAllStudios = asyncHandler(async (req, res) => {
       $project: {
         bookings: 0,
         maxBookings: 0,
+      },
+    },
+
+    // Add full URL paths to images
+    {
+      $addFields: {
+        thumbnail: {
+          $cond: {
+            if: { $ne: ["$thumbnail", null] },
+            then: {
+              $concat: [process.env.BASE_URL, "/uploads/studio/", "$thumbnail"],
+            },
+            else: null,
+          },
+        },
+        live_view: {
+          $cond: {
+            if: { $ne: ["$live_view", null] },
+            then: {
+              $concat: [process.env.BASE_URL, "/uploads/studio/", "$live_view"],
+            },
+            else: null,
+          },
+        },
+        imagesGallery: {
+          $map: {
+            input: "$imagesGallery",
+            as: "img",
+            in: {
+              $concat: [process.env.BASE_URL, "/uploads/studio/", "$$img"],
+            },
+          },
+        },
       },
     },
   ]);
