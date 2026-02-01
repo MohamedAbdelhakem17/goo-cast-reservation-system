@@ -1,5 +1,6 @@
 import Footer from "@/layout/_components/footer/footer";
 import { Outlet, useLocation } from "react-router-dom";
+import WhatsAppButton from "../../components/layout/Footer/whats-app-button";
 import Navbar from "../_components/navbar/navbar";
 import PromotionsBar from "../_components/promotions-bar/promotions-bar";
 
@@ -28,6 +29,9 @@ const MainLayout = () => {
 
         {/* Footer */}
         {!isBookingPage && <Footer />}
+
+        {/* WhatsApp Button */}
+        <WhatsAppButton />
       </div>
     </>
   );
