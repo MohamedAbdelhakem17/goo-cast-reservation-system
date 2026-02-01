@@ -88,11 +88,11 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
     <motion.div
       variants={cardVariants}
       whileHover={{ y: -5 }}
-      className="col-span-1 cursor-pointer overflow-hidden px-3 py-5 md:px-5"
+      className="col-span-1 cursor-pointer overflow-hidden px-1 py-5"
       onClick={() => onSelect(pkg)}
     >
       <div
-        className={`relative flex h-full flex-col overflow-hidden rounded-3xl border bg-gray-50 p-2 transition-colors duration-300 md:p-4 dark:bg-gray-800 ${
+        className={`relative flex h-full flex-col overflow-hidden rounded-3xl border bg-gray-50 p-8 transition-colors duration-300 dark:bg-gray-800 ${
           isActive
             ? "border-main shadow-main/20"
             : "border-gray-100 shadow-sm dark:border-gray-700"
