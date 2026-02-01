@@ -63,11 +63,6 @@ export default function AddOns() {
 
         return (
           <motion.div
-            onClick={() => {
-              if (!isSelected) {
-                handleIncrement(addon._id, addon.name, addon.price);
-              }
-            }}
             key={addon._id}
             variants={cardVariants}
             className={`flex flex-col justify-between overflow-hidden rounded-2xl border bg-gray-50 shadow-sm transition-transform duration-300 hover:shadow-2xl dark:bg-gray-800 ${

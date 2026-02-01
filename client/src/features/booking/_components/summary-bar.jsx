@@ -64,7 +64,7 @@ export default function SummaryBar() {
           {/* Display items */}
           {visibleSteps.map((step, index) => {
             const isActive = step.id === currentStep;
-            const isClickable = step.id < currentStep && !isActive;
+            const isClickable = !isActive && step.value;
 
             return (
               <div key={step.id} className="flex shrink-0 items-center gap-2">
