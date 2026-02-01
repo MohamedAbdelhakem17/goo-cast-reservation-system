@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { parsePhoneNumberFromString } = require("libphonenumber-js");
 
 //
 // ────────────────────────────────────────────────
@@ -74,10 +75,52 @@ const userProfileSchema = new mongoose.Schema(
 
     phone: {
       type: String,
-      required: true,
+      required: [true, "Phone is required"],
       trim: true,
       unique: true,
-      match: [/^01[0-2,5]{1}[0-9]{8}$/, "Invalid Egyptian phone number"],
+      validate: {
+        validator: function (value) {
+          if (!value) return false;
+
+          const allowedCountries = ["eg", "sa", "ae"];
+
+          // Remove all non-digit characters except leading +
+          let cleanValue = value.replace(/[^\d+]/g, "");
+
+          // If doesn't start with +, check if it already has a country code
+          if (!cleanValue.startsWith("+")) {
+            // Check if it starts with known country codes (20, 966, 971)
+            if (cleanValue.startsWith("20")) {
+              cleanValue = "+" + cleanValue;
+            } else if (cleanValue.startsWith("966")) {
+              cleanValue = "+" + cleanValue;
+            } else if (cleanValue.startsWith("971")) {
+              cleanValue = "+" + cleanValue;
+            } else {
+              // No country code detected, add default Egypt country code
+              // Remove leading zeros
+              cleanValue = cleanValue.replace(/^0+/, "");
+              cleanValue = "+20" + cleanValue;
+            }
+          }
+
+          try {
+            const phoneNumber = parsePhoneNumberFromString(cleanValue);
+            if (!phoneNumber) return false;
+
+            // Validate the phone number is valid and from allowed countries
+            const countryCode = phoneNumber.country?.toLowerCase();
+            return (
+              phoneNumber.isValid() &&
+              countryCode &&
+              allowedCountries.includes(countryCode)
+            );
+          } catch {
+            return false;
+          }
+        },
+        message: "Phone number is not valid. Only Egypt (+20), Saudi Arabia (+966), and UAE (+971) numbers are accepted.",
+      },
     },
 
     tags: {
