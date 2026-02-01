@@ -1,11 +1,12 @@
-import { BookingInput } from "@/components/booking";
+import { BookingInput, BookingPhoneInput } from "@/components/booking";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { BookingLabel } from "@/features/booking/_components";
 import Cart from "@/features/booking/_components/cart/cart";
 import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import "react-phone-input-2/lib/style.css";
 import Faq from "./../select-additional-services/_components/faq";
 import PaymentOptions from "./_components/payment-way";
 
@@ -19,6 +20,10 @@ export default function PersonalInformation() {
   // Localization
   const { t } = useLocalization();
 
+  // state
+  const [fullName, setFullName] = useState("");
+  const [value, setValue] = useState("");
+
   // Ref
   const inputRef = useRef(null);
 
@@ -31,6 +36,10 @@ export default function PersonalInformation() {
     if (inputRef.current) {
       inputRef.current.focus();
     }
+  }, []);
+
+  useEffect(() => {
+    setFullName(`${firstName} ${lastName}`.trim());
   }, []);
 
   // Variables
@@ -47,14 +56,40 @@ export default function PersonalInformation() {
       {/* Responsive Grid Layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
         {/* === Form Section === */}
-        <div className="col-span-2 w-full rounded-md border border-gray-100 p-4 py-3 shadow-sm">
+        <div className="col-span-2 w-full rounded-md border border-gray-100 bg-white p-4 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <form className="w-full space-y-3 px-5">
             <motion.div
               {...motionProps}
               className="b-0 m-0 flex w-full flex-col gap-4 lg:flex-row"
             >
-              {/* First name */}
+              {/* Full Name */}
               <BookingInput
+                className="w-full"
+                type="text"
+                id="fullName"
+                label={t("full-name")}
+                placeholder={t("enter-your-full-name")}
+                value={fullName}
+                errors={
+                  getBookingError("personalInfo.firstName") ||
+                  getBookingError("personalInfo.lastName")
+                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFullName(value);
+
+                  const parts = value.trim().split(" ");
+                  const first = parts.shift() || "";
+                  const last = parts.join(" ");
+
+                  setBookingField("personalInfo.firstName", first);
+                  setBookingField("personalInfo.lastName", last);
+                }}
+                inputRef={inputRef}
+              />
+
+              {/* First name */}
+              {/* <BookingInput
                 className="w-full lg:w-1/2"
                 type="text"
                 id="firstName"
@@ -72,10 +107,10 @@ export default function PersonalInformation() {
                 touched={formik.touched.firstName}
                 value={firstName}
                 inputRef={inputRef}
-              />
+              /> */}
 
               {/* Last name */}
-              <BookingInput
+              {/* <BookingInput
                 className="w-full lg:w-1/2"
                 type="text"
                 id="lastName"
@@ -92,7 +127,7 @@ export default function PersonalInformation() {
                 }}
                 touched={formik.touched.lastName}
                 value={lastName}
-              />
+              /> */}
             </motion.div>
 
             {/* Email */}
@@ -117,23 +152,16 @@ export default function PersonalInformation() {
             </motion.div>
 
             {/* Phone number */}
-            <motion.div {...motionProps}>
-              <BookingInput
-                type="text"
-                id="phoneNumber"
-                value={phone}
+            <motion.div {...motionProps} className="b-0 m-0 w-full">
+              <BookingPhoneInput
                 label={t("phone-number")}
-                placeholder={t("enter-your-phone-number")}
-                errors={getBookingError("personalInfo.phone")}
-                onBlur={(e) => {
-                  formik.handleBlur(e);
-                  tracking("user_data", { phone });
-                }}
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setBookingField("personalInfo.phone", e.target.value);
-                }}
-                touched={formik.touched.phoneNumber}
+                value={formik.values.personalInfo.phone}
+                onChange={(value) => formik.setFieldValue("personalInfo.phone", value)}
+                onBlur={() =>
+                  formik.handleBlur({ target: { name: "personalInfo.phone" } })
+                }
+                errors={formik.errors.personalInfo?.phone}
+                touched={formik.touched.personalInfo?.phone}
               />
             </motion.div>
 
@@ -162,8 +190,8 @@ export default function PersonalInformation() {
           </form>
 
           {/* Payment Section */}
-          <div className="border-t border-gray-200 px-5 pt-4">
-            <h3 className="flex items-center gap-2 font-semibold text-gray-700">
+          <div className="border-t border-gray-200 px-5 pt-4 dark:border-gray-700">
+            <h3 className="flex items-center gap-2 font-semibold text-gray-700 dark:text-gray-300">
               <i className="fa-solid fa-credit-card mr-3"></i>
               {t("payment-method")}
             </h3>
@@ -219,7 +247,7 @@ export default function PersonalInformation() {
 
       {/* === FAQ Section (same width as form) === */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
-        <div className="order-2 col-span-2 w-full rounded-md border border-gray-100 p-4 py-5 shadow-sm lg:order-none">
+        <div className="order-2 col-span-2 w-full rounded-md border border-gray-100 bg-white p-4 py-5 shadow-sm lg:order-none dark:border-gray-700 dark:bg-gray-800">
           <Faq />
         </div>
       </div>

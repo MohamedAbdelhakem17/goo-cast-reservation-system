@@ -1,14 +1,23 @@
-import { useEffect, useMemo } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { useGetSingleAddon } from "@/apis/admin/manage-addons.api";
-import { useEditAddons, useAddNewAddon } from "@/apis/admin/manage-addons.api";
-import { useFormik } from "formik";
-import { addonsValidationSchema, initialAddonValues } from "@/utils/schemas/addon.schema";
-import { motion } from "framer-motion";
-import { TextArea, Input, Button, ErrorFeedback } from "@/components/common";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  useAddNewAddon,
+  useEditAddons,
+  useGetSingleAddon,
+} from "@/apis/admin/manage-addons.api";
+import {
+  Button,
+  ErrorFeedback,
+  Input,
+  OptimizedImage,
+  TextArea,
+} from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import { addonsValidationSchema, initialAddonValues } from "@/utils/schemas/addon.schema";
+import { useQueryClient } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import { motion } from "framer-motion";
+import { useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function AddAddons() {
   const { t } = useLocalization();
@@ -213,7 +222,7 @@ export default function AddAddons() {
               <ErrorFeedback>{form.errors.image}</ErrorFeedback>
             )}
             {form.values.image && (
-              <img
+              <OptimizedImage
                 src={
                   form.values.image instanceof File
                     ? imageUrl.get("image")

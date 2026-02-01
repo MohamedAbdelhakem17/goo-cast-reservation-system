@@ -1,4 +1,3 @@
-import { API_BASE_URL } from "@/constants/config";
 import axiosInstance from "@/utils/axios-instance";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -15,9 +14,7 @@ const fetchBookings = async (filters) => {
   params.append("page", page.toString());
   params.append("limit", limit.toString());
 
-  const { data } = await axiosInstance.get(
-    `${API_BASE_URL}/bookings?${params.toString()}`,
-  );
+  const { data } = await axiosInstance.get(`/bookings?${params.toString()}`);
 
   return data;
 };
@@ -55,7 +52,7 @@ export const useChangeBookingStatus = () => {
     mutationKey: ["change-booking-status"],
 
     mutationFn: async (payload) => {
-      const { data } = await axiosInstance.put(`${API_BASE_URL}/bookings`, payload);
+      const { data } = await axiosInstance.put(`/bookings`, payload);
 
       return data;
     },

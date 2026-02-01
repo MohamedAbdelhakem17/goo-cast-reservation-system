@@ -1,26 +1,31 @@
-import { useState } from "react";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { Check } from "lucide-react";
-import usePriceFormat from "@/hooks/usePriceFormat";
+import { useGetAutoApplyCoupon } from "@/apis/admin/manage-coupon.api";
 import { useApplyCoupon } from "@/apis/public/coupon.api";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import { Check } from "lucide-react";
+import { useEffect, useState } from "react";
 
+/* ---------------------------------- */
+/* Coupon Input */
+/* ---------------------------------- */
 function CouponInput({ coupon, setCoupon, onApply, disabled, isPending, t }) {
   return (
-    <div className="my-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="my-3 flex flex-col gap-3 sm:flex-row sm:items-center">
       <input
         type="text"
         placeholder={t("enter-coupon-code")}
-        value={coupon.toUpperCase()}
+        value={coupon}
         onChange={(e) => setCoupon(e.target.value.toUpperCase())}
-        className="focus:border-main focus:ring-main w-full flex-1 rounded-md border-2 border-gray-200 bg-transparent px-3 py-2 text-gray-700 placeholder-gray-400 focus:ring-1 focus:outline-none sm:text-sm"
+        className="focus:border-main focus:ring-main w-full flex-1 rounded-md border-2 border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:ring-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
       />
       <button
         disabled={disabled || isPending}
         onClick={onApply}
-        className={`w-full rounded-md border-2 border-gray-100 bg-gray-100 px-4 py-2 text-sm font-medium text-black shadow-sm transition-all duration-200 sm:w-auto ${
-          disabled ? "cursor-not-allowed opacity-50" : "hover:bg-gray-200"
+        className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+          disabled || isPending
+            ? "cursor-not-allowed bg-gray-100 opacity-50 dark:bg-gray-800"
+            : "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
         }`}
       >
         {isPending ? t("applying") : t("apply")}
@@ -29,80 +34,104 @@ function CouponInput({ coupon, setCoupon, onApply, disabled, isPending, t }) {
   );
 }
 
+/* ---------------------------------- */
+/* Main Component */
+/* ---------------------------------- */
 export default function ApplyDiscount({ getBookingField, setBookingField }) {
   const { t } = useLocalization();
-
-  const priceFormat = usePriceFormat();
-  const [coupon, setCoupon] = useState(getBookingField("couponCode") || "");
   const { addToast } = useToast();
+  const priceFormat = usePriceFormat();
+
+  const [coupon, setCoupon] = useState(getBookingField("couponCode") || "");
+  const [autoApplied, setAutoApplied] = useState(false);
+
+  const { data: autoCoupon } = useGetAutoApplyCoupon();
   const { applyCoupon, isPending } = useApplyCoupon();
 
   const discount = getBookingField("discount");
-  const totalPackagePrice = getBookingField("totalPackagePrice");
-  const totalAddOns =
-    getBookingField("selectedAddOns")?.reduce(
-      (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
-      0,
-    ) || 0;
+  const totalPackagePrice = getBookingField("totalPackagePrice") || 0;
+  const selectedAddOns = getBookingField("selectedAddOns") || [];
 
-  const handleApplyCoupon = () => {
+  const totalAddOns = selectedAddOns.reduce(
+    (acc, item) => acc + (item.quantity > 0 ? item.price * item.quantity : 0),
+    0,
+  );
+
+  /* ---------------------------------- */
+  /* Apply Coupon Logic */
+  /* ---------------------------------- */
+  const handleApplyCoupon = (code) => {
+    const appliedCode = code || coupon;
+    if (!appliedCode) return;
+
     applyCoupon(
-      { coupon_id: coupon },
+      { coupon_id: appliedCode },
       {
-        onSuccess: (response) => {
-          setBookingField("couponCode", coupon);
+        onSuccess: (res) => {
+          const discountValue = res.data.discount;
 
-          const discount = response.data.discount;
-          const packageAfterDiscount =
-            totalPackagePrice - totalPackagePrice * (discount / 100);
+          const totalAfterDiscount =
+            totalPackagePrice * (1 - discountValue / 100) + totalAddOns;
 
-          const totalPriceAfterDiscount = packageAfterDiscount + totalAddOns;
+          setBookingField("couponCode", appliedCode);
+          setBookingField("discount", discountValue);
+          setBookingField("totalPriceAfterDiscount", totalAfterDiscount);
 
-          setBookingField("totalPriceAfterDiscount", totalPriceAfterDiscount);
-          setBookingField("discount", discount);
-
-          addToast(response.message || "Coupon Applied Successfully", "success");
+          addToast(res.message || t("coupon-applied"), "success");
         },
-        onError: (error) => {
-          const errorMessage = error.response?.data?.message || "Coupon is not valid";
-          addToast(errorMessage, "error");
+        onError: (err) => {
+          addToast(err.response?.data?.message || t("invalid-coupon"), "error");
         },
       },
     );
   };
 
+  /* ---------------------------------- */
+  /* Auto Apply Coupon */
+  /* ---------------------------------- */
+  useEffect(() => {
+    if (autoCoupon?.data && !autoApplied && !coupon) {
+      const autoCode = autoCoupon.data.code;
+      setCoupon(autoCode);
+      handleApplyCoupon(autoCode);
+      setAutoApplied(true);
+    }
+  }, [autoCoupon, autoApplied, coupon]);
+
+  /* ---------------------------------- */
+  /* UI */
+  /* ---------------------------------- */
   return (
     <div className="my-3 w-full rounded-xl py-2">
-      <h2 className="flex items-center gap-2 text-sm font-bold text-gray-800">
-        <i className="fa-solid fa-tag text-gray-600"></i>
+      <h2 className="flex items-center gap-2 text-sm font-bold">
+        <i className="fa-solid fa-tag"></i>
         {t("promo-code")}
       </h2>
 
       {discount ? (
-        <div className="mt-3 flex flex-col rounded-lg border border-green-200 bg-green-50 p-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-2 sm:items-center">
-            <Check className="mt-[2px] h-4 w-4 text-green-600" />
+        <div className="mt-3 flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3">
+          <div className="flex items-center gap-2">
+            <Check className="h-4 w-4 text-green-600" />
             <div>
               <div className="text-sm font-medium">{coupon}</div>
-              <div className="text-xs text-green-600">
-                {t("discount-discount-on-package-only")}
+              <div className="text-xs text-green-600 capitalize">
+                {t("discount-applied-on-package")}
               </div>
             </div>
           </div>
-          <div className="mt-2 flex items-center sm:mt-0">
-            <span className="text-sm font-medium text-green-600">
-              - {priceFormat(totalPackagePrice * (discount / 100))}
-            </span>
-          </div>
+
+          <span className="text-sm font-medium text-green-600">
+            - {priceFormat(totalPackagePrice * (discount / 100))}
+          </span>
         </div>
       ) : (
         <CouponInput
           coupon={coupon}
           setCoupon={setCoupon}
-          onApply={handleApplyCoupon}
+          onApply={() => handleApplyCoupon()}
           disabled={!coupon}
-          t={t}
           isPending={isPending}
+          t={t}
         />
       )}
     </div>

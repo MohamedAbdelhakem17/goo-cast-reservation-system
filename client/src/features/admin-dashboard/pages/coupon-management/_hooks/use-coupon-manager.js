@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import {
   useCreateNewCoupon,
   useDeleteCoupon,
   useUpdateCoupon,
 } from "@/apis/admin/manage-coupon.api";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 export function useCouponManager() {
   // state
@@ -68,8 +68,13 @@ export function useCouponManager() {
           setEditingCoupon(null);
           callback();
         },
-        onError: () => {
-          addToast("Failed to update coupon. Please try again.", "error");
+        onError: (error) => {
+          addToast(
+            error?.response?.data?.message ||
+              "Failed to update coupon. Please try again.",
+            "error",
+            1600,
+          );
         },
       },
     );

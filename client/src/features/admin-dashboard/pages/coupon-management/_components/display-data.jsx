@@ -1,13 +1,43 @@
-import { Loading, Table, ResponsiveTable } from "@/components/common";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { Pencil, RefreshCw, Trash2 } from "lucide-react";
-import useDataFormat from "@/hooks/useDateFormat";
-import { useGetAllCoupons } from "@/apis/admin/manage-coupon.api";
+import { useChangeCouponStatus, useGetAllCoupons } from "@/apis/admin/manage-coupon.api";
+import { Loading, RadioButton, ResponsiveTable, Table } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import useDataFormat from "@/hooks/useDateFormat";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useQueryClient } from "@tanstack/react-query";
+import { Pencil, RefreshCw, Trash2 } from "lucide-react";
 
 function CouponActions({ coupon, handleEdit, handleDeleteConfirm, couponToDelete }) {
+  const { t } = useLocalization();
   const isDeleting = couponToDelete?._id === coupon._id;
 
+  const { changeStatus, isPending } = useChangeCouponStatus();
+
+  const { addToast } = useToast();
+  const queryClient = useQueryClient();
+  // function
+  const handelUpdateStatus = (value, id) => {
+    return new Promise((resolve, reject) => {
+      changeStatus(
+        { payload: value, id },
+        {
+          onSuccess: () => {
+            addToast(t("change-status-successfully"), "success");
+            queryClient.invalidateQueries("addons");
+            resolve();
+          },
+          onError: (error) => {
+            const errorMessage =
+              error?.response?.data?.message || t("failed-to-change-status");
+
+            addToast(errorMessage, "error");
+
+            reject(error);
+          },
+        },
+      );
+    });
+  };
   return (
     <div className="flex gap-2">
       <button
@@ -27,6 +57,13 @@ function CouponActions({ coupon, handleEdit, handleDeleteConfirm, couponToDelete
           <Trash2 className="h-4 w-4" />
         )}
       </button>
+
+      {/* Change status button */}
+      <RadioButton
+        initialValue={coupon.isActive}
+        isPending={isPending}
+        callback={(value) => handelUpdateStatus(value, coupon._id)}
+      />
     </div>
   );
 }
@@ -51,6 +88,7 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
     t("expires-at"),
     t("max-uses"),
     t("count-used"),
+    t("priority"),
     t("actions"),
   ];
 
@@ -105,10 +143,26 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
           className="hover:bg-gray-50 [&_td]:px-6 [&_td]:py-4 [&_td]:whitespace-nowrap"
         >
           <td className="font-medium">{coupon.name}</td>
+
           <td>
             <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-100 px-2 py-1 font-mono text-xs font-medium text-gray-800 uppercase">
               {coupon.code}
             </span>
+
+            {/* auto apply */}
+            <div className="mt-1 flex items-center gap-x-2">
+              {/* indicator */}
+              <span
+                className={`size-2 rounded-full ${coupon.autoApply ? "bg-emerald-500" : "bg-gray-300"}`}
+              />
+
+              {/* Label */}
+              <span
+                className={`text-xs font-semibold ${coupon.autoApply ? "text-emerald-500" : "text-gray-400"}`}
+              >
+                {coupon.autoApply ? t("auto-apply") : t("manual")}
+              </span>
+            </div>
           </td>
           <td>
             <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
@@ -126,6 +180,7 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
           </td>
           <td>{coupon.max_uses}</td>
           <td>{coupon.times_used}</td>
+          <td>{coupon.priority || 0}</td>
           <td>
             <CouponActions
               coupon={coupon}
@@ -143,12 +198,31 @@ export default function DisplayData({ handleEdit, handleDeleteConfirm, couponToD
       {coupons.map((coupon) => (
         <ResponsiveTable
           key={coupon._id}
-          title={coupon.name}
+          title={
+            <>
+              {coupon.name}
+              {/* auto apply */}
+              <div className="my-1 flex items-center gap-x-2">
+                {/* indicator */}
+                <span
+                  className={`size-1 rounded-full ${coupon.autoApply ? "bg-emerald-500" : "bg-gray-300"}`}
+                />
+
+                {/* Label */}
+                <span
+                  className={`text-xs font-semibold ${coupon.autoApply ? "text-emerald-500" : "text-gray-400"}`}
+                >
+                  {coupon.autoApply ? t("auto-apply") : t("manual")}
+                </span>
+              </div>
+            </>
+          }
           subtitle={coupon.code}
           fields={[
             { label: t("discount"), value: coupon.discount + "%" },
             { label: t("expires"), value: formatDate(coupon.expires_at) },
             { label: t("max-uses"), value: coupon.max_uses },
+            { label: t("priority"), value: coupon.priority },
             { label: t("used"), value: coupon.times_used },
           ]}
           actions={

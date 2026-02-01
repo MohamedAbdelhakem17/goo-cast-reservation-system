@@ -1,0 +1,37 @@
+name: Deploy to staging
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+            cd /var/www/staging-goocast
+
+            git fetch origin
+            git reset --hard origin/dev
+
+            echo "Building client..."
+            cd client
+            npm ci
+            npm run build
+
+            echo "Restarting server..."
+            cd ../server
+            npm ci
+            pm2 restart staging-goocast

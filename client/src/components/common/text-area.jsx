@@ -1,10 +1,11 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import ErrorFeedback from "./error-feedback";
 
 const Textarea = ({
   label,
   id,
+  name,
   value,
   onChange,
   placeholder,
@@ -61,6 +62,7 @@ const Textarea = ({
                 : "border-b-gray-300"
           }`}
           id={id}
+          name={name}
           placeholder={isFocused || !label ? placeholder : ""}
           value={value}
           onChange={onChange}

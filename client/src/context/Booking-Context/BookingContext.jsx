@@ -20,16 +20,16 @@ export default function BookingProvider({ children }) {
   const { t } = useLocalization();
   // Constants
   const STEP_LABELS = [
-    t("select-studio"),
     t("date-and-time"),
-    t("select-service"),
+    t("select-studio"),
+    t("select-package"),
     t("additional-services"),
     t("payment-info"),
   ];
   const TOTAL_STEPS = STEP_LABELS.length;
   const STEP_FIELDS = {
-    1: ["studio"],
-    2: ["date", "startSlot", "duration"],
+    1: ["date", "startSlot", "duration"],
+    2: ["studio"],
     3: ["selectedPackage"],
     4: ["selectedAddOns"],
     5: [
@@ -183,12 +183,43 @@ export default function BookingProvider({ children }) {
   };
 
   // Check if current step has validation errors
+  // const hasError = () => {
+  //   const fields = STEP_FIELDS[currentStep] || [];
+
+  //   return fields.some((field) => {
+  //     const value = getBookingField(field);
+  //     const error = getBookingError(field);
+
+  //     // Check if value is considered empty
+  //     const isEmpty =
+  //       value === undefined ||
+  //       value === null ||
+  //       value === "" ||
+  //       (Array.isArray(value) && value.length === 0);
+
+  //     return isEmpty || Boolean(error);
+  //   });
+  // };
+
   const hasError = () => {
     const fields = STEP_FIELDS[currentStep] || [];
+
+    const getNestedValue = (obj, path) =>
+      path.split(".").reduce((acc, key) => acc?.[key], obj);
+
     return fields.some((field) => {
-      const value = getBookingField(field);
+      const value = getNestedValue(values, field);
       const error = getBookingError(field);
-      return !value || error;
+
+      // Special handling for studio
+      const isEmpty =
+        value === undefined ||
+        value === null ||
+        value === "" ||
+        (field === "studio" && (!value || !value.id)) ||
+        (field === "selectedPackage" && (!value || !value.id));
+
+      return isEmpty || Boolean(error);
     });
   };
 

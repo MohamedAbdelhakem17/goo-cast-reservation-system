@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import { motion } from "framer-motion";
-import { Input } from "@/components/common";
 import signupForm from "@/apis/auth/signup.api";
+import { Input } from "@/components/common";
+import { motion } from "framer-motion";
+import { useRef } from "react";
 // import GoogleButton from "@/components/Google-Button/GoogleButton"
 import useLocalization from "@/context/localization-provider/localization-context";
 
@@ -19,7 +19,7 @@ export default function Signup({ closeModal, changeForm }) {
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Close Modal */}
-      <div className="my-2 flex w-full justify-center rounded-t-3xl bg-white/80 p-2">
+      <div className="my-2 flex w-full justify-center rounded-t-3xl bg-white/80 p-2 transition-none dark:bg-gray-800/80">
         <motion.i
           onClick={closeModal}
           whileTap={{ scale: 0.9, shadow: "0px 0px 15px rgba(0,0,0,0.3)" }}
@@ -30,7 +30,7 @@ export default function Signup({ closeModal, changeForm }) {
 
       {/* Card */}
       <motion.div
-        className="relative overflow-hidden rounded-b-3xl bg-white shadow-xl"
+        className="relative overflow-hidden rounded-b-3xl bg-white shadow-xl transition-none dark:bg-gray-800"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -48,16 +48,16 @@ export default function Signup({ closeModal, changeForm }) {
             transition={{ delay: 0.4, duration: 0.5 }}
             className="mb-6 text-center"
           >
-            <h2 className="mb-2 text-2xl font-bold text-gray-800">
+            <h2 className="mb-2 text-2xl font-bold text-gray-800 transition-none dark:text-gray-100">
               {t("welcome-join-us")}
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 transition-none dark:text-gray-400">
               {t("create-your-account-and-start-your-journey")}
             </p>
           </motion.div>
 
           {/* Form */}
-          <form className="space-y-2" onSubmit={formik.handleSubmit}>
+          <form className="space-y-6" onSubmit={formik.handleSubmit}>
             {/* Name */}
             <motion.div
               initial={{ opacity: 0, x: -10 }}

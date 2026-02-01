@@ -1,6 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "@/constants/config";
 import {
   useDeleteData,
   useGetData,
@@ -9,14 +8,12 @@ import {
 } from "../../hooks/useApi";
 
 // ============ PACKAGES ============
-export const GetAllCategories = () =>
-  useGetData(["categories"], `${API_BASE_URL}/categories`);
-export const CreateCategory = () =>
-  usePostData(["category"], `${API_BASE_URL}/categories`);
+export const GetAllCategories = () => useGetData(["categories"], `/categories`);
+export const CreateCategory = () => usePostData(["category"], `/categories`);
 export const UpdateCategory = (categoryId) =>
-  useUpdateData(["categories", categoryId], `${API_BASE_URL}/categories`);
+  useUpdateData(["categories", categoryId], `/categories`);
 export const DeleteCategory = (categoryId) =>
-  useDeleteData(["categories", categoryId], `${API_BASE_URL}/categories`);
+  useDeleteData(["categories", categoryId], `/categories`);
 
 // ============ PACKAGES ============
 export const GetAllPackages = () => {
@@ -24,7 +21,7 @@ export const GetAllPackages = () => {
     queryKey: ["packages"],
     queryFn: async () => {
       try {
-        const { data } = await axios.get(`${API_BASE_URL}/hourly-packages`);
+        const { data } = await axios.get(`/hourly-packages`);
         return data;
       } catch (error) {
         console.error("Error fetching packages:", error);
@@ -39,7 +36,7 @@ export const AddNewPackage = () => {
   return useMutation({
     mutationFn: async (data) => {
       try {
-        const response = await axios.post(`${API_BASE_URL}/hourly-packages`, data, {
+        const response = await axios.post(`/hourly-packages`, data, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -61,14 +58,11 @@ export const DeletePackage = () => {
   return useMutation({
     mutationFn: async (packageId) => {
       try {
-        const { data } = await axios.delete(
-          `${API_BASE_URL}/hourly-packages/${packageId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+        const { data } = await axios.delete(`/hourly-packages/${packageId}`, {
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+        });
         return data;
       } catch (error) {
         console.error("Error deleting package:", error);
@@ -86,7 +80,7 @@ export const UpdatePackage = () => {
   return useMutation({
     mutationFn: async ({ id, data }) => {
       try {
-        const response = await axios.put(`${API_BASE_URL}/hourly-packages/${id}`, data, {
+        const response = await axios.put(`/hourly-packages/${id}`, data, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -106,7 +100,7 @@ export const UpdatePackage = () => {
 export const GetPackagesByCategory = () => {
   return useMutation({
     mutationFn: async ({ category }) => {
-      const res = await axios.post(`${API_BASE_URL}/hourly-packages/category`, {
+      const res = await axios.post(`/hourly-packages/category`, {
         category,
       });
       return res.data;
@@ -120,7 +114,7 @@ export const GetAllAddOns = () => {
     queryKey: ["addons-user"],
     queryFn: async () => {
       try {
-        const { data } = await axios.get(`${API_BASE_URL}/add-ons?status=true`);
+        const { data } = await axios.get(`/add-ons?status=true`);
         return data;
       } catch (error) {
         console.error("Error fetching add-ons:", error);
@@ -147,7 +141,7 @@ export const AddNewAddOn = () => {
             formData.append(key, value);
           }
         });
-        const response = await axios.post(`${API_BASE_URL}/add-ons`, formData, {
+        const response = await axios.post(`/add-ons`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -170,7 +164,7 @@ export const DeleteAddOn = () => {
   return useMutation({
     mutationFn: async (addOnId) => {
       try {
-        const { data } = await axios.delete(`${API_BASE_URL}/add-ons/${addOnId}`, {
+        const { data } = await axios.delete(`/add-ons/${addOnId}`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -214,7 +208,7 @@ export const UpdateAddOn = () => {
           }
         });
 
-        const response = await axios.put(`${API_BASE_URL}/add-ons/${id}`, formData, {
+        const response = await axios.put(`/add-ons/${id}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

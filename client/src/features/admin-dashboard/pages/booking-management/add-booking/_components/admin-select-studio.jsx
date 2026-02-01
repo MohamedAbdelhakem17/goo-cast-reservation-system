@@ -1,8 +1,7 @@
-import image from "./gamma5.jpg";
-import useLocalization from "@/context/localization-provider/localization-context";
-import { Store } from "lucide-react";
 import { useGetStudio } from "@/apis/public/studio.api";
 import { OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { Store } from "lucide-react";
 
 export default function AdminSelectStudio({ selectStudio, selectedStudio }) {
   // Localization
@@ -43,7 +42,7 @@ export default function AdminSelectStudio({ selectStudio, selectedStudio }) {
               {/* Image Wrapper */}
               <div className="relative h-56 w-full overflow-hidden rounded-t-2xl">
                 <OptimizedImage
-                  src={thumbnail || image}
+                  src={thumbnail}
                   alt={name?.[lng]}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />

@@ -19,6 +19,11 @@ const getInitialPackageValues = (pkg) => {
       en: Array.isArray(pkg?.details?.en) ? pkg.details.en : [],
     },
 
+    not_included: {
+      ar: Array.isArray(pkg?.not_included?.ar) ? pkg.not_included.ar : [],
+      en: Array.isArray(pkg?.not_included?.en) ? pkg.not_included.en : [],
+    },
+
     target_audience: {
       ar: Array.isArray(pkg?.target_audience?.ar) ? pkg.target_audience.ar : [],
       en: Array.isArray(pkg?.target_audience?.en) ? pkg.target_audience.en : [],
@@ -46,9 +51,13 @@ const getInitialPackageValues = (pkg) => {
 
     icon: pkg?.icon || "",
 
+    best_for: pkg?.best_for || "",
+    show_image: pkg?.show_image ?? false,
+    // For tracking changes
     current_target_audience: "",
     current_post_session_benefits: "",
     current_details: "",
+    current_not_included: "",
   };
 };
 
@@ -83,6 +92,13 @@ const packageValidationSchema = Yup.object().shape({
       .of(Yup.string().required("Each English detail is required."))
       .min(0, "Please provide at least one English detail."),
   }),
+
+  not_included: Yup.object()
+    .shape({
+      ar: Yup.array().of(Yup.string()).optional(),
+      en: Yup.array().of(Yup.string()).optional(),
+    })
+    .optional(),
 
   target_audience: Yup.object().shape({
     ar: Yup.array()
@@ -123,13 +139,13 @@ const packageValidationSchema = Yup.object().shape({
 
   image: Yup.mixed()
     .test("fileRequired", "Please upload an image.", (value) => {
-      if (!value) return false; // مفيش صورة خالص
-      if (typeof value === "string") return true; // صورة قديمة جايه من الـ DB
-      return value && value.size <= 5 * 1024 * 1024; // صورة جديدة
+      if (!value) return false;
+      if (typeof value === "string") return true;
+      return value && value.size <= 5 * 1024 * 1024;
     })
     .test("fileType", "Only image files are allowed (jpg, jpeg, png).", (value) => {
       if (!value) return false;
-      if (typeof value === "string") return true; // صورة قديمة URL
+      if (typeof value === "string") return true;
       return ["image/jpg", "image/jpeg", "image/png"].includes(value.type);
     }),
 
@@ -140,6 +156,18 @@ const packageValidationSchema = Yup.object().shape({
       return value;
     })
     .required(),
+  show_image: Yup.boolean()
+    .transform((value, originalValue) => {
+      if (originalValue === "true") return true;
+      if (originalValue === "false") return false;
+      return value;
+    })
+    .required(),
+
+  best_for: Yup.number()
+    .typeError("Best for must be a valid number.")
+    .integer("Best for must be an integer.")
+    .min(1, "Best for cannot be less than 1."),
 });
 
-export { packageValidationSchema, getInitialPackageValues };
+export { getInitialPackageValues, packageValidationSchema };

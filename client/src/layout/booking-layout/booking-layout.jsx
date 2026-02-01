@@ -1,6 +1,7 @@
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import { NavigationButtons, Stepper } from "@/features/booking/_components";
 import BookingHeader from "@/layout/_components/booking-header/booking-header";
+import PromotionsBar from "@/layout/_components/promotions-bar/promotions-bar";
 import { trackBookingStep } from "@/utils/gtm";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
@@ -60,36 +61,37 @@ export default function BookingLayout({ children, currentStep }) {
   }, [currentStep, location.search]);
 
   return (
-    <div className="min-h-screen">
+    <div className="dark:transparent min-h-screen bg-white dark:bg-transparent">
       {/* Header and Stepper */}
       <div className="sticky top-0 z-[500]">
+        <PromotionsBar />
         <BookingHeader />
         <Stepper />
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto mb-3 w-full px-3 md:px-4 lg:max-w-4xl lg:px-6 xl:max-w-6xl">
+      <div className="mx-auto mb-1 w-full px-3 md:px-4 lg:max-w-4xl lg:px-6 xl:max-w-6xl">
         <motion.div
-          className="rounded-xl bg-white"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          className="rounded-xl bg-white dark:bg-transparent"
+          // initial={{ opacity: 0 }}
+          // animate={{ opacity: 1 }}
+          // exit={{ opacity: 0 }}
+          // transition={{ duration: 0.2 }}
         >
           <AnimatePresence mode="wait" custom={currentStep}>
             <motion.div
               key={currentStep}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              // initial={{ opacity: 0 }}
+              // animate={{ opacity: 1 }}
+              // exit={{ opacity: 0 }}
+              // transition={{ duration: 0.2 }}
             >
               <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                className="items-start space-y-2 md:space-y-2 lg:grid lg:grid-cols-1 lg:gap-6"
+                // variants={containerVariants}
+                // initial="hidden"
+                // animate="visible"
+                // exit="exit"
+                className="items-start space-y-1 md:space-y-2 lg:grid lg:grid-cols-1 lg:gap-6"
               >
                 <motion.div variants={itemVariants} className="rounded-lg">
                   {children}

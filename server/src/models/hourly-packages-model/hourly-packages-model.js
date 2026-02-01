@@ -60,6 +60,19 @@ const HourlyPackageSchema = new mongoose.Schema(
       },
     },
 
+    not_included: {
+      ar: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+      en: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+    },
+
     post_session_benefits: {
       ar: {
         type: [String],
@@ -107,8 +120,24 @@ const HourlyPackageSchema = new mongoose.Schema(
       required: true,
       default: true,
     },
+
+    show_image: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+
+    best_for: {
+      type: Number,
+      required: true,
+      default: 1,
+    },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 
 HourlyPackageSchema.pre(/^find/, function (next) {

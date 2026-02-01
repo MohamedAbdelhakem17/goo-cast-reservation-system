@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
-import { OptimizedImage } from "@/components/common";
-import useLocalization from "@/context/localization-provider/localization-context";
 import { useGetStudio } from "@/apis/public/studio.api";
-import { Loading } from "@/components/common";
+import { Loading, OptimizedImage } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -108,10 +107,12 @@ export default function Studio() {
             {/* Studio Name and Location */}
             <div className="flex flex-grow flex-col justify-between p-4">
               {/* Studio name */}
-              <h3 className="text-xl font-bold text-gray-800">{studio.name?.[lng]}</h3>
+              <h3 className="text-xl font-bold text-gray-800 transition-none dark:text-gray-100">
+                {studio.name?.[lng]}
+              </h3>
 
               {/* Studio location */}
-              <p className="mt-2 flex items-center gap-2 text-gray-600">
+              <p className="mt-2 flex items-center gap-2 text-gray-600 transition-none dark:text-gray-300">
                 <i className="fa-solid fa-location-dot text-main"></i>
                 <span className="text-lg">{studio.address?.[lng]}</span>
               </p>

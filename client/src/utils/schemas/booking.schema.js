@@ -1,5 +1,64 @@
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { DateTime } from "luxon";
 import * as Yup from "yup";
+
+const allowedCountries = ["eg", "sa", "ae"];
+
+const getPhoneValidation = (t) =>
+  Yup.string()
+    .required(t("phone-is-required"))
+    .test("is-valid-phone", t("phone-number-is-not-valid"), function (value) {
+      if (!value) return false;
+
+      // Remove all non-digit characters except leading +
+      let cleanValue = value.replace(/[^\d+]/g, "");
+
+      // If doesn't start with +, check if it already has a country code
+      if (!cleanValue.startsWith("+")) {
+        // Check if it starts with known country codes (20, 966, 971)
+        if (cleanValue.startsWith("20")) {
+          cleanValue = "+" + cleanValue;
+        } else if (cleanValue.startsWith("966")) {
+          cleanValue = "+" + cleanValue;
+        } else if (cleanValue.startsWith("971")) {
+          cleanValue = "+" + cleanValue;
+        } else {
+          // No country code detected, add default based on parent or Egypt
+          const parentCountry = this.parent.country?.toLowerCase();
+          const country = parentCountry || "eg";
+
+          // Remove leading zeros
+          cleanValue = cleanValue.replace(/^0+/, "");
+
+          switch (country) {
+            case "eg":
+              cleanValue = "+20" + cleanValue;
+              break;
+            case "sa":
+              cleanValue = "+966" + cleanValue;
+              break;
+            case "ae":
+              cleanValue = "+971" + cleanValue;
+              break;
+            default:
+              return false;
+          }
+        }
+      }
+
+      try {
+        const phoneNumber = parsePhoneNumberFromString(cleanValue);
+        if (!phoneNumber) return false;
+
+        // Validate the phone number is valid and from allowed countries
+        const countryCode = phoneNumber.country?.toLowerCase();
+        return (
+          phoneNumber.isValid() && countryCode && allowedCountries.includes(countryCode)
+        );
+      } catch {
+        return false;
+      }
+    });
 
 export const getBookingInitialValues = (data = null) => {
   //  get start date
@@ -61,7 +120,13 @@ export const getBookingInitialValues = (data = null) => {
     endSlot: booking.endSlot || null,
     duration: booking.duration || 1,
     persons: booking.persons || 0,
-    selectedPackage: booking.package || {},
+    selectedPackage: {
+      category: booking?.selectedPackage.category || null,
+      id: booking?.selectedPackage._id || null,
+      name: booking?.selectedPackage.category || null,
+      price: booking?.selectedPackage.price || 0,
+      slug: booking?.selectedPackage.slug || null,
+    },
     selectedAddOns:
       booking.addOns?.map((a) => ({
         id: a.item?._id || a.item?.id || "",
@@ -107,9 +172,7 @@ export const getBookingValidationSchema = (t) =>
     personalInfo: Yup.object({
       firstName: Yup.string().required(t("first-name-is-required")),
       lastName: Yup.string().required(t("last-name-is-required")),
-      phone: Yup.string()
-        .matches(/^01(0|1|2|5)[0-9]{8}$/, t("phone-number-is-not-valid"))
-        .required(t("phone-is-required")),
+      phone: getPhoneValidation(t),
       email: Yup.string().email(t("invalid-email")).required(t("email-is-required")),
     }),
 

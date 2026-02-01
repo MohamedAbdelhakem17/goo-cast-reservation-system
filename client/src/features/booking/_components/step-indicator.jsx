@@ -1,7 +1,7 @@
-import React from "react";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
-import { Check } from "lucide-react";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { Check } from "lucide-react";
+import React from "react";
 
 export default function Stepper() {
   const { lng, t } = useLocalization();
@@ -20,7 +20,7 @@ export default function Stepper() {
   };
 
   return (
-    <div className="bg-white px-4 py-3 lg:px-8">
+    <div className="bg-white px-4 py-2 lg:px-8 dark:border-gray-300 dark:bg-gray-950">
       {/* Desktop/Tablet View */}
       <div className="mx-auto hidden max-w-5xl scale-[.9] items-center justify-between sm:flex">
         {steps.map((step, index) => (
@@ -39,8 +39,8 @@ export default function Stepper() {
                   step.id < currentStep
                     ? "border-[#FF3B30] bg-[#FF3B30] text-white"
                     : step.id === currentStep
-                      ? "border-[#FF3B30] bg-white text-[#FF3B30]"
-                      : "border-gray-300 bg-white text-gray-400"
+                      ? "border-[#FF3B30] bg-white text-[#FF3B30] dark:bg-gray-900"
+                      : "border-gray-300 bg-white text-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-500"
                 }`}
               >
                 {step.id < currentStep ? (
@@ -53,7 +53,9 @@ export default function Stepper() {
               </div>
               <div
                 className={`max-w-fit text-center text-sm lg:max-w-fit ${
-                  step.id === currentStep ? "font-medium text-[#FF3B30]" : "text-gray-600"
+                  step.id === currentStep
+                    ? "font-medium text-[#FF3B30]"
+                    : "text-gray-600 dark:text-gray-400"
                 }`}
               >
                 {step.title}
@@ -63,7 +65,7 @@ export default function Stepper() {
             {index < steps.length - 1 && (
               <div
                 className={`mx-2 h-0.5 flex-1 transition-colors duration-300 lg:mx-4 ${
-                  step.id < currentStep ? "bg-[#FF3B30]" : "bg-gray-300"
+                  step.id < currentStep ? "bg-[#FF3B30]" : "bg-gray-300 dark:bg-gray-700"
                 }`}
               />
             )}
@@ -72,18 +74,18 @@ export default function Stepper() {
       </div>
 
       {/* Mobile View */}
-      <div className="py-3 sm:hidden">
+      <div className="pt-1 sm:hidden">
         {/* Progress Bar */}
         <div className="mb-4">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-600">
+            <span className="text-xs font-medium text-gray-600 transition-none dark:text-gray-400">
               {t("steps-indicator", {
                 currentStep: new Intl.NumberFormat(`${lng}-EG`).format(currentStep),
                 length: new Intl.NumberFormat(`${lng}-EG`).format(steps.length),
               })}
             </span>
           </div>
-          <div className="h-1.5 w-full rounded-full bg-gray-200">
+          <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
             <div
               className="h-1.5 rounded-full bg-gradient-to-r from-[#FF3B30] to-[#FF6B60] transition-all duration-500 ease-out"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
@@ -92,7 +94,7 @@ export default function Stepper() {
         </div>
 
         {/* Current Step Display */}
-        <div
+        {/* <div
           className="cursor-pointer rounded-xl border border-[#FF3B30]/20 bg-gradient-to-r from-[#FF3B30]/5 to-[#FF6B60]/5 p-4"
           onClick={handleScroll}
         >
@@ -113,10 +115,10 @@ export default function Stepper() {
               <div className="text-xs text-gray-500">{t("current-step")}</div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Mini Steps Overview */}
-        <div className="mt-4 flex cursor-pointer justify-center space-x-2">
+        {/* <div className="mt-4 flex cursor-pointer justify-center space-x-2">
           {steps.map((step) => (
             <button
               key={step.id}
@@ -129,7 +131,7 @@ export default function Stepper() {
               }`}
             />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );

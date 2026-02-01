@@ -1,4 +1,4 @@
-import axiosInstance from "@/utils/axios-instance";
+import axiosInstance, { axiosInstanceV2 } from "@/utils/axios-instance";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetFullyBookedDates = (duration) => {
@@ -22,7 +22,7 @@ export const useGetFullyBookedDates = (duration) => {
   return { data, isLoading, error };
 };
 
-export const useGetAvailableSlots = () => {
+export const useGetAvailableSlots = (version = "v1") => {
   const {
     mutate: getSlots,
     data,
@@ -32,7 +32,9 @@ export const useGetAvailableSlots = () => {
     mutationKey: ["available-slots"],
 
     mutationFn: async (payload) => {
-      const { data } = await axiosInstance.post(`/bookings/available-slots`, payload);
+      const instance = version === "v2" ? axiosInstanceV2 : axiosInstance;
+
+      const { data } = await instance.post(`/bookings/available-slots`, payload);
 
       return data;
     },
@@ -60,4 +62,25 @@ export const useCreateBooking = (role) => {
   });
 
   return { createBooking, isPending, error, data };
+};
+
+export const useGetAvailableStudios = (queryParams) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["available-studios", queryParams],
+
+    queryFn: async () => {
+      const queryString = new URLSearchParams(queryParams).toString();
+
+      const { data } = await axiosInstanceV2(
+        `/bookings/available-studios?${queryString}`,
+      );
+      return data;
+    },
+
+    enabled: !!queryParams.date && !!queryParams.startSlot,
+    cacheTime: 0,
+    staleTime: 0,
+  });
+
+  return { data, isLoading, error };
 };

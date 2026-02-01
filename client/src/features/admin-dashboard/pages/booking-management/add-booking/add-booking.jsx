@@ -11,6 +11,7 @@ import {
   AdminSelectSlots,
   AdminSelectStudio,
 } from "./_components";
+import PersonalInformation from "./_components/personal-info";
 import useAdminCreateBooking from "./_hook/use-admin-create-booking";
 import TimeCalendar from "./time";
 
@@ -43,7 +44,6 @@ export default function AddBooking() {
   };
 
   // Destructure personal info for cleaner usage
-  const { firstName, lastName, phone, email, brand } = values.personalInfo;
 
   return (
     <motion.div
@@ -104,76 +104,26 @@ export default function AddBooking() {
           </h3>
 
           <div className="w-full space-y-4 rounded-md border border-gray-100 bg-white p-5 shadow-sm">
-            {/* Personal Info Inputs */}
-            <motion.div {...motionProps} className="flex flex-col gap-4 lg:flex-row">
-              {/* First Name */}
-              <BookingInput
-                className="w-full lg:w-1/2"
-                id="firstName"
-                label={t("first-name")}
-                placeholder={t("enter-your-first-name")}
-                errors={getFieldError("personalInfo.firstName")}
-                onChange={(e) => setFieldValue("personalInfo.firstName", e.target.value)}
-                onBlur={formik.handleBlur}
-                touched={formik.touched?.personalInfo?.firstName}
-                value={firstName}
-              />
-
-              {/* Last Name */}
-              <BookingInput
-                className="w-full lg:w-1/2"
-                id="lastName"
-                label={t("last-name")}
-                placeholder={t("enter-your-last-name")}
-                errors={getFieldError("personalInfo.lastName")}
-                onChange={(e) => setFieldValue("personalInfo.lastName", e.target.value)}
-                onBlur={formik.handleBlur}
-                touched={formik.touched?.personalInfo?.lastName}
-                value={lastName}
-              />
-            </motion.div>
-
-            {/* Email */}
-            <motion.div {...motionProps}>
-              <BookingInput
-                id="email"
-                label={t("email")}
-                placeholder={t("enter-your-email")}
-                errors={getFieldError("personalInfo.email")}
-                onChange={(e) => setFieldValue("personalInfo.email", e.target.value)}
-                onBlur={formik.handleBlur}
-                touched={formik.touched?.personalInfo?.email}
-                value={email}
-              />
-            </motion.div>
-
-            {/* Phone */}
-            <motion.div {...motionProps}>
-              <BookingInput
-                id="phone"
-                label={t("phone-number")}
-                placeholder={t("enter-your-phone-number")}
-                errors={getFieldError("personalInfo.phone")}
-                onChange={(e) => setFieldValue("personalInfo.phone", e.target.value)}
-                onBlur={formik.handleBlur}
-                touched={formik.touched?.personalInfo?.phone}
-                value={phone}
-              />
-            </motion.div>
+            {/* Select User */}
+            <PersonalInformation
+              setFieldValue={setFieldValue}
+              formik={formik}
+              getFieldError={getFieldError}
+            />
 
             {/* Extra Comments */}
             <motion.div {...motionProps}>
               <BookingInput
-                id="brand"
+                id="extraComment"
                 label={t("special-requests-or-comments")}
                 placeholder={t(
                   "any-special-requirements-equipment-needs-or-additional-information",
                 )}
-                errors={getFieldError("personalInfo.brand")}
-                onChange={(e) => setFieldValue("personalInfo.brand", e.target.value)}
+                errors={getFieldError("extraComment")}
+                onChange={(e) => setFieldValue("extraComment", e.target.value)}
                 onBlur={formik.handleBlur}
-                touched={formik.touched?.personalInfo?.brand}
-                value={brand}
+                touched={formik.touched?.extraComment}
+                value={values?.extraComment}
               />
             </motion.div>
           </div>

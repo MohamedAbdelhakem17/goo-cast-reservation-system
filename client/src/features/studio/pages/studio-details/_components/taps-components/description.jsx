@@ -24,7 +24,7 @@ export default function Description({ description }) {
 
   return (
     <motion.div
-      className="mx-auto max-w-3xl rounded-xl bg-white px-6 py-8 shadow-sm"
+      className="mx-auto max-w-3xl rounded-xl bg-white px-6 py-8 shadow-sm dark:bg-gray-800"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -35,7 +35,7 @@ export default function Description({ description }) {
       >
         {description && (
           <div
-            className="[&_h2]:text-main [&_h2]:text-xl [&_h2]:font-bold [&_p]:mt-2 [&_p]:text-sm [&_p]:leading-relaxed [&_p]:font-medium [&_p]:text-gray-800"
+            className="[&_h2]:text-main [&_h2]:text-xl [&_h2]:font-bold [&_p]:mt-2 [&_p]:text-sm [&_p]:leading-relaxed [&_p]:font-medium [&_p]:text-gray-800 dark:[&_p]:text-gray-200"
             dangerouslySetInnerHTML={{ __html: description }}
           />
         )}

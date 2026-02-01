@@ -1,13 +1,11 @@
-import { API_BASE_URL } from "@/constants/config";
-
 export default function GoogleButton({ label }) {
   const handleGoogleLogin = () => {
-    const googleLoginUrl = `${API_BASE_URL}/auth/google`;
+    const googleLoginUrl = `/auth/google`;
     const newWindoW = window.open(
       googleLoginUrl,
       "_blank",
       "width=500,height=500",
-      "noopener"
+      "noopener",
     );
     if (newWindoW) {
       let timer = setInterval(() => {
@@ -21,7 +19,7 @@ export default function GoogleButton({ label }) {
   return (
     <button
       onClick={handleGoogleLogin}
-      className="flex items-center justify-center gap-3 px-5 py-2 border border-gray-300 rounded-xl shadow-sm hover:shadow-md transition duration-300     mx-auto bg-white text-sm font-medium"
+      className="mx-auto flex items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-5 py-2 text-sm font-medium shadow-sm transition duration-300 hover:shadow-md"
     >
       <svg
         width="20"

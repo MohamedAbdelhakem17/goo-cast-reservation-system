@@ -48,6 +48,34 @@
   --font-arabic: "PingAR LT";
 
   --color-main: #ff0000;
+  --color-main-dark: #ff2929;
+
+  /* Light mode colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+
+  /* Dark mode colors */
+  --color-dark-bg-primary: #0f172a;
+  --color-dark-bg-secondary: #1e293b;
+  --color-dark-bg-card: #1e293b;
+  --color-dark-text-primary: #f1f5f9;
+  --color-dark-text-secondary: #94a3b8;
+  --color-dark-border: #334155;
+}
+
+@variant dark (&:is(.dark *));
+
+/* Global dark mode background */
+:root {
+  background: var(--color-bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+.dark {
+  background: var(--color-dark-bg-primary);
 }
 
 .text-color {
@@ -69,11 +97,33 @@
   border-radius: 10px;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #9ca3af;
   border-radius: 10px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* === Custom Animations === */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }

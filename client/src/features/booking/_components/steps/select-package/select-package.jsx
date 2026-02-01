@@ -1,13 +1,13 @@
-"use client";
 import { useGetAllPackages } from "@/apis/admin/manage-package.api";
 import { OptimizedImage } from "@/components/common";
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
-import { Check, Dot } from "lucide-react";
-import { memo, useState } from "react";
+import { Check, Dot, X } from "lucide-react";
+import { memo } from "react";
 import BookingLabel from "../../booking-label";
 
 // ----------------------
@@ -27,27 +27,46 @@ const cardVariants = {
 };
 
 // ----------------------
+// Recommendation Logic
+// ----------------------
+const getRecommendationLabel = (bestFor, persons, t) => {
+  if (!bestFor || !persons) return null;
+
+  if (persons === 1) {
+    return bestFor === 1 ? t("most-recommended") : null;
+  }
+
+  if (persons > 1 && persons <= bestFor) {
+    return t("most-recommended");
+  }
+
+  return null;
+};
+
+// ----------------------
 // Sub components
 // ----------------------
-const InfoSection = memo(({ label, items }) => {
+const InfoSection = memo(({ label, items, icon }) => {
   const { lng } = useLocalization();
 
   if (!items?.[lng]?.length) return null;
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-      <h4 className="mb-2 text-sm font-semibold text-gray-900">{label}:</h4>
-      <ul className="space-y-2">
+      {label && (
+        <h6 className="mb-2 font-medium text-gray-900 dark:text-gray-100">{label}</h6>
+      )}
+      <ul className="space-y-4">
         {items[lng].map((benefit, idx) => (
           <motion.li
             key={idx}
-            className="flex items-start gap-2 text-sm text-gray-600"
+            className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 + idx * 0.1 }}
           >
-            <Dot className="mt-0.5 h-4 w-4 text-black" />
-            <span>{benefit}</span>
+            {icon || <Dot className="h-4 w-4 text-black" />}
+            <span className="flex-1 text-pretty">{benefit}</span>
           </motion.li>
         ))}
       </ul>
@@ -57,42 +76,55 @@ const InfoSection = memo(({ label, items }) => {
 InfoSection.displayName = "InfoSection";
 
 // ----------------------
-// Package Card Component
+// Package Card
 // ----------------------
-const PackageCard = memo(({ pkg, isActive, onSelect }) => {
+const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
   const { t, lng } = useLocalization();
   const priceFormat = usePriceFormat();
+
+  const recommendationLabel = getRecommendationLabel(+pkg.best_for, +persons, t);
 
   return (
     <motion.div
       variants={cardVariants}
       whileHover={{ y: -5 }}
-      className="w-full cursor-pointer md:w-5/12"
+      className="col-span-1 cursor-pointer overflow-hidden px-1 py-5"
       onClick={() => onSelect(pkg)}
     >
       <div
-        className={`flex h-full flex-col overflow-hidden rounded-3xl border bg-gray-50 p-2 transition-colors duration-300 md:p-4 ${
-          isActive ? "border-main shadow-main/20 border-2" : "border-gray-100 shadow-sm"
+        className={`relative flex h-full flex-col overflow-hidden rounded-3xl border bg-gray-50 p-8 transition-colors duration-300 dark:bg-gray-800 ${
+          isActive
+            ? "border-main shadow-main/20"
+            : "border-gray-100 shadow-sm dark:border-gray-700"
         }`}
       >
+        {/* Most Recommended Badge */}
+        {recommendationLabel && (
+          <span
+            className={`bg-main shadow-main dark:shadow-main/60 absolute -end-10 top-7 z-40 ${lng === "ar" ? "-rotate-45" : "rotate-45"} px-10 py-1 text-xs font-bold text-white shadow-md`}
+          >
+            {recommendationLabel}
+          </span>
+        )}
         {/* Header */}
-        <div className="flex flex-col items-start gap-2">
-          {/* Image  */}
-          <OptimizedImage
-            src={pkg.image}
-            alt={pkg.name?.[lng]}
-            className="h-72 w-full rounded-t-2xl object-cover"
-          />
-          {/* Name */}
-          <h5 className="text-main text-2xl font-bold">{pkg.name?.[lng]}</h5>
+        <div
+          className={`flex flex-col items-start gap-4 ${recommendationLabel ? "mt-6" : ""}`}
+        >
+          {pkg.show_image && (
+            <OptimizedImage
+              src={pkg.image}
+              alt={pkg.name?.[lng]}
+              className="h-72 w-full rounded-t-2xl object-cover"
+            />
+          )}
 
-          {/* Price */}
-          <p className={`text-color text-3xl font-bold`}>
-            {/* Number */}
+          <h5 className="text-main line-clamp-2 max-w-[14rem] overflow-hidden text-2xl font-bold break-words">
+            {pkg.name?.[lng]}
+          </h5>
+
+          <p className="my-2 text-3xl font-bold text-gray-900 dark:text-gray-100">
             {priceFormat(pkg.price)}
-
-            {/* Icon */}
-            <span className="ms-1 inline-block text-sm font-normal text-gray-600">
+            <span className="ms-1 text-sm font-normal text-gray-600 dark:text-gray-400">
               / {t("hour")}
             </span>
           </p>
@@ -100,7 +132,7 @@ const PackageCard = memo(({ pkg, isActive, onSelect }) => {
 
         {/* Description */}
         <motion.p
-          className="my-2.5 text-sm font-normal text-gray-600"
+          className="my-2.5 line-clamp-3 overflow-hidden border-b border-gray-300 pb-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -108,15 +140,34 @@ const PackageCard = memo(({ pkg, isActive, onSelect }) => {
         </motion.p>
 
         {/* Info Sections */}
-        <div className="space-y-2.5 py-2">
-          <InfoSection label={t("whats-included")} items={pkg.details} />
+        <div className="space-y-4 py-2">
+          <div className="border-b border-gray-300 pb-3 dark:border-gray-700">
+            <InfoSection
+              label={t("whats-included")}
+              items={pkg.details}
+              icon={
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                  <Check className="h-3 w-3 text-white" />
+                </div>
+              }
+            />
+            <InfoSection
+              items={pkg.not_included}
+              icon={
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
+                  <X className="h-3 w-3 text-white" />
+                </div>
+              }
+            />
+          </div>
 
           <InfoSection
             label={t("after-your-session")}
             items={pkg.post_session_benefits}
           />
         </div>
-        {/* Action Button */}
+
+        {/* Action */}
         <div className="mt-auto px-4">
           <motion.button
             whileHover={{ scale: 1.03 }}
@@ -148,17 +199,14 @@ PackageCard.displayName = "PackageCard";
 // Main Component
 // ----------------------
 export default function SelectPackage() {
-  const { t, lng } = useLocalization();
+  const { t } = useLocalization();
   const { packages } = useGetAllPackages(true);
-  const { setBookingField, handleNextStep, bookingData } = useBooking();
+  const { setBookingField, handleNextStep, bookingData, formik } = useBooking();
+  const { addToast } = useToast();
 
-  const [selectedPackage, setSelectedPackage] = useState(
-    bookingData.selectedPackage?.id || null,
-  );
+  const selectedPackageId = bookingData.selectedPackage?.id || null;
 
   const handleSelect = (pkg, next = false) => {
-    setSelectedPackage(pkg._id);
-
     setBookingField("selectedPackage", {
       id: pkg._id,
       name: pkg.name,
@@ -166,17 +214,23 @@ export default function SelectPackage() {
       slug: pkg.category.slug,
       price: pkg.price,
     });
+
     setBookingField(
       "totalPackagePrice",
       Number(pkg.price) * Number(bookingData?.duration),
     );
 
-    tracking("add-package", { package_name: pkg.name?.[lng], price: pkg.price });
+    formik.setFieldTouched("selectedPackage", true);
 
-    // reset dependent fields
-    // ["startSlot", "endSlot", "studio"].forEach((f) => setBookingField(f, null));
+    tracking("add-package", {
+      package_name: pkg.name?.[bookingData.lng],
+      price: pkg.price,
+    });
 
-    if (next) handleNextStep();
+    if (next) {
+      addToast("Package selected successfully", "success", 1000);
+      handleNextStep();
+    }
   };
 
   return (
@@ -187,7 +241,7 @@ export default function SelectPackage() {
       />
 
       <motion.div
-        className="flex scale-x-90 flex-wrap justify-center gap-2 md:px-8 lg:justify-around lg:px-0"
+        className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 md:px-8 lg:grid-cols-3 lg:px-0"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -196,8 +250,9 @@ export default function SelectPackage() {
           <PackageCard
             key={pkg._id}
             pkg={pkg}
-            isActive={selectedPackage === pkg._id}
+            isActive={selectedPackageId === pkg._id}
             onSelect={handleSelect}
+            persons={bookingData?.persons}
           />
         ))}
       </motion.div>

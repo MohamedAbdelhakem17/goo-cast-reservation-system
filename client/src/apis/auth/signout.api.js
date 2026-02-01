@@ -1,9 +1,8 @@
-import { API_BASE_URL } from "@/constants/config";
-import { usePostData } from "../../hooks/useApi";
 import { useAuth } from "../../context/Auth-Context/AuthContext";
+import { usePostData } from "../../hooks/useApi";
 
 const Signout = () => {
-  const { mutate: signout } = usePostData("signout", `${API_BASE_URL}/auth/signout`);
+  const { mutate: signout } = usePostData("signout", `/auth/signout`);
   const { dispatch } = useAuth();
 
   const handelLogout = () => {

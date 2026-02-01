@@ -4,6 +4,7 @@ import {
   Bolt,
   Building,
   CalendarDays,
+  ClockFading,
   Globe,
   Home,
   LayoutList,
@@ -46,6 +47,7 @@ export default function c() {
         { name: t("addons"), path: "/admin-dashboard/addons", icon: Blocks },
         { name: t("coupon"), path: "/admin-dashboard/coupon", icon: Ticket },
         { name: t("admins"), path: "/admin-dashboard/admins", icon: ShieldUser },
+        { name: t("promotions"), path: "/admin-dashboard/promotions", icon: ClockFading },
       ],
     },
     {

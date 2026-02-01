@@ -1,11 +1,9 @@
+import { ErrorBoundary, LoadingScreen } from "@/components/common";
 import { Suspense, lazy, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { useAuth } from "../context/Auth-Context/AuthContext";
-import { LoadingScreen, ErrorBoundary } from "@/components/common";
 
-import { trackPageView } from "@/utils/gtm";
 import { AdminRoute, PublicRoute, UserRoute } from "./_components";
-import { useCleanLocalStorage } from "@/hooks";
 
 const SuccessLogin = lazy(
   () => import("@/features/auth/pages/success-login/success-login"),
@@ -13,23 +11,18 @@ const SuccessLogin = lazy(
 const NotFound = lazy(() => import("@/features/public/pages/not-found/not-found"));
 
 export default function AppRouter() {
-  const { loading } = useAuth();
+  // NAvigation
   const location = useLocation();
-  const cleanLocalStorage = useCleanLocalStorage();
 
+  // Hooks
+  const { loading } = useAuth();
+
+  // Effect
   useEffect(() => {
     window.scrollTo(0, 0, { behavior: "smooth" });
   }, [location.pathname]);
 
-  // useEffect(() => {
-  //   trackPageView(location.pathname);
-  // }, [location]);
-
-  useEffect(() => {
-    cleanLocalStorage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
-
+  // Loading Case
   if (loading) return <LoadingScreen />;
 
   return (

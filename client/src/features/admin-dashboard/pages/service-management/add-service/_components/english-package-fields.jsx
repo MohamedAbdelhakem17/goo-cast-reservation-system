@@ -1,6 +1,6 @@
 import { Input, TextArea } from "@/components/common";
-import MultiLangArrayInput from "./multi-lang-array-input";
 import useLocalization from "@/context/localization-provider/localization-context";
+import MultiLangArrayInput from "./multi-lang-array-input";
 
 export default function EnglishFields({ formik }) {
   const { t } = useLocalization();
@@ -37,6 +37,7 @@ export default function EnglishFields({ formik }) {
         label={t("service-description")}
         id="description.en"
         name="description.en"
+        className="col-span-full"
         value={formik.values.description.en}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
@@ -71,6 +72,15 @@ export default function EnglishFields({ formik }) {
         lang={"en"}
         labelKey={t("details-0")}
         placeholderKey={t("enter-detail-0")}
+      />
+
+      {/* not included */}
+      <MultiLangArrayInput
+        form={formik}
+        fieldName="not_included"
+        lang={"en"}
+        labelKey={t("not-included")}
+        placeholderKey={t("enter-not-included")}
       />
     </div>
   );

@@ -97,6 +97,10 @@ const studioSchema = new mongoose.Schema(
       required: [true, "Please provide a thumbnail"],
       trim: true,
     },
+    live_view: {
+      type: String,
+      trim: true,
+    },
     imagesGallery: {
       type: [String],
       validate: [
@@ -108,9 +112,9 @@ const studioSchema = new mongoose.Schema(
         },
         {
           validator: function (val) {
-            return val.length <= 5;
+            return val.length <= 10;
           },
-          message: "You can upload a maximum of 5 images.",
+          message: "You can upload a maximum of 10 images.",
         },
       ],
       required: true,
@@ -168,7 +172,11 @@ const studioSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 
 studioSchema.pre("save", function (next) {
@@ -209,11 +217,23 @@ function setImage(doc) {
   if (doc.thumbnail) {
     doc.thumbnail = `${process.env.BASE_URL}/uploads/studio/${doc.thumbnail}`;
   }
+
+  if (doc.live_view) {
+    doc.live_view = `${process.env.BASE_URL}/uploads/studio/${doc.live_view}`;
+  }
+
   if (doc.imagesGallery) {
     doc.imagesGallery = doc.imagesGallery.map(
-      (img) => `${process.env.BASE_URL}/uploads/studio/${img}`
+      (img) => `${process.env.BASE_URL}/uploads/studio/${img}`,
     );
   }
 }
+
+studioSchema.virtual("bookingsCount", {
+  ref: "Booking",
+  localField: "_id",
+  foreignField: "studio",
+  count: true,
+});
 
 module.exports = mongoose.model("Studio", studioSchema);

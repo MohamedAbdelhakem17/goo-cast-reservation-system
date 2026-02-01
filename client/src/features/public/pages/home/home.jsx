@@ -1,18 +1,12 @@
-import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import {
-  Hero,
-  Packages,
-  BookNow,
-  Studio,
-  Reviews,
-  EmailSuccessfully,
-} from "./_components";
+import { useEffect, useState } from "react";
+import { BookNow, EmailSuccessfully, Hero, Packages } from "./_components";
 
 const Home = () => {
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
+    localStorage.removeItem("bookingConfirmation");
     const isActivated = localStorage.getItem("emailActivated");
     if (isActivated === "true") {
       setShowMessage(true);
@@ -24,7 +18,7 @@ const Home = () => {
   }, []);
 
   return (
-    <main className="container mx-auto my-5 py-5">
+    <main className="container mx-auto my-5 py-5 dark:bg-gray-950">
       <Hero />
       <Packages />
       <BookNow />

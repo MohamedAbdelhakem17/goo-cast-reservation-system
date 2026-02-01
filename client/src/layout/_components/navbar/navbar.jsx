@@ -1,22 +1,22 @@
-import { NavLink, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { logo } from "@/assets/images";
-import AuthModelProvider from "@/context/Auth-Model-Context/AuthModelContext";
 import { useAuth } from "@/context/Auth-Context/AuthContext";
+import AuthModelProvider from "@/context/Auth-Model-Context/AuthModelContext";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 
+import { LanguageSwitcher, OptimizedImage } from "@/components/common";
+import ToggleTheme from "@/components/common/toggle-theme";
+import { usePublicRoutes } from "@/constants/routes";
+import useLocalization from "@/context/localization-provider/localization-context";
+import navLinkClasses from "./_assets/nav-link-classes";
 import {
   AuthButtons,
   AuthModel,
-  MobileToggle,
   MobileMenu,
+  MobileToggle,
   UserProfile,
 } from "./_components";
-import navLinkClasses from "./_assets/nav-link-classes";
-import { OptimizedImage } from "@/components/common";
-import useLocalization from "@/context/localization-provider/localization-context";
-import { LanguageSwitcher } from "@/components/common";
-import { usePublicRoutes } from "@/constants/routes";
 
 export default function Navbar() {
   // Localization
@@ -42,8 +42,10 @@ export default function Navbar() {
     <AuthModelProvider>
       {/* Navbar */}
       <nav
-        className={`fixed top-0 left-0 z-50 w-full bg-white transition-all duration-300 ${
-          scrolled ? "py-2 shadow-lg" : "py-4 shadow-md"
+        className={`relative w-full bg-white transition-all duration-300 dark:bg-gray-900 ${
+          scrolled
+            ? "py-2 shadow-lg dark:shadow-gray-800"
+            : "py-4 shadow-md dark:shadow-gray-800"
         }`}
       >
         <motion.div
@@ -85,6 +87,8 @@ export default function Navbar() {
           {/* Buttons or Profile */}
           <div className="flex items-center gap-2">
             {!isAuthenticated ? <AuthButtons /> : <UserProfile />}
+            {/* Theme Toggle */}
+            <ToggleTheme />
             {/* Language Switcher */}
             <LanguageSwitcher lng={lng} changeLanguage={changeLanguage} />
             {/* Mobile Toggle */}

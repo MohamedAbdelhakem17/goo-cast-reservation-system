@@ -10,8 +10,10 @@ const PackageSection = memo(function PackageSection({
 
   return (
     <div className="flex items-center justify-between py-1">
-      <p className="text-md text-gray-500">{selectedPackage.name?.[lng]}</p>
-      <p className="text-md text-gray-500">
+      <p className="text-md text-gray-500 dark:text-gray-400">
+        {selectedPackage.name?.[lng]}
+      </p>
+      <p className="text-md text-gray-500 dark:text-gray-400">
         {priceFormat(selectedPackage.price)} x {duration} {lng === "ar" ? "ساعة" : "h"}
       </p>
     </div>

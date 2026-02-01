@@ -14,7 +14,8 @@ const cors = require("cors");
 
 const databaseConnect = require("./config/database-connection");
 const errorMiddlewareHandler = require("./middleware/error-middleware-handler");
-const amountRoutes = require("./routes/index");
+const AmountRoutesV1 = require("./api/v1/routes/");
+const AmountRoutesV2 = require("./api/v2/routes/");
 const AppError = require("./utils/app-error");
 const { HTTP_STATUS_TEXT } = require("./config/system-variables");
 
@@ -74,7 +75,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  })
+  }),
 );
 
 app.use(
@@ -91,7 +92,7 @@ app.use(
       domain: undefined,
       path: "/",
     },
-  })
+  }),
 );
 
 // Passport initialization
@@ -99,7 +100,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // ====== API Routes ======
-amountRoutes(app);
+AmountRoutesV1(app);
+AmountRoutesV2(app);
 
 // ====== Serve Static Uploads ======
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
@@ -120,8 +122,8 @@ app.use("*", (req, res, next) => {
     new AppError(
       404,
       HTTP_STATUS_TEXT.ERROR,
-      `This route ${req.originalUrl} not found.`
-    )
+      `This route ${req.originalUrl} not found.`,
+    ),
   );
 });
 
@@ -132,7 +134,7 @@ app.use(errorMiddlewareHandler);
 const PORT = process.env.PORT || 7000;
 const server = app.listen(PORT, () => {
   console.log(
-    `🚀 Server running on port: ${PORT} in ${process.env.ENVIRONMENT_MODE} mode`
+    `🚀 Server running on port: ${PORT} in ${process.env.ENVIRONMENT_MODE} mode`,
   );
 });
 

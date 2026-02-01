@@ -1,24 +1,23 @@
-import { motion, AnimatePresence } from "framer-motion";
-import FormStepper from "@/features/admin-dashboard/_components/form-steeper";
-import FormNavigationButtons from "@/features/admin-dashboard/_components/form-navigation-buttons";
-import { useState } from "react";
-import { useFormik } from "formik";
 import {
-  packageValidationSchema,
-  getInitialPackageValues,
-} from "@/utils/schemas/package.schema";
-import { hasError } from "@/utils/formik-helper";
-import EnglishPackageFields from "./_components/english-package-fields";
-import ArabicPackageFields from "./_components/arabic-package-fields";
-import ShardPackageFields from "./_components/shard-package-fields";
+  useAddNewPackage,
+  useGetSinglePackage,
+  useUpdatePackage,
+} from "@/apis/admin/manage-package.api";
+import { EmptyState, Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useGetSinglePackage } from "@/apis/admin/manage-package.api";
-import { useAddNewPackage, useUpdatePackage } from "@/apis/admin/manage-package.api";
-import { Loading } from "@/components/common";
-import { EmptyState } from "@/components/common";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import FormNavigationButtons from "@/features/admin-dashboard/_components/form-navigation-buttons";
+import FormStepper from "@/features/admin-dashboard/_components/form-steeper";
+import { hasError } from "@/utils/formik-helper";
+import { getInitialPackageValues } from "@/utils/schemas/package.schema";
 import { useQueryClient } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import ArabicPackageFields from "./_components/arabic-package-fields";
+import EnglishPackageFields from "./_components/english-package-fields";
+import ShardPackageFields from "./_components/shard-package-fields";
 
 const STEP_FIELDS = {
   0: [
@@ -28,6 +27,7 @@ const STEP_FIELDS = {
     "description.en",
     "details.en",
     "post_session_benefits.en",
+    "not_included.en",
     // "session_type.en",
   ],
   1: [
@@ -37,6 +37,7 @@ const STEP_FIELDS = {
     "description.ar",
     "details.ar",
     "post_session_benefits.ar",
+    "not_included.ar",
     // "session_type.ar",
   ],
   2: [
@@ -44,6 +45,8 @@ const STEP_FIELDS = {
     "price",
     "image",
     "category",
+    "show_image",
+    "best_for",
   ],
 };
 
@@ -166,6 +169,9 @@ export default function AddService() {
   // variables
   const FORM_STEPS = [t("add-english"), t("add-arabic"), t("shared")];
   const isHasError = hasError(STEP_FIELDS, currentStep, formik);
+
+  console.log("formik errors", formik.errors);
+  console.log("has Error", isHasError);
 
   const activeStep = {
     0: <EnglishPackageFields formik={formik} />,
