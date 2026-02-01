@@ -51,13 +51,13 @@ const InlineStudioCard = memo(
         }`}
         onClick={handleCardClick}
       >
-        {studio.isMostPopular && (
+        {/* {studio.isMostPopular && (
           <span
             className={`bg-main shadow-main dark:shadow-main/60 absolute -end-10 top-7 z-40 ${lng === "ar" ? "-rotate-45" : "rotate-45"} px-10 py-1 text-xs font-bold text-white shadow-md`}
           >
             {t("most-recommended")}
           </span>
-        )}
+        )} */}
 
         <ImageCarousel
           studio={studio}

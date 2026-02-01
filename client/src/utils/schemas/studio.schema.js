@@ -116,15 +116,14 @@ export const validationSchema = Yup.object({
     }),
 
   live_view: Yup.mixed()
+    .nullable()
     .optional()
     .test("fileSize", "File too large", (value) => {
-      if (!value) return true;
-      if (typeof value === "string") return true;
+      if (!value || typeof value === "string") return true;
       return value.size <= 5000000;
     })
     .test("fileType", "Unsupported file type", (value) => {
-      if (!value) return true;
-      if (typeof value === "string") return true;
+      if (!value || typeof value === "string") return true;
       return ["image/jpeg", "image/png", "image/jpg"].includes(value.type);
     }),
 
