@@ -161,15 +161,25 @@ const PackageCard = memo(({ pkg, isActive, onSelect, persons }) => {
             />
           </div>
 
-          <InfoSection
-            label={t("after-your-session")}
-            items={pkg.post_session_benefits}
-            icon={
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
-                <Check className="h-3 w-3 text-white" />
-              </div>
-            }
-          />
+          <div className="pb-3 dark:border-gray-700">
+            <InfoSection
+              label={t("after-your-session")}
+              items={pkg.post_session_benefits}
+              icon={
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                  <Check className="h-3 w-3 text-white" />
+                </div>
+              }
+            />
+            <InfoSection
+              items={pkg.not_included_post_session_benefits}
+              icon={
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
+                  <X className="h-3 w-3 text-white" />
+                </div>
+              }
+            />
+          </div>
         </div>
 
         {/* Action */}

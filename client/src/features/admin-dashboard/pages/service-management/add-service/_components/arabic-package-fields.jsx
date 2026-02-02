@@ -48,6 +48,7 @@ export default function ArabicFields({ formik }) {
       {/* Target Audience */}
       <MultiLangArrayInput
         form={formik}
+        className="col-span-full"
         fieldName="target_audience"
         lang={"ar"}
         labelKey={t("target-audience-0")}
@@ -61,6 +62,15 @@ export default function ArabicFields({ formik }) {
         lang={"ar"}
         labelKey={t("post-session-benefits")}
         placeholderKey={t("enter-benefit")}
+      />
+
+      {/* Not Included Post-session Benefits */}
+      <MultiLangArrayInput
+        form={formik}
+        fieldName="not_included_post_session_benefits"
+        lang={"ar"}
+        labelKey={t("not-included-post-session-benefits")}
+        placeholderKey={t("enter-not-included-post-session-benefits")}
       />
 
       {/* Details */}

@@ -86,6 +86,19 @@ const HourlyPackageSchema = new mongoose.Schema(
       },
     },
 
+    not_included_post_session_benefits: {
+      ar: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+      en: {
+        type: [String],
+        required: [true, "Please provide details"],
+        set: (arr) => arr.map((s) => s.trim()),
+      },
+    },
+
     icon: String,
 
     price: {

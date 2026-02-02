@@ -267,6 +267,42 @@ exports.getStudioById = asyncHandler(async (req, res) => {
 
 // create a new studio
 exports.createStudio = asyncHandler(async (req, res) => {
+  // Parse facilities and equipment arrays if they come as comma-separated strings
+  if (req.body.facilities) {
+    if (req.body.facilities.ar && typeof req.body.facilities.ar === "string") {
+      req.body.facilities.ar = req.body.facilities.ar
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+    }
+    if (req.body.facilities.en && typeof req.body.facilities.en === "string") {
+      req.body.facilities.en = req.body.facilities.en
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+    }
+  }
+
+  if (req.body.equipment) {
+    if (req.body.equipment.ar && typeof req.body.equipment.ar === "string") {
+      req.body.equipment.ar = req.body.equipment.ar
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+    }
+    if (req.body.equipment.en && typeof req.body.equipment.en === "string") {
+      req.body.equipment.en = req.body.equipment.en
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+    }
+  }
+
+  // Clean up temporary fields
+  delete req.body.currentFacility;
+  delete req.body.currentEquipment;
+  delete req.body.current_facilities;
+
   const studio = await StudioModel.create(req.body);
 
   if (!studio) {
@@ -283,7 +319,43 @@ exports.createStudio = asyncHandler(async (req, res) => {
 // update a studio
 exports.updateStudio = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(req.body);
+
+  // Parse facilities and equipment arrays if they come as comma-separated strings
+  if (req.body.facilities) {
+    if (req.body.facilities.ar && typeof req.body.facilities.ar === "string") {
+      req.body.facilities.ar = req.body.facilities.ar
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+    }
+    if (req.body.facilities.en && typeof req.body.facilities.en === "string") {
+      req.body.facilities.en = req.body.facilities.en
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+    }
+  }
+
+  if (req.body.equipment) {
+    if (req.body.equipment.ar && typeof req.body.equipment.ar === "string") {
+      req.body.equipment.ar = req.body.equipment.ar
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+    }
+    if (req.body.equipment.en && typeof req.body.equipment.en === "string") {
+      req.body.equipment.en = req.body.equipment.en
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
+    }
+  }
+
+  // Clean up temporary fields
+  delete req.body.currentFacility;
+  delete req.body.currentEquipment;
+  delete req.body.current_facilities;
+
   const studio = await StudioModel.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true,

@@ -1,7 +1,7 @@
 import { Input, TextArea } from "@/components/common";
-import FacilitiesInput from "./facilities-input";
-import EquipmentInput from "./equipment-input";
 import useLocalization from "@/context/localization-provider/localization-context";
+import MultiLangArrayInput from "../../../service-management/add-service/_components/multi-lang-array-input";
+import EquipmentInput from "./equipment-input";
 export default function StudioArabicFields({ formik }) {
   const { t } = useLocalization();
   return (
@@ -47,7 +47,13 @@ export default function StudioArabicFields({ formik }) {
       />
 
       {/* Facilities */}
-      <FacilitiesInput form={formik} lang="ar" />
+      <MultiLangArrayInput
+        form={formik}
+        fieldName="facilities"
+        lang="ar"
+        labelKey="facilities"
+        placeholderKey="enter-facility"
+      />
 
       {/* Equipment */}
       <EquipmentInput form={formik} lang="ar" />
