@@ -559,5 +559,7 @@
   "delete-promotion-confirmation": "delete promotion confirmation",
   "promotion-deleted-successfully": "promotion deleted successfully",
   "failed-to-delete-promotion": "failed to delete promotion",
-  "skip": "Skip"
+  "skip": "Skip",
+  "enter-not-included-post-session-benefits": "Enter not included post-session benefits",
+  "not-included-post-session-benefits": "Not included post-session benefits"
 }

@@ -18,7 +18,9 @@ export default function MultiLangArrayInput({
         ar: [...form.values[fieldName]?.ar],
         en: [...form.values[fieldName]?.en],
       };
-      updated[lang].push(currentValue);
+      // Split by comma and add each item separately
+      const items = currentValue.split(',').map(item => item.trim()).filter(item => item);
+      updated[lang].push(...items);
       form.setFieldValue(fieldName, updated);
       form.setFieldValue(`current_${fieldName}`, "");
     }

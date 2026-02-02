@@ -5,13 +5,18 @@ function buildStudioFormData(payload, options = {}) {
   const formData = new FormData();
 
   const {
-    imageFields = ["thumbnail"],
+    imageFields = ["thumbnail", "live_view"],
     galleryField = "imagesGallery",
     existingGalleryField = "existingImages",
   } = options;
 
   Object.entries(payload).forEach(([key, value]) => {
     if (value === null || value === undefined) return;
+
+    // Skip temporary fields
+    if (key.startsWith("current") || key === "current_facilities") {
+      return;
+    }
 
     // Handle Gallery
     if (key === galleryField && Array.isArray(value)) {
@@ -26,7 +31,7 @@ function buildStudioFormData(payload, options = {}) {
       return;
     }
 
-    // Handle Image Fields (e.g. thumbnail)
+    // Handle Image Fields (e.g. thumbnail, live_view)
     if (imageFields.includes(key)) {
       if (value instanceof File) {
         formData.append(key, value);
@@ -37,13 +42,29 @@ function buildStudioFormData(payload, options = {}) {
       return;
     }
 
-    // Arrays (e.g. equipment[], facilities[])
+    // Handle multilingual array fields (facilities, equipment)
+    if (
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      (key === "facilities" || key === "equipment")
+    ) {
+      Object.entries(value).forEach(([lang, items]) => {
+        if (Array.isArray(items)) {
+          items.forEach((item) => {
+            formData.append(`${key}[${lang}][]`, item);
+          });
+        }
+      });
+      return;
+    }
+
+    // Arrays (e.g. dayOff[])
     if (Array.isArray(value)) {
       value.forEach((item) => formData.append(`${key}[]`, item));
       return;
     }
 
-    // Nested Objects
+    // Nested Objects (e.g. name, address, minSlotsPerDay)
     if (typeof value === "object") {
       Object.entries(value).forEach(([subKey, subValue]) => {
         formData.append(`${key}[${subKey}]`, subValue);
@@ -60,7 +81,7 @@ function buildStudioFormData(payload, options = {}) {
 
 const handelAddStudio = async (payload) => {
   const formData = buildStudioFormData(payload, {
-    imageFields: ["thumbnail"],
+    imageFields: ["thumbnail", "live_view"],
     galleryField: "imagesGallery",
   });
 
@@ -104,7 +125,7 @@ export const useDeleteStudio = () => {
 
 const handelUpdateStudio = async ({ id, payload }) => {
   const formData = buildStudioFormData(payload, {
-    imageFields: ["thumbnail"],
+    imageFields: ["thumbnail", "live_view"],
     galleryField: "imagesGallery",
     existingGalleryField: "existingImages",
   });

@@ -38,6 +38,15 @@ const getInitialPackageValues = (pkg) => {
         : [],
     },
 
+    not_included_post_session_benefits: {
+      ar: Array.isArray(pkg?.not_included_post_session_benefits?.ar)
+        ? pkg.not_included_post_session_benefits.ar
+        : [],
+      en: Array.isArray(pkg?.not_included_post_session_benefits?.en)
+        ? pkg.not_included_post_session_benefits.en
+        : [],
+    },
+
     session_type: {
       ar: pkg?.session_type?.ar || "",
       en: pkg?.session_type?.en || "",
@@ -58,6 +67,7 @@ const getInitialPackageValues = (pkg) => {
     current_post_session_benefits: "",
     current_details: "",
     current_not_included: "",
+    current_not_included_post_session_benefits: "",
   };
 };
 
@@ -110,6 +120,15 @@ const packageValidationSchema = Yup.object().shape({
   }),
 
   post_session_benefits: Yup.object().shape({
+    ar: Yup.array()
+      .of(Yup.string().required("Each Arabic benefit is required."))
+      .min(0, "Please provide at least one Arabic post-session benefit."),
+    en: Yup.array()
+      .of(Yup.string().required("Each English benefit is required."))
+      .min(0, "Please provide at least one English post-session benefit."),
+  }),
+
+  not_included_post_session_benefits: Yup.object().shape({
     ar: Yup.array()
       .of(Yup.string().required("Each Arabic benefit is required."))
       .min(0, "Please provide at least one Arabic post-session benefit."),
