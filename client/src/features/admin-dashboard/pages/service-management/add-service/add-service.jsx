@@ -28,6 +28,7 @@ const STEP_FIELDS = {
     "details.en",
     "post_session_benefits.en",
     "not_included.en",
+    "not_included_post_session_benefits.en",
     // "session_type.en",
   ],
   1: [
@@ -38,6 +39,7 @@ const STEP_FIELDS = {
     "details.ar",
     "post_session_benefits.ar",
     "not_included.ar",
+    "not_included_post_session_benefits.ar",
     // "session_type.ar",
   ],
   2: [
