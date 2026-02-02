@@ -534,5 +534,8 @@
   "no-promotions-found": "لم يتم العثور على أي عروض ترويجية",
   "delete-promotion-warning": "لا يمكن التراجع عن هذا الإجراء. \nسيتم حذف الترويج نهائيًا.",
   "delete-promotion-confirmation": "حذف تأكيد الترويج",
-  "promotion-deleted-successfully": "تم حذف الترويج بنجاح"
+  "promotion-deleted-successfully": "تم حذف الترويج بنجاح",
+  "skip": "تخطى",
+  "enter-not-included-post-session-benefits": "أدخل الفوائد غير المشمولة بعد الجلسة",
+  "not-included-post-session-benefits": "الفوائد غير المشمولة بعد الجلسة"
 }

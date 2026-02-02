@@ -96,6 +96,7 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     details,
     category,
     post_session_benefits,
+    not_included_post_session_benefits,
     target_audience,
     price,
     image,
@@ -106,7 +107,10 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
 
   if (
     (!name || !description || !details,
-    !category || !post_session_benefits || !target_audience)
+    !category ||
+      !post_session_benefits ||
+      !not_included_post_session_benefits ||
+      !target_audience)
   ) {
     return next(
       new AppError(
@@ -123,6 +127,7 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     details,
     category,
     post_session_benefits,
+    not_included_post_session_benefits,
     target_audience,
     price,
     image,
@@ -141,14 +146,60 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
 // update hourly package
 exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
+
+  const {
+    name,
+    description,
+    details,
+    category,
+    post_session_benefits,
+    not_included_post_session_benefits,
+    target_audience,
+    price,
+    image,
+    not_included,
+    best_for,
+    show_image,
+  } = req.body;
+
+  const updateData = {};
+
+  if (name !== undefined) updateData.name = name;
+  if (description !== undefined) updateData.description = description;
+  if (details !== undefined) updateData.details = details;
+  if (category !== undefined) updateData.category = category;
+  if (post_session_benefits !== undefined)
+    updateData.post_session_benefits = post_session_benefits;
+  if (not_included_post_session_benefits !== undefined)
+    updateData.not_included_post_session_benefits =
+      not_included_post_session_benefits;
+  if (target_audience !== undefined)
+    updateData.target_audience = target_audience;
+  if (price !== undefined) updateData.price = price;
+  if (image !== undefined) updateData.image = image;
+  if (not_included !== undefined) updateData.not_included = not_included;
+  if (best_for !== undefined) updateData.best_for = best_for;
+  if (show_image !== undefined) updateData.show_image = show_image;
+
+  if (Object.keys(updateData).length === 0) {
+    return next(
+      new AppError(
+        400,
+        HTTP_STATUS_TEXT.FAIL,
+        "No valid fields provided for update",
+      ),
+    );
+  }
+
   const hourlyPackage = await HourlyPackageModel.findByIdAndUpdate(
     id,
-    req.body,
+    updateData,
     {
       new: true,
       runValidators: true,
     },
   );
+
   if (!hourlyPackage) {
     return next(
       new AppError(
@@ -158,10 +209,11 @@ exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
       ),
     );
   }
+
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
     data: hourlyPackage,
-    message: "hourly package updated successfully",
+    message: "Hourly package updated successfully",
   });
 });
 

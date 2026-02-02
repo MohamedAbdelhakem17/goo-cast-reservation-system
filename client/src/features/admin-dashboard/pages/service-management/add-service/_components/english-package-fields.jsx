@@ -51,6 +51,7 @@ export default function EnglishFields({ formik }) {
       <MultiLangArrayInput
         form={formik}
         fieldName="target_audience"
+        className="col-span-full"
         lang={"en"}
         labelKey={t("target-audience-0")}
         placeholderKey={t("enter-target")}
@@ -63,6 +64,15 @@ export default function EnglishFields({ formik }) {
         lang={"en"}
         labelKey={t("post-session-benefits")}
         placeholderKey={t("enter-benefit")}
+      />
+
+      {/* Not Included Post-session Benefits */}
+      <MultiLangArrayInput
+        form={formik}
+        fieldName="not_included_post_session_benefits"
+        lang={"en"}
+        labelKey={t("not-included-post-session-benefits")}
+        placeholderKey={t("enter-not-included-post-session-benefits")}
       />
 
       {/* Details */}
