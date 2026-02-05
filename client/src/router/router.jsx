@@ -25,6 +25,7 @@ export default function AppRouter() {
   // Loading Case
   if (loading) return <LoadingScreen />;
 
+  console.log("User in Router:", user);
   return (
     <Suspense fallback={<LoadingScreen />}>
       <ErrorBoundary>

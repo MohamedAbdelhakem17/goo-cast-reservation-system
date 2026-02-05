@@ -561,5 +561,6 @@
   "failed-to-delete-promotion": "failed to delete promotion",
   "skip": "Skip",
   "enter-not-included-post-session-benefits": "Enter not included post-session benefits",
-  "not-included-post-session-benefits": "Not included post-session benefits"
+  "not-included-post-session-benefits": "Not included post-session benefits",
+  "please-fix-errors-before-proceeding": "Please fix all errors before proceeding"
 }

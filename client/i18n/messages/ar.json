@@ -537,5 +537,6 @@
   "promotion-deleted-successfully": "تم حذف الترويج بنجاح",
   "skip": "تخطى",
   "enter-not-included-post-session-benefits": "أدخل الفوائد غير المشمولة بعد الجلسة",
-  "not-included-post-session-benefits": "الفوائد غير المشمولة بعد الجلسة"
+  "not-included-post-session-benefits": "الفوائد غير المشمولة بعد الجلسة",
+  "please-fix-errors-before-proceeding": "يرجى تصحيح الأخطاء قبل المتابعة"
 }
