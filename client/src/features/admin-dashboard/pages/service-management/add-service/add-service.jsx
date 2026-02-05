@@ -9,7 +9,7 @@ import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import FormNavigationButtons from "@/features/admin-dashboard/_components/form-navigation-buttons";
 import FormStepper from "@/features/admin-dashboard/_components/form-steeper";
 import { hasError } from "@/utils/formik-helper";
-import { getInitialPackageValues, packageValidationSchema } from "@/utils/schemas/package.schema";
+import { getInitialPackageValues } from "@/utils/schemas/package.schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { AnimatePresence, motion } from "framer-motion";
@@ -105,7 +105,7 @@ export default function AddService() {
   const handleNextStep = async () => {
     // Validate current step fields before proceeding
     const currentStepFields = STEP_FIELDS[currentStep] || [];
-    
+
     // Touch all fields in current step to show errors
     const touchedFields = {};
     currentStepFields.forEach((field) => {
@@ -116,9 +116,9 @@ export default function AddService() {
         touchedFields[keys[0]] = { ...formik.touched[keys[0]], [keys[1]]: true };
       }
     });
-    
+
     await formik.setTouched({ ...formik.touched, ...touchedFields });
-    
+
     // Validate current step fields
     const errors = await formik.validateForm();
     const hasStepErrors = currentStepFields.some((field) => {
@@ -130,7 +130,7 @@ export default function AddService() {
       }
       return false;
     });
-    
+
     // Only proceed if no errors in current step
     if (!hasStepErrors && currentStep < FORM_STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
@@ -181,7 +181,7 @@ export default function AddService() {
   // Form  and  validation
   const formik = useFormik({
     initialValues: getInitialPackageValues(editedPackage?.data),
-    validationSchema: packageValidationSchema,
+    // validationSchema: packageValidationSchema,
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {

@@ -1,5 +1,5 @@
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { getStudioInitialValues, validationSchema } from "@/utils/schemas/studio.schema";
+import { getStudioInitialValues } from "@/utils/schemas/studio.schema";
 import { useFormik } from "formik";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -151,7 +151,7 @@ export default function AddStudio() {
   // Form and validation
   const form = useFormik({
     initialValues: getStudioInitialValues(updatedStudio?.data),
-    validationSchema: validationSchema,
+    // validationSchema: validationSchema,
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
