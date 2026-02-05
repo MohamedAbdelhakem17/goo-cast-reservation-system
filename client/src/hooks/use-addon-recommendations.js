@@ -148,8 +148,15 @@ export const useAddonRecommendations = ({ addons, bookingData, t, lng }) => {
           recommendation.badge = t("addon-badge-popular-upgrade");
           recommendation.priority = dbRules.priority || 2;
 
+          // Set reason based on category
           if (addon.category === "editing") {
             recommendation.reason = t("addon-reason-episode-edit");
+          } else if (addon.category === "production") {
+            recommendation.reason = t("addon-reason-production-quality");
+          } else if (addon.category === "accessibility") {
+            recommendation.reason = t("addon-reason-accessibility");
+          } else {
+            recommendation.reason = t("addon-reason-package-upgrade");
           }
           return recommendation;
         }
