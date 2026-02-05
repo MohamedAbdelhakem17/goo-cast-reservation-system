@@ -15,7 +15,7 @@ export default function AppRouter() {
   const location = useLocation();
 
   // Hooks
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
 
   // Effect
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function AppRouter() {
           {PublicRoute()}
 
           {/* Admin Dashboard Layout */}
-          {AdminRoute()}
+          {AdminRoute(user)}
 
           {/* User Dashboard Layout */}
           {UserRoute()}

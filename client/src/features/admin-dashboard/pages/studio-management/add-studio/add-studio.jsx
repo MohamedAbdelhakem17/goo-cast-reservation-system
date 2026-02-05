@@ -73,8 +73,37 @@ export default function AddStudio() {
   const queryClient = useQueryClient();
 
   // Functions
-  const handleNextStep = () => {
-    if (currentStep < FORM_STEPS.length - 1) {
+  const handleNextStep = async () => {
+    // Validate current step fields before proceeding
+    const currentStepFields = STEP_FIELDS[currentStep] || [];
+
+    // Touch all fields in current step to show errors
+    const touchedFields = {};
+    currentStepFields.forEach((field) => {
+      const keys = field.split(".");
+      if (keys.length === 1) {
+        touchedFields[keys[0]] = true;
+      } else if (keys.length === 2) {
+        touchedFields[keys[0]] = { ...form.touched[keys[0]], [keys[1]]: true };
+      }
+    });
+
+    await form.setTouched({ ...form.touched, ...touchedFields });
+
+    // Validate current step fields
+    const errors = await form.validateForm();
+    const hasStepErrors = currentStepFields.some((field) => {
+      const keys = field.split(".");
+      if (keys.length === 1) {
+        return errors[keys[0]];
+      } else if (keys.length === 2) {
+        return errors[keys[0]]?.[keys[1]];
+      }
+      return false;
+    });
+
+    // Only proceed if no errors in current step
+    if (!hasStepErrors && currentStep < FORM_STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -123,6 +152,8 @@ export default function AddStudio() {
   const form = useFormik({
     initialValues: getStudioInitialValues(updatedStudio?.data),
     validationSchema: validationSchema,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: (values) => {
       const finalData = {
         ...values,

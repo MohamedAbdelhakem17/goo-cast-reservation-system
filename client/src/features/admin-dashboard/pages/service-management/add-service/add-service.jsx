@@ -9,7 +9,7 @@ import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import FormNavigationButtons from "@/features/admin-dashboard/_components/form-navigation-buttons";
 import FormStepper from "@/features/admin-dashboard/_components/form-steeper";
 import { hasError } from "@/utils/formik-helper";
-import { getInitialPackageValues } from "@/utils/schemas/package.schema";
+import { getInitialPackageValues, packageValidationSchema } from "@/utils/schemas/package.schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { AnimatePresence, motion } from "framer-motion";
@@ -102,8 +102,37 @@ export default function AddService() {
   const queryClient = useQueryClient();
 
   // Function
-  const handleNextStep = () => {
-    if (currentStep < FORM_STEPS.length - 1) {
+  const handleNextStep = async () => {
+    // Validate current step fields before proceeding
+    const currentStepFields = STEP_FIELDS[currentStep] || [];
+    
+    // Touch all fields in current step to show errors
+    const touchedFields = {};
+    currentStepFields.forEach((field) => {
+      const keys = field.split(".");
+      if (keys.length === 1) {
+        touchedFields[keys[0]] = true;
+      } else if (keys.length === 2) {
+        touchedFields[keys[0]] = { ...formik.touched[keys[0]], [keys[1]]: true };
+      }
+    });
+    
+    await formik.setTouched({ ...formik.touched, ...touchedFields });
+    
+    // Validate current step fields
+    const errors = await formik.validateForm();
+    const hasStepErrors = currentStepFields.some((field) => {
+      const keys = field.split(".");
+      if (keys.length === 1) {
+        return errors[keys[0]];
+      } else if (keys.length === 2) {
+        return errors[keys[0]]?.[keys[1]];
+      }
+      return false;
+    });
+    
+    // Only proceed if no errors in current step
+    if (!hasStepErrors && currentStep < FORM_STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -152,7 +181,9 @@ export default function AddService() {
   // Form  and  validation
   const formik = useFormik({
     initialValues: getInitialPackageValues(editedPackage?.data),
-    // validationSchema: packageValidationSchema,
+    validationSchema: packageValidationSchema,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: (values) => {
       const finalData = {
         ...values,
@@ -171,9 +202,6 @@ export default function AddService() {
   // variables
   const FORM_STEPS = [t("add-english"), t("add-arabic"), t("shared")];
   const isHasError = hasError(STEP_FIELDS, currentStep, formik);
-
-  console.log("formik errors", formik.errors);
-  console.log("has Error", isHasError);
 
   const activeStep = {
     0: <EnglishPackageFields formik={formik} />,

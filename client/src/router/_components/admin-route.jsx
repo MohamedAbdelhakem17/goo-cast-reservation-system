@@ -8,7 +8,6 @@ import hasPermission from "../../utils/access-roles";
 
 import POLICIES_ROLES from "../../utils/constant/system-policies-roles";
 import SYSTEM_ROLES from "../../utils/constant/system-roles.constant";
-import { useAuth } from "./../../context/Auth-Context/AuthContext";
 
 // Authentication admin
 const Dashboard = lazy(
@@ -167,9 +166,7 @@ const adminRoutes = [
   },
 ];
 
-export default function AdminRoute() {
-  const { user } = useAuth();
-
+export default function AdminRoute(user) {
   const redirectTo = [SYSTEM_ROLES.ADMIN, SYSTEM_ROLES.MANAGER].includes(user?.role)
     ? "/admin-dashboard"
     : "/";
