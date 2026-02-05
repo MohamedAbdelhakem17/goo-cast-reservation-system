@@ -1,4 +1,3 @@
-// models/AddOn.js
 const mongoose = require("mongoose");
 
 const AddOnSchema = new mongoose.Schema({
@@ -62,27 +61,27 @@ const AddOnSchema = new mongoose.Schema({
   recommendation_rules: {
     min_persons: {
       type: Number,
-      default: null, // Recommend if booking has >= this many persons
+      default: null,
     },
     max_persons: {
       type: Number,
-      default: null, // Recommend if booking has <= this many persons
+      default: null,
     },
     recommended_for_packages: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: "HourlyPackage" }],
-      default: [], // Array of package IDs this is recommended for
+      default: [],
     },
     excluded_from_packages: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: "HourlyPackage" }],
-      default: [], // Array of package IDs this should be hidden for
+      default: [],
     },
     is_universal_recommendation: {
       type: Boolean,
-      default: false, // Always recommend this add-on
+      default: false,
     },
     priority: {
       type: Number,
-      default: 0, // Higher priority shows first in recommendations
+      default: 0,
       min: 0,
       max: 10,
     },

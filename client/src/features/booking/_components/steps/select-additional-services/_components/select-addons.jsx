@@ -53,7 +53,7 @@ export default function AddOns() {
   const priceFormat = usePriceFormat();
 
   // Get recommendations
-  const { recommended, regular, disabledAddons } = useAddonRecommendations({
+  const { recommended, regular } = useAddonRecommendations({
     addons,
     bookingData,
     t,
