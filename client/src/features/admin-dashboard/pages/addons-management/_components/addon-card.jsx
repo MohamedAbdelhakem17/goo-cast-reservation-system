@@ -1,11 +1,11 @@
-import { Edit2, Trash } from "lucide-react";
-import usePriceFormat from "@/hooks/usePriceFormat";
-import { OptimizedImage, RadioButton } from "@/components/common";
 import { useChangeAddonsStatus } from "@/apis/admin/manage-addons.api";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { OptimizedImage, RadioButton } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import { useQueryClient } from "@tanstack/react-query";
+import { Edit2, Trash } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function AddonCart({ addon, setDeletedAddon }) {
   // Localization
@@ -62,16 +62,14 @@ export default function AddonCart({ addon, setDeletedAddon }) {
           <p className="text-sm font-light text-gray-500">{addon.description?.[lng]}</p>
 
           {/* Recommendation Info */}
-          {(addon.category !== "other" || 
-            addon.recommendation_rules?.is_universal_recommendation || 
+          {(addon.category !== "other" ||
+            addon.recommendation_rules?.is_universal_recommendation ||
             addon.recommendation_rules?.min_persons) && (
             <div className="space-y-2 rounded-md bg-blue-50 p-3 dark:bg-blue-900/20">
               {addon.category !== "other" && (
                 <div className="flex items-center gap-2 text-xs">
                   <i className="fa-solid fa-tag text-blue-600"></i>
-                  <span className="font-semibold text-blue-700">
-                    {t(addon.category)}
-                  </span>
+                  <span className="font-semibold text-blue-700">{t(addon.category)}</span>
                 </div>
               )}
               {addon.recommendation_rules?.is_universal_recommendation && (
