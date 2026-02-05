@@ -77,12 +77,25 @@ exports.imageManipulation = async (req, res, next) => {
 
     // Thumbnail
     if (req.files.thumbnail) {
-      const thumbnailName = `studio-${uuidv4()}-${Date.now()}.jpeg`;
-      await sharp(req.files.thumbnail[0].buffer)
-        .resize(2000, 1333)
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toFile(`${uploadDir}/${thumbnailName}`);
+      const file = req.files.thumbnail[0];
+      const isGif = file.mimetype === "image/gif";
+      const extension = isGif ? "gif" : "jpeg";
+      const thumbnailName = `studio-${uuidv4()}-${Date.now()}.${extension}`;
+
+      if (isGif) {
+        // For GIFs, save directly without processing to preserve animation
+        await fs.promises.writeFile(
+          `${uploadDir}/${thumbnailName}`,
+          file.buffer,
+        );
+      } else {
+        // For other images, process with Sharp
+        await sharp(file.buffer)
+          .resize(2000, 1333)
+          .toFormat("jpeg")
+          .jpeg({ quality: 90 })
+          .toFile(`${uploadDir}/${thumbnailName}`);
+      }
       req.body.thumbnail = thumbnailName;
     } else if (req.body.thumbnailUrl) {
       req.body.thumbnail = req.body.thumbnailUrl;

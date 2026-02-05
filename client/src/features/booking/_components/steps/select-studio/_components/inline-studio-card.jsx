@@ -16,7 +16,7 @@ const InlineStudioCard = memo(
     liveViewMode,
     onToggleLiveView,
   }) => {
-    const allImages = [...(studio.imagesGallery || [])];
+    const allImages = [studio.thumbnail, ...(studio.imagesGallery || [])];
     const isActive = selectedStudio === studio._id;
     const isAvailable =
       studio.is_available && studio.recording_seats >= bookingData.persons;
