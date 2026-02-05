@@ -1,6 +1,6 @@
 import { Input } from "@/components/common";
-import { motion } from "framer-motion";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { motion } from "framer-motion";
 
 export default function MultiLangArrayInput({
   form,
@@ -19,10 +19,15 @@ export default function MultiLangArrayInput({
         en: [...form.values[fieldName]?.en],
       };
       // Split by comma and add each item separately
-      const items = currentValue.split(',').map(item => item.trim()).filter(item => item);
+      const items = currentValue
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item);
       updated[lang].push(...items);
       form.setFieldValue(fieldName, updated);
       form.setFieldValue(`current_${fieldName}`, "");
+      // Mark field as touched to trigger validation
+      form.setFieldTouched(`${fieldName}.${lang}`, true, true);
     }
   };
 
@@ -33,6 +38,8 @@ export default function MultiLangArrayInput({
     };
     updated[lang] = updated[lang].filter((_, i) => i !== index);
     form.setFieldValue(fieldName, updated);
+    // Mark field as touched to trigger validation
+    form.setFieldTouched(`${fieldName}.${lang}`, true, true);
   };
 
   const error = form.touched[fieldName]?.[lang] && form.errors[fieldName]?.[lang];

@@ -1,6 +1,6 @@
 import { Input } from "@/components/common";
-import { motion } from "framer-motion";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { motion } from "framer-motion";
 
 export default function EquipmentInput({ form, lang }) {
   const { t } = useLocalization();
@@ -15,6 +15,8 @@ export default function EquipmentInput({ form, lang }) {
       equipment[lang].push(ce);
       form.setFieldValue("equipment", equipment);
       form.setFieldValue("currentEquipment", "");
+      // Mark field as touched to trigger validation
+      form.setFieldTouched(`equipment.${lang}`, true, true);
     }
   };
 
@@ -25,6 +27,8 @@ export default function EquipmentInput({ form, lang }) {
     };
     equipment[lang] = equipment[lang].filter((_, i) => i !== index);
     form.setFieldValue("equipment", equipment);
+    // Mark field as touched to trigger validation
+    form.setFieldTouched(`equipment.${lang}`, true, true);
   };
 
   const equipmentError = form.touched.equipment?.[lang] && form.errors.equipment?.[lang];

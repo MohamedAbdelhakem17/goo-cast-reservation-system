@@ -1,8 +1,29 @@
 // ====== Load Environment Variables ======
 const path = require("path");
-require("dotenv").config({
-  path: path.join(__dirname, "../.env"),
-});
+const fs = require("fs");
+
+// Try multiple .env file locations in order of priority
+const envFiles = [
+  path.join(__dirname, "../.env"),
+  path.join(__dirname, "../.env.local"),
+];
+
+// Find the first existing .env file
+let envPath = null;
+for (const filePath of envFiles) {
+  if (fs.existsSync(filePath)) {
+    envPath = filePath;
+    break;
+  }
+}
+
+// Load the environment variables
+if (envPath) {
+  require("dotenv").config({ path: envPath });
+} else {
+  console.warn("⚠️ No .env file found. Using system environment variables.");
+  require("dotenv").config({ path: path.join(__dirname, "../.env.local") });
+}
 
 // ====== Imports ======
 const express = require("express");
@@ -10,7 +31,7 @@ const passport = require("passport");
 const expressSession = require("express-session");
 const morgan = require("morgan");
 const cors = require("cors");
-const helmet = require("helmet");
+// const helmet = require("helmet");
 
 const databaseConnect = require("./config/database-connection");
 const errorMiddlewareHandler = require("./middleware/error-middleware-handler");
@@ -30,40 +51,40 @@ if (process.env.ENVIRONMENT_MODE === "development") {
 }
 
 // Security headers
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        "default-src": ["'self'"],
-        "script-src": [
-          "'self'",
-          "https://www.googletagmanager.com",
-          "https://www.google-analytics.com",
-          "https://*.clarity.ms",
-        ],
-        "img-src": [
-          "'self'",
-          "data:",
-          "https://*.googleusercontent.com",
-          "https://www.google-analytics.com",
-          "https://*.clarity.ms",
-        ],
-        "connect-src": [
-          "'self'",
-          "https://www.google-analytics.com",
-          "https://region1.google-analytics.com",
-          "https://*.clarity.ms",
-        ],
-        "frame-src": [
-          "'self'",
-          "https://www.googletagmanager.com",
-          "https://*.clarity.ms",
-        ],
-      },
-    },
-  }),
-);
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       useDefaults: true,
+//       directives: {
+//         "default-src": ["'self'"],
+//         "script-src": [
+//           "'self'",
+//           "https://www.googletagmanager.com",
+//           "https://www.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "img-src": [
+//           "'self'",
+//           "data:",
+//           "https://*.googleusercontent.com",
+//           "https://www.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "connect-src": [
+//           "'self'",
+//           "https://www.google-analytics.com",
+//           "https://region1.google-analytics.com",
+//           "https://*.clarity.ms",
+//         ],
+//         "frame-src": [
+//           "'self'",
+//           "https://www.googletagmanager.com",
+//           "https://*.clarity.ms",
+//         ],
+//       },
+//     },
+//   }),
+// );
 
 // Body parser
 app.use(express.json());

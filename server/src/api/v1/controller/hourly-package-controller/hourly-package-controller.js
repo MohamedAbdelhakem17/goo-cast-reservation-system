@@ -162,22 +162,62 @@ exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
     show_image,
   } = req.body;
 
+  // Helper function to parse JSON strings and nested objects (for empty arrays sent from frontend)
+  const parseIfJSON = (value) => {
+    // If it's already an object or array, return as is
+    if (typeof value === "object" && value !== null) {
+      // Recursively parse nested objects
+      const parsed = {};
+      for (const key in value) {
+        if (
+          typeof value[key] === "string" &&
+          (value[key].startsWith("[") || value[key].startsWith("{"))
+        ) {
+          try {
+            parsed[key] = JSON.parse(value[key]);
+          } catch (e) {
+            parsed[key] = value[key];
+          }
+        } else {
+          parsed[key] = value[key];
+        }
+      }
+      return parsed;
+    }
+
+    // If it's a JSON string, parse it
+    if (
+      typeof value === "string" &&
+      (value.startsWith("[") || value.startsWith("{"))
+    ) {
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return value;
+      }
+    }
+
+    return value;
+  };
+
   const updateData = {};
 
   if (name !== undefined) updateData.name = name;
   if (description !== undefined) updateData.description = description;
-  if (details !== undefined) updateData.details = details;
+  if (details !== undefined) updateData.details = parseIfJSON(details);
   if (category !== undefined) updateData.category = category;
   if (post_session_benefits !== undefined)
-    updateData.post_session_benefits = post_session_benefits;
+    updateData.post_session_benefits = parseIfJSON(post_session_benefits);
   if (not_included_post_session_benefits !== undefined)
-    updateData.not_included_post_session_benefits =
-      not_included_post_session_benefits;
+    updateData.not_included_post_session_benefits = parseIfJSON(
+      not_included_post_session_benefits,
+    );
   if (target_audience !== undefined)
-    updateData.target_audience = target_audience;
+    updateData.target_audience = parseIfJSON(target_audience);
   if (price !== undefined) updateData.price = price;
   if (image !== undefined) updateData.image = image;
-  if (not_included !== undefined) updateData.not_included = not_included;
+  if (not_included !== undefined)
+    updateData.not_included = parseIfJSON(not_included);
   if (best_for !== undefined) updateData.best_for = best_for;
   if (show_image !== undefined) updateData.show_image = show_image;
 

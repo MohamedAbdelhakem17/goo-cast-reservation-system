@@ -8,6 +8,17 @@ export function appendDataToFormData(
   const appendFormData = (formData, data, parentKey = "") => {
     if (data instanceof File) {
       formData.append(parentKey, data);
+    } else if (Array.isArray(data)) {
+      // Handle arrays explicitly
+      if (data.length === 0) {
+        // Append empty array marker so backend knows to clear the field
+        formData.append(parentKey, JSON.stringify([]));
+      } else {
+        data.forEach((item, index) => {
+          const newKey = `${parentKey}[${index}]`;
+          appendFormData(formData, item, newKey);
+        });
+      }
     } else if (typeof data === "object" && data !== null) {
       Object.entries(data).forEach(([key, value]) => {
         const newKey = parentKey ? `${parentKey}[${key}]` : key;

@@ -28,6 +28,7 @@ const STEP_FIELDS = {
     "details.en",
     "post_session_benefits.en",
     "not_included.en",
+    "not_included_post_session_benefits.en",
     // "session_type.en",
   ],
   1: [
@@ -38,6 +39,7 @@ const STEP_FIELDS = {
     "details.ar",
     "post_session_benefits.ar",
     "not_included.ar",
+    "not_included_post_session_benefits.ar",
     // "session_type.ar",
   ],
   2: [
@@ -100,8 +102,37 @@ export default function AddService() {
   const queryClient = useQueryClient();
 
   // Function
-  const handleNextStep = () => {
-    if (currentStep < FORM_STEPS.length - 1) {
+  const handleNextStep = async () => {
+    // Validate current step fields before proceeding
+    const currentStepFields = STEP_FIELDS[currentStep] || [];
+
+    // Touch all fields in current step to show errors
+    const touchedFields = {};
+    currentStepFields.forEach((field) => {
+      const keys = field.split(".");
+      if (keys.length === 1) {
+        touchedFields[keys[0]] = true;
+      } else if (keys.length === 2) {
+        touchedFields[keys[0]] = { ...formik.touched[keys[0]], [keys[1]]: true };
+      }
+    });
+
+    await formik.setTouched({ ...formik.touched, ...touchedFields });
+
+    // Validate current step fields
+    const errors = await formik.validateForm();
+    const hasStepErrors = currentStepFields.some((field) => {
+      const keys = field.split(".");
+      if (keys.length === 1) {
+        return errors[keys[0]];
+      } else if (keys.length === 2) {
+        return errors[keys[0]]?.[keys[1]];
+      }
+      return false;
+    });
+
+    // Only proceed if no errors in current step
+    if (!hasStepErrors && currentStep < FORM_STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -151,6 +182,8 @@ export default function AddService() {
   const formik = useFormik({
     initialValues: getInitialPackageValues(editedPackage?.data),
     // validationSchema: packageValidationSchema,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: (values) => {
       const finalData = {
         ...values,
@@ -169,9 +202,6 @@ export default function AddService() {
   // variables
   const FORM_STEPS = [t("add-english"), t("add-arabic"), t("shared")];
   const isHasError = hasError(STEP_FIELDS, currentStep, formik);
-
-  console.log("formik errors", formik.errors);
-  console.log("has Error", isHasError);
 
   const activeStep = {
     0: <EnglishPackageFields formik={formik} />,
