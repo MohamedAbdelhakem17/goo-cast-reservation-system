@@ -61,6 +61,44 @@ export default function AddonCart({ addon, setDeletedAddon }) {
           {/* description */}
           <p className="text-sm font-light text-gray-500">{addon.description?.[lng]}</p>
 
+          {/* Recommendation Info */}
+          {(addon.category !== "other" || 
+            addon.recommendation_rules?.is_universal_recommendation || 
+            addon.recommendation_rules?.min_persons) && (
+            <div className="space-y-2 rounded-md bg-blue-50 p-3 dark:bg-blue-900/20">
+              {addon.category !== "other" && (
+                <div className="flex items-center gap-2 text-xs">
+                  <i className="fa-solid fa-tag text-blue-600"></i>
+                  <span className="font-semibold text-blue-700">
+                    {t(addon.category)}
+                  </span>
+                </div>
+              )}
+              {addon.recommendation_rules?.is_universal_recommendation && (
+                <div className="flex items-center gap-2 text-xs">
+                  <i className="fa-solid fa-star text-amber-600"></i>
+                  <span className="text-amber-700">{t("universal-recommendation")}</span>
+                </div>
+              )}
+              {addon.recommendation_rules?.min_persons && (
+                <div className="flex items-center gap-2 text-xs">
+                  <i className="fa-solid fa-users text-green-600"></i>
+                  <span className="text-green-700">
+                    {t("min-persons")}: {addon.recommendation_rules.min_persons}+
+                  </span>
+                </div>
+              )}
+              {addon.recommendation_rules?.priority > 0 && (
+                <div className="flex items-center gap-2 text-xs">
+                  <i className="fa-solid fa-arrow-up text-purple-600"></i>
+                  <span className="text-purple-700">
+                    {t("priority")}: {addon.recommendation_rules.priority}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Price and Status */}
           <div className="flex items-center justify-between">
             <p className="text-2xl font-bold">{priceFormat(addon.price)}</p>

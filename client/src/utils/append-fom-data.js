@@ -32,6 +32,9 @@ export function appendDataToFormData(
   Object.entries(data).forEach(([key, value]) => {
     if (key === imageFieldKey) {
       handleImageField(formData, value, imageFormDataKey);
+    } else if (key === "recommendation_rules" || key === "tags") {
+      // Stringify complex objects/arrays for proper backend parsing
+      formData.append(key, JSON.stringify(value));
     } else {
       appendFormData(formData, value, key);
     }
