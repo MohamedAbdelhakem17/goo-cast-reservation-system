@@ -85,9 +85,9 @@ export default function AddOns() {
         } dark:bg-gray-800`}
       >
         {/* === Image === */}
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl p-2">
+        <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl p-2">
           {isDisabled && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-0">
               <div className="text-center">
                 <i className="fa-solid fa-circle-check mb-2 text-3xl text-green-400 drop-shadow-lg"></i>
                 <p className="text-sm font-semibold text-white drop-shadow-lg">
