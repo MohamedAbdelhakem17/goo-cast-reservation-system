@@ -45,6 +45,48 @@ const AddOnSchema = new mongoose.Schema({
     required: true,
     default: true,
   },
+
+  // Recommendation metadata
+  category: {
+    type: String,
+    enum: ["equipment", "editing", "production", "accessibility", "other"],
+    default: "other",
+  },
+
+  tags: {
+    type: [String],
+    default: [],
+  },
+
+  // Recommendation rules
+  recommendation_rules: {
+    min_persons: {
+      type: Number,
+      default: null, // Recommend if booking has >= this many persons
+    },
+    max_persons: {
+      type: Number,
+      default: null, // Recommend if booking has <= this many persons
+    },
+    recommended_for_packages: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "HourlyPackage" }],
+      default: [], // Array of package IDs this is recommended for
+    },
+    excluded_from_packages: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "HourlyPackage" }],
+      default: [], // Array of package IDs this should be hidden for
+    },
+    is_universal_recommendation: {
+      type: Boolean,
+      default: false, // Always recommend this add-on
+    },
+    priority: {
+      type: Number,
+      default: 0, // Higher priority shows first in recommendations
+      min: 0,
+      max: 10,
+    },
+  },
 });
 
 function setImage(doc) {
