@@ -161,7 +161,7 @@ export default function AddOns() {
                 className="text-md border-main hover:bg-main text-main w-full rounded-lg border-2 bg-white px-4 py-2 font-semibold transition-all duration-200 hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleIncrement(addon._id, addon.name, addon.price);
+                  handleIncrement(addon._id, addon.name, addon.price, addon.unit);
                 }}
               >
                 {t("add-to-cart")}
@@ -174,7 +174,7 @@ export default function AddOns() {
                     className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white text-black dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDecrement(addon._id, addon.name, addon.price);
+                      handleDecrement(addon._id, addon.name, addon.price, addon.unit);
                     }}
                     disabled={quantity === 0}
                   >
@@ -190,7 +190,7 @@ export default function AddOns() {
                     className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white text-black dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleIncrement(addon._id, addon.name, addon.price);
+                      handleIncrement(addon._id, addon.name, addon.price, addon.unit);
                     }}
                   >
                     <i className="fa-solid fa-plus text-sm"></i>

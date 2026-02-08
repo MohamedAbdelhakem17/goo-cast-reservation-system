@@ -46,16 +46,25 @@ export const useAddOnsManager = ({
 
   // handel increment addons
   const handleIncrement = useCallback(
-    (id, name, price) => {
+    (id, name, price, unit) => {
       const currentQty = getQuantity(id);
+      const addonPrice = unit === "hour" ? price * bookingData?.duration : price;
+      console.log(
+        "Addon Price:",
+        addonPrice,
+        "Unit:",
+        unit,
+        "Duration:",
+        bookingData?.duration,
+      );
       if (tracking) {
         tracking("add-addon", {
           addon_name: name?.[lng] || name,
-          addon_price: price,
+          addon_price: addonPrice,
           addon_quantity: currentQty + 1,
         });
       }
-      handleAddOnChange(id, name, currentQty + 1, price);
+      handleAddOnChange(id, name, currentQty + 1, addonPrice);
     },
     [getQuantity, handleAddOnChange, tracking, lng],
   );
