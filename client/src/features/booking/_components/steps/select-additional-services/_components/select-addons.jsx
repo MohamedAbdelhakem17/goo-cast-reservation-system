@@ -139,7 +139,12 @@ export default function AddOns() {
 
           {/* Price */}
           <div className="text-md flex w-fit items-center justify-center rounded-lg p-1 font-bold text-gray-800 dark:text-gray-200">
-            {priceFormat(addon.price)}
+            {priceFormat(addon.price)}{" "}
+            {addon.unit && (
+              <span className="ms-1 text-sm font-normal text-gray-600 dark:text-gray-400">
+                / per {addon.unit}
+              </span>
+            )}
           </div>
 
           {/* === Actions === */}

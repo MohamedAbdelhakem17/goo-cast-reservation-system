@@ -131,7 +131,6 @@
   "addon-badge-popular-upgrade": "Popular upgrade",
   "addon-badge-recommended-all": "Recommended for all bookings",
   "recommendation-settings": "Recommendation Settings",
-  "equipment": "Equipment",
   "editing": "Editing",
   "production": "Production",
   "accessibility": "Accessibility",
@@ -537,7 +536,6 @@
   "email-address": "Email Address",
   "send-email": "Send Email",
   "call-now": "Call Now",
-  "tags": "Tags",
   "switch-to-table": "Switch to table  ",
   "switch-to-kanban": "Switch to  kanban",
   "bookings-pipeline": "Bookings",
@@ -552,7 +550,6 @@
   "maximum-allowed": "Maximum allowed:",
   "please-select-number-of-people": "Please select number of people first",
   "enter-your-full-name": "Enter your full name ",
-  "priority": "Priority",
   "auto-apply": "Auto Apply",
   "manual": "manual",
   "discount-applied-on-package": "discount applied on package",
@@ -605,5 +602,7 @@
   "skip": "Skip",
   "enter-not-included-post-session-benefits": "Enter not included post-session benefits",
   "not-included-post-session-benefits": "Not included post-session benefits",
-  "please-fix-errors-before-proceeding": "Please fix all errors before proceeding"
+  "please-fix-errors-before-proceeding": "Please fix all errors before proceeding",
+  "unit": "Unit",
+  "enter-unit": "Enter Unit"
 }
