@@ -92,9 +92,10 @@ exports.createAddOn = asyncHandler(async (req, res, next) => {
     category,
     tags,
     recommendation_rules,
+    unit,
   } = req.body;
 
-  if (!name || !description || !price || !image) {
+  if (!name || !description || !price || !image || !unit) {
     return next(
       new AppError(
         400,
@@ -165,6 +166,7 @@ exports.createAddOn = asyncHandler(async (req, res, next) => {
     category: category || "other",
     tags: parsedTags,
     recommendation_rules: parsedRecommendationRules,
+    unit,
   });
 
   res.status(201).json({

@@ -57,6 +57,13 @@ const AddOnSchema = new mongoose.Schema({
     default: [],
   },
 
+  unit: {
+    type: String,
+    trim: true,
+    default: "hour",
+    required: [true, "Please provide a unit for the add-on"],
+  },
+
   // Recommendation rules
   recommendation_rules: {
     min_persons: {

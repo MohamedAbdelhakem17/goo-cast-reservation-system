@@ -23,6 +23,7 @@ const initialAddonValues = {
     is_universal_recommendation: false,
     priority: 0,
   },
+  unit: "hour",
 };
 
 const addonsValidationSchema = (isEdit = false) =>
@@ -76,6 +77,7 @@ const addonsValidationSchema = (isEdit = false) =>
       is_universal_recommendation: Yup.boolean(),
       priority: Yup.number().min(0).max(10, "Priority must be between 0-10"),
     }).nullable(),
+    unit: Yup.string().trim().required("Unit is required."),
   });
 
-export { initialAddonValues, addonsValidationSchema };
+export { addonsValidationSchema, initialAddonValues };

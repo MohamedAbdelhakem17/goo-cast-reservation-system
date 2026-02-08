@@ -74,6 +74,21 @@ export const AddonBasicFields = ({ form, t }) => {
         />
       </div>
 
+      {/* Unit */}
+      <div className="col-span-2">
+        <Input
+          label={t("unit")}
+          id="unit"
+          name="unit"
+          type="text"
+          value={form.values.unit}
+          onChange={form.handleChange}
+          onBlur={form.handleBlur}
+          errors={form.touched.unit && form.errors.unit}
+          placeholder={t("enter-unit")}
+        />
+      </div>
+
       {/* Active Checkbox */}
       <div className="col-span-2">
         <label className="flex items-center gap-4">
