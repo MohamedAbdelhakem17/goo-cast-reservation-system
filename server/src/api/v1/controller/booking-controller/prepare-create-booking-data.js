@@ -140,7 +140,11 @@ const prepareEditBookingData = async (body, user, isEdit = false) => {
       const clientAddOn = selectedAddOns[i];
       if (!dbAddOn) continue;
 
-      const addOnPrice = dbAddOn.price * clientAddOn.quantity;
+      let addOnPrice = dbAddOn.price * clientAddOn.quantity;
+      if (dbAddOn.unit === "hour") {
+        addOnPrice = dbAddOn.price * duration * clientAddOn.quantity;
+      }
+
       totalAddOnsPriceFromDb += addOnPrice;
 
       addOnDetails.push({
