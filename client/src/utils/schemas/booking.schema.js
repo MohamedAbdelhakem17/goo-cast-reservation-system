@@ -170,7 +170,20 @@ export const getBookingValidationSchema = (t) =>
     selectedAddOns: Yup.array().nullable().notRequired(),
 
     personalInfo: Yup.object({
-      firstName: Yup.string().required(t("first-name-is-required")),
+      firstName: Yup.string()
+        .required(t("last-name-required-when-first-name-entered"))
+        .test(
+          "has-last-name",
+          t("last-name-required-when-first-name-entered"),
+          function (value) {
+            const { lastName } = this.parent;
+            // If firstName has a value, lastName must also have a value
+            if (value && value.trim().length > 0) {
+              return lastName && lastName.trim().length > 0;
+            }
+            return true;
+          },
+        ),
       lastName: Yup.string().required(t("last-name-is-required")),
       phone: getPhoneValidation(t),
       email: Yup.string().email(t("invalid-email")).required(t("email-is-required")),

@@ -12,6 +12,7 @@ export const getStudioInitialValues = (studio) => {
     },
     basePricePerSlot: studio?.basePricePerSlot ?? "",
     isFixedHourly: studio?.isFixedHourly ?? true,
+    mostPopular: studio?.mostPopular ?? false,
     description: {
       ar: studio?.description?.ar || "",
       en: studio?.description?.en || "",

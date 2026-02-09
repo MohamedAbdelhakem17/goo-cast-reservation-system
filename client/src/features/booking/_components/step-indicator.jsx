@@ -1,23 +1,56 @@
 import { useBooking } from "@/context/Booking-Context/BookingContext";
 import useLocalization from "@/context/localization-provider/localization-context";
+import useDateFormat from "@/hooks/useDateFormat";
+import useTimeConvert from "@/hooks/useTimeConvert";
 import { Check } from "lucide-react";
 import React from "react";
 
 export default function Stepper() {
   const { lng, t } = useLocalization();
-  const { currentStep, stepLabels, setCurrentStep, maxStepReached } = useBooking();
+  const { currentStep, stepLabels, setCurrentStep, maxStepReached, bookingData } =
+    useBooking();
+  const dateFormat = useDateFormat();
+  const timeFormat = useTimeConvert();
 
-  const steps = stepLabels.map((title, index) => ({
-    id: index + 1,
-    title,
-  }));
+  const steps = stepLabels.map((title, index) => {
+    const stepId = index + 1;
+    let displayTitle = title;
 
-  const handleScroll = () => {
-    window.scrollBy({
-      top: 200,
-      behavior: "smooth",
-    });
-  };
+    // Step 1: Show date if selected
+    if (stepId === 1 && bookingData?.date) {
+      displayTitle = `${dateFormat(bookingData.date)} • ${timeFormat(bookingData.startSlot)}`;
+    }
+
+    // Step 2: Show studio name if selected
+    if (stepId === 2 && bookingData?.studio?.id) {
+      displayTitle =
+        bookingData.studio.name?.[lng] ||
+        bookingData.studio.name?.en ||
+        bookingData.studio.name ||
+        title;
+    }
+
+    // Step 3: Show package name if selected
+    if (stepId === 3 && bookingData?.selectedPackage?.id) {
+      displayTitle =
+        bookingData.selectedPackage.name?.[lng] ||
+        bookingData.selectedPackage.name?.en ||
+        bookingData.selectedPackage.name ||
+        title;
+    }
+
+    return {
+      id: stepId,
+      title: displayTitle,
+    };
+  });
+
+  // const handleScroll = () => {
+  //   window.scrollBy({
+  //     top: 200,
+  //     behavior: "smooth",
+  //   });
+  // };
 
   return (
     <div className="bg-white px-4 py-2 lg:px-8 dark:border-gray-300 dark:bg-gray-950">

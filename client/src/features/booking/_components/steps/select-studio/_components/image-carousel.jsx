@@ -80,7 +80,7 @@ const ImageCarousel = memo(
             {/* 360 Badge */}
             {studio.live_view && (
               <span
-                className="absolute top-3 left-3 z-20 flex cursor-pointer items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs text-white backdrop-blur-sm transition-all hover:bg-black/80 dark:bg-white/20 dark:hover:bg-white/30"
+                className="absolute start-3 top-3 z-20 flex cursor-pointer items-center gap-1 rounded-full bg-black/70 px-3 py-1 text-xs text-white backdrop-blur-sm transition-all hover:bg-black/80 dark:bg-white/20 dark:hover:bg-white/30"
                 onClick={handleToggleLiveView}
               >
                 <Rotate3D size={14} />
@@ -91,14 +91,14 @@ const ImageCarousel = memo(
             {/* Next / Prev buttons */}
             <button
               onClick={prevImage}
-              className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
+              className="absolute start-2 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
             >
               <ChevronLeft size={15} />
             </button>
 
             <button
               onClick={nextImage}
-              className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
+              className="absolute end-2 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/60 dark:bg-white/20 dark:hover:bg-white/30"
             >
               <ChevronRight size={15} />
             </button>

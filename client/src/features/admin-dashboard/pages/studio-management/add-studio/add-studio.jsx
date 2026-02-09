@@ -214,6 +214,7 @@ export default function AddStudio() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
+              className="space-y-12"
             >
               {/* Render fields dynamically based on step */}
               {activeStep[currentStep]}

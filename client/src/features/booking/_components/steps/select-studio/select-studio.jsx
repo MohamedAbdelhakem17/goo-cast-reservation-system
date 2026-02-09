@@ -10,7 +10,7 @@ import { tracking } from "@/utils/gtm";
 import BookingLabel from "../../booking-label";
 import ImagePreviewModal from "./_components/image-preview-modal";
 import InlineStudioCard from "./_components/inline-studio-card";
-import StudioCard from "./_components/studio-card";
+// import StudioCard from "./_components/studio-card";
 
 export default function SelectStudio() {
   const { t, lng } = useLocalization();

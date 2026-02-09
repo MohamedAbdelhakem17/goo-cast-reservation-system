@@ -400,6 +400,7 @@
   "studio-is-required": "Studio is required",
   "first-name-is-required": "First name is required",
   "last-name-is-required": "Last name is required",
+  "last-name-required-when-first-name-entered": "Full name is Requied",
   "phone-number-is-not-valid": "Phone number is not valid",
   "phone-is-required": "Phone is required",
   "email-is-required": "Email is required",
@@ -604,5 +605,6 @@
   "not-included-post-session-benefits": "Not included post-session benefits",
   "please-fix-errors-before-proceeding": "Please fix all errors before proceeding",
   "unit": "Unit",
-  "enter-unit": "Enter Unit"
+  "enter-unit": "Enter Unit",
+  "most-popular": "Set This Studio Most Popular"
 }
