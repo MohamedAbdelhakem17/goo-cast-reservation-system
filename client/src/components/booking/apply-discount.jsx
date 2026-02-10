@@ -109,18 +109,18 @@ export default function ApplyDiscount({ getBookingField, setBookingField }) {
       </h2>
 
       {discount ? (
-        <div className="mt-3 flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3">
+        <div className="mt-3 flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950">
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-green-600" />
+            <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
             <div>
-              <div className="text-sm font-medium">{coupon}</div>
-              <div className="text-xs text-green-600 capitalize">
+              <div className="text-sm font-medium dark:text-gray-100">{coupon}</div>
+              <div className="text-xs text-green-600 capitalize dark:text-green-400">
                 {t("discount-applied-on-package")}
               </div>
             </div>
           </div>
 
-          <span className="text-sm font-medium text-green-600">
+          <span className="text-sm font-medium text-green-600 dark:text-green-400">
             - {priceFormat(totalPackagePrice * (discount / 100))}
           </span>
         </div>
