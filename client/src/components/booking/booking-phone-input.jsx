@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import PhoneInput from "react-phone-input-2";
+import ar from "react-phone-input-2/lang/ar.json";
 import "react-phone-input-2/lib/style.css";
+import { LocalesContext } from "../../context/localization-provider/localization-context";
 
 const BookingPhoneInput = ({
   label,
@@ -13,6 +15,7 @@ const BookingPhoneInput = ({
   disabled,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const { lng } = useContext(LocalesContext);
 
   return (
     <div className="relative mb-8">
@@ -28,6 +31,9 @@ const BookingPhoneInput = ({
         preferredCountries={["eg", "sa", "ae"]}
         value={value}
         onChange={onChange}
+        localization={lng === "ar" ? ar : {}}
+        enableSearch={true}
+        searchPlaceholder={lng === "ar" ? "بحث..." : "Search..."}
         inputProps={{
           name: "personalInfo.phone",
           required: true,
@@ -37,6 +43,7 @@ const BookingPhoneInput = ({
             onBlur && onBlur(e);
           },
           disabled,
+          dir: lng === "ar" ? "ltr" : "ltr", // Phone numbers are always LTR
         }}
         containerStyle={{ width: "100%" }}
         inputStyle={{
@@ -47,10 +54,15 @@ const BookingPhoneInput = ({
           border: errors && touched ? "1px solid #f56565" : "1px solid #d1d5db",
           backgroundColor: disabled ? "#f3f4f6" : "#ffffff",
           color: "#1f2937",
+          direction: "ltr", // Phone numbers are always LTR
         }}
         buttonStyle={{
           padding: "10px",
           backgroundColor: "transparent",
+          ...(lng === "ar" && { right: 0, left: "auto" }), // Position flag on right for RTL
+        }}
+        dropdownStyle={{
+          ...(lng === "ar" && { textAlign: "right" }), // Align dropdown text for RTL
         }}
       />
 

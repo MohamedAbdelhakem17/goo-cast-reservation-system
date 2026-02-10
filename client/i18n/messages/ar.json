@@ -388,6 +388,7 @@
   "passwords-must-match": "كلمات المرور غير متطابقة",
   "first-name-is-required": "الاسم الأول مطلوب",
   "last-name-is-required": "اسم العائلة مطلوب",
+  "last-name-required-when-first-name-entered": "الاسم الكامل مطلوب",
   "phone-number-is-not-valid": "رقم الهاتف غير صحيح",
   "phone-is-required": "رقم الهاتف مطلوب",
   "invalid-email": "البريد الإلكتروني غير صحيح",
@@ -580,5 +581,7 @@
   "not-included-post-session-benefits": "الفوائد غير المشمولة بعد الجلسة",
   "please-fix-errors-before-proceeding": "يرجى تصحيح الأخطاء قبل المتابعة",
   "unit": "وحدة",
-  "enter-unit": "أدخل الوحدة"
+  "enter-unit": "أدخل الوحدة",
+  "select-package": "حدد الخدمة  ",
+  "most-popular": "قم بتعيين هذا الاستوديو الأكثر شهرة"
 }

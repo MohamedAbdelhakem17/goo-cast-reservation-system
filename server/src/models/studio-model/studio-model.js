@@ -171,6 +171,11 @@ const studioSchema = new mongoose.Schema(
       required: true,
       default: true,
     },
+
+    mostPopular: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -228,12 +233,5 @@ function setImage(doc) {
     );
   }
 }
-
-studioSchema.virtual("bookingsCount", {
-  ref: "Booking",
-  localField: "_id",
-  foreignField: "studio",
-  count: true,
-});
 
 module.exports = mongoose.model("Studio", studioSchema);

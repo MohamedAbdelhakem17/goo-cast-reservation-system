@@ -88,6 +88,60 @@ export default function Calendar({ openToggle, getAvailableSlots }) {
     const value = Math.min(MAX_DURATION, Math.max(MIN_DURATION, duration + delta));
 
     setBookingField("duration", value);
+
+    // Recalculate package price if package is selected
+    const selectedPackage = bookingData?.selectedPackage;
+    if (selectedPackage && selectedPackage.price) {
+      const newTotalPackagePrice = selectedPackage.price * value;
+      setBookingField("totalPackagePrice", newTotalPackagePrice);
+
+      // Reapply coupon discount if exists
+      const discount = bookingData?.discount;
+      if (discount) {
+        // Recalculate hour-based addons first
+        let totalAddOns = 0;
+        const selectedAddOns = bookingData?.selectedAddOns || [];
+
+        if (selectedAddOns.length > 0) {
+          const updatedAddOns = selectedAddOns.map((addon) => {
+            if (addon.unit === "hour" && addon.basePrice) {
+              const newPrice = addon.basePrice * value;
+              totalAddOns += newPrice * addon.quantity;
+              return {
+                ...addon,
+                price: newPrice,
+                totalPrice: newPrice * addon.quantity,
+              };
+            }
+            totalAddOns += addon.price * addon.quantity;
+            return addon;
+          });
+          setBookingField("selectedAddOns", updatedAddOns);
+        }
+
+        // Recalculate total with discount
+        const totalAfterDiscount =
+          newTotalPackagePrice * (1 - discount / 100) + totalAddOns;
+        setBookingField("totalPriceAfterDiscount", totalAfterDiscount);
+      }
+    } else {
+      // Recalculate hour-based addons only
+      const selectedAddOns = bookingData?.selectedAddOns || [];
+      if (selectedAddOns.length > 0) {
+        const updatedAddOns = selectedAddOns.map((addon) => {
+          if (addon.unit === "hour" && addon.basePrice) {
+            const newPrice = addon.basePrice * value;
+            return {
+              ...addon,
+              price: newPrice,
+              totalPrice: newPrice * addon.quantity,
+            };
+          }
+          return addon;
+        });
+        setBookingField("selectedAddOns", updatedAddOns);
+      }
+    }
   };
 
   const changePersons = (delta) => {

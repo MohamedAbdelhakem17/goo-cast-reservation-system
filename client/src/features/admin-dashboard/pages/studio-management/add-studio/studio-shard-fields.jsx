@@ -1,6 +1,6 @@
-import ImagesInputs from "./_components/images-inputs";
-import { Input, ErrorFeedback } from "@/components/common";
+import { ErrorFeedback, Input } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import ImagesInputs from "./_components/images-inputs";
 
 export default function StudioSharedFields({ formik }) {
   const { t } = useLocalization();
@@ -52,6 +52,21 @@ export default function StudioSharedFields({ formik }) {
         placeholder={t("add-recording-seats")}
         className="my-2 w-full"
       />
+
+      <div className="my-6 flex w-full items-center space-x-2 md:w-1/4">
+        <label className="flex cursor-pointer items-center space-x-2">
+          <input
+            type="checkbox"
+            name="mostPopular"
+            checked={formik.values.mostPopular}
+            onChange={() =>
+              formik.setFieldValue("mostPopular", !formik.values.mostPopular)
+            }
+            className="text-main h-6 w-6 rounded p-3"
+          />
+          <span className="text-gray-700">{t("most-popular")}</span>
+        </label>
+      </div>
 
       {/* Min Slots Per Day */}
       <div className="my-2 rounded-lg bg-gray-50 p-6">
