@@ -17,7 +17,7 @@ export default function Stepper() {
     let displayTitle = title;
 
     // Step 1: Show date if selected
-    if (stepId === 1 && bookingData?.date) {
+    if (stepId === 1 && bookingData?.date && bookingData?.startSlot) {
       displayTitle = `${dateFormat(bookingData.date)} • ${timeFormat(bookingData.startSlot)}`;
     }
 
