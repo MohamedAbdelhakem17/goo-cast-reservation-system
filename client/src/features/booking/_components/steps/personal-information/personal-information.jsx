@@ -74,6 +74,10 @@ export default function PersonalInformation() {
                   getBookingError("personalInfo.firstName") ||
                   getBookingError("personalInfo.lastName")
                 }
+                touched={
+                  formik.touched.personalInfo?.firstName ||
+                  formik.touched.personalInfo?.lastName
+                }
                 onChange={(e) => {
                   const value = e.target.value;
                   setFullName(value);
@@ -84,6 +88,11 @@ export default function PersonalInformation() {
 
                   setBookingField("personalInfo.firstName", first);
                   setBookingField("personalInfo.lastName", last);
+                }}
+                onBlur={() => {
+                  formik.setFieldTouched("personalInfo.firstName", true);
+                  formik.setFieldTouched("personalInfo.lastName", true);
+                  tracking("user_data", { fullName });
                 }}
                 inputRef={inputRef}
               />

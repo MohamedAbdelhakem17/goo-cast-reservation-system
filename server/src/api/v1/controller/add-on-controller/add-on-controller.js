@@ -42,7 +42,10 @@ exports.getAllAddOns = asyncHandler(async (req, res, next) => {
     filter.is_active = status === "true";
   }
 
-  const addOns = await AddOnModel.find(filter).sort({ name: 1 });
+  const addOns = await AddOnModel.find(filter)
+    .populate("recommendation_rules.recommended_for_packages", "name")
+    .populate("recommendation_rules.excluded_from_packages", "name")
+    .sort({ name: 1 });
 
   if (addOns.length === 0) {
     return res.status(200).json({
@@ -61,7 +64,9 @@ exports.getAllAddOns = asyncHandler(async (req, res, next) => {
 exports.getAddOnById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const addOn = await AddOnModel.findById(id);
+  const addOn = await AddOnModel.findById(id)
+    .populate("recommendation_rules.recommended_for_packages", "name")
+    .populate("recommendation_rules.excluded_from_packages", "name");
 
   if (!addOn) {
     return res.status(404).json({
@@ -77,10 +82,20 @@ exports.getAddOnById = asyncHandler(async (req, res, next) => {
 });
 
 exports.createAddOn = asyncHandler(async (req, res, next) => {
-  const { name, description, price, image, perHourDiscounts, isFixed } =
-    req.body;
+  const {
+    name,
+    description,
+    price,
+    image,
+    perHourDiscounts,
+    isFixed,
+    category,
+    tags,
+    recommendation_rules,
+    unit,
+  } = req.body;
 
-  if (!name || !description || !price || !image) {
+  if (!name || !description || !price || !image || !unit) {
     return next(
       new AppError(
         400,
@@ -117,6 +132,30 @@ exports.createAddOn = asyncHandler(async (req, res, next) => {
     );
   }
 
+  // Parse recommendation_rules if it's a string
+  let parsedRecommendationRules = {};
+  if (recommendation_rules) {
+    try {
+      parsedRecommendationRules =
+        typeof recommendation_rules === "string"
+          ? JSON.parse(recommendation_rules)
+          : recommendation_rules;
+    } catch (e) {
+      // If parsing fails, use default values
+      parsedRecommendationRules = {};
+    }
+  }
+
+  // Parse tags if it's a string
+  let parsedTags = [];
+  if (tags) {
+    try {
+      parsedTags = typeof tags === "string" ? JSON.parse(tags) : tags;
+    } catch (e) {
+      parsedTags = [];
+    }
+  }
+
   const addOn = await AddOnModel.create({
     name,
     description,
@@ -124,6 +163,10 @@ exports.createAddOn = asyncHandler(async (req, res, next) => {
     image,
     perHourDiscounts: parsedPerHourDiscounts,
     isFixed,
+    category: category || "other",
+    tags: parsedTags,
+    recommendation_rules: parsedRecommendationRules,
+    unit,
   });
 
   res.status(201).json({
@@ -136,6 +179,28 @@ exports.createAddOn = asyncHandler(async (req, res, next) => {
 // update add-on
 exports.updateAddOn = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
+
+  // Parse recommendation_rules if it's a string
+  if (
+    req.body.recommendation_rules &&
+    typeof req.body.recommendation_rules === "string"
+  ) {
+    try {
+      req.body.recommendation_rules = JSON.parse(req.body.recommendation_rules);
+    } catch (e) {
+      // If parsing fails, leave as is
+    }
+  }
+
+  // Parse tags if it's a string
+  if (req.body.tags && typeof req.body.tags === "string") {
+    try {
+      req.body.tags = JSON.parse(req.body.tags);
+    } catch (e) {
+      // If parsing fails, leave as is
+    }
+  }
+
   const addOn = await AddOnModel.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true,

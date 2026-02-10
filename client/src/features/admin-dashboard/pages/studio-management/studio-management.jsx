@@ -2,6 +2,7 @@ import { useDeleteStudio } from "@/apis/admin/manage-studio.api";
 import { useGetStudio } from "@/apis/public/studio.api";
 import { Alert, EmptyState, Loading, Popup } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
@@ -12,6 +13,7 @@ const StudioManagement = () => {
   const { lng, t } = useLocalization();
   const { data: studiosData, isLoading } = useGetStudio("all");
   const { deleteStudio } = useDeleteStudio();
+  const queryClient = useQueryClient();
 
   const [selectedStudio, setSelectedStudio] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -21,6 +23,7 @@ const StudioManagement = () => {
       onSuccess: () => {
         setSelectedStudio(null);
         setShowSuccess(true);
+        queryClient.invalidateQueries("studios");
         setTimeout(() => setShowSuccess(false), 1000);
       },
     });
@@ -57,7 +60,7 @@ const StudioManagement = () => {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* include Data */}
             {studiosData?.data.map((studio) => (
-              <StudioCard studio={studio} key={studio._id} />
+              <StudioCard studio={studio} key={studio._id} onDelete={setSelectedStudio} />
             ))}
           </div>
         )}

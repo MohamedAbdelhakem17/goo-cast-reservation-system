@@ -1,4 +1,3 @@
-// models/AddOn.js
 const mongoose = require("mongoose");
 
 const AddOnSchema = new mongoose.Schema({
@@ -44,6 +43,55 @@ const AddOnSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
     default: true,
+  },
+
+  // Recommendation metadata
+  category: {
+    type: String,
+    enum: ["equipment", "editing", "production", "accessibility", "other"],
+    default: "other",
+  },
+
+  tags: {
+    type: [String],
+    default: [],
+  },
+
+  unit: {
+    type: String,
+    trim: true,
+    default: "hour",
+    required: [true, "Please provide a unit for the add-on"],
+  },
+
+  // Recommendation rules
+  recommendation_rules: {
+    min_persons: {
+      type: Number,
+      default: null,
+    },
+    max_persons: {
+      type: Number,
+      default: null,
+    },
+    recommended_for_packages: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "HourlyPackage" }],
+      default: [],
+    },
+    excluded_from_packages: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "HourlyPackage" }],
+      default: [],
+    },
+    is_universal_recommendation: {
+      type: Boolean,
+      default: false,
+    },
+    priority: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 10,
+    },
   },
 });
 

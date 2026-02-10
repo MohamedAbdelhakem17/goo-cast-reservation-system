@@ -1,4 +1,4 @@
-name: Deploy to staging
+name: 🚀 Deploy to Staging Environment
 
 on:
   push:
@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout source code
         uses: actions/checkout@v3
 
-      - name: Deploy via SSH
+      - name: 🚀 Deploy to staging server via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -21,17 +21,72 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             set -e
+            
+            echo "╔════════════════════════════════════════════════════════════╗"
+            echo "║  🚀 Starting Staging Deployment - Goo Cast Studio         ║"
+            echo "║  📅 Timestamp: $(date '+%Y-%m-%d %H:%M:%S')                ║"
+            echo "╚════════════════════════════════════════════════════════════╝"
+            echo ""
+            
+            echo "📂 Navigating to deployment directory..."
             cd /var/www/staging-goocast
-
+            echo "✅ Current directory: $(pwd)"
+            echo ""
+            
+            echo "🔄 Fetching latest changes from repository..."
             git fetch origin
+            echo "✅ Repository fetched successfully"
+            echo ""
+            
+            echo "🔄 Resetting to latest dev branch..."
             git reset --hard origin/dev
-
-            echo "Building client..."
+            COMMIT_HASH=$(git rev-parse --short HEAD)
+            COMMIT_MSG=$(git log -1 --pretty=%B)
+            echo "✅ Deployed commit: $COMMIT_HASH"
+            echo "📝 Commit message: $COMMIT_MSG"
+            echo ""
+            
+            echo "╔════════════════════════════════════════════════════════════╗"
+            echo "║  📦 Building Client Application                           ║"
+            echo "╚════════════════════════════════════════════════════════════╝"
             cd client
-            npm ci
+            echo "🔧 Installing client dependencies..."
+            npm ci --silent
+            echo "✅ Client dependencies installed"
+            echo ""
+            
+            echo "🏗️  Building production client bundle..."
             npm run build
-
-            echo "Restarting server..."
+            echo "✅ Client build completed successfully"
+            echo ""
+            
+            echo "╔════════════════════════════════════════════════════════════╗"
+            echo "║  ⚙️  Updating Server Application                          ║"
+            echo "╚════════════════════════════════════════════════════════════╝"
             cd ../server
-            npm ci
+            echo "🔧 Installing server dependencies..."
+            npm ci --silent
+            echo "✅ Server dependencies installed"
+            echo ""
+            
+            echo "🔄 Restarting application with PM2..."
             pm2 restart staging-goocast
+            echo "✅ Application restarted successfully"
+            echo ""
+            
+            echo "╔════════════════════════════════════════════════════════════╗"
+            echo "║  ✨ Deployment Completed Successfully!                    ║"
+            echo "║  🌐 Environment: Staging                                   ║"
+            echo "║  📅 Completed at: $(date '+%Y-%m-%d %H:%M:%S')             ║"
+            echo "║  🔖 Version: $COMMIT_HASH                                  ║"
+            echo "╚════════════════════════════════════════════════════════════╝"
+      
+      - name: ✅ Deployment status
+        if: success()
+        run: |
+          echo "::notice::✅ Staging deployment completed successfully!"
+          
+      - name: ❌ Deployment failed
+        if: failure()
+        run: |
+          echo "::error::❌ Staging deployment failed! Please check the logs above for details."

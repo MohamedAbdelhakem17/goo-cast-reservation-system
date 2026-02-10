@@ -38,9 +38,9 @@ function CountdownTimer({ endDate }) {
   }, [endDate]);
 
   return (
-    <div className="flex items-center gap-1 rounded-full bg-white/20 px-2 py-1 backdrop-blur-sm md:gap-3 md:px-5 md:py-2.5 dark:bg-white/10">
+    <div className="flex items-center gap-1 rounded-full bg-white/20 px-2 py-1 backdrop-blur-sm md:gap-3 md:px-5 md:py-2 dark:bg-white/10">
       <Clock className="h-3 w-3 md:h-5 md:w-5" />
-      <div className="flex items-center gap-0.5 text-xs font-bold md:gap-1.5 md:text-base lg:text-lg">
+      <div className="flex items-center gap-0.5 text-xs font-bold md:gap-1.5 md:text-base lg:text-sm">
         {timeLeft.days > 0 && (
           <>
             <span className="tabular-nums">{timeLeft.days}d</span>
@@ -117,7 +117,7 @@ export default function PromotionsBar() {
       </div>
 
       {/* Content */}
-      <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-2 px-6 py-4 md:gap-4 md:px-8 md:py-5">
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-2 px-6 py-4 md:gap-4 md:px-8 md:py-2">
         <div className="flex min-w-0 flex-1 items-center gap-1.5 md:gap-3">
           <div className="hidden animate-bounce md:block">
             <Gift className="h-6 w-6 md:h-7 md:w-7" />

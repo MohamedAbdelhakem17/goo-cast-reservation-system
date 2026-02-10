@@ -1,13 +1,13 @@
-import { Edit2, Trash, Camera, TreePine } from "lucide-react";
-import usePriceFormat from "@/hooks/usePriceFormat";
-import { OptimizedImage, RadioButton } from "@/components/common";
-import { useToast } from "@/context/Toaster-Context/ToasterContext";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import useLocalization from "@/context/localization-provider/localization-context";
 import { useChangeStudioStatus } from "@/apis/admin/manage-studio.api";
+import { OptimizedImage, RadioButton } from "@/components/common";
+import useLocalization from "@/context/localization-provider/localization-context";
+import { useToast } from "@/context/Toaster-Context/ToasterContext";
+import usePriceFormat from "@/hooks/usePriceFormat";
+import { useQueryClient } from "@tanstack/react-query";
+import { Camera, Edit2, Trash, TreePine } from "lucide-react";
+import { Link } from "react-router-dom";
 
-export default function StudioCard({ studio }) {
+export default function StudioCard({ studio, onDelete }) {
   // Localization
   const { t, lng } = useLocalization();
 
@@ -117,7 +117,7 @@ export default function StudioCard({ studio }) {
 
           {/* Delete button */}
           <button
-            onClick={() => setDeletedAddon(studio)}
+            onClick={() => onDelete(studio)}
             className="rounded-md p-2 hover:bg-gray-100"
           >
             <Trash className="text-main cursor-pointer" size={18} />

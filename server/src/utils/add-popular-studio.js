@@ -40,13 +40,6 @@ const addMostPopularFlag = (matchStage = {}) => [
     },
   },
 
-  // Flag most popular
-  {
-    $addFields: {
-      isMostPopular: { $eq: ["$bookingsCount", "$maxBookings"] },
-    },
-  },
-
   // Cleanup
   {
     $project: {

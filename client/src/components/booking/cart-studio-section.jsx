@@ -12,7 +12,7 @@ const StudioSection = memo(function StudioSection({
   if (!studio) return null;
   return (
     <div className="flex items-center justify-between space-y-1 border-b-1 border-gray-300 pb-4 dark:border-gray-700">
-      <div className="flex-1">
+      <div className="flex-1 space-y-3">
         {/* Booking date */}
         <p className="text-md text-gray-500 dark:text-gray-400">
           <i className="fa-solid fa-calendar-days me-2 text-[12px]"></i>
@@ -35,7 +35,7 @@ const StudioSection = memo(function StudioSection({
         isFullWidth={false}
         src={studio?.image}
         alt={studio.name?.[lng]}
-        className="h-20 w-20 rounded-md"
+        className="h-30 w-40 rounded-md"
       />
     </div>
   );

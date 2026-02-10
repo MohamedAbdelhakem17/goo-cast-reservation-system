@@ -30,7 +30,6 @@ export default function useBookingFormik() {
 
   // Functions
   const handleCreateBooking = (values, { setSubmitting, resetForm }) => {
-    console.log(values);
     const payload = {
       ...values,
       studio: { id: values.studio.id },
