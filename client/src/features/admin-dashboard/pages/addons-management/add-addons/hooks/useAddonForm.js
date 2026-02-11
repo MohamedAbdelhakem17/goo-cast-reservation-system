@@ -76,6 +76,7 @@ export const useAddonForm = (isEdit, singleAddon, t) => {
         price: data?.price || null,
         category: data?.category || "other",
         tags: data?.tags || [],
+        unit: data?.unit || "unit",
         recommendation_rules: {
           min_persons: data?.recommendation_rules?.min_persons || null,
           max_persons: data?.recommendation_rules?.max_persons || null,
