@@ -30,6 +30,8 @@ export const useAddonForm = (isEdit, singleAddon, t) => {
     const mutation = isEdit ? editAddons : addAddon;
     const payload = isEdit ? { payload: values, id: singleAddon?.data?._id } : values;
 
+    console.log("Submitting Addon with values:", values);
+
     const successMessage = isEdit
       ? t("addon-updated-successfully")
       : t("addon-added-successfully");
@@ -51,6 +53,8 @@ export const useAddonForm = (isEdit, singleAddon, t) => {
     initialValues: initialAddonValues,
     validationSchema: addonsValidationSchema(isEdit),
     onSubmit: handleSubmit,
+    validateOnChange: true,
+    validateOnBlur: true,
   });
 
   // Populate form values when editing
