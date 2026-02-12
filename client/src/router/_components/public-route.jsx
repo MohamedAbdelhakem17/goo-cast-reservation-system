@@ -14,9 +14,7 @@ const Booking = lazy(() => import("@/features/booking/pages/booking/booking"));
 const ConfirmationBooking = lazy(
   () => import("@/features/booking/pages/confirmation-booking/confirmation-booking"),
 );
-const RamadanOffer = lazy(
-  () => import("@/features/public/pages/ramadan-offer/ramadan-offer"),
-);
+const Offers = lazy(() => import("@/features/public/pages/ramadan-offer/ramadan-offer"));
 export default function PublicRoute() {
   return (
     <Route element={<MainLayout />}>
@@ -40,7 +38,7 @@ export default function PublicRoute() {
         }
       />
 
-      <Route path="/ramadan-offer" element={<RamadanOffer />} />
+      <Route path="/offers/:slug" element={<Offers />} />
     </Route>
   );
 }

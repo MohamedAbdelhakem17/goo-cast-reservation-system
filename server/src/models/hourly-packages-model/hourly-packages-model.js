@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const HourlyPackageSchema = new mongoose.Schema(
   {
@@ -128,6 +129,12 @@ const HourlyPackageSchema = new mongoose.Schema(
       ar: { type: String },
     },
 
+    package_type: {
+      type: String,
+      enum: ["basic", "bundle"],
+      default: "basic",
+    },
+
     is_active: {
       type: Boolean,
       required: true,
@@ -144,6 +151,17 @@ const HourlyPackageSchema = new mongoose.Schema(
       type: Number,
       required: true,
       default: 1,
+    },
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      default: function () {
+        return slugify(this.name.en, { lower: true });
+      },
     },
   },
   {
@@ -177,4 +195,11 @@ HourlyPackageSchema.post("init", (doc) => {
   setImage(doc);
 });
 
+HourlyPackageSchema.pre("save", function (next) {
+  if (this.isModified("name")) {
+    this.slug = slugify(this.name.en, { lower: true });
+  }
+
+  next();
+});
 module.exports = mongoose.model("HourlyPackage", HourlyPackageSchema);

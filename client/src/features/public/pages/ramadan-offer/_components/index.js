@@ -1,1 +1,1 @@
-export { default as RamadanOfferHeader } from "./ramadan-offer-header";
+export { default as OfferHeader } from "./offer-header";

@@ -36,4 +36,7 @@ router
 
 router.put("/price-mange/:id", hourlyPackageController.packagePriceMange);
 
+router.get("/bundle/:slug", hourlyPackageController.getOneBundleHourlyPackage);
+router.get("/bundles", hourlyPackageController.getBundleHourlyPackage);
+
 module.exports = router;

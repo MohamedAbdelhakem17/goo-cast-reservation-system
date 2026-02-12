@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { Flame, Moon, Sparkles, Star } from "lucide-react";
 import FloatingIcon from "./floating-icon";
 
-export default function RamadanOfferHeader({ badge, title, description, onBookNow }) {
+export default function OfferHeader({ badge, title, description, onBookNow }) {
   const titleParts = title ? title.split(" ") : ["Ramadan", "Special Bundle"];
 
   return (
-    <div className="relative overflow-hidden px-4 py-8 text-center sm:px-6 md:px-8 md:py-12 lg:py-16">
+    <div className="relative overflow-hidden p-4 text-center">
       {/* Floating Icons (Hidden on small screens) */}
       <FloatingIcon className="absolute top-10 left-5 opacity-20 md:block lg:left-10">
         <Moon size={48} className="md:h-16 md:w-16" />

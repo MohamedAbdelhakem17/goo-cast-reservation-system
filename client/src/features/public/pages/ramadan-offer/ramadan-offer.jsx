@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import { RamadanOfferHeader } from "./_components";
+import { useNavigate, useParams } from "react-router-dom";
+import { OfferHeader } from "./_components";
 
-export default function RamadanOffer() {
+export default function Offers() {
   const navigate = useNavigate();
+  const { slug } = useParams();
 
   const handleBookNow = () => {
     // Navigate to booking page or show booking modal
@@ -10,9 +11,9 @@ export default function RamadanOffer() {
   };
 
   return (
-    <div className="min-h-screen bg-white pt-16 transition-colors duration-300 sm:pt-20 md:pt-24 dark:bg-gray-950">
-      <RamadanOfferHeader
-        badge="Limited Time Offer"
+    <div className="min-h-screen bg-white pt-16 transition-colors duration-300 dark:bg-gray-950">
+      <OfferHeader
+        badge={"Limited Time Offer " + slug}
         title="Ramadan Special Bundle Test"
         description="Get 40 studio hours plus professional services at an unprecedented rate this Ramadan month."
         onBookNow={handleBookNow}
