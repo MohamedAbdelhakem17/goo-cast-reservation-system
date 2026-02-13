@@ -583,5 +583,7 @@
   "unit": "وحدة",
   "enter-unit": "أدخل الوحدة",
   "select-package": "حدد الخدمة  ",
-  "most-popular": "قم بتعيين هذا الاستوديو الأكثر شهرة"
+  "most-popular": "قم بتعيين هذا الاستوديو الأكثر شهرة",
+  "whatsIncluded": "",
+  "select-time-and-date": "حدد تاريخ ووقت الجلسة الخاصة بك"
 }

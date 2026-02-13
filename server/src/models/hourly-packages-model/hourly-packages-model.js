@@ -156,12 +156,10 @@ const HourlyPackageSchema = new mongoose.Schema(
     slug: {
       type: String,
       required: true,
+      index: true,
       unique: true,
       lowercase: true,
       trim: true,
-      default: function () {
-        return slugify(this.name.en, { lower: true });
-      },
     },
   },
   {
@@ -175,7 +173,7 @@ HourlyPackageSchema.pre(/^find/, function (next) {
   this.populate([
     {
       path: "category",
-      select: "name slug",
+      select: "name slug minHours",
     },
   ]);
   next();

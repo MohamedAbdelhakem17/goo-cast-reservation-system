@@ -26,7 +26,7 @@ const promotionSchema = new mongoose.Schema(
       type: String,
     },
 
-    hasTimer: { type: Boolean, default: false },
+    hasTimer: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

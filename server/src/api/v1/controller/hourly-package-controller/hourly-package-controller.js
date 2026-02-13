@@ -92,7 +92,11 @@ exports.getOneHourlyPackage = asyncHandler(async (req, res, next) => {
 exports.getOneBundleHourlyPackage = asyncHandler(async (req, res, next) => {
   const { slug } = req.params;
 
-  const bundle = await HourlyPackageModel.findOne({ slug });
+  const bundle = await HourlyPackageModel.findOne({
+    slug,
+    package_type: "bundle",
+    is_active: true,
+  });
 
   if (!bundle) {
     return res.status(404).json({

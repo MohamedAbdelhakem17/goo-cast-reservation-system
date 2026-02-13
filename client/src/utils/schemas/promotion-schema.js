@@ -19,6 +19,9 @@ const usePromotionSchema = () => {
     end_date: promotion?.end_date?.slice(0, 10) || "",
     priority: promotion?.priority || "",
     isEnabled: promotion?.isEnabled || false,
+    hasLink: promotion?.hasLink || false,
+    link: promotion?.link || "",
+    hasTimer: promotion?.hasTimer || true,
   });
 
   const promotionValidationSchema = Yup.object({
