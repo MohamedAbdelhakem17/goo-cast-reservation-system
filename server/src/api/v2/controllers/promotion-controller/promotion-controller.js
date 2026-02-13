@@ -37,8 +37,17 @@ const validatePromotionDates = require("../../../../utils/validate-promotion-dat
 
 exports.createNwPromotion = asyncHandler(async (req, res) => {
   // Get Data from request body
-  const { title, start_date, end_date, description, isEnabled, priority } =
-    req.body;
+  const {
+    title,
+    start_date,
+    end_date,
+    description,
+    isEnabled,
+    priority,
+    hasLink,
+    link,
+    hasTimer,
+  } = req.body;
 
   // Validated required fields
   if (!title || !start_date || !end_date) {
@@ -68,6 +77,9 @@ exports.createNwPromotion = asyncHandler(async (req, res) => {
     description,
     isEnabled,
     priority,
+    hasLink,
+    link,
+    hasTimer,
   });
 
   // Send response
@@ -293,13 +305,32 @@ exports.getActivePromotions = asyncHandler(async (req, res) => {
 exports.updatedPromotion = asyncHandler(async (req, res) => {
   // Get promotion ID from request parameters
   const { id } = req.params;
-  const { title, start_date, end_date, description, isEnabled, priority } =
-    req.body;
+  const {
+    title,
+    start_date,
+    end_date,
+    description,
+    isEnabled,
+    priority,
+    hasLink,
+    link,
+    hasTimer,
+  } = req.body;
 
   // Find promotion by ID and update
   const updatedPromotion = await PromotionModel.findByIdAndUpdate(
     id,
-    { title, start_date, end_date, description, isEnabled, priority },
+    {
+      title,
+      start_date,
+      end_date,
+      description,
+      isEnabled,
+      priority,
+      hasLink,
+      link,
+      hasTimer,
+    },
     { new: true, runValidators: true },
   );
 

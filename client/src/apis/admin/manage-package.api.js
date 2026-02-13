@@ -1,6 +1,6 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
-import axiosInstance from "@/utils/axios-instance";
 import { appendDataToFormData } from "@/utils/append-fom-data";
+import axiosInstance from "@/utils/axios-instance";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetAllPackages = (status) => {
   const url =
@@ -34,6 +34,21 @@ export const useGetSinglePackage = (id) => {
       return data;
     },
     enabled: !!id,
+  });
+
+  return { data, isLoading, error };
+};
+
+export const useGetSingleBundle = (slug) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["bundle", slug],
+
+    queryFn: async () => {
+      const { data } = await axiosInstance(`/hourly-packages/bundle/${slug}`);
+
+      return data;
+    },
+    enabled: !!slug,
   });
 
   return { data, isLoading, error };

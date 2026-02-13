@@ -52,6 +52,8 @@ const getInitialPackageValues = (pkg) => {
       en: pkg?.session_type?.en || "",
     },
 
+    package_type: pkg?.package_type || "basic",
+
     price: pkg?.price ?? "",
 
     image: pkg?.image ?? null,

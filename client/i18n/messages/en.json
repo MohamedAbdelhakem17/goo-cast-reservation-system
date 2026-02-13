@@ -606,5 +606,13 @@
   "please-fix-errors-before-proceeding": "Please fix all errors before proceeding",
   "unit": "Unit",
   "enter-unit": "Enter Unit",
-  "most-popular": "Set This Studio Most Popular"
+  "most-popular": "Set This Studio Most Popular",
+  "package-type": "Paackage Type",
+  "select-package-type": "Select Package type",
+  "limited-time-offer": "Limited Time Offer",
+  "offers": {
+    "whatsIncluded": "What's Included"
+  },
+  "whatsIncluded": "What's Included",
+  "select-time-and-date": "Select Your session Date and Time"
 }

@@ -88,6 +88,49 @@ exports.getOneHourlyPackage = asyncHandler(async (req, res, next) => {
   });
 });
 
+// get one bundle package
+exports.getOneBundleHourlyPackage = asyncHandler(async (req, res, next) => {
+  const { slug } = req.params;
+
+  const bundle = await HourlyPackageModel.findOne({
+    slug,
+    package_type: "bundle",
+    is_active: true,
+  });
+
+  if (!bundle) {
+    return res.status(404).json({
+      status: HTTP_STATUS_TEXT.FAIL,
+      message: "Package not found",
+    });
+  }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: bundle,
+  });
+});
+
+// get  Bundle package
+exports.getBundleHourlyPackage = asyncHandler(async (req, res, next) => {
+  const bundlePackage = await HourlyPackageModel.find({
+    package_type: "bundle",
+    is_active: true,
+  });
+
+  if (bundlePackage.length === 0) {
+    res.status(200).json({
+      status: HTTP_STATUS_TEXT.SUCCESS,
+      data: bundlePackage,
+    });
+  }
+
+  res.status(200).json({
+    status: HTTP_STATUS_TEXT.SUCCESS,
+    data: bundlePackage,
+  });
+});
+
 // create hourly package
 exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
   const {
@@ -103,6 +146,7 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     not_included,
     best_for,
     show_image,
+    package_type,
   } = req.body;
 
   if (
@@ -134,6 +178,7 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     not_included,
     best_for,
     show_image,
+    package_type,
   });
 
   res.status(201).json({
@@ -160,6 +205,7 @@ exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
     not_included,
     best_for,
     show_image,
+    package_type,
   } = req.body;
 
   // Helper function to parse JSON strings and nested objects (for empty arrays sent from frontend)
@@ -220,6 +266,7 @@ exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
     updateData.not_included = parseIfJSON(not_included);
   if (best_for !== undefined) updateData.best_for = best_for;
   if (show_image !== undefined) updateData.show_image = show_image;
+  if (package_type !== undefined) updateData.package_type = package_type;
 
   if (Object.keys(updateData).length === 0) {
     return next(

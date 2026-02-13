@@ -2,6 +2,7 @@ import { useGetActivePromotions } from "@/apis/admin/manage-promotions.api";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { Clock, Gift, Sparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 // Countdown Timer Component
 function CountdownTimer({ endDate }) {
@@ -126,8 +127,18 @@ export default function PromotionsBar() {
         </div>
 
         <div className="flex flex-shrink-0 items-center gap-1 md:gap-3">
-          <CountdownTimer endDate={promotion.end_date} />
+          {/* If has timer */}
+          {promotion.hasTimer && <CountdownTimer endDate={promotion.end_date} />}
 
+          {/* If has Link */}
+          {promotion.hasLink && (
+            <Link
+              className="text-main rounded bg-white px-8 py-1 text-sm font-bold"
+              to={`/offers/${promotion.link}`}
+            >
+              Book Now
+            </Link>
+          )}
           <button
             onClick={() => setIsVisible(false)}
             className="rounded-full p-0.5 transition-all hover:bg-white/20 md:p-1"
