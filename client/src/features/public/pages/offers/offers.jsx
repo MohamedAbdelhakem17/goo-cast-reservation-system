@@ -2,7 +2,7 @@ import { useGetSingleBundle } from "@/apis/admin/manage-package.api";
 import { useGetAvailableSlots, useGetAvailableStudios } from "@/apis/public/booking.api";
 import { Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import TimeCalendar from "../../../admin-dashboard/pages/booking-management/add-booking/time";
 import { OfferHeader, OfferSelectSlots } from "./_components";
@@ -25,6 +25,7 @@ export default function Offers() {
 
   // Sate
   const { data: { data: bundle = {} } = {}, isLoading, error } = useGetSingleBundle(slug);
+  const selectTimeRef = useRef(null);
 
   const {
     values,
@@ -75,6 +76,14 @@ export default function Offers() {
     return keys.reduce((acc, key) => (acc ? acc[key] : undefined), formik.errors);
   };
 
+  const handleScrollToBooking = () => {
+    const element = selectTimeRef.current;
+    if (element) {
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY - 115;
+      window.scrollTo({ top: elementPosition, behavior: "smooth" });
+    }
+  };
+
   // Variables
   const isOfferPage = path.includes("/offers/");
 
@@ -98,7 +107,6 @@ export default function Offers() {
     return <div className="my-20 text-center">Error loading offer details.</div>;
   }
 
-  console.log("Bundle Data:", bundle.bundle_actual_price);
   return (
     <div className="relative container mx-auto mt-6 min-h-screen space-y-6 bg-white p-3 pt-10 transition-colors duration-300 dark:bg-gray-950">
       {/* Offer Header */}
@@ -109,13 +117,25 @@ export default function Offers() {
         onBookNow={handleBookNow}
       />
 
+      {/* Book now btn */}
+      <div className="flex justify-center">
+        <button
+          type="button"
+          onClick={handleScrollToBooking}
+          className="bg-main hover:bg-main/90 rounded-lg px-8 py-3 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
+        >
+          {t("book-now", "Book Now")}
+        </button>
+      </div>
+
       {/* Offer Information */}
       <OfferInformation
         information={[...bundle?.post_session_benefits[lng], ...bundle?.details[lng]]}
       />
 
       {/* Select Time */}
-      <div className="space-y-6">
+
+      <div className="space-y-6" ref={selectTimeRef}>
         <OfferSectionTitle
           title={t("select-time-and-date", "Select Your session Date and Time")}
           info={t(
