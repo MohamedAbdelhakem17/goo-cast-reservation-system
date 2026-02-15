@@ -1,9 +1,4 @@
-import {
-  AddOnsSection,
-  ApplyDiscount,
-  PackageSection,
-  StudioSection,
-} from "@/components/booking";
+import { AddOnsSection, PackageSection, StudioSection } from "@/components/booking";
 import useLocalization from "@/context/localization-provider/localization-context";
 import useCartCalculations from "@/hooks/use-cart-calculations";
 import useNumberFormat from "@/hooks/use-number-format";
@@ -83,9 +78,7 @@ export default function OfferCart({ data, setFieldValue, getFieldValue, actualPr
             <span className="flex items-center gap-1.5">
               {t("actual-price", "Actual Price")}
             </span>
-            <span className="line-through">
-              {priceFormat(actualPrice)} × {numberFormat(data.duration)} h
-            </span>
+            <span className="line-through">{priceFormat(actualPrice)}</span>
           </div>
         )}
 
@@ -96,9 +89,9 @@ export default function OfferCart({ data, setFieldValue, getFieldValue, actualPr
           lng={lng}
         />
 
-        {/* Pricing Breakdown Section */}
+        {/*  Pricing Breakdown Section
         <div className="space-y-3 rounded-lg border-y border-gray-200 bg-gray-50/50 px-2 py-4 dark:border-gray-700 dark:bg-gray-800/30">
-          {/* Subtotal Row */}
+          Subtotal Row
           <div className="flex justify-between text-base font-medium text-gray-700 dark:text-gray-300">
             <span className="flex items-center gap-1.5">
               <i className="fa-solid fa-receipt text-sm text-gray-500"></i>
@@ -107,7 +100,7 @@ export default function OfferCart({ data, setFieldValue, getFieldValue, actualPr
             <span className="font-semibold">{priceFormat(subtotal)}</span>
           </div>
 
-          {/* Discount Row (only shown if discount applied) */}
+          Discount Row (only shown if discount applied)
           {discountAmount > 0 && (
             <div className="flex justify-between text-sm font-medium text-green-600 dark:text-green-500">
               <span className="flex items-center gap-1.5">
@@ -117,12 +110,12 @@ export default function OfferCart({ data, setFieldValue, getFieldValue, actualPr
               <span className="font-semibold">- {priceFormat(discountAmount)}</span>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Coupon/Discount Application Section */}
-        <ApplyDiscount getBookingField={getFieldValue} setBookingField={setFieldValue} />
+        {/* <ApplyDiscount getBookingField={getFieldValue} setBookingField={setFieldValue} /> */}
 
-        <div className="flex items-center justify-between py-1 pt-2">
+        <div className="flex items-center justify-between border-t border-gray-200 py-1 pt-2 dark:border-gray-700">
           <p className="text-md font-bold">{t("total")}</p>
           <p className="text-md text-gray-500">{priceFormat(totalAfterDiscount)}</p>
         </div>

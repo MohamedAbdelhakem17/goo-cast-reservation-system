@@ -71,7 +71,7 @@ export default function SelectStudio({
             )}
 
           {/* Studio Cards Grid - Larger cards with 2 columns on medium+ screens */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
+          <div className="mt-5 grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
             {availableStudiosData?.data?.map((studio) => {
               // Check if current studio is selected
               const isSelected = values?.studio?.id === studio._id;
