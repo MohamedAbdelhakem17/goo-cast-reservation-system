@@ -52,6 +52,7 @@ exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
   let filter = {};
   if (status !== undefined) {
     filter.is_active = status === "true";
+    filter.package_type = "basic";
   }
 
   const hourlyPackages = await HourlyPackageModel.find(filter);

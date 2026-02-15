@@ -11,6 +11,7 @@ export default function OfferSelectSlots({
   isPending,
   slots,
   error,
+  formik,
 }) {
   const { t } = useLocalization();
 
@@ -21,6 +22,7 @@ export default function OfferSelectSlots({
       +values?.selectedPackage?.price,
     );
 
+    formik.setFieldTouched("studio", true);
     setFieldValue("startSlot", time);
     setFieldValue("endSlot", endTime);
     setFieldValue("totalPackagePrice", totalPrice);
@@ -92,6 +94,15 @@ export default function OfferSelectSlots({
           />
         ))}
       </div>
+
+      {/* Error Message */}
+      {formik?.touched?.startSlot && formik?.errors?.startSlot && (
+        <div className="mt-2 rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
+          <p className="text-sm text-red-600 dark:text-red-400">
+            {formik.errors.startSlot}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

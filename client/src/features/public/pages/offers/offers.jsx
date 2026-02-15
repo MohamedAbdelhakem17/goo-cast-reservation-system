@@ -151,6 +151,13 @@ export default function Offers() {
           setFieldValue={setFieldValue}
           isBlocked={false}
         />
+
+        {/* Date Validation Error */}
+        {formik?.touched?.date && formik?.errors?.date && (
+          <div className="mt-2 rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
+            <p className="text-sm text-red-600 dark:text-red-400">{formik.errors.date}</p>
+          </div>
+        )}
       </div>
 
       {/* Select Slots  */}
@@ -160,6 +167,7 @@ export default function Offers() {
         error={slotsError}
         setFieldValue={setFieldValue}
         values={values}
+        formik={formik}
       />
 
       {/* Select Studio */}
@@ -171,6 +179,7 @@ export default function Offers() {
         setFieldValue={setFieldValue}
         t={t}
         lng={lng}
+        formik={formik}
       />
 
       {/* Select Addons */}
@@ -223,6 +232,7 @@ export default function Offers() {
             {formik.errors.personalInfo?.phone && (
               <li>{formik.errors.personalInfo.phone}</li>
             )}
+            {formik.errors?.studio && <li>{formik.errors.studio}</li>}
           </ul>
         </div>
       )}
