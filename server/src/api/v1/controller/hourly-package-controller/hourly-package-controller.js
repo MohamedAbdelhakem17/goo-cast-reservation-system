@@ -147,6 +147,7 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     best_for,
     show_image,
     package_type,
+    bundle_actual_price,
   } = req.body;
 
   if (
@@ -179,6 +180,7 @@ exports.createHourlyPackage = asyncHandler(async (req, res, next) => {
     best_for,
     show_image,
     package_type,
+    bundle_actual_price,
   });
 
   res.status(201).json({
@@ -206,6 +208,7 @@ exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
     best_for,
     show_image,
     package_type,
+    bundle_actual_price,
   } = req.body;
 
   // Helper function to parse JSON strings and nested objects (for empty arrays sent from frontend)
@@ -267,6 +270,8 @@ exports.updateHourlyPackage = asyncHandler(async (req, res, next) => {
   if (best_for !== undefined) updateData.best_for = best_for;
   if (show_image !== undefined) updateData.show_image = show_image;
   if (package_type !== undefined) updateData.package_type = package_type;
+  if (bundle_actual_price !== undefined)
+    updateData.bundle_actual_price = bundle_actual_price;
 
   if (Object.keys(updateData).length === 0) {
     return next(

@@ -184,7 +184,7 @@ export const getBookingValidationSchema = (t) =>
             return true;
           },
         ),
-      lastName: Yup.string().required(t("last-name-is-required")),
+      // lastName: Yup.string().required(t("last-name-is-required")),
       phone: getPhoneValidation(t),
       email: Yup.string().email(t("invalid-email")).required(t("email-is-required")),
     }),

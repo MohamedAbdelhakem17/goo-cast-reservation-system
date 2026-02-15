@@ -74,12 +74,11 @@ export default function useOfferBooking({ bundle, data = null }) {
         coupon_code: values.couponCode,
         totalPriceAfterDiscount: values.totalPriceAfterDiscount || values.totalPrice,
         personalInfo: {
-          firstName: values.personalInfo.firstName,
-          lastName: values.personalInfo.lastName,
+          fullName: values.personalInfo.fullName,
           email: values.personalInfo.email,
           phone: values.personalInfo.phone,
         },
-        extraComments: values.personalInfo.extraComments,
+        extraComments: values.extraComment,
       };
 
       createBooking(payload, {

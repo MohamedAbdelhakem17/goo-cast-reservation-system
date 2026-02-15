@@ -64,6 +64,7 @@ const getInitialPackageValues = (pkg) => {
 
     best_for: pkg?.best_for || "",
     show_image: pkg?.show_image ?? false,
+    bundle_actual_price: pkg?.bundle_actual_price ?? "",
     // For tracking changes
     current_target_audience: "",
     current_post_session_benefits: "",
