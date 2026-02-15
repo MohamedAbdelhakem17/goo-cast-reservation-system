@@ -155,7 +155,7 @@ const HourlyPackageSchema = new mongoose.Schema(
 
     slug: {
       type: String,
-      required: true,
+      // required: true,
       index: true,
       unique: true,
       lowercase: true,
