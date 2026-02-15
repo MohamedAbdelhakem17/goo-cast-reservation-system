@@ -39,7 +39,7 @@ exports.serviceImageManipulation = async (req, res, next) => {
     next();
   } catch (err) {
     console.error("Image processing failed:", err);
-    res
+    return res
       .status(500)
       .json({ message: "Image processing failed", error: err.message });
   }
@@ -49,20 +49,20 @@ exports.serviceImageManipulation = async (req, res, next) => {
 exports.getAllHourlyPackages = asyncHandler(async (req, res, next) => {
   const { status } = req.query;
 
+  console.log("Received status query parameter:", status);
+
   let filter = {};
   if (status !== undefined) {
     filter.is_active = status === "true";
     filter.package_type = "basic";
   }
 
-  const hourlyPackages = await HourlyPackageModel.find(filter);
-
-  if (hourlyPackages.length === 0) {
-    res.status(200).json({
-      status: HTTP_STATUS_TEXT.SUCCESS,
-      data: hourlyPackages,
-    });
+  if (status) {
+    filter.is_active = status === "true";
+    filter.package_type = "basic";
   }
+
+  const hourlyPackages = await HourlyPackageModel.find(filter);
 
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
@@ -118,13 +118,6 @@ exports.getBundleHourlyPackage = asyncHandler(async (req, res, next) => {
     package_type: "bundle",
     is_active: true,
   });
-
-  if (bundlePackage.length === 0) {
-    res.status(200).json({
-      status: HTTP_STATUS_TEXT.SUCCESS,
-      data: bundlePackage,
-    });
-  }
 
   res.status(200).json({
     status: HTTP_STATUS_TEXT.SUCCESS,
