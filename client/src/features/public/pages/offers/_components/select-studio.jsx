@@ -140,10 +140,7 @@ export default function SelectStudio({
                 const isSelected = values?.studio?.id === studio._id;
 
                 // Get all images for the studio
-                const allImages = [
-                  studio.thumbnail,
-                  ...(studio.imagesGallery || []),
-                ].filter(Boolean);
+                const allImages = [...(studio.imagesGallery || [])].filter(Boolean);
                 const currentImageIndex = imageIndices[studio._id] || 0;
 
                 return (
