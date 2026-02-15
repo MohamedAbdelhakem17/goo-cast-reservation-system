@@ -108,7 +108,7 @@ export default function useOfferBooking({ bundle, data = null }) {
   // Formik configuration
   const formik = useFormik({
     initialValues,
-    validationSchema: getBookingValidationSchema(t),
+    validationSchema: getBookingValidationSchema(t).omit(["totalPriceAfterDiscount"]),
     onSubmit: (values, helpers) => handleCreateBooking(values, helpers),
     enableReinitialize: true,
   });

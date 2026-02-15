@@ -108,7 +108,7 @@ export default function Offers() {
   }
 
   return (
-    <div className="relative container mx-auto mt-6 min-h-screen space-y-6 bg-white p-3 pt-10 transition-colors duration-300 dark:bg-gray-950">
+    <div className="relative container mx-auto mt-6 min-h-screen space-y-8 bg-white p-3 pt-10 transition-colors duration-300 dark:bg-gray-950">
       {/* Offer Header */}
       <OfferHeader
         badge={t("limited-time-offer")}
@@ -214,8 +214,8 @@ export default function Offers() {
           </h4>
           <ul className="list-inside list-disc space-y-1 text-sm text-red-700 dark:text-red-300">
             {formik.errors.startSlot && <li>{formik.errors.startSlot}</li>}
-            {formik.errors.personalInfo?.fullName && (
-              <li>{formik.errors.personalInfo.fullName}</li>
+            {formik.errors.personalInfo?.firstName && (
+              <li>{formik.errors.personalInfo.firstName}</li>
             )}
             {formik.errors.personalInfo?.email && (
               <li>{formik.errors.personalInfo.email}</li>
