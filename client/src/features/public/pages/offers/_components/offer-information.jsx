@@ -1,5 +1,6 @@
 import useLocalization from "@/context/localization-provider/localization-context";
 import { BadgeCheck, CalendarCheck, Flame, Sparkles } from "lucide-react";
+import OfferSectionTitle from "./offer-section-title";
 
 const icons = [Sparkles, BadgeCheck, CalendarCheck, Flame];
 
@@ -8,9 +9,13 @@ export default function OfferInformation({ information }) {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-        {t("whatsIncluded", "What's Included")}
-      </h2>
+      <OfferSectionTitle
+        title={t("whatsIncluded", "What's Included")}
+        info={t(
+          "whats-included-info",
+          "Discover the exclusive benefits and features included in this offer",
+        )}
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {information?.map((item, index) => {

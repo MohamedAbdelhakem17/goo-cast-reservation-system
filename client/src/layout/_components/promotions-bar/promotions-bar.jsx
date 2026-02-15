@@ -134,7 +134,7 @@ export default function PromotionsBar() {
           {promotion.hasTimer && <CountdownTimer endDate={promotion.end_date} />}
 
           {/* If has Link */}
-          {promotion.hasLink && promotion.showButton && (
+          {promotion.hasLink && !showButton && (
             <Link
               className="text-main rounded bg-white px-8 py-1 text-sm font-bold"
               to={`/offers/${promotion.link}`}

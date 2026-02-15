@@ -1,5 +1,5 @@
+// Import necessary dependencies
 import { useGetAddons } from "@/apis/admin/manage-addons.api";
-import AddonSectionHeader from "@/components/booking/addon-section-header";
 import RecommendationBadge from "@/components/booking/recommendation-badge";
 import RecommendationReason from "@/components/booking/recommendation-reason";
 import { Loading } from "@/components/common";
@@ -9,32 +9,51 @@ import { useAddOnsManager } from "@/hooks/use-addons-manger";
 import usePriceFormat from "@/hooks/usePriceFormat";
 import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
+import OfferSectionTitle from "./offer-section-title";
 
+/**
+ * Animation variants for the addon container
+ * Creates a staggered fade-in effect for child elements
+ */
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
+      staggerChildren: 0.08, // Faster stagger for smoother animation
+      delayChildren: 0.05,
     },
   },
 };
 
+/**
+ * Animation variants for individual addon cards
+ * Provides smooth entrance with spring physics
+ */
 const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 15 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 50 },
+    transition: { type: "spring", stiffness: 100, damping: 15 },
   },
 };
 
+/**
+ * OfferAddOns Component
+ * Displays available addons for booking offers with recommendations
+ *
+ * @param {Object} bookingData - Current booking data including selected addons
+ * @param {Function} setBookingField - Function to update booking fields
+ */
 export default function OfferAddOns({ bookingData, setBookingField }) {
+  // Localization hook for translations and language
   const { t, lng } = useLocalization();
 
+  // Fetch all active addons from the API
   const { addons, isLoading } = useGetAddons(true);
 
+  // Addon management functions for cart operations
   const { handleIncrement, handleDecrement, handleRemove, getQuantity } =
     useAddOnsManager({
       bookingData,
@@ -44,8 +63,10 @@ export default function OfferAddOns({ bookingData, setBookingField }) {
       lng,
     });
 
+  // Price formatting hook for consistent currency display
   const priceFormat = usePriceFormat();
 
+  // Separate addons into recommended and regular categories
   const { recommended, regular } = useAddonRecommendations({
     addons,
     bookingData,
@@ -53,9 +74,17 @@ export default function OfferAddOns({ bookingData, setBookingField }) {
     lng,
   });
 
+  // Show loading state while fetching addons
   if (isLoading) return <Loading />;
 
+  /**
+   * Renders an individual addon card with all its features
+   *
+   * @param {Object|Recommendation} recommendation - Addon or recommendation object
+   * @param {boolean} showRecommendation - Whether to show recommendation badge/reason
+   */
   const renderAddonCard = (recommendation, showRecommendation = false) => {
+    // Extract addon from recommendation or use directly
     const addon = recommendation.addon || recommendation;
     const quantity = getQuantity(addon._id);
     const isSelected = quantity > 0;
@@ -66,29 +95,33 @@ export default function OfferAddOns({ bookingData, setBookingField }) {
       <motion.div
         key={addon._id}
         variants={cardVariants}
-        className={`flex flex-col justify-between overflow-hidden rounded-2xl border bg-gray-50 shadow-sm transition-transform duration-300 ${
+        className={`flex flex-col justify-between overflow-hidden rounded-xl border bg-white shadow-sm transition-all duration-300 ${
           isDisabled
             ? "cursor-not-allowed border-gray-200 opacity-60 dark:border-gray-600"
-            : "hover:shadow-2xl"
+            : "hover:-translate-y-1 hover:shadow-lg"
         } ${
           isSelected && !isDisabled
-            ? "border-main shadow-main/10"
-            : "border-gray-100 dark:border-gray-700"
+            ? "border-main shadow-main/20 ring-main/10 ring-2"
+            : "border-gray-200 dark:border-gray-700"
         } dark:bg-gray-800`}
       >
-        <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl p-2">
+        {/* Addon Image Section */}
+        <div className="group relative aspect-[16/9] w-full overflow-hidden p-1.5">
+          {/* Disabled Overlay - Shows when addon is already included */}
           {isDisabled && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-0">
-              <div className="text-center">
-                <i className="fa-solid fa-circle-check mb-2 text-3xl text-green-400 drop-shadow-lg"></i>
-                <p className="text-sm font-semibold text-white drop-shadow-lg">
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-0">
+              <div className="px-2 text-center">
+                <i className="fa-solid fa-circle-check mb-1.5 text-2xl text-green-400 drop-shadow-lg"></i>
+                <p className="text-xs font-semibold text-white drop-shadow-lg">
                   {disabledReason}
                 </p>
               </div>
             </div>
           )}
+
+          {/* Recommendation Badge */}
           {showRecommendation && recommendation.badge && (
-            <div className="absolute top-4 left-4 z-10">
+            <div className="absolute top-3 left-3 z-10">
               <RecommendationBadge
                 text={recommendation.badge}
                 variant={
@@ -103,47 +136,57 @@ export default function OfferAddOns({ bookingData, setBookingField }) {
               />
             </div>
           )}
+
+          {/* Addon Image with smooth hover effect */}
           <img
             src={addon.image}
             alt={addon.name?.[lng]}
-            className="h-full w-full rounded-2xl object-cover transition-transform duration-300 hover:scale-95"
+            className="h-full w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
         </div>
 
-        <div className="flex flex-grow flex-col gap-y-3 p-4">
-          <h3 className="text-lg font-semibold text-black dark:text-gray-100">
+        {/* Addon Content Section */}
+        <div className="flex flex-grow flex-col gap-y-2 p-3">
+          {/* Addon Name */}
+          <h3 className="line-clamp-1 text-base font-semibold text-gray-900 dark:text-gray-100">
             {addon.name?.[lng]}
           </h3>
 
-          <p className="flex-grow text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+          {/* Addon Description */}
+          <p className="line-clamp-2 flex-grow text-xs leading-relaxed text-gray-600 dark:text-gray-400">
             {addon.description?.[lng]}
           </p>
 
+          {/* Recommendation Reason (if applicable) */}
           {showRecommendation && recommendation.reason && (
             <RecommendationReason reason={recommendation.reason} />
           )}
 
-          <div className="text-md flex w-fit items-center justify-center rounded-lg p-1 font-bold text-gray-800 dark:text-gray-200">
+          {/* Pricing Display */}
+          <div className="flex w-fit items-center justify-center rounded-md bg-gray-50 px-2 py-1 text-sm font-bold text-gray-900 dark:bg-gray-700 dark:text-gray-100">
             {priceFormat(addon.price)}{" "}
             {addon.unit && (
-              <span className="ms-1 text-sm font-normal text-gray-600 dark:text-gray-400">
-                / per {addon.unit}
+              <span className="ms-1 text-xs font-normal text-gray-600 dark:text-gray-400">
+                / {addon.unit}
               </span>
             )}
           </div>
 
-          <div className="mt-2">
+          {/* Action Buttons Section */}
+          <div className="mt-1">
+            {/* Disabled State - Already Included in Package */}
             {isDisabled ? (
               <button
-                className="text-md w-full cursor-not-allowed rounded-lg border-2 border-gray-300 bg-gray-100 px-4 py-2 font-semibold text-gray-500"
+                className="w-full cursor-not-allowed rounded-md border-2 border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-semibold text-gray-500"
                 disabled
               >
                 {t("included-in-package")}
               </button>
             ) : quantity === 0 ? (
+              /* Add Button - Initial State */
               <button
-                className="text-md border-main hover:bg-main text-main w-full rounded-lg border-2 bg-white px-4 py-2 font-semibold transition-all duration-200 hover:text-white"
+                className="border-main hover:bg-main text-main w-full rounded-md border-2 bg-white px-3 py-1.5 text-sm font-semibold transition-all duration-200 hover:text-white hover:shadow-md"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleIncrement(addon._id, addon.name, addon.price, addon.unit);
@@ -152,38 +195,44 @@ export default function OfferAddOns({ bookingData, setBookingField }) {
                 {t("add-to-cart")}
               </button>
             ) : (
-              <div className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-2">
+              /* Quantity Controls - Active State */
+              <div className="flex items-center justify-between py-1">
+                {/* Quantity Adjuster */}
+                <div className="flex items-center gap-1.5">
+                  {/* Decrement Button */}
                   <motion.button
                     whileTap={{ scale: 0.9 }}
-                    className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white text-black dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                    className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDecrement(addon._id, addon.name, addon.price, addon.unit);
                     }}
                     disabled={quantity === 0}
                   >
-                    <i className="fa-solid fa-minus text-sm"></i>
+                    <i className="fa-solid fa-minus text-xs"></i>
                   </motion.button>
 
-                  <span className="w-8 text-center font-medium text-gray-900 dark:text-gray-100">
+                  {/* Quantity Display */}
+                  <span className="w-7 text-center text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {quantity}
                   </span>
 
+                  {/* Increment Button */}
                   <motion.button
                     whileTap={{ scale: 0.9 }}
-                    className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 bg-white text-black dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                    className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleIncrement(addon._id, addon.name, addon.price, addon.unit);
                     }}
                   >
-                    <i className="fa-solid fa-plus text-sm"></i>
+                    <i className="fa-solid fa-plus text-xs"></i>
                   </motion.button>
                 </div>
 
+                {/* Remove Button */}
                 <button
-                  className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="rounded-md border border-gray-300 px-2.5 py-1 text-xs text-gray-700 transition-colors hover:border-red-300 hover:bg-gray-100 hover:text-red-600 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemove(addon._id);
@@ -201,19 +250,20 @@ export default function OfferAddOns({ bookingData, setBookingField }) {
 
   return (
     <div className="w-full space-y-8 px-2 sm:px-4 lg:px-0">
+      {/* Recommended Addons Section */}
       {recommended && recommended.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.15 }}
         >
-          <AddonSectionHeader
+          <OfferSectionTitle
             title={t("addon-section-recommended")}
-            icon="fa-solid fa-star"
-            count={recommended.length}
+            info={t("select-recmmended-addon")}
           />
+          {/* Grid layout - 4 columns on large screens for compact display */}
           <motion.div
-            className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -223,21 +273,22 @@ export default function OfferAddOns({ bookingData, setBookingField }) {
         </motion.div>
       )}
 
+      {/* Regular/Other Addons Section */}
       {regular && regular.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.25 }}
         >
-          <AddonSectionHeader
+          <OfferSectionTitle
             title={
               recommended.length > 0 ? t("addon-section-other") : t("addon-section-all")
             }
-            icon="fa-solid fa-grip"
-            count={regular.length}
+            info={t("select-addon")}
           />
+          {/* Grid layout - 4 columns on large screens for compact display */}
           <motion.div
-            className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             variants={containerVariants}
             initial="hidden"
             animate="visible"

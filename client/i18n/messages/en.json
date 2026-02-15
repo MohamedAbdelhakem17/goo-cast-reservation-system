@@ -614,5 +614,16 @@
     "whatsIncluded": "What's Included"
   },
   "whatsIncluded": "What's Included",
-  "select-time-and-date": "Select Your session Date and Time"
+  "select-time-and-date": "Select Your session Date and Time",
+  "addons-label": "Enhance Your Experience with Exclusive Add-Ons",
+  "failed-to-load-studios": "Failed to load studios",
+  "no-available-studios": "No available studios for this time",
+  "seats": "seats",
+  "slot": "Slot",
+  "provide-your-contact-details": "Please provide your contact details to complete the booking",
+  "select-addon": "Enhance Your Experience with Exclusive Add-Ons",
+  "select-recmmended-addon": "Build the Perfect Package for Your Needs",
+  "whats-included-info": "Discover the exclusive benefits and features included in this offer",
+  "select-time-and-date-info": "Choose the perfect date and time for your session",
+  "select-studio-info": "Choose the perfect studio for your session"
 }
