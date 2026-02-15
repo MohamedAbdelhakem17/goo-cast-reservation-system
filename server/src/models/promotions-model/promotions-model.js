@@ -19,6 +19,14 @@ const promotionSchema = new mongoose.Schema(
     },
 
     priority: { type: Number, default: 0 },
+
+    hasLink: { type: Boolean, default: false },
+
+    link: {
+      type: String,
+    },
+
+    hasTimer: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

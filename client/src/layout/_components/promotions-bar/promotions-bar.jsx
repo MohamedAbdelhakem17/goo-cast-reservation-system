@@ -2,6 +2,7 @@ import { useGetActivePromotions } from "@/apis/admin/manage-promotions.api";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { Clock, Gift, Sparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 // Countdown Timer Component
 function CountdownTimer({ endDate }) {
@@ -101,6 +102,9 @@ export default function PromotionsBar() {
   const { t, lng } = useLocalization();
   const { data, isLoading } = useGetActivePromotions();
   const [isVisible, setIsVisible] = useState(true);
+  const pathname = useLocation().pathname;
+
+  const showButton = pathname.includes("/offers/") || pathname.includes("/booking/");
 
   if (isLoading || !data || data.status !== "success" || !data.data || !isVisible) {
     return null;
@@ -126,7 +130,18 @@ export default function PromotionsBar() {
         </div>
 
         <div className="flex flex-shrink-0 items-center gap-1 md:gap-3">
-          <CountdownTimer endDate={promotion.end_date} />
+          {/* If has timer */}
+          {promotion.hasTimer && <CountdownTimer endDate={promotion.end_date} />}
+
+          {/* If has Link */}
+          {promotion.hasLink && !showButton && (
+            <Link
+              className="text-main rounded bg-white px-8 py-1 text-sm font-bold"
+              to={`/offers/${promotion.link}`}
+            >
+              Book Now
+            </Link>
+          )}
 
           <button
             onClick={() => setIsVisible(false)}

@@ -49,6 +49,8 @@ const STEP_FIELDS = {
     "category",
     "show_image",
     "best_for",
+    "package_type",
+    "bundle_actual_price",
   ],
 };
 

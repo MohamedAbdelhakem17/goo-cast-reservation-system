@@ -52,6 +52,8 @@ const getInitialPackageValues = (pkg) => {
       en: pkg?.session_type?.en || "",
     },
 
+    package_type: pkg?.package_type || "basic",
+
     price: pkg?.price ?? "",
 
     image: pkg?.image ?? null,
@@ -62,6 +64,7 @@ const getInitialPackageValues = (pkg) => {
 
     best_for: pkg?.best_for || "",
     show_image: pkg?.show_image ?? false,
+    bundle_actual_price: pkg?.bundle_actual_price ?? "",
     // For tracking changes
     current_target_audience: "",
     current_post_session_benefits: "",

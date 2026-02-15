@@ -5,12 +5,12 @@ export default function SlotButton({ time, isSelected, onClick, index }) {
   const timeFormat = useTimeConvert();
   return (
     <motion.button
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        delay: Math.min(index * 0.05, 0.5),
-        duration: 0.3,
-      }}
+      // initial={{ opacity: 0, y: 20 }}
+      // animate={{ opacity: 1, y: 0 }}
+      // transition={{
+      //   delay: Math.min(index * 0.05, 0.5),
+      //   duration: 0.3,
+      // }}
       onClick={() => onClick(time)}
       className={`w-full rounded-lg border-2 p-4 text-center transition-all duration-200 hover:shadow-md ${
         isSelected

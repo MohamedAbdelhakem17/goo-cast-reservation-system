@@ -164,7 +164,9 @@ export const getBookingValidationSchema = (t) =>
       )
       .required(t("package-is-required")),
 
-    studio: Yup.object().required(t("studio-is-required")),
+    studio: Yup.object()
+      .required(t("studio-is-required"))
+      .test("has-id", t("studio-is-required"), (value) => value && value.id),
     endSlot: Yup.string().required("Time end slot is required"),
     startSlot: Yup.string().required("Time slot is required"),
     selectedAddOns: Yup.array().nullable().notRequired(),
@@ -184,7 +186,7 @@ export const getBookingValidationSchema = (t) =>
             return true;
           },
         ),
-      lastName: Yup.string().required(t("last-name-is-required")),
+      // lastName: Yup.string().required(t("last-name-is-required")),
       phone: getPhoneValidation(t),
       email: Yup.string().email(t("invalid-email")).required(t("email-is-required")),
     }),

@@ -14,6 +14,7 @@ const Booking = lazy(() => import("@/features/booking/pages/booking/booking"));
 const ConfirmationBooking = lazy(
   () => import("@/features/booking/pages/confirmation-booking/confirmation-booking"),
 );
+const Offers = lazy(() => import("@/features/public/pages/offers/offers"));
 
 export default function PublicRoute() {
   return (
@@ -37,6 +38,8 @@ export default function PublicRoute() {
           </BookingProvider>
         }
       />
+
+      <Route path="/offers/:slug" element={<Offers />} />
     </Route>
   );
 }
