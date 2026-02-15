@@ -20,7 +20,7 @@ import { ShoppingCart } from "lucide-react";
  * @param {Function} setFieldValue - Formik function to update form fields
  * @param {Function} getFieldValue - Formik function to retrieve form field values
  */
-export default function OfferCart({ data, setFieldValue, getFieldValue }) {
+export default function OfferCart({ data, setFieldValue, getFieldValue, actualPrice }) {
   // Localization for translations and language settings
   const { t, lng } = useLocalization();
 
@@ -76,6 +76,18 @@ export default function OfferCart({ data, setFieldValue, getFieldValue }) {
           priceFormat={priceFormat}
           lng={lng}
         />
+
+        {/* Actual Price Row (only shown if actualPrice exists and differs from subtotal) */}
+        {actualPrice && (
+          <div className="flex justify-between text-base font-medium text-gray-500 dark:text-gray-400">
+            <span className="flex items-center gap-1.5">
+              {t("actual-price", "Actual Price")}
+            </span>
+            <span className="line-through">
+              {priceFormat(actualPrice)} × {numberFormat(data.duration)} h
+            </span>
+          </div>
+        )}
 
         {/* Selected Add-ons List */}
         <AddOnsSection

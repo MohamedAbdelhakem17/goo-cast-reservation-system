@@ -98,6 +98,7 @@ export default function Offers() {
     return <div className="my-20 text-center">Error loading offer details.</div>;
   }
 
+  console.log("Bundle Data:", bundle.bundle_actual_price);
   return (
     <div className="relative container mx-auto mt-6 min-h-screen space-y-6 bg-white p-3 pt-10 transition-colors duration-300 dark:bg-gray-950">
       {/* Offer Header */}
@@ -172,6 +173,7 @@ export default function Offers() {
           data={values}
           setFieldValue={setFieldValue}
           getFieldValue={getFieldValue}
+          actualPrice={bundle?.bundle_actual_price}
         />
       </div>
 
@@ -183,6 +185,27 @@ export default function Offers() {
       >
         {isBookingPending ? t("processing", "Processing...") : t("book-now", "Book Now")}
       </button>
+
+      {/* Validation Errors */}
+      {formik.touched && !formik.isValid && Object.keys(formik.errors).length > 0 && (
+        <div className="space-y-2 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+          <h4 className="font-semibold text-red-800 dark:text-red-400">
+            {t("please-fix-the-following-errors", "Please fix the following errors:")}
+          </h4>
+          <ul className="list-inside list-disc space-y-1 text-sm text-red-700 dark:text-red-300">
+            {formik.errors.startSlot && <li>{formik.errors.startSlot}</li>}
+            {formik.errors.personalInfo?.fullName && (
+              <li>{formik.errors.personalInfo.fullName}</li>
+            )}
+            {formik.errors.personalInfo?.email && (
+              <li>{formik.errors.personalInfo.email}</li>
+            )}
+            {formik.errors.personalInfo?.phone && (
+              <li>{formik.errors.personalInfo.phone}</li>
+            )}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

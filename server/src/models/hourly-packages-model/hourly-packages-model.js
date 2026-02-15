@@ -161,6 +161,11 @@ const HourlyPackageSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+
+    bundle_actual_price: {
+      type: Number,
+      min: [0, "Price must be a positive number"],
+    },
   },
   {
     timestamps: true,

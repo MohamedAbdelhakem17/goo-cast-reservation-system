@@ -85,6 +85,22 @@ export default function ShardFields({ formik }) {
         placeholder={t("select-package-type")}
         className="col-span-1 md:col-span-2"
       />
+
+      {/*  Actual  Bundle Price */}
+      {formik.values.package_type === "bundle" && (
+        <Input
+          type="number"
+          label={t("bundle-actual-price")}
+          id="bundle_actual_price"
+          name="bundle_actual_price"
+          value={formik.values.bundle_actual_price}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          errors={formik.touched.bundle_actual_price && formik.errors.bundle_actual_price}
+          placeholder={t("bundle-actual-price-placeholder")}
+          className="col-span-1 md:col-span-2"
+        />
+      )}
       {/* Image */}
       <div className="col-span-1 md:col-span-2">
         <label className="mb-2 block font-semibold">{t("image")}</label>

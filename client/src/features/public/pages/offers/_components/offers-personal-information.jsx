@@ -1,4 +1,5 @@
 import { BookingInput, BookingPhoneInput } from "@/components/booking";
+import { useEffect, useState } from "react";
 import PaymentOptions from "./../../../../booking/_components/steps/personal-information/_components/payment-way";
 import OfferSectionTitle from "./offer-section-title";
 
@@ -24,6 +25,14 @@ export default function OffersPersonalInformation({
   formik,
   getFieldError,
 }) {
+  const [fullName, setFullName] = useState("");
+  useEffect(() => {
+    setFullName(
+      `${values.personalInfo.firstName} ${values.personalInfo.lastName}`.trim(),
+    );
+  }, []);
+
+  console.log(fullName);
   return (
     <div className="space-y-6">
       {/* Section Header */}
@@ -43,13 +52,28 @@ export default function OffersPersonalInformation({
             className="w-full"
             type="text"
             id="fullName"
-            label={t("full-name", "Full Name")}
-            placeholder={t("enter-your-full-name", "Enter your full name")}
-            errors={getFieldError("personalInfo.fullName")}
-            onBlur={formik.handleBlur}
-            onChange={(e) => setFieldValue("personalInfo.fullName", e.target.value)}
-            touched={formik.touched.personalInfo?.fullName}
-            value={values.personalInfo.fullName}
+            label={t("full-name")}
+            placeholder={t("enter-your-full-name")}
+            value={fullName}
+            touched={
+              formik.touched.personalInfo?.firstName ||
+              formik.touched.personalInfo?.lastName
+            }
+            onChange={(e) => {
+              const value = e.target.value;
+              setFullName(value);
+
+              const parts = value.trim().split(" ");
+              const first = parts.shift() || "";
+              const last = parts.join(" ");
+
+              setFieldValue("personalInfo.firstName", first);
+              setFieldValue("personalInfo.lastName", last);
+            }}
+            onBlur={() => {
+              formik.setFieldTouched("personalInfo.firstName", true);
+              formik.setFieldTouched("personalInfo.lastName", true);
+            }}
           />
         </div>
 
