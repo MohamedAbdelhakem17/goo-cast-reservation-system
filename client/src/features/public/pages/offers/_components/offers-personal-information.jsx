@@ -74,6 +74,10 @@ export default function OffersPersonalInformation({
               formik.setFieldTouched("personalInfo.firstName", true);
               formik.setFieldTouched("personalInfo.lastName", true);
             }}
+            errors={
+              getFieldError("personalInfo.firstName") ||
+              getFieldError("personalInfo.lastName")
+            }
           />
         </div>
 
