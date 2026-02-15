@@ -44,9 +44,7 @@ export default function SelectStudio({
 
     const interval = setInterval(() => {
       availableStudiosData.data.forEach((studio) => {
-        const allImages = [studio.thumbnail, ...(studio.imagesGallery || [])].filter(
-          Boolean,
-        );
+        const allImages = [...(studio.imagesGallery || [])].filter(Boolean);
 
         // Only auto-scroll if there are multiple images and studio is not hovered
         if (allImages.length > 1 && !hoveredStudios[studio._id]) {
