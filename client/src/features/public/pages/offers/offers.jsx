@@ -12,6 +12,7 @@ import OfferInformation from "./_components/offer-information";
 import OfferSectionTitle from "./_components/offer-section-title";
 import OffersPersonalInformation from "./_components/offers-personal-information";
 import SelectStudio from "./_components/select-studio";
+import StudioImages from "./_components/studio-images";
 import useOfferBooking from "./_hooks/use-offer-booking";
 
 export default function Offers() {
@@ -107,6 +108,10 @@ export default function Offers() {
     return <div className="my-20 text-center">Error loading offer details.</div>;
   }
 
+  const actualPrice = bundle?.bundle_actual_price * bundle?.category?.minHours;
+  const price = bundle?.price * bundle?.category?.minHours;
+  const discountAmount = actualPrice - price;
+
   return (
     <div className="relative container mx-auto mt-6 min-h-screen space-y-8 bg-white p-3 pt-10 transition-colors duration-300 dark:bg-gray-950">
       {/* Offer Header */}
@@ -114,6 +119,9 @@ export default function Offers() {
         badge={t("limited-time-offer")}
         title={bundle?.name?.[lng]}
         description={bundle?.description?.[lng]}
+        actualPrice={actualPrice}
+        price={price}
+        discountAmount={discountAmount}
         onBookNow={handleBookNow}
       />
 
@@ -127,6 +135,9 @@ export default function Offers() {
           {t("book-now", "Book Now")}
         </button>
       </div>
+
+      {/* Images */}
+      <StudioImages />
 
       {/* Offer Information */}
       <OfferInformation
