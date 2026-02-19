@@ -25,6 +25,8 @@
     "axios": "^1.8.4",
     "blurhash": "^2.0.5",
     "buffer": "^6.0.3",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "formik": "^2.4.6",
     "gapi-script": "^1.2.0",
     "i18next": "^25.5.2",
