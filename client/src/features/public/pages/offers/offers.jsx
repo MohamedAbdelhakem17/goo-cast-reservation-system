@@ -100,11 +100,12 @@ export default function Offers() {
   }, [isOfferPage]);
 
   useEffect(() => {
+    if (!bundle?.name) return;
     tracking("add-package", {
-      package_name: pkg.name?.[bookingData.lng],
-      price: pkg.price,
+      package_name: bundle?.name?.[lng],
+      price: bundle?.price,
     });
-  }, []);
+  }, [bundle]);
 
   // Loading Case
   if (isLoading) {
