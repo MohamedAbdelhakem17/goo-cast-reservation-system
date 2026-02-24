@@ -941,9 +941,7 @@ exports.updateBooking = asyncHandler(async (req, res) => {
         end: { dateTime: endDateTime.toISOString() },
       };
       await updateCalenderEvent(existingBooking.googleEventId, eventData);
-    } catch (err) {
-      console.warn("⚠️ Failed to update Google Calendar event:", err.message);
-    }
+    } catch (err) {}
   }
 
   res.status(200).json({
