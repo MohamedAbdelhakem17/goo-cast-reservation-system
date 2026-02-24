@@ -7,7 +7,6 @@ import useLocalization from "@/context/localization-provider/localization-contex
 import useAddonRecommendations from "@/hooks/use-addon-recommendations";
 import { useAddOnsManager } from "@/hooks/use-addons-manger";
 import usePriceFormat from "@/hooks/usePriceFormat";
-import { tracking } from "@/utils/gtm";
 import { motion } from "framer-motion";
 import OfferSectionTitle from "./offer-section-title";
 
@@ -59,7 +58,7 @@ export default function OfferAddOns({ bookingData, setBookingField }) {
       bookingData,
       setBookingField,
       addons,
-      tracking,
+      tracking: true,
       lng,
     });
 

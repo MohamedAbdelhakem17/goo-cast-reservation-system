@@ -2,6 +2,7 @@ import { useGetSingleBundle } from "@/apis/admin/manage-package.api";
 import { useGetAvailableSlots, useGetAvailableStudios } from "@/apis/public/booking.api";
 import { Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
+import { tracking } from "@/utils/gtm";
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import TimeCalendar from "../../../admin-dashboard/pages/booking-management/add-booking/time";
@@ -97,6 +98,13 @@ export default function Offers() {
       }
     };
   }, [isOfferPage]);
+
+  useEffect(() => {
+    tracking("add-package", {
+      package_name: pkg.name?.[bookingData.lng],
+      price: pkg.price,
+    });
+  }, []);
 
   // Loading Case
   if (isLoading) {
@@ -220,8 +228,17 @@ export default function Offers() {
       <button
         type="button"
         disabled={isBookingPending || !formik.isValid}
+        onClick={
+          !formik.isSubmitting
+            ? () => {
+                handleSubmit();
+                tracking("create_booking", {
+                  totalPrice: values.totalPrice,
+                });
+              }
+            : undefined
+        }
         className="bg-main ms-auto flex w-full items-center justify-center gap-x-3 rounded-md px-4 py-2 text-lg text-white disabled:bg-gray-100 disabled:text-gray-400"
-        onClick={handleSubmit}
       >
         {isBookingPending ? t("processing", "Processing...") : t("book-now", "Book Now")}
       </button>
