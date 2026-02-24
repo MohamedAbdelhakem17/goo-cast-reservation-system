@@ -2,6 +2,7 @@ import { SlotButton } from "@/components/booking";
 import { EmptyState, Loading } from "@/components/common";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { calculateEndTime, calculateTotalPrice } from "@/hooks/useManageSlots";
+import { tracking } from "@/utils/gtm";
 import { TimerOff } from "lucide-react";
 import OfferSectionTitle from "./offer-section-title";
 
@@ -26,6 +27,12 @@ export default function OfferSelectSlots({
     setFieldValue("startSlot", time);
     setFieldValue("endSlot", endTime);
     setFieldValue("totalPackagePrice", totalPrice);
+
+    tracking("add_to_cart", {
+      totalPrice: totalPrice,
+      startTime: time,
+      duration: values?.duration,
+    });
   };
 
   // Loading state

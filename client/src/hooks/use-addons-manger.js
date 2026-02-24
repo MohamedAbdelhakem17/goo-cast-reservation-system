@@ -54,14 +54,7 @@ export const useAddOnsManager = ({
     (id, name, price, unit) => {
       const currentQty = getQuantity(id);
       const addonPrice = unit === "hour" ? price * bookingData?.duration : price;
-      console.log(
-        "Addon Price:",
-        addonPrice,
-        "Unit:",
-        unit,
-        "Duration:",
-        bookingData?.duration,
-      );
+
       if (tracking) {
         tracking("add-addon", {
           addon_name: name?.[lng] || name,
