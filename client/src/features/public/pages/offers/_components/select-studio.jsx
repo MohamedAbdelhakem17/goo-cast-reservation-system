@@ -1,4 +1,5 @@
 import { OptimizedImage } from "@/components/common";
+import { tracking } from "@/utils/gtm";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import OfferSectionTitle from "./offer-section-title";
@@ -147,14 +148,16 @@ export default function SelectStudio({
                   <button
                     key={studio._id}
                     type="button"
-                    onClick={() =>
+                    onClick={() => {
                       setFieldValue("studio", {
                         id: studio._id,
                         name: studio.name,
                         image: studio.thumbnail,
                         recording_seats: studio.recording_seats,
-                      })
-                    }
+                      });
+
+                      tracking("add-studio", { studio_name: studio.name?.[lng] });
+                    }}
                     onMouseEnter={() => handleMouseEnter(studio._id)}
                     onMouseLeave={() => handleMouseLeave(studio._id)}
                     className={`group focus:ring-main/20 relative overflow-hidden rounded-3xl border-2 bg-white text-left shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl focus:ring-4 focus:outline-none dark:bg-slate-900 ${
