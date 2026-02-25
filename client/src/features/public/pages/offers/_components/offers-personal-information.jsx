@@ -32,7 +32,6 @@ export default function OffersPersonalInformation({
     );
   }, []);
 
-  console.log(fullName);
   return (
     <div className="space-y-6">
       {/* Section Header */}

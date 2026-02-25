@@ -179,6 +179,7 @@ bookingSchema.post("save", async function (doc, next) {
   await doc.populate([
     { path: "studio", select: "name thumbnail address" },
     { path: "package", select: "name" },
+    { path: "personalInfo", select: "firstName lastName email phone fullName" },
     { path: "addOns.item", select: "name price image description" },
     { path: "createdBy", select: "fullName email" },
   ]);
