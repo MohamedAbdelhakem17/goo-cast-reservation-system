@@ -78,7 +78,9 @@ export default function OfferCart({ data, setFieldValue, getFieldValue, actualPr
             <span className="flex items-center gap-1.5">
               {t("actual-price", "Actual Price")}
             </span>
-            <span className="line-through">{priceFormat(actualPrice)}</span>
+            <span className="line-through">
+              {priceFormat(actualPrice * data.duration)} × {data.duration} h
+            </span>
           </div>
         )}
 
