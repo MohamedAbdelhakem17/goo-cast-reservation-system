@@ -27,6 +27,7 @@ export default function Offers() {
 
   // Sate
   const { data: { data: bundle = {} } = {}, isLoading, error } = useGetSingleBundle(slug);
+
   const selectTimeRef = useRef(null);
 
   const {
@@ -37,6 +38,7 @@ export default function Offers() {
     handleSubmit,
     isPending: isBookingPending,
   } = useOfferBooking({
+    // baseValues,
     bundle,
   });
 
@@ -117,9 +119,9 @@ export default function Offers() {
     return <div className="my-20 text-center">Error loading offer details.</div>;
   }
 
-  const actualPrice = bundle?.bundle_actual_price * bundle?.category?.minHours;
-  const price = bundle?.price * bundle?.category?.minHours;
-  const discountAmount = actualPrice - price;
+  // const actualPrice = bundle?.bundle_actual_price * bundle?.category?.minHours;
+  // const price = bundle?.price * bundle?.category?.minHours;
+  // const discountAmount = actualPrice - price;
 
   return (
     <div className="relative container mx-auto mt-6 min-h-screen space-y-8 bg-white p-3 pt-10 transition-colors duration-300 dark:bg-gray-950">
@@ -128,9 +130,9 @@ export default function Offers() {
         badge={t("limited-time-offer")}
         title={bundle?.name?.[lng]}
         description={bundle?.description?.[lng]}
-        actualPrice={actualPrice}
-        price={price}
-        discountAmount={discountAmount}
+        // actualPrice={actualPrice}
+        price={bundle?.price}
+        // discountAmount={discountAmount}
         onBookNow={handleBookNow}
       />
 
@@ -156,13 +158,52 @@ export default function Offers() {
       {/* Select Time */}
 
       <div className="space-y-6" ref={selectTimeRef}>
-        <OfferSectionTitle
-          title={t("select-time-and-date", "Select Your session Date and Time")}
-          info={t(
-            "select-time-and-date-info",
-            "Choose the perfect date and time for your session",
-          )}
-        />
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <OfferSectionTitle
+            title={t("select-time-and-date", "Select Your session Date and Time")}
+            info={t(
+              "select-time-and-date-info",
+              "Choose the perfect date and time for your session",
+            )}
+          />
+
+          {/* Duration */}
+          <div className="flex items-center gap-x-10">
+            {/* 4 Hour */}
+            <button
+              className={`border-main cursor-pointer rounded-md border px-6 py-2 ${values?.duration === 4 ? "ring-main bg-main text-white ring-2 ring-offset-2" : "text-main bg-white"}`}
+              onClick={() => {
+                setFieldValue("duration", 4);
+                setFieldValue("startSlot", "");
+                handleDateSelect({
+                  studioId: values?.studio?.id,
+                  date: values.date || currentDate,
+                  duration: 4,
+                });
+              }}
+            >
+              4 hour
+            </button>
+
+            {/*  2 Hour */}
+            <button
+              className={`border-main cursor-pointer rounded-md border px-6 py-2 ${values?.duration === 2 ? "ring-main bg-main text-white ring-2 ring-offset-2" : "text-main bg-white"}`}
+              onClick={() => {
+                setFieldValue("duration", 2);
+                setFieldValue("startSlot", "");
+                handleDateSelect({
+                  studioId: values?.studio?.id,
+                  date: values.date || currentDate,
+                  duration: 2,
+                });
+              }}
+            >
+              2 hour
+            </button>
+          </div>
+
+          <div className="hidden lg:block" />
+        </div>
 
         <TimeCalendar
           duration={values?.duration || bundle?.category?.minHours || 4}

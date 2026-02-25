@@ -14,7 +14,7 @@ const calendar = google.calendar({ version: "v3", auth });
 // Create event
 exports.createCalendarEvent = async (
   eventData,
-  { duration, username, package, studio }
+  { duration, username, package, studio },
 ) => {
   try {
     // Event Data
@@ -46,7 +46,6 @@ exports.createCalendarEvent = async (
     const eventId = data?.id;
     return eventId;
   } catch (err) {
-    console.log(err);
     throw new Error(err);
   }
 };
@@ -67,7 +66,6 @@ exports.updateCalenderEvent = async (eventId, newEventData) => {
       sendUpdates: "all",
     });
 
-    console.log(data);
     return data.id;
   } catch (error) {
     console.error("Google Calendar Error (updateEvent):", err.message);
@@ -90,7 +88,6 @@ exports.deleteCalenderEvent = async (eventId) => {
     });
 
     // If delete successfully
-    console.log("delete", data);
     return true;
   } catch (error) {
     console.error("Google Calendar Error (updateEvent):", err.message);

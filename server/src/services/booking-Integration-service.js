@@ -99,7 +99,7 @@ exports.runBookingIntegrations = async ({ booking, integrationData }) => {
     opportunityID = await saveOpportunityInGoHighLevel(
       userData,
       opportunityData,
-      appointmentData
+      appointmentData,
     );
     booking.opportunityID = opportunityID;
 
