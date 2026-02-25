@@ -201,6 +201,8 @@ export default function Offers() {
               2 hour
             </button>
           </div>
+
+          <div className="hidden lg:block" />
         </div>
 
         <TimeCalendar
