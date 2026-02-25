@@ -174,6 +174,12 @@ export default function Offers() {
               className={`border-main cursor-pointer rounded-md border px-6 py-2 ${values?.duration === 4 ? "ring-main bg-main text-white ring-2 ring-offset-2" : "text-main bg-white"}`}
               onClick={() => {
                 setFieldValue("duration", 4);
+                setFieldValue("startSlot", "");
+                handleDateSelect({
+                  studioId: values?.studio?.id,
+                  date: values.date || currentDate,
+                  duration: 4,
+                });
               }}
             >
               4 hour
@@ -184,6 +190,12 @@ export default function Offers() {
               className={`border-main cursor-pointer rounded-md border px-6 py-2 ${values?.duration === 2 ? "ring-main bg-main text-white ring-2 ring-offset-2" : "text-main bg-white"}`}
               onClick={() => {
                 setFieldValue("duration", 2);
+                setFieldValue("startSlot", "");
+                handleDateSelect({
+                  studioId: values?.studio?.id,
+                  date: values.date || currentDate,
+                  duration: 2,
+                });
               }}
             >
               2 hour

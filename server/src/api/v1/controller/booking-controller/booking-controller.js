@@ -467,7 +467,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
 
   // working window for this studio
   const startOfDayMinutes = timeToMinutes(/** studio.startTime || **/ "09:00");
-  const endOfDayMinutes = timeToMinutes(/** studio.endTime || **/ "20:00");
+  const endOfDayMinutes = timeToMinutes(/** studio.endTime || **/ "24:00");
   if (
     startOfDayMinutes === null ||
     endOfDayMinutes === null ||
@@ -565,7 +565,7 @@ exports.getAvailableStartSlots = asyncHandler(async (req, res, next) => {
     meta: {
       requestedDate: date,
       duration,
-      studioWorkingHours: { start: "09:00", end: "20:00" },
+      studioWorkingHours: { start: "09:00", end: "24:00" },
       totalAvailableSlots: availableSlots.length,
     },
   });

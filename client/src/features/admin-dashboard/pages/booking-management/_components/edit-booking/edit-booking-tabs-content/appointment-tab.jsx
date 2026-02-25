@@ -5,7 +5,7 @@ import useTimeConvert from "@/hooks/useTimeConvert";
 /* helpers */
 const normalizeDate = (date) => {
   if (!date) return "";
-  // لو جاي ISO من السيرفر
+  // if date is in datetime format, convert it to date format
   if (date.includes("T")) return date.split("T")[0];
   return date;
 };
@@ -16,7 +16,7 @@ export default function AppointmentTab({ duration, studio, values, setFieldValue
   const { data: fullyBookedDates } = useGetFullyBookedDates(duration);
   const { getSlots, data: slots } = useGetAvailableSlots();
 
-  /* أقل تاريخ = النهارده */
+  //  min date is today
   const today = new Date().toISOString().split("T")[0];
 
   const isDateDisabled = (date) => {
@@ -27,11 +27,11 @@ export default function AppointmentTab({ duration, studio, values, setFieldValue
   const handleDateChange = (e) => {
     const newDate = e.target.value;
 
-    // حدّث التاريخ دايمًا
+    // update formik values
     setFieldValue("date", newDate);
     setFieldValue("startSlot", "");
 
-    // لو اليوم Fully booked ما تجيبش slots
+    // if date is disabled, don't fetch slots
     if (isDateDisabled(newDate)) return;
 
     getSlots({
