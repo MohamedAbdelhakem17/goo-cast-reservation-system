@@ -44,16 +44,23 @@ export default function OfferHeader({
 
         <div className="hidden h-12 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent sm:block dark:via-gray-600" />
 
-        <div className="flex flex-col items-center gap-1 sm:items-start">
-          <span className="border-b border-gray-200 pb-2 text-sm font-semibold text-gray-400 sm:text-base dark:border-gray-700 dark:text-gray-500">
+        <div className="flex flex-col items-center gap-0.5 sm:items-start">
+          <span className="text-sm font-semibold text-gray-400 sm:text-base dark:border-gray-700 dark:text-gray-500">
             {price * 4} EGP for 4 Hours
           </span>
+
+          {/* Divider with OR */}
+          <div className="flex w-full items-center gap-3">
+            <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+            <span className="text-sm font-semibold text-gray-400 dark:text-gray-500">
+              or
+            </span>
+            <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+          </div>
+
           <span className="text-sm font-semibold text-gray-400 sm:text-base dark:text-gray-500">
             {price * 2} EGP for 2 Hours
           </span>
-          {/* <span className="rounded-full bg-gradient-to-r from-green-400 to-emerald-500 px-3 py-1 text-xs font-bold text-white shadow-md sm:text-sm">
-            Save {discountAmount} EGP
-          </span> */}
         </div>
       </div>
     </div>
