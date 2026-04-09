@@ -592,5 +592,15 @@
   "select-recmmended-addon": "أنشئ الحزمة المثالية لاحتياجاتك",
   "whats-included-info": "اكتشف المزايا والميزات الحصرية المتضمنة في هذا العرض",
   "select-studio-info": "اختر الاستوديو المثالي لجلستك",
-  "select-time-and-date-info": "اختر التاريخ والوقت المثاليين لجلستك"
+  "select-time-and-date-info": "اختر التاريخ والوقت المثاليين لجلستك",
+  "studio-bundles": "باقات الاستوديو",
+  "premium-studio-packages-built-for-creators": "باقات استوديو احترافية صممت خصيصا لصناع المحتوى",
+  "studio-bundles-hero-description": "وقت استوديو احترافي ومعدات متقدمة وخدمات صناعة محتوى، كلها ضمن باقات توفر عليك الوقت والتكلفة.",
+  "view-bundles": "عرض الباقات",
+  "our-bundel": "باقاتنا",
+  "our-bundel-info": "اكتشف المزايا والخصائص الحصرية المتضمنة في باقات الاستوديو لدينا",
+  "select-bundle": "اختر الباقة",
+  "bundle": "باقة",
+  "error-loading-offer-details": "حدث خطأ أثناء تحميل تفاصيل العرض.",
+  "no-active-bundles-available": "لا توجد باقات مفعلة حاليا."
 }

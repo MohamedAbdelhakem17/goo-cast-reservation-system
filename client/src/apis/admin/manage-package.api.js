@@ -54,6 +54,20 @@ export const useGetSingleBundle = (slug) => {
   return { data, isLoading, error };
 };
 
+export const useGetAllActiveBundles = () => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["active-bundles"],
+
+    queryFn: async () => {
+      const { data } = await axiosInstance("/hourly-packages/bundles");
+
+      return data;
+    },
+  });
+
+  return { data, isLoading, error };
+};
+
 export const useGetPackagesByCategory = (id) => {
   const {
     data: packagesInCategory,
