@@ -8,8 +8,6 @@ const getApiBaseUrl = () => {
   // Fallback: auto-detect based on current hostname
   const hostname = window.location.hostname;
 
-  return "https://booking.goocast.net/api";
-
   if (hostname === "localhost" || hostname === "127.0.0.1") {
     return "http://localhost:8045/api";
   } else if (hostname.includes("staging")) {

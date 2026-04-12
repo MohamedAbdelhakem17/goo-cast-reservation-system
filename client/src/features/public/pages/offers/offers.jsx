@@ -70,7 +70,7 @@ export default function Offers() {
     <div className="relative container mx-auto mt-6 min-h-screen space-y-8 bg-white p-3 pt-10 transition-colors duration-300 dark:bg-gray-950">
       {/* Offer Header */}
       <OfferHeader
-        badge={t("studio-bundles", "Studio Bundles")}
+        badge={t("limited-time-offer", "Limited-Time Offer")}
         title={t(
           "premium-studio-packages-built-for-creators",
           "Premium Studio Packages Built for Creators",
