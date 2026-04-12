@@ -639,5 +639,6 @@
   "no-active-bundles-available": "No active bundles available right now.",
   "bundle-actual-price": "bundle actual price placeholder",
   "bundle-actual-price-placeholder": "bundle actual price placeholder",
-  "actual-price": "Actual Price"
+  "actual-price": "Actual Price",
+  "selected-0": "Selected"
 }

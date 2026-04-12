@@ -2,14 +2,13 @@ import { useGetAllActiveBundles } from "@/apis/admin/manage-package.api";
 import { useGetAvailableSlots, useGetAvailableStudios } from "@/apis/public/booking.api";
 import { tracking } from "@/utils/gtm";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import useOfferBooking from "./use-offer-booking";
 
 const getBundleId = (item) => item?._id || item?.id;
 
 export default function useOffersPageLogic({ lng }) {
   const path = useLocation().pathname;
-  const navigate = useNavigate();
 
   const {
     data: { data: bundles = [] } = {},
@@ -53,15 +52,7 @@ export default function useOffersPageLogic({ lng }) {
     duration: values.duration,
   });
 
-  const handleBookNow = useCallback(() => {
-    try {
-      localStorage.setItem("bookingData", JSON.stringify(values));
-    } catch (err) {
-      console.error("Failed to persist booking data:", err);
-    }
 
-    navigate("/booking");
-  }, [navigate, values]);
 
   const handleDateSelect = useCallback(
     (payload) => {
@@ -133,7 +124,6 @@ export default function useOffersPageLogic({ lng }) {
     availableStudiosData,
     isLoadingAvailable,
     errorAvailable,
-    handleBookNow,
     handleDateSelect,
     getFieldError,
     handleScrollToBooking,

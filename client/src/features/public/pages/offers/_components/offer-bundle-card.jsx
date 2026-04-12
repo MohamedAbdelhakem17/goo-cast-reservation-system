@@ -22,16 +22,14 @@ export default function OfferBundleCard({ item, index, lng, t, isSelected, onSel
   const Icon = BUNDLE_ICONS[index % BUNDLE_ICONS.length];
   const theme = HEADER_THEMES[index % HEADER_THEMES.length];
 
-  const benefits = [
-    ...(item?.post_session_benefits?.[lng] || []),
-    ...(item?.details?.[lng] || []),
-  ].filter(Boolean);
+  const postSessionBenefits = (item?.post_session_benefits?.[lng] || []).filter(Boolean);
+  const details = (item?.details?.[lng] || []).filter(Boolean);
 
   return (
     <article
       className={`flex h-full flex-col overflow-hidden rounded-3xl border bg-white shadow-sm transition-all dark:bg-slate-900 ${
         isSelected
-          ? "border-fuchsia-400 ring-4 ring-fuchsia-200/70 dark:border-fuchsia-400 dark:ring-fuchsia-900/40"
+          ? "border-main/40 ring-2 ring-main/30 dark:border-main dark:ring-main/30"
           : "border-slate-200 hover:-translate-y-1 hover:shadow-lg dark:border-slate-800"
       }`}
     >
@@ -48,7 +46,7 @@ export default function OfferBundleCard({ item, index, lng, t, isSelected, onSel
         </p>
       </div>
 
-      <div className="flex flex-1 flex-col p-7 md:p-8">
+      <div className="flex flex-1 flex-col p-2 md:p-3">
         {hasActualPrice && (
           <p className="text-center text-base font-semibold text-slate-400 line-through dark:text-slate-500">
             EGP {actualPrice.toLocaleString()}
@@ -59,25 +57,47 @@ export default function OfferBundleCard({ item, index, lng, t, isSelected, onSel
           EGP {price.toLocaleString()}
         </p>
 
-        <ul className="mt-5 flex-1 space-y-3 text-sm leading-6 text-slate-700 dark:text-slate-300">
-          {benefits.map((benefit, benefitIndex) => (
-            <li key={`${itemId}-${benefitIndex}`} className="flex items-start gap-2">
-              <Check className="mt-0.5 h-4 w-4 text-green-500" />
-              <span>{benefit}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="mt-2 flex-1 space-y-5">
+          {postSessionBenefits.length > 0 && (
+              <ul className="space-y-2.5  ">
+                {postSessionBenefits.map((benefit, benefitIndex) => (
+                  <li
+                    key={`${itemId}-post-${benefitIndex}`}
+                    className="flex w-full items-start gap-2 pb-2.5 text-sm leading-6 text-slate-800 last:pb-0  dark:text-slate-100"
+                  >
+                    <span className="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-emerald-500/40 text-emerald-600 dark:text-emerald-400">
+                      <Check className="h-3 w-3" />
+                    </span>
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+          )}
+
+          {details.length > 0 && (
+            <section className="border-t border-slate-200 pt-4 dark:border-slate-700">
+              <ul className="space-y-3 text-sm leading-6 text-slate-700 dark:text-slate-300">
+                {details.map((detail, detailIndex) => (
+                  <li key={`${itemId}-detail-${detailIndex}`} className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
+                    <span>{detail}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
 
         <button
           type="button"
           onClick={() => onSelect(itemId)}
           className={`mt-6 w-full rounded-lg px-4 py-3 text-base font-semibold transition-colors ${
             isSelected
-              ? "bg-fuchsia-600 text-white hover:bg-fuchsia-500"
+              ? "bg-main text-white hover:bg-main/50"
               : "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
           }`}
         >
-          {isSelected ? t("selected", "Selected") : t("select-bundle", "Select Bundle")}
+          {isSelected ? t("selected-0", "Selected") : t("select-bundle", "Select Bundle")}
         </button>
       </div>
     </article>

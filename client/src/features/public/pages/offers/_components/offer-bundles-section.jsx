@@ -16,7 +16,7 @@ export default function OfferBundlesSection({
         title={t("our-bundel", "Our Bundel")}
         info={t(
           "our-bundel-info",
-          "Discover the exclusive benefits and features included in our Studio Bundell",
+          "Discover the exclusive benefits and features included in our Studio Bundel",
         )}
       />
 

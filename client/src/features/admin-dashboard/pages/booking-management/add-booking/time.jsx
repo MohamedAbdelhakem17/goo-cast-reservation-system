@@ -9,6 +9,7 @@ export default function TimeCalendar({
   bookingData,
   setFieldValue,
   isBlocked = true,
+  showDurationInput = true,
 }) {
   // Localization
   const { t } = useLocalization();
@@ -31,6 +32,7 @@ export default function TimeCalendar({
   const isStudioAndPackageSelected = Boolean(
     bookingData?.studio?.id && bookingData?.selectedPackage?.id,
   );
+  const isDurationControlDisabled = isBlocked && !isStudioAndPackageSelected;
 
   // Functions
   const handleIncrement = () => {
@@ -110,7 +112,7 @@ export default function TimeCalendar({
 
       {/* Duration Selector */}
 
-      {isBlocked && (
+      {showDurationInput && (
         <div className="mb-5 flex flex-col items-center justify-between gap-3 md:flex-row">
           {/* Title */}
           <p className="text-sm font-medium text-gray-700 dark:text-slate-200">
@@ -123,7 +125,7 @@ export default function TimeCalendar({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleDecrement}
-              disabled={!isStudioAndPackageSelected}
+              disabled={isDurationControlDisabled}
               className="flex h-10 w-10 items-center justify-center border-r border-gray-200 bg-gray-100 text-gray-700 transition hover:bg-gray-200 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
             >
               <i className="fa-solid fa-minus"></i>
@@ -138,7 +140,7 @@ export default function TimeCalendar({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleIncrement}
-              disabled={!isStudioAndPackageSelected}
+              disabled={isDurationControlDisabled}
               className="flex h-10 w-10 items-center justify-center border-l border-gray-200 bg-gray-100 text-gray-700 transition hover:bg-gray-200 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
             >
               <i className="fa-solid fa-plus"></i>

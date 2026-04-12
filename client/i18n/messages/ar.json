@@ -602,5 +602,6 @@
   "select-bundle": "اختر الباقة",
   "bundle": "باقة",
   "error-loading-offer-details": "حدث خطأ أثناء تحميل تفاصيل العرض.",
-  "no-active-bundles-available": "لا توجد باقات مفعلة حاليا."
+  "no-active-bundles-available": "لا توجد باقات مفعلة حاليا.",
+  "selected-0": "مختارة"
 }

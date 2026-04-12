@@ -2,8 +2,8 @@ import { useCreateBooking } from "@/apis/public/booking.api";
 import useLocalization from "@/context/localization-provider/localization-context";
 import { useToast } from "@/context/Toaster-Context/ToasterContext";
 import {
-  getBookingInitialValues,
-  getBookingValidationSchema,
+    getBookingInitialValues,
+    getBookingValidationSchema,
 } from "@/utils/schemas/booking.schema";
 import { useFormik } from "formik";
 import { useCallback, useMemo } from "react";
@@ -13,7 +13,8 @@ const buildOfferDefaults = (baseValues, bundle) => {
   const bundleId = bundle?._id || bundle?.id || null;
   if (!bundleId) return baseValues;
 
-  const duration = bundle?.category?.minHours || baseValues.duration || 1;
+  const hasBundleActualPrice = Number(bundle?.bundle_actual_price ?? 0) > 0;
+  const duration = hasBundleActualPrice ? 2 : baseValues.duration || 1;
   const packagePrice = Number(bundle?.price ?? 0);
   const totalPackagePrice = packagePrice * duration;
 

@@ -31,12 +31,13 @@ export default function Offers() {
     availableStudiosData,
     isLoadingAvailable,
     errorAvailable,
-    handleBookNow,
     handleDateSelect,
     getFieldError,
     handleScrollToBooking,
     handleSubmitBooking,
   } = useOffersPageLogic({ lng });
+
+  // const showDurationInput = bundle?.
 
   // Loading Case
   if (isLoading) {
@@ -63,6 +64,7 @@ export default function Offers() {
   // const actualPrice = bundle?.bundle_actual_price * bundle?.category?.minHours;
   // const price = bundle?.price * bundle?.category?.minHours;
   // const discountAmount = actualPrice - price;
+  const hasBundleActualPrice = Number(bundle?.bundle_actual_price ?? 0) > 0;
 
   return (
     <div className="relative container mx-auto mt-6 min-h-screen space-y-8 bg-white p-3 pt-10 transition-colors duration-300 dark:bg-gray-950">
@@ -100,11 +102,12 @@ export default function Offers() {
 
       <div className="space-y-6">
         <TimeCalendar
-          duration={values?.duration || bundle?.category?.minHours || 4}
+          duration={hasBundleActualPrice ? 2 : values?.duration || 1}
           onDateSelect={handleDateSelect}
           bookingData={values}
           setFieldValue={setFieldValue}
           isBlocked={false}
+          showDurationInput={!hasBundleActualPrice}
         />
 
         {/* Date Validation Error */}
